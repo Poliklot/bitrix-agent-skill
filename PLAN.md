@@ -12,12 +12,37 @@
 
 ```
 bitrix-agent-skill/
-├── bitrix.md          ← сам скилл (единственное, что в гите)
-├── PLAN.md            ← этот файл (в гите)
-├── .gitignore         ← исключает research/ и examples/
-├── research/          ← изучение файлов ядра (не в гите)
-└── examples/          ← тестовые задачи и проверка скилла (не в гите)
+├── bitrix/                     ← сам скилл (в гите)
+│   ├── SKILL.md                ← entry point < 300 строк (frontmatter + навигация)
+│   └── references/             ← тематические файлы, грузятся по требованию
+│       ├── orm.md              ← DataManager, фильтры, события, Result/Error
+│       ├── events-routing.md   ← EventManager, Controller, Routing
+│       ├── modules-loader.md   ← Модули, Loader, Application, Config
+│       ├── components.md       ← Компоненты, шаблоны, кеш в компонентах
+│       ├── cache-infra.md      ← Cache, TaggedCache, CAgent, IO
+│       ├── http.md             ← DateTime, HttpClient, HttpRequest, HttpResponse
+│       └── iblocks.md          ← Инфоблоки legacy+D7, HL-блоки
+├── PLAN.md                     ← этот файл (в гите)
+├── .gitignore                  ← исключает research/, examples/, bitrix.md
+├── research/                   ← изучение файлов ядра (не в гите)
+└── examples/                   ← тестовые задачи и проверка скилла (не в гите)
 ```
+
+### Установка скилла
+
+```bash
+cp -r bitrix/ ~/.claude/skills/bitrix
+```
+
+Затем в любом проекте с Bitrix:
+```
+/bitrix <задача>
+```
+
+### Принцип progressive disclosure (агентские скиллы agentskills.io)
+- **SKILL.md** (~300 строк) — всегда загружается при активации скилла
+- **references/*.md** — загружаются только когда задача требует конкретной темы
+- Агент читает только нужный reference-файл, не весь контекст сразу
 
 ---
 
@@ -67,11 +92,18 @@ bitrix-agent-skill/
 - [x] Высоконагруженные инфоблоки (HL Blocks): `HighloadBlockTable::compileEntity`, UTM-таблицы
 - [x] События инфоблоков, gotchas (VERSION 1/2, fetch vs fetchObject, API_CODE)
 
+### Фаза 5.5 — Реструктуризация в agentskills.io формат ✅
+- [x] Разбивка монолитного bitrix.md (2600 строк) на SKILL.md + references/
+- [x] SKILL.md < 300 строк: frontmatter, роль, правила, quick-ref, навигация
+- [x] 7 reference-файлов: orm, events-routing, modules-loader, components, cache-infra, http, iblocks
+- [x] Обновлён .gitignore (bitrix.md исключён, bitrix/ в гите)
+- [x] Обновлён PLAN.md со структурой и принципом progressive disclosure
+
 ### Фаза 6 — Безопасность и лучшие практики
-- [ ] XSS: `htmlspecialchars`, `Application::getHtmlEncoder()`
-- [ ] SQL-инъекции: только ORM и подготовленные запросы
-- [ ] CSRF: `bitrix_sessid_post()`
-- [ ] Права доступа: `CUser`, `CGroup`, проверка прав на модуль/элемент
+- [ ] XSS: `htmlspecialchars`, `HtmlFilter::encode()`, `Application::getHtmlEncoder()`
+- [ ] SQL-инъекции: только ORM и `forSql()` для сырых запросов
+- [ ] CSRF: `bitrix_sessid_post()`, ActionFilter\Csrf в Controllers
+- [ ] Права доступа: `CUser`, `CGroup`, `CIBlock::GetPermission()`, проверка на модуль
 
 ### Фаза 7 — REST API и внешние интеграции
 - [ ] Регистрация методов через `CModule`, `AddRestMethod`
@@ -79,9 +111,9 @@ bitrix-agent-skill/
 - [ ] `Bitrix\Main\Web\HttpClient` для внешних запросов
 
 ### Фаза 8 — Тестирование скилла
-- [ ] Набор реальных задач в `examples/` разной сложности
-- [ ] Проверка качества ответов скилла
-- [ ] Итеративное уточнение инструкций
+- [ ] Набор реальных задач в `examples/` разной сложности (создание модуля, компонент, iblock CRUD, HL-блок)
+- [ ] Проверка качества ответов скилла с Claude Haiku (самый строгий тест)
+- [ ] Итеративное уточнение инструкций по наблюдению за поведением агента
 
 ---
 
