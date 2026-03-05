@@ -99,11 +99,14 @@ cp -r bitrix/ ~/.claude/skills/bitrix
 - [x] Обновлён .gitignore (bitrix.md исключён, bitrix/ в гите)
 - [x] Обновлён PLAN.md со структурой и принципом progressive disclosure
 
-### Фаза 6 — Безопасность и лучшие практики
-- [ ] XSS: `htmlspecialchars`, `HtmlFilter::encode()`, `Application::getHtmlEncoder()`
-- [ ] SQL-инъекции: только ORM и `forSql()` для сырых запросов
-- [ ] CSRF: `bitrix_sessid_post()`, ActionFilter\Csrf в Controllers
-- [ ] Права доступа: `CUser`, `CGroup`, `CIBlock::GetPermission()`, проверка на модуль
+### Фаза 6 — Безопасность и лучшие практики ✅
+- [x] XSS: `HtmlFilter::encode()` (ENT_COMPAT по умолчанию!), `htmlspecialchars`, URL/JS-контексты
+- [x] SQL-инъекции: ORM как защита, `forSql()` для raw SQL, что НЕ является защитой
+- [x] CSRF: `bitrix_sessid_post()`, `check_bitrix_sessid()`, `ActionFilter\Csrf` (только SCOPE_AJAX!)
+- [x] Текущий пользователь: `CurrentUser::get()` (D7), глобальный `$USER` (legacy)
+- [x] Права доступа: `CIBlock::GetPermission()` (D/R/W/X), `$APPLICATION->GetGroupRight()`, `CanDoOperation()`
+- [x] `ActionFilter\Authentication` в Controllers
+- [x] Gotchas: ENT_COMPAT vs ENT_QUOTES, Csrf только в SCOPE_AJAX, CurrentUser никогда не null
 
 ### Фаза 7 — REST API и внешние интеграции
 - [ ] Регистрация методов через `CModule`, `AddRestMethod`
