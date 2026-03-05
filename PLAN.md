@@ -117,7 +117,12 @@ cp -r bitrix/ ~/.claude/skills/bitrix
 - [x] `Bitrix\Main\Web\HttpClient` для вызова внешнего REST API с OAuth-токеном
 - [x] Обновление OAuth refresh_token
 
-### Фаза 8 — Тестирование скилла
+### Фаза 8 — Admin UI ✅
+- [x] CAdminList, CAdminForm, CAdminTabControl, фильтры, групповые действия
+- [x] Кастомные UF-типы через OnUserTypeBuildList + BaseType
+- [x] Admin menu.php + права + InstallFiles
+
+### Фаза 9 — Тестирование скилла
 - [ ] Набор реальных задач в `examples/` разной сложности (создание модуля, компонент, iblock CRUD, HL-блок)
 - [ ] Проверка качества ответов скилла с Claude Haiku (самый строгий тест)
 - [ ] Итеративное уточнение инструкций по наблюдению за поведением агента
