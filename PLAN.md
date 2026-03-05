@@ -60,11 +60,12 @@ bitrix-agent-skill/
 - [x] HTTP: `HttpRequest` — getQuery/getPost/getCookie/isAjax/isJson/decodeJson
 - [x] HTTP: `HttpResponse` — addHeader/setStatus/addCookie/flush/redirectTo
 
-### Фаза 5 — Инфоблоки
-- [ ] Legacy API: `CIBlock`, `CIBlockElement`, `CIBlockSection`
-- [ ] D7 ORM для инфоблоков: `Iblock\ElementTable`, фильтры, select
-- [ ] Свойства: типы, множественные, сложные (файл, список, привязка)
-- [ ] Высоконагруженные инфоблоки (HL Blocks): `Bitrix\Highloadblock`
+### Фаза 5 — Инфоблоки ✅
+- [x] Legacy API: `CIBlock`, `CIBlockElement`, `CIBlockSection`
+- [x] D7 ORM для инфоблоков: `IblockTable::compileEntity`, API_CODE, `\Iblock\Elements\{Code}Table`
+- [x] Свойства: типы (S/N/F/E/G/L), `PropertyTable`, `ElementPropertyTable`, множественные
+- [x] Высоконагруженные инфоблоки (HL Blocks): `HighloadBlockTable::compileEntity`, UTM-таблицы
+- [x] События инфоблоков, gotchas (VERSION 1/2, fetch vs fetchObject, API_CODE)
 
 ### Фаза 6 — Безопасность и лучшие практики
 - [ ] XSS: `htmlspecialchars`, `Application::getHtmlEncoder()`
