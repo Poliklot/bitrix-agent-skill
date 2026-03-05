@@ -38,6 +38,21 @@ $dt = new DateTime();                    // сейчас
 $dt = DateTime::createFromTimestamp($ts);
 ```
 
+## Обязательное подтверждение перед изменением данных
+
+Перед любой операцией, изменяющей данные в БД или файловой системе, показывай:
+
+```
+Собираюсь выполнить:
+  Операция: [тип: создание / изменение / удаление]
+  Объект: [что именно — инфоблок "Товары", группа "Редакторы", таблица b_catalog]
+  Что изменится: [БД / файлы / права]
+  Обратимость: [обратимо / необратимо]
+Продолжить?
+```
+
+Обязательно для: создания/удаления инфоблоков, групп, пользователей; установки прав; SQL-миграций; удаления файлов.
+
 ## Что никогда не делать
 
 - **Не конкатенировать** пользовательский ввод в SQL — только ORM или `$helper->forSql()`
@@ -163,6 +178,7 @@ class Order extends Controller
 | XSS, SQL-инъекции, CSRF, права доступа, CurrentUser, ActionFilter | [references/security.md](references/security.md) |
 | REST-методы, OnRestServiceBuildDescription, события REST, Webhook, OAuth, HttpClient | [references/rest.md](references/rest.md) |
 | Admin-страницы, CAdminList, CAdminForm, CAdminTabControl, фильтры, меню, права, кастомные UF-типы | [references/admin-ui.md](references/admin-ui.md) |
+| Создание инфоблоков/типов/свойств, группы, пользователи, права, миграции, SQL схема | [references/entities-migrations.md](references/entities-migrations.md) |
 
 ---
 
