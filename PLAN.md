@@ -108,10 +108,14 @@ cp -r bitrix/ ~/.claude/skills/bitrix
 - [x] `ActionFilter\Authentication` в Controllers
 - [x] Gotchas: ENT_COMPAT vs ENT_QUOTES, Csrf только в SCOPE_AJAX, CurrentUser никогда не null
 
-### Фаза 7 — REST API и внешние интеграции
-- [ ] Регистрация методов через `CModule`, `AddRestMethod`
-- [ ] Webhook и приложения в Bitrix24
-- [ ] `Bitrix\Main\Web\HttpClient` для внешних запросов
+### Фаза 7 — REST API и внешние интеграции ✅
+- [x] Регистрация методов через `OnRestServiceBuildDescription`, `CRestUtil::GLOBAL_SCOPE`
+- [x] Сигнатура callback: `($params, $start, $server)`, пагинация (`next`/`total`)
+- [x] `RestException` — коды ошибок, HTTP-статусы
+- [x] Исходящие REST-события: `CRestUtil::EVENTS`, структура, `event.bind`
+- [x] Входящий Webhook — URL-шаблон, вызов через curl
+- [x] `Bitrix\Main\Web\HttpClient` для вызова внешнего REST API с OAuth-токеном
+- [x] Обновление OAuth refresh_token
 
 ### Фаза 8 — Тестирование скилла
 - [ ] Набор реальных задач в `examples/` разной сложности (создание модуля, компонент, iblock CRUD, HL-блок)

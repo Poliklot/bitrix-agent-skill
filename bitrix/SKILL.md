@@ -161,6 +161,7 @@ class Order extends Controller
 | Type\DateTime, Type\Date, HttpClient, HttpRequest, HttpResponse | [references/http.md](references/http.md) |
 | Инфоблоки (legacy + D7 ORM), свойства, HL-блоки, события инфоблоков | [references/iblocks.md](references/iblocks.md) |
 | XSS, SQL-инъекции, CSRF, права доступа, CurrentUser, ActionFilter | [references/security.md](references/security.md) |
+| REST-методы, OnRestServiceBuildDescription, события REST, Webhook, OAuth, HttpClient | [references/rest.md](references/rest.md) |
 
 ---
 
