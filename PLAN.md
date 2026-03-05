@@ -142,15 +142,15 @@ cp -r bitrix/ ~/.claude/skills/bitrix
 ### Фаза 11 — SEO, кеш, доступ ✅
 - [x] `references/seo-cache-access.md` — сброс кеша (файловый/managed/HTML), noindex, sitemap, robots.txt, AuthForm
 
-### Фаза 12 — Критичные модули (приоритет: каждый проект) ✅
-- [x] `references/sale.md` — Sale: корзина, заказы, оплата, доставка, скидки, купоны, события
+### Фаза 12 — Ядро main: почта ✅
 - [x] `references/mail-notifications.md` — CEventType, CEventMessage, CEvent::Send, SMS-провайдеры
-- [x] `references/catalog.md` — Цены, прайс-листы, SKU/offers, склады, остатки, скидки каталога
 
-### Фаза 13 — Частые задачи (приоритет: большинство проектов)
-- [ ] `references/templates.md` — Структура шаблона сайта, Asset D7, $APPLICATION в header/footer, composite + шаблоны
-- [ ] `references/users.md` — CUser::Add/Login, UserTable D7, UF пользователей, восстановление пароля, CurrentUser
-- [ ] `references/webforms.md` — Веб-формы: CForm, CFormResult, AJAX-версия, форма на инфоблоке
+> `sale.md` и `catalog.md` написаны, но **не включены в навигацию скилла** — требуют модулей `sale`/`catalog`, которых нет в текущем ядре. Подключить когда будет установлено ядро интернет-магазина.
+
+### Фаза 13 — Частые задачи (приоритет: большинство проектов) ✅
+- [x] `references/templates.md` — Структура шаблона сайта, Asset D7, $APPLICATION в header/footer, composite + шаблоны
+- [x] `references/users.md` — CUser::Add/Login, UserTable D7, UF пользователей, восстановление пароля, CurrentUser
+- [x] `references/webforms.md` — Веб-формы: CForm, CFormResult, AJAX-версия, форма на инфоблоке
 - [ ] Дополнить `references/cache-infra.md` — CFile::SaveFile/ResizeImage, загрузка $_FILES в D7, CFile::MakeFileArray
 
 ### Фаза 14 — Специализированные интеграции
