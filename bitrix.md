@@ -434,33 +434,68 @@ $result = OrderTable::getList([
 
 ## ORM: События сущностей (Entity Events)
 
-Срабатывают при любом `add()`, `update()`, `delete()` на DataManager. Перехватываются двумя способами.
+На каждую операцию (`add`, `update`, `delete`) ядро стреляет **тремя** событиями: `OnBefore*`, `On*`, `OnAfter*` — итого 9 событий.
+
+| Константа DataManager | Имя события | Когда | Можно прервать? |
+|---|---|---|---|
+| `EVENT_ON_BEFORE_ADD` | `OnBeforeAdd` | до INSERT | да |
+| `EVENT_ON_ADD` | `OnAdd` | в транзакции после INSERT | нет |
+| `EVENT_ON_AFTER_ADD` | `OnAfterAdd` | после коммита | нет |
+| `EVENT_ON_BEFORE_UPDATE` | `OnBeforeUpdate` | до UPDATE | да |
+| `EVENT_ON_UPDATE` | `OnUpdate` | в транзакции после UPDATE | нет |
+| `EVENT_ON_AFTER_UPDATE` | `OnAfterUpdate` | после коммита | нет |
+| `EVENT_ON_BEFORE_DELETE` | `OnBeforeDelete` | до DELETE | да |
+| `EVENT_ON_DELETE` | `OnDelete` | в транзакции | нет |
+| `EVENT_ON_AFTER_DELETE` | `OnAfterDelete` | после коммита | нет |
+
+### ORM\EventResult — что умеет
+
+```php
+use Bitrix\Main\ORM\EventResult;
+use Bitrix\Main\ORM\EntityError;
+
+$result = new EventResult(); // по умолчанию SUCCESS
+
+// Изменить поля перед сохранением
+$result->modifyFields(['UPDATED_AT' => new \Bitrix\Main\Type\DateTime()]);
+
+// Убрать поле из сохранения
+$result->unsetField('SOME_FIELD');
+$result->unsetFields(['FIELD_A', 'FIELD_B']);
+
+// Прервать операцию с ошибкой (меняет тип на ERROR)
+$result->setErrors([new EntityError('Сообщение', 'MY_CODE')]);
+$result->addError(new EntityError('Ещё одна ошибка'));
+
+// EntityError: код по умолчанию — 'BX_ERROR' (не 0!)
+new EntityError('Сообщение');            // код = 'BX_ERROR'
+new EntityError('Сообщение', 'MY_CODE'); // код = 'MY_CODE'
+```
 
 ### Способ 1 — переопределение метода в DataManager (рекомендуется)
+
+Ядро вызывает метод класса **напрямую** перед отправкой в EventManager.
 
 ```php
 use Bitrix\Main\ORM\Data\DataManager;
 use Bitrix\Main\ORM\Event;
 use Bitrix\Main\ORM\EventResult;
 use Bitrix\Main\ORM\EntityError;
-use Bitrix\Main\ORM\Fields\FieldTypeMask;
 
 class OrderTable extends DataManager
 {
-    // Вызывается ДО вставки. Можно изменить поля или прервать операцию.
-    public static function onBeforeAdd(Event $event): EventResult
+    // Параметры onBeforeAdd: 'fields' (массив) + 'object' (EntityObject)
+    public static function OnBeforeAdd(Event $event): EventResult
     {
         $result = new EventResult();
         $fields = $event->getParameter('fields');
+        $object = $event->getParameter('object'); // EntityObject
 
         if (empty($fields['TITLE'])) {
-            $result->setErrors([
-                new EntityError('Заголовок обязателен', 'EMPTY_TITLE'),
-            ]);
-            return $result; // операция прервётся
+            $result->addError(new EntityError('Заголовок обязателен', 'EMPTY_TITLE'));
+            return $result;
         }
 
-        // Добавить/изменить поля перед сохранением
         $result->modifyFields([
             'CREATED_BY' => \Bitrix\Main\Engine\CurrentUser::get()->getId(),
         ]);
@@ -468,14 +503,14 @@ class OrderTable extends DataManager
         return $result;
     }
 
-    // Вызывается ПОСЛЕ вставки. ID уже есть.
-    public static function onAfterAdd(Event $event): EventResult
+    // Параметры onAfterAdd: 'id', 'primary', 'fields', 'object'
+    public static function OnAfterAdd(Event $event): EventResult
     {
-        $result = new EventResult();
-        $id     = $event->getParameter('id');
-        $fields = $event->getParameter('fields');
+        $result  = new EventResult();
+        $id      = $event->getParameter('id');      // новый ID (int)
+        $primary = $event->getParameter('primary'); // ['ID' => 5]
+        $object  = $event->getParameter('object');  // clone EntityObject
 
-        // Например: отправить уведомление, сбросить кеш
         \Bitrix\Main\Application::getInstance()
             ->getTaggedCache()
             ->clearByTag('my_order_list');
@@ -483,64 +518,71 @@ class OrderTable extends DataManager
         return $result;
     }
 
-    // ДО обновления — $primary содержит PK, $fields — только изменяемые поля
-    public static function onBeforeUpdate(Event $event): EventResult
+    // Параметры onBeforeUpdate: 'id', 'primary', 'fields', 'object'
+    public static function OnBeforeUpdate(Event $event): EventResult
     {
         $result  = new EventResult();
         $primary = $event->getParameter('primary'); // ['ID' => 5]
-        $fields  = $event->getParameter('fields');
+        $fields  = $event->getParameter('fields');  // только изменяемые поля
 
         $result->modifyFields(['UPDATED_AT' => new \Bitrix\Main\Type\DateTime()]);
         return $result;
     }
 
-    public static function onAfterUpdate(Event $event): EventResult
+    public static function OnAfterUpdate(Event $event): EventResult
     {
-        $result  = new EventResult();
-        $primary = $event->getParameter('primary');
-        return $result;
+        return new EventResult();
     }
 
-    // ДО удаления — последний шанс прервать
-    public static function onBeforeDelete(Event $event): EventResult
+    // Параметры onBeforeDelete: 'id', 'primary', 'object'
+    public static function OnBeforeDelete(Event $event): EventResult
     {
         $result  = new EventResult();
-        $primary = $event->getParameter('primary');
+        $primary = $event->getParameter('primary'); // ['ID' => 5]
 
-        $hasItems = OrderItemTable::getCount(['=ORDER_ID' => $primary['ID']]) > 0;
-        if ($hasItems) {
-            $result->setErrors([
-                new EntityError('Нельзя удалить заказ с позициями', 'HAS_ITEMS'),
-            ]);
+        if (OrderItemTable::getCount(['=ORDER_ID' => $primary['ID']]) > 0) {
+            $result->addError(new EntityError('Нельзя удалить заказ с позициями', 'HAS_ITEMS'));
         }
         return $result;
     }
 
-    public static function onAfterDelete(Event $event): EventResult
+    public static function OnAfterDelete(Event $event): EventResult
     {
-        $result  = new EventResult();
         $primary = $event->getParameter('primary');
-        // Каскадное удаление, очистка кеша
-        return $result;
+        // каскадное удаление, очистка кеша
+        return new EventResult();
     }
 }
 ```
 
+### Важно: регистр имён методов
+
+Ядро вызывает методы через `call_user_func_array([$dataClass, 'OnBeforeAdd'], [$event])`.
+Методы должны называться **`OnBeforeAdd`**, **`OnAfterAdd`** и т.д. — с заглавной `O`.
+PHP регистронезависим для методов, но следуй соглашению ядра.
+
 ### Способ 2 — подписка через EventManager (из другого модуля)
 
+Ядро стреляет два варианта события: legacy (без namespace) и modern (с namespace).
+
 ```php
-// В init.php или include.php вашего модуля
+// Modern-вариант события: '\My\Namespace\OrderTable::OnBeforeAdd'
+// Legacy-вариант: 'OrderTableOnBeforeAdd' (просто className + eventType)
+
+// Подписываться нужно на modern-вариант (с namespace):
 \Bitrix\Main\EventManager::getInstance()->addEventHandler(
-    'my.module',                               // модуль, которому принадлежит DataManager
-    '\MyVendor\MyModule\OrderTable::OnBeforeAdd',
+    'my.module',                                      // модуль, которому принадлежит таблица
+    '\MyVendor\MyModule\OrderTable::OnBeforeAdd',     // modern-формат
     [\AnotherVendor\Integration\Handler::class, 'onOrderBeforeAdd']
 );
 
+// Обработчик получает ORM\Event (т.к. addEventHandler = version 2)
 class Handler
 {
-    public static function onOrderBeforeAdd(Event $event): EventResult
+    public static function onOrderBeforeAdd(\Bitrix\Main\ORM\Event $event): \Bitrix\Main\ORM\EventResult
     {
-        $result = new EventResult();
+        $result = new \Bitrix\Main\ORM\EventResult();
+        $fields = $event->getParameter('fields');
         // ...
         return $result;
     }
@@ -551,64 +593,92 @@ class Handler
 
 ## Result / Error — паттерн для сервисов
 
-Единственный правильный способ передавать успех/ошибку в D7-коде. Не исключения, не bool, не null.
+Единственный правильный способ передавать успех/ошибку в D7-коде.
+
+### Error — полный API
+
+```php
+use Bitrix\Main\Error;
+
+// Конструктор: new Error($message, $code = 0, $customData = null)
+$error = new Error('Заголовок обязателен', 'EMPTY_TITLE');
+$error = new Error('Ошибка валидации', 'VALIDATION', ['field' => 'TITLE', 'max' => 255]);
+
+// Из исключения
+$error = Error::createFromThrowable($exception); // getMessage() + getCode()
+
+// Методы
+$error->getMessage();    // строка
+$error->getCode();       // int|string
+$error->getCustomData(); // mixed — дополнительные данные (например, для фронта)
+(string) $error;         // то же что getMessage()
+json_encode($error);     // {'message':..., 'code':..., 'customData':...}
+```
+
+### ErrorCollection — полный API
+
+```php
+use Bitrix\Main\ErrorCollection;
+
+$collection = new ErrorCollection();
+$collection->setError($error);           // добавить один Error
+$collection->add([$error1, $error2]);    // добавить массив
+$collection->getErrorByCode('MY_CODE'); // Error|null — найти по коду
+$collection->toArray();                  // Error[]
+```
+
+### Result — полный API
 
 ```php
 use Bitrix\Main\Result;
 use Bitrix\Main\Error;
 
-// Сервис
+$result = new Result();
+
+$result->addError(new Error('...'));        // добавить ошибку → isSuccess() = false
+$result->addErrors([$error1, $error2]);     // массив ошибок → isSuccess() = false
+$result->isSuccess();                       // bool
+$result->getErrors();                       // Error[]
+$result->getError();                        // Error|null — первая ошибка
+$result->getErrorMessages();               // string[] — только тексты
+$result->getErrorCollection();             // ErrorCollection
+$result->setData(['id' => 5]);             // сохранить данные (SqlExpression отфильтруются)
+$result->getData();                         // array
+```
+
+### Паттерн в сервисе
+
+```php
 class OrderService
 {
     public function create(array $data): Result
     {
         $result = new Result();
 
-        // Валидация
         if (empty($data['TITLE'])) {
-            return $result->addError(new Error('Заголовок не может быть пустым', 'EMPTY_TITLE'));
-        }
-        if (strlen($data['TITLE']) > 255) {
-            return $result->addError(new Error('Заголовок слишком длинный', 'TITLE_TOO_LONG'));
+            return $result->addError(new Error('Заголовок обязателен', 'EMPTY_TITLE'));
         }
 
-        // Несколько ошибок сразу
-        $errors = [];
-        if (!isset($data['USER_ID'])) {
-            $errors[] = new Error('USER_ID обязателен', 'EMPTY_USER_ID');
-        }
-        if (!empty($errors)) {
-            $result->addErrors($errors);
-            return $result;
-        }
-
-        // Операция с ORM
         $addResult = OrderTable::add($data);
         if (!$addResult->isSuccess()) {
-            // Пробросить ошибки ORM в свой Result
-            return $result->addErrors($addResult->getErrors());
+            return $result->addErrors($addResult->getErrors()); // проброс ошибок ORM
         }
 
-        // Успех — складываем данные
-        $result->setData(['id' => $addResult->getId()]);
-        return $result;
+        return $result->setData(['id' => $addResult->getId()]);
     }
 }
 
 // Использование
-$service = new OrderService();
-$result  = $service->create(['TITLE' => 'Тест', 'USER_ID' => 1]);
+$result = (new OrderService())->create(['TITLE' => 'Тест', 'USER_ID' => 1]);
 
 if ($result->isSuccess()) {
     $id = $result->getData()['id'];
 } else {
-    // Все ошибки
     foreach ($result->getErrors() as $error) {
-        echo $error->getMessage(); // для пользователя
-        echo $error->getCode();    // для программиста / i18n
+        echo $error->getMessage();    // для пользователя
+        echo $error->getCode();       // для i18n / switch
+        $extra = $error->getCustomData(); // дополнительные данные
     }
-    // Или просто массив строк
-    $messages = $result->getErrorMessages();
 }
 ```
 
@@ -616,50 +686,75 @@ if ($result->isSuccess()) {
 
 ## EventManager — события модулей
 
-### Подписка на стандартные события Bitrix
+### Два типа подписки: runtime и persistent
+
+| Метод | Где хранится | Когда использовать |
+|-------|-------------|-------------------|
+| `addEventHandler()` | в памяти (до конца запроса) | `init.php`, `include.php` модуля |
+| `registerEventHandler()` | в БД `b_module_to_module` | инсталлятор модуля |
+
+### Версии обработчиков: version 1 vs version 2
+
+- `addEventHandler()` → version=2 → обработчику передаётся объект `Event`
+- `addEventHandlerCompatible()` → version=1 → обработчику передаются параметры по-отдельности (legacy)
 
 ```php
-// Регистрация в /local/php_interface/init.php или в include.php модуля
 use Bitrix\Main\EventManager;
+use Bitrix\Main\Event;
+use Bitrix\Main\EventResult;
 
 $em = EventManager::getInstance();
 
-// Legacy-событие (большинство стандартных событий iblock, sale, etc.)
+// D7 — обработчик получает Event объект (version=2)
 $em->addEventHandler(
     'iblock',
     'OnBeforeIBlockElementAdd',
-    [\MyVendor\MyModule\IblockHandler::class, 'onBeforeElementAdd']
+    [\MyVendor\MyModule\IblockHandler::class, 'onBeforeElementAdd'],
+    false,   // $includeFile (false = не нужен)
+    100      // $sort (по умолчанию 100)
 );
 
-// Или через замыкание (только для простой логики)
-$em->addEventHandler('main', 'OnPageStart', function() {
-    // выполняется на каждой странице
-});
+// Legacy — обработчик получает параметры по отдельности (version=1)
+$em->addEventHandlerCompatible(
+    'iblock',
+    'OnBeforeIBlockElementAdd',
+    [\MyVendor\MyModule\IblockHandler::class, 'onBeforeElementAddLegacy']
+);
 
-// Обработчик legacy-события (поля передаются по ссылке)
+// Удалить обработчик (возвращает int $handlerKey)
+$key = $em->addEventHandler(...);
+$em->removeEventHandler('iblock', 'OnBeforeIBlockElementAdd', $key);
+```
+
+### Обработчики: D7 vs legacy стиль
+
+```php
 class IblockHandler
 {
-    public static function onBeforeElementAdd(array &$arFields): void
+    // D7-стиль (addEventHandler, version=2): получает Event
+    public static function onBeforeElementAdd(Event $event): ?EventResult
     {
-        $arFields['PREVIEW_TEXT'] = strip_tags($arFields['PREVIEW_TEXT'] ?? '');
+        $fields = $event->getParameter('fields'); // именованный параметр
+        // Вернуть null = ничего не делать
+        // Вернуть EventResult::ERROR = прервать
+        return null;
     }
 
-    // Некоторые события ожидают bool-возврат для прерывания
-    public static function onBeforeIBlockElementDelete(int $id): bool
+    // Legacy-стиль (addEventHandlerCompatible, version=1): получает параметры напрямую
+    public static function onBeforeElementAddLegacy(array &$arFields): void
     {
-        // return false — прервёт удаление
-        return true;
+        $arFields['PREVIEW_TEXT'] = strip_tags($arFields['PREVIEW_TEXT'] ?? '');
     }
 }
 ```
 
-### Создание и отправка своих событий (D7-стиль)
+### Создание и отправка своих D7-событий
 
 ```php
 use Bitrix\Main\Event;
 use Bitrix\Main\EventResult;
 
-// Отправка события
+// Огонь!
 $event = new Event('my.module', 'OnOrderStatusChanged', [
     'id'        => $orderId,
     'oldStatus' => $old,
@@ -667,49 +762,44 @@ $event = new Event('my.module', 'OnOrderStatusChanged', [
 ]);
 $event->send();
 
-// Проверка результатов (если подписчики могут влиять на поведение)
+// EventResult: UNDEFINED=0, SUCCESS=1, ERROR=2
 foreach ($event->getResults() as $eventResult) {
-    switch ($eventResult->getType()) {
-        case EventResult::SUCCESS:
-            $params = $eventResult->getParameters(); // данные от подписчика
-            break;
-        case EventResult::ERROR:
-            // Подписчик сигнализирует об ошибке
-            break;
+    if ($eventResult->getType() === EventResult::SUCCESS) {
+        $data = $eventResult->getParameters(); // что вернул обработчик
+    } elseif ($eventResult->getType() === EventResult::ERROR) {
+        // обработчик просигнализировал об ошибке
     }
 }
 
-// Подписчик на D7-событие
+// Подписчик возвращает \Bitrix\Main\EventResult (не ORM\EventResult!)
 $em->addEventHandler('my.module', 'OnOrderStatusChanged', function(Event $event) {
-    $id        = $event->getParameter('id');
-    $newStatus = $event->getParameter('newStatus');
-
-    $result = new EventResult(EventResult::SUCCESS);
-    $result->setParameters(['notified' => true]);
-    return $result;
+    $id = $event->getParameter('id');
+    return new EventResult(EventResult::SUCCESS, ['notified' => true], 'my.module');
 });
 ```
 
-### Регистрация обработчиков событий в модуле (в БД, persistent)
+### Persistent-регистрация в инсталляторе модуля
 
 ```php
-// В /bitrix/modules/my.module/install/index.php при установке модуля
-RegisterModuleDependences(
+// В /bitrix/modules/my.module/install/index.php при установке
+\Bitrix\Main\EventManager::getInstance()->registerEventHandler(
     'iblock',
     'OnBeforeIBlockElementAdd',
     'my.module',
     '\MyVendor\MyModule\IblockHandler',
-    'onBeforeElementAdd'
+    'onBeforeElementAdd',
+    100  // sort
 );
 
 // При удалении модуля
-UnRegisterModuleDependences(
+\Bitrix\Main\EventManager::getInstance()->unRegisterEventHandler(
     'iblock',
     'OnBeforeIBlockElementAdd',
     'my.module',
     '\MyVendor\MyModule\IblockHandler',
     'onBeforeElementAdd'
 );
+// Кеш b_module_to_module сбросится автоматически
 ```
 
 ---
@@ -730,31 +820,54 @@ use Bitrix\Main\Error;
 
 class Order extends Controller
 {
-    // Настройка фильтров для каждого action
+    // Настройка фильтров для каждого action.
+    // Дефолтные prefilters: Authentication + HttpMethod(GET|POST) + Csrf
     public function configureActions(): array
     {
         return [
+            // Полностью заменить prefilters
             'getList' => [
                 'prefilters' => [
                     new ActionFilter\Authentication(),
                     new ActionFilter\HttpMethod([ActionFilter\HttpMethod::METHOD_GET]),
+                    // Csrf НЕ добавлен — это GET, не нужен
                 ],
             ],
+
+            // Добавить к дефолтным (+prefilters) или убрать (-prefilters)
+            'export' => [
+                '+prefilters' => [
+                    new ActionFilter\Scope([Controller::SCOPE_AJAX]),
+                ],
+            ],
+
+            // Убрать конкретный фильтр из дефолтных
+            'publicInfo' => [
+                '-prefilters' => [
+                    ActionFilter\Authentication::class,
+                    ActionFilter\Csrf::class,
+                ],
+            ],
+
+            // POST с CSRF (добавляется автоматически если есть HttpMethod::POST)
             'create' => [
                 'prefilters' => [
                     new ActionFilter\Authentication(),
                     new ActionFilter\HttpMethod([ActionFilter\HttpMethod::METHOD_POST]),
-                    new ActionFilter\Csrf(),           // проверяет sessid
+                    // Csrf добавится автоматически т.к. есть POST + это AJAX scope
                 ],
             ],
-            // Публичный action без авторизации
+
+            // Полностью без фильтров (публичный endpoint)
             'publicStats' => [
-                'prefilters' => [],
+                'prefilters'  => [],
+                'postfilters' => [],
             ],
         ];
     }
 
-    // Параметры метода — автоматически извлекаются из GET/POST и кастуются
+    // Параметры метода автоматически извлекаются из GET/POST и кастуются по типам PHP
+    // METHOD_ACTION_SUFFIX = 'Action' — методы должны заканчиваться на Action
     public function getListAction(int $page = 1, int $limit = 20): array
     {
         $offset = ($page - 1) * $limit;
@@ -799,7 +912,6 @@ class Order extends Controller
     // Можно вернуть Result — ошибки пробросятся автоматически
     public function deleteAction(int $id): ?\Bitrix\Main\Result
     {
-        // Проверка прав
         if (!CurrentUser::get()->isAdmin()) {
             $this->addError(new Error('Недостаточно прав', 'ACCESS_DENIED'));
             return null;
@@ -807,40 +919,88 @@ class Order extends Controller
 
         return \MyVendor\MyModule\OrderTable::delete($id);
     }
+
+    // Форвардинг в другой контроллер
+    public function complexAction(): mixed
+    {
+        return $this->forward(AnotherController::class, 'process', ['key' => 'value']);
+    }
+
+    // Конвертация UPPER_CASE ключей ORM → camelCase для JSON-ответа
+    public function getItemAction(int $id): ?array
+    {
+        $row = \MyVendor\MyModule\OrderTable::getById($id)->fetch();
+        if (!$row) {
+            $this->addError(new Error('Не найден', 'NOT_FOUND'));
+            return null;
+        }
+        // ['USER_ID' => 1, 'CREATED_AT' => ...] → ['userId' => 1, 'createdAt' => ...]
+        return $this->convertKeysToCamelCase($row);
+    }
+
+    // Redirect из контроллера
+    public function loginAction(): \Bitrix\Main\HttpResponse
+    {
+        return $this->redirectTo('/login/');
+    }
 }
+```
+
+### AjaxJson — формат ответа
+
+Контроллер возвращает данные через `AjaxJson`. Структура JSON-ответа:
+
+```json
+// Успех
+{"status": "success", "data": {...}, "errors": []}
+
+// Ошибка
+{"status": "error", "data": null, "errors": [{"message": "...", "code": "...", "customData": null}]}
+
+// Доступ запрещён (фильтр Authentication)
+{"status": "denied", "data": null, "errors": [...]}
+```
+
+```php
+use Bitrix\Main\Engine\Response\AjaxJson;
+use Bitrix\Main\ErrorCollection;
+
+// Ручное создание AjaxJson (если нужно вернуть из action напрямую)
+return AjaxJson::createSuccess(['id' => 5]);
+return AjaxJson::createError(new ErrorCollection([$error]));
+return AjaxJson::createDenied();
 ```
 
 ### Вызов контроллера с фронтенда
 
 ```javascript
 // Формат action: vendor.module.controller.action (всё lowercase, точки)
-// vendor=myvendor, module=mymodule, controller=Order → myvendor.mymodule.order
+// namespace \\MyVendor\\MyModule\\Controller → 'myvendor.mymodule'
+// класс Order + метод getListAction → 'myvendor.mymodule.order.getList'
 
-// Через BX.ajax.runAction (встроенный в Bitrix)
 BX.ajax.runAction('myvendor.mymodule.order.getList', {
     data: { page: 1, limit: 20 },
 }).then(response => {
     console.log(response.data); // { items: [...], total: N }
-}).catch(err => {
-    console.error(err);
+}).catch(errors => {
+    console.error(errors);
 });
 
-// POST через runAction
+// POST с CSRF
 BX.ajax.runAction('myvendor.mymodule.order.create', {
     method: 'POST',
     data: {
         title:  'Новый заказ',
-        sessid: BX.bitrix_sessid(), // CSRF токен
+        sessid: BX.bitrix_sessid(), // CSRF-токен
     },
 });
 ```
 
 ```php
-// Или напрямую через URL (GET):
+// URL напрямую (GET):
 // /bitrix/services/main/ajax.php?action=myvendor.mymodule.order.getList&page=1
 
-// Форма регистрации контроллера в .settings.php модуля:
-// /bitrix/modules/my.module/.settings.php
+// Регистрация namespace контроллера в /bitrix/modules/my.module/.settings.php
 return [
     'controllers' => [
         'value' => [
@@ -913,23 +1073,40 @@ public function getAction(): ?array
 
 ## Type\DateTime и Type\Date
 
+### Критически важно: userTime
+
+`DateTime::toString()` **автоматически конвертирует в таймзону пользователя** (если включён `\CTimeZone`).
+`format()` — возвращает серверное время без конвертации.
+
+```
+toString() → пользовательское время (для вывода)
+format()   → серверное время (для хранения, сравнения)
+```
+
 ```php
 use Bitrix\Main\Type\DateTime;
 use Bitrix\Main\Type\Date;
 
 // Создание
-$now  = new DateTime();                                    // текущий момент (серверное время)
-$dt   = new DateTime('2024-06-15 14:30:00');               // из строки в формате Bitrix
-$dt   = DateTime::createFromTimestamp(time());             // из UNIX timestamp
+$now  = new DateTime();                                      // текущий момент (серверное время)
+$dt   = new DateTime('2024-06-15 14:30:00');                 // из строки в формате Bitrix
+$dt   = DateTime::createFromTimestamp(time());               // из UNIX timestamp
 $dt   = DateTime::createFromUserTime('15.06.2024 14:30:00'); // из пользовательского формата
+$dt   = DateTime::createFromPhp(new \DateTime('now'));       // из PHP-нативного \DateTime
+$dt   = DateTime::tryParse('2024-06-15 14:30:00');           // null при ошибке (не бросает исключение)
 
-$date = new Date();                                        // сегодня
-$date = new Date('2024-06-15', 'Y-m-d');                   // из произвольного формата
+$date = new Date();                          // сегодня
+$date = new Date('2024-06-15', 'Y-m-d');     // из произвольного формата
 $date = Date::createFromTimestamp(time());
 
 // Форматирование
-echo $dt->format('d.m.Y H:i:s');           // любой PHP date-формат
-echo $dt->getTimestamp();                   // UNIX timestamp
+echo $dt->format('d.m.Y H:i:s');  // PHP date-формат, СЕРВЕРНОЕ время
+echo $dt->toString();              // Bitrix-формат, ПОЛЬЗОВАТЕЛЬСКОЕ время (авто-конвертация)
+echo $dt->getTimestamp();          // UNIX timestamp
+
+// Отключить авто-конвертацию таймзоны (нужно для сравнений, хранения)
+$dt->disableUserTime(); // toString() теперь тоже вернёт серверное время
+$dt->enableUserTime();  // вернуть обратно (по умолчанию)
 
 // Арифметика (DateInterval ISO 8601)
 $dt->add('P1D');    // +1 день
@@ -938,23 +1115,33 @@ $dt->add('P1Y');    // +1 год
 $dt->add('PT2H');   // +2 часа
 $dt->add('PT30M');  // +30 минут
 $dt->add('P1DT2H'); // +1 день 2 часа
+$dt->add('-P1D');   // -1 день
 
-// Сравнение
+// setTime
+$dt->setTime(0, 0, 0); // начало дня
+
+// setTimeZone
+$dt->setTimeZone(new \DateTimeZone('Europe/Moscow'));
+
+// Сравнение — используй getTimestamp(), не toString()
 if ($dt->getTimestamp() > (new DateTime())->getTimestamp()) {
     // в будущем
 }
 
-// Работа с таймзоной пользователя
-$userDt = clone $dt;
-$userDt->toUserTime(); // конвертировать в зону пользователя (для вывода)
-
-// При сохранении в ORM — передаём объект DateTime напрямую
+// При сохранении в ORM — объект DateTime напрямую
 OrderTable::update($id, ['DEADLINE' => new DateTime('2024-12-31 23:59:59')]);
 
-// При чтении из ORM — поле DatetimeField возвращает объект DateTime
-$row   = OrderTable::getById($id)->fetch();
-$date  = $row['CREATED_AT']; // instanceof Bitrix\Main\Type\DateTime
-echo $date->format('d.m.Y');
+// При чтении из ORM — DatetimeField возвращает объект DateTime
+$row  = OrderTable::getById($id)->fetch();
+$date = $row['CREATED_AT']; // instanceof Bitrix\Main\Type\DateTime
+echo $date->format('d.m.Y');   // серверное время
+echo $date->toString();        // пользовательское время
+
+// Безопасный парсинг (не бросает ObjectException)
+$dt = DateTime::tryParse($userInput);
+if ($dt === null) {
+    // некорректный формат
+}
 ```
 
 ---
