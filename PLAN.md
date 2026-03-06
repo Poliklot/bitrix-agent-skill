@@ -159,6 +159,9 @@ cp -r bitrix/ ~/.claude/skills/bitrix
 - [ ] `references/crm.md` — требует модуль `crm` (не установлен)
 - [ ] `references/1c-exchange.md` — требует модули `sale`/`catalog` (не установлены)
 
+### Фаза 14.5 — Кастомные UF-типы и ACF-паттерны ✅
+- [x] `references/custom-uf-types.md` — BaseType, onBeforeSave, BASE_TYPE_FILE, getDbColumnType, ACF Repeater/Group/Flexible Content через HL, глубокая вложенность HL→HL, файл в UF HL, RENDER_COMPONENT
+
 ### Фаза 15 — Корпоративные сайты и блоги
 - [ ] `references/blog-socialnet.md` — CBlogPost, комментарии (forum D7), лайки/рейтинги, рабочие группы, живая лента, подписки
 - [ ] `references/push-pull.md` — Bitrix Pull&Push: отправка события из PHP, BX.PULL.subscribe, WebSocket/SSE/LongPolling, отладка

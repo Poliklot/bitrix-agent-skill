@@ -188,6 +188,7 @@ class Order extends Controller
 | Веб-формы: CForm, CFormResult::Add, форма на инфоблоке, AJAX-форма через Controller, валидация, антифлуд | [references/webforms.md](references/webforms.md) |
 | Поиск: CSearch::Index/DeleteIndex/ReIndexAll, BeforeIndex, OnSearch, регистрация модуля в ReIndexAll | [references/search.md](references/search.md) |
 | Импорт CSV/URL, многошаговый импорт, CFile::SaveFile/MakeFileArray/GetFileArray/ResizeImageGet, экспорт потоком | [references/import-export.md](references/import-export.md) |
+| Кастомные UF-типы (BaseType, onBeforeSave, BASE_TYPE_FILE, getDbColumnType), ACF Repeater/Group/Flexible Content через HL, глубокая вложенность HL→HL, RENDER_COMPONENT | [references/custom-uf-types.md](references/custom-uf-types.md) |
 
 ---
 
