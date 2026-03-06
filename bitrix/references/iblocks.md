@@ -421,26 +421,92 @@ if ($hlblocks) {
 
 ## Инфоблоки — события
 
+Все события инфоблоков (`OnBeforeIBlockElementAdd` и пр.) — **legacy**: параметры передаются по ссылке. Для корректной модификации полей и отмены операции используй `addEventHandlerCompatible`, а не `addEventHandler`.
+
+> `addEventHandler` (version=2) оборачивает параметры в объект `Event` — ссылка теряется, изменения не применяются. `addEventHandlerCompatible` (version=1) передаёт `$arFields` напрямую по ссылке.
+
 ```php
 use Bitrix\Main\EventManager;
 
-// Legacy-события инфоблоков (регистрируются в модуле)
-EventManager::getInstance()->addEventHandler(
+$em = EventManager::getInstance();
+
+// Изменение полей ДО добавления — addEventHandlerCompatible + by-ref
+$em->addEventHandlerCompatible(
     'iblock',
     'OnBeforeIBlockElementAdd',
-    function (\Bitrix\Main\Event $event) {
-        // $arFields передаётся по ссылке — изменения применяются
-        $arFields = &$event->getParameter('arFields');
-        $arFields['NAME'] = trim($arFields['NAME']);
-
-        // Для отмены операции:
-        $result = new \Bitrix\Main\EventResult(\Bitrix\Main\EventResult::ERROR, 'Причина');
-        return $result;
-    }
+    ['\MyVendor\MyModule\IblockHandler', 'onBeforeAdd']
 );
-// Аналогично: OnAfterIBlockElementAdd, OnBeforeIBlockElementUpdate,
-//             OnAfterIBlockElementUpdate, OnBeforeIBlockElementDelete,
-//             OnAfterIBlockElementDelete
+
+// Действия ПОСЛЕ добавления (кеш, уведомления)
+$em->addEventHandlerCompatible(
+    'iblock',
+    'OnAfterIBlockElementAdd',
+    ['\MyVendor\MyModule\IblockHandler', 'onAfterAdd']
+);
+
+// Аналогично: OnBeforeIBlockElementUpdate, OnAfterIBlockElementUpdate,
+//             OnBeforeIBlockElementDelete, OnAfterIBlockElementDelete
+```
+
+```php
+namespace MyVendor\MyModule;
+
+use Bitrix\Main\Application;
+
+class IblockHandler
+{
+    /**
+     * OnBefore* — $arFields по ссылке.
+     * Отмена операции: global $APPLICATION; $APPLICATION->ThrowException('Ошибка');
+     * После ThrowException ядро прочитает GetException() и вернёт false из Add/Update.
+     */
+    public static function onBeforeAdd(array &$arFields): void
+    {
+        // Фильтровать только нужный инфоблок
+        if ((int)($arFields['IBLOCK_ID'] ?? 0) !== MY_IBLOCK_ID) {
+            return;
+        }
+
+        // Нормализация полей — работает через ссылку
+        $arFields['NAME'] = trim($arFields['NAME'] ?? '');
+        $arFields['PREVIEW_TEXT'] = strip_tags($arFields['PREVIEW_TEXT'] ?? '');
+
+        // Отменить добавление
+        if (empty($arFields['NAME'])) {
+            global $APPLICATION;
+            $APPLICATION->ThrowException('Название обязательно');
+            return;
+        }
+    }
+
+    /**
+     * OnAfter* — $arFields по ссылке; содержит ['ID'] = ID только что добавленного элемента.
+     */
+    public static function onAfterAdd(array &$arFields): void
+    {
+        if ((int)($arFields['IBLOCK_ID'] ?? 0) !== MY_IBLOCK_ID) {
+            return;
+        }
+
+        $id = (int)($arFields['ID'] ?? 0);
+        if (!$id) {
+            return;
+        }
+
+        // Очистить тегированный кеш инфоблока
+        Application::getInstance()->getTaggedCache()
+            ->clearByTag('iblock_id_' . MY_IBLOCK_ID);
+    }
+
+    /**
+     * OnBeforeIBlockElementDelete — $id (int) по ссылке, не массив!
+     */
+    public static function onBeforeDelete(int &$id): void
+    {
+        // Проверка перед удалением
+        // Отмена: $APPLICATION->ThrowException('...')
+    }
+}
 ```
 
 ---

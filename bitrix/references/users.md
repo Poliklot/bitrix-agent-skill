@@ -285,25 +285,53 @@ while ($user = $res->Fetch()) { ... }
 
 ```php
 use Bitrix\Main\EventManager;
+use Bitrix\Main\Application;
 
-// До регистрации (можно отменить)
-EventManager::getInstance()->addEventHandler('main', 'OnBeforeUserAdd', function(\Bitrix\Main\Event $event) {
-    $fields = $event->getParameter('arFields');
-    // изменить $fields или бросить исключение для отмены
-});
+$em = EventManager::getInstance();
 
-// После регистрации
-EventManager::getInstance()->addEventHandler('main', 'OnAfterUserAdd', function(\Bitrix\Main\Event $event) {
+// OnBeforeUserAdd / OnBeforeUserUpdate — legacy-события main.
+// Чтобы изменить $arFields по ссылке или отменить операцию — нужен addEventHandlerCompatible.
+// addEventHandler оборачивает параметры в Event-объект и ссылка теряется.
+$em->addEventHandlerCompatible('main', 'OnBeforeUserAdd',
+    ['\MyVendor\MyModule\UserHandler', 'onBeforeAdd']);
+
+class UserHandler
+{
+    // $arFields — по ссылке: можно читать и изменять
+    public static function onBeforeAdd(array &$arFields): void
+    {
+        // Нормализация
+        $arFields['EMAIL'] = mb_strtolower(trim($arFields['EMAIL'] ?? ''));
+
+        // Отмена операции: ThrowException, ядро проверит GetException() после события
+        if (empty($arFields['EMAIL'])) {
+            global $APPLICATION;
+            $APPLICATION->ThrowException('Email обязателен');
+        }
+    }
+
+    // OnAfterUserAdd — читаем результат, arFields['ID'] = ID нового пользователя
+    public static function onAfterAdd(array &$arFields): void
+    {
+        $userId = (int)$arFields['ID'];
+        // отправить welcome-письмо и т.д.
+    }
+}
+
+// OnAfterUserAdd через addEventHandler тоже работает если не нужна ссылка
+$em->addEventHandler('main', 'OnAfterUserAdd', function(\Bitrix\Main\Event $event) {
     $fields = $event->getParameter('arFields');
-    $userId = $fields['ID'];
-    // отправить welcome-письмо и т.д.
+    $userId = (int)($fields['ID'] ?? 0);
+    // логика после добавления
 });
 
 // После авторизации
-EventManager::getInstance()->addEventHandler('main', 'OnUserLoginComplete', function(\Bitrix\Main\Event $event) {
-    $userId = $event->getParameter('USER_ID');
+$em->addEventHandler('main', 'OnUserLoginComplete', function(\Bitrix\Main\Event $event) {
+    $userId = (int)$event->getParameter('USER_ID');
 });
 ```
+
+> **Gotcha:** `OnBeforeUserAdd` / `OnBeforeUserUpdate` — legacy-события `main`. Если нужно изменить `$arFields` или отменить операцию через `ThrowException` — обязательно `addEventHandlerCompatible`. `addEventHandler` (D7-обёртка) передаёт параметры как копию внутри `Event`-объекта, ссылка на массив теряется.
 
 ---
 

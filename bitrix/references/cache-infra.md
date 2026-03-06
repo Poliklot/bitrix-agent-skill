@@ -48,7 +48,7 @@ if ($cache->startDataCache($ttl, $cacheId, $cacheDir)) {
 $cache = Application::getInstance()->getCache();
 
 if ($cache->startDataCache($ttl, $cacheId, $cacheDir)) {
-    // кеш-промах: ob_start() уже запущен ядром
+    // кеш-промах: startDataCache() сам вызвал ob_start() внутри себя
     $data = compute();
     echo renderHtml($data);           // попадает в буфер
     $cache->endDataCache(['data' => $data]); // сохраняет HTML + vars

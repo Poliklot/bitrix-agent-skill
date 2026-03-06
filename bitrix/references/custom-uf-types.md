@@ -211,9 +211,13 @@ class FileCustomType extends BaseType
         return $html;
     }
 
-    // onBeforeSave при таком renderEditForm получает массив ['del'=>'Y','old_id'=>123,'file'=>[...]]
-    // Нужно разобрать в onBeforeSave:
-    public static function onBeforeSaveMultipart(array $userField, mixed $value): int|false
+    /**
+     * Это полная реализация onBeforeSave для multipart-формы выше.
+     * В реальном классе ЗАМЕНИ упрощённый onBeforeSave выше на этот метод
+     * (переименуй в onBeforeSave — Bitrix вызывает только этот хук).
+     * Получает массив ['del'=>'Y','old_id'=>123,'file'=>[...]] из renderEditForm.
+     */
+    public static function onBeforeSave(array $userField, mixed $value): int|false
     {
         if (!is_array($value)) {
             return is_numeric($value) ? (int)$value : false;
