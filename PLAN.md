@@ -153,11 +153,11 @@ cp -r bitrix/ ~/.claude/skills/bitrix
 - [x] `references/webforms.md` — Веб-формы: CForm, CFormResult, AJAX-версия, форма на инфоблоке
 - [ ] Дополнить `references/cache-infra.md` — CFile::SaveFile/ResizeImage, загрузка $_FILES в D7, CFile::MakeFileArray
 
-### Фаза 14 — Специализированные интеграции
-- [ ] `references/crm.md` — CRM лиды/сделки/контакты/компании: PHP API + REST, UF CRM, события, CCrmDeal::GetList
-- [ ] `references/1c-exchange.md` — CommerceML: этапы, события OnIBlockImport*, отладка, права, ручной запуск
-- [ ] `references/search.md` — CSearch::Search/Index/DeleteIndex, событие OnSearch, переиндексация, морфология
-- [ ] `references/import-export.md` — CSV/Excel импорт инфоблока, многошаговый импорт, CFile::MakeFileArray из URL, экспорт потоком
+### Фаза 14 — Специализированные интеграции ✅
+- [x] `references/search.md` — CSearch::Index/DeleteIndex/ReIndexAll, BeforeIndex, OnSearch, регистрация модуля в ReIndexAll, автоиндексация по событию инфоблока
+- [x] `references/import-export.md` — CSV/Excel импорт инфоблока, многошаговый импорт через сессию, CFile::SaveFile/MakeFileArray/GetFileArray/ResizeImageGet/ResizeImage, импорт изображений из URL, потоковый экспорт
+- [ ] `references/crm.md` — требует модуль `crm` (не установлен)
+- [ ] `references/1c-exchange.md` — требует модули `sale`/`catalog` (не установлены)
 
 ### Фаза 15 — Корпоративные сайты и блоги
 - [ ] `references/blog-socialnet.md` — CBlogPost, комментарии (forum D7), лайки/рейтинги, рабочие группы, живая лента, подписки

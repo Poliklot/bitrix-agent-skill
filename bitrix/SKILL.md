@@ -185,6 +185,8 @@ class Order extends Controller
 | Пользователи: UserTable D7, CUser::Add/Login/Update, группы, UF пользователей, SendPassword, события | [references/users.md](references/users.md) |
 | Шаблоны сайта: header/footer, $APPLICATION::SetTitle/SetPageProperty/ShowHead, Asset D7, хлебные крошки, component_epilog/prolog, composite cache | [references/templates.md](references/templates.md) |
 | Веб-формы: CForm, CFormResult::Add, форма на инфоблоке, AJAX-форма через Controller, валидация, антифлуд | [references/webforms.md](references/webforms.md) |
+| Поиск: CSearch::Index/DeleteIndex/ReIndexAll, BeforeIndex, OnSearch, регистрация модуля в ReIndexAll | [references/search.md](references/search.md) |
+| Импорт CSV/URL, многошаговый импорт, CFile::SaveFile/MakeFileArray/GetFileArray/ResizeImageGet, экспорт потоком | [references/import-export.md](references/import-export.md) |
 
 ---
 
