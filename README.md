@@ -1,55 +1,59 @@
-# Bitrix Skill for Claude Code
+# Навык Bitrix для Claude Code
 
-Claude Code skill for Bitrix CMS and Bitrix24 development. Covers D7 and legacy APIs — ORM, components, iblocks, HL blocks, caching, events, REST, and more.
+Навык Claude Code для разработки на Bitrix CMS и Bitrix24. Охватывает D7 и legacy API: ORM, компоненты, инфоблоки, HL-блоки, кеширование, события, REST и многое другое.
 
-## Installation
+## Установка
 
 ```bash
 cp -r bitrix/ ~/.claude/skills/bitrix
 ```
 
-Then in any Bitrix project:
+Затем в любом проекте на Bitrix:
 
 ```
-/bitrix <your task>
+/bitrix <ваша задача>
 ```
 
-## How it works
+## Как это работает
 
-The skill follows the [agentskills.io](https://agentskills.io) progressive disclosure format:
+Навык следует формату progressive disclosure от [agentskills.io](https://agentskills.io):
 
-- **`bitrix/SKILL.md`** — entry point loaded on every invocation (~200 lines): role, core rules, quick reference, navigation table
-- **`bitrix/references/*.md`** — topic files loaded on demand when the task requires them
+- **`bitrix/SKILL.md`** — точка входа, загружается при каждом вызове (~200 строк): роль, базовые правила, quick reference, таблица навигации
+- **`bitrix/references/*.md`** — тематические файлы, загружаются по необходимости, когда задача требует конкретной темы
 
-The agent reads only the relevant reference file, not the entire context at once.
+Агент читает только релевантный reference-файл, а не весь контекст сразу.
 
-## Coverage
+## Покрытие
 
-| Reference file | Topics |
-|----------------|--------|
-| `orm.md` | DataManager, CRUD, Relations, filters, aggregation, runtime fields, ORM events, Result/Error |
-| `events-routing.md` | EventManager, Engine\Controller, AJAX, Routing, CSRF |
-| `modules-loader.md` | Module structure, Loader, PSR-4, Application, ServiceLocator, Config\Option, Loc |
-| `components.md` | CBitrixComponent, templates, component cache, CComponentEngine |
+| Файл справки | Темы |
+|--------------|------|
+| `orm.md` | DataManager, CRUD, связи, фильтры, агрегация, runtime fields, ORM events, Result/Error |
+| `events-routing.md` | EventManager, Engine\Controller, AJAX, роутинг, CSRF |
+| `modules-loader.md` | Структура модуля, Loader, PSR-4, Application, ServiceLocator, Config\Option, Loc |
+| `components.md` | CBitrixComponent, шаблоны, кеш компонента, CComponentEngine |
 | `cache-infra.md` | Data\Cache, TaggedCache, CAgent, IO\File/Directory/Path |
 | `http.md` | Type\DateTime, HttpClient, HttpRequest, HttpResponse |
-| `iblocks.md` | Iblocks legacy + D7 ORM, properties, HL blocks, iblock events |
-| `iblock-hl-relations.md` | Iblock ↔ HL relations: directory (UF_XML_ID), hlblock UF, `_REF` in ORM, AbstractOrmRepository |
-| `custom-uf-types.md` | Custom UF types (BaseType, onBeforeSave, file upload), ACF patterns via HL (Repeater, Group, Flexible Content, deep nesting) |
-| `security.md` | XSS, SQL injection, CSRF, access control, CurrentUser, ActionFilter |
-| `rest.md` | REST methods, OnRestServiceBuildDescription, REST events, Webhook, OAuth |
-| `admin-ui.md` | Admin pages, CAdminList, CAdminForm, CAdminTabControl, custom UF types in admin |
-| `entities-migrations.md` | Creating iblocks/types/properties, groups, users, permissions, SQL migrations |
-| `sef-urls.md` | SEF URLs, urlrewrite.php, UrlRewriter D7, SEF_MODE/SEF_RULE, CComponentEngine |
-| `seo-cache-access.md` | Cache clearing, noindex, sitemap, robots.txt, page access control |
-| `mail-notifications.md` | CEventType, CEventMessage, Mail\Event::send, SMS providers |
-| `users.md` | UserTable D7, CUser::Add/Login/Update, user groups, UF fields, password recovery |
-| `templates.md` | Site template structure, Asset D7, $APPLICATION in header/footer, composite cache |
-| `webforms.md` | CForm, CFormResult, AJAX form via Controller, validation |
-| `search.md` | CSearch::Index/DeleteIndex/ReIndexAll, BeforeIndex, OnSearch, module registration |
-| `import-export.md` | CSV/URL import, multistep import, CFile::SaveFile/MakeFileArray/ResizeImageGet, streaming export |
+| `iblocks.md` | Инфоблоки legacy + D7 ORM, свойства, HL-блоки, события инфоблоков |
+| `iblock-hl-relations.md` | Связи инфоблоков и HL: directory (UF_XML_ID), HL-поля в UF, `_REF` в ORM, AbstractOrmRepository |
+| `custom-uf-types.md` | Кастомные UF-типы (BaseType, onBeforeSave, загрузка файлов), ACF-подходы через HL (Repeater, Group, Flexible Content, глубокая вложенность) |
+| `security.md` | XSS, SQL injection, CSRF, контроль доступа, CurrentUser, ActionFilter |
+| `rest.md` | REST-методы, OnRestServiceBuildDescription, REST-события, Webhook, OAuth |
+| `admin-ui.md` | Админ-страницы, CAdminList, CAdminForm, CAdminTabControl, кастомные UF-типы в админке |
+| `entities-migrations.md` | Создание инфоблоков/типов/свойств, групп, пользователей, прав доступа, SQL-миграции |
+| `sef-urls.md` | ЧПУ (SEF), urlrewrite.php, UrlRewriter D7, SEF_MODE/SEF_RULE, CComponentEngine |
+| `seo-cache-access.md` | Очистка кеша, noindex, sitemap, robots.txt, контроль доступа к страницам |
+| `mail-notifications.md` | CEventType, CEventMessage, Mail\Event::send, SMS-провайдеры |
+| `users.md` | UserTable D7, CUser::Add/Login/Update, группы пользователей, UF-поля, восстановление пароля |
+| `templates.md` | Структура шаблона сайта, Asset D7, $APPLICATION в header/footer, композитный кеш |
+| `webforms.md` | CForm, CFormResult, AJAX-форма через Controller, валидация |
+| `search.md` | CSearch::Index/DeleteIndex/ReIndexAll, BeforeIndex, OnSearch, регистрация модуля |
+| `import-export.md` | Импорт CSV/URL, многошаговый импорт, CFile::SaveFile/MakeFileArray/ResizeImageGet, потоковый экспорт |
 
-## Requirements
+## Требования
 
 - Claude Code
-- Bitrix CMS 23+ or Bitrix24 2024+
+- Bitrix CMS 23+ или Bitrix24 2024+
+
+## Лицензия
+
+MIT. Подробности в [LICENSE](LICENSE).
