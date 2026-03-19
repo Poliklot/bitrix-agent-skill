@@ -5,13 +5,27 @@
 ## Установка
 
 ```bash
-cp -r bitrix/ ~/.claude/skills/bitrix
+curl -fsSL https://raw.githubusercontent.com/Poliklot/claude-bitrix-skill/master/install.sh | bash
 ```
+
+Навык устанавливается в `~/.claude/skills/bitrix/`.
 
 Затем в любом проекте на Bitrix:
 
 ```
 /bitrix <ваша задача>
+```
+
+## Обновление
+
+```bash
+bash ~/.claude/skills/bitrix/update.sh
+```
+
+Скрипт проверяет текущую версию и обновляет только при необходимости. Принудительное обновление:
+
+```bash
+bash ~/.claude/skills/bitrix/update.sh --force
 ```
 
 ## Как это работает

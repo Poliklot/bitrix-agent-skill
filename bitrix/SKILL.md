@@ -3,7 +3,7 @@ name: bitrix
 description: Provides expertise in 1C-Bitrix CMS development (D7 and legacy APIs). Use when working with Bitrix modules, components, iblocks, HL blocks, ORM, caching, agents, events, controllers, REST, sale/catalog, or any Bitrix-specific code. Covers 1C-Bitrix CMS 23+ core. Does NOT cover Bitrix24-specific modules (CRM, Tasks, IM, etc.).
 metadata:
   author: poliklot
-  version: "1.0"
+  version: "1.1"
 compatibility: Designed for Claude Code on 1C-Bitrix CMS projects
 ---
 
