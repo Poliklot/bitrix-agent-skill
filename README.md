@@ -28,6 +28,14 @@ bash ~/.claude/skills/bitrix/update.sh
 bash ~/.claude/skills/bitrix/update.sh --force
 ```
 
+Только проверить, появилась ли новая версия:
+
+```bash
+bash ~/.claude/skills/bitrix/update.sh --check
+```
+
+Начиная с версии `1.3.7`, при первом содержательном обращении к `/bitrix` навык должен сначала выполнить такую проверку и, если версия выросла, предложить обновление в явной форме: `Обновилась версия скилла с X до Y. Давай обновим?`
+
 ## Как это работает
 
 Навык следует формату progressive disclosure от [agentskills.io](https://agentskills.io):

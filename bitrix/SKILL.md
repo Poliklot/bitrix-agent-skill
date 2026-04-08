@@ -3,7 +3,7 @@ name: bitrix
 description: Provides expertise in 1C-Bitrix CMS development using the actual project core as the primary source of truth. Use when working with currently installed core modules, standard components, iblocks, blog, forms, HL blocks, templates, import/export, caching, agents, events, controllers, search, SEO, users, or infrastructure. First inspect installed modules and components under `www/bitrix` before relying on memory. Missing modules such as `catalog`, `sale`, `bizproc`, `pull`, or `socialnet` must be treated as deferred until they appear in the core.
 metadata:
   author: poliklot
-  version: "1.3.6"
+  version: "1.3.7"
 compatibility: Designed for Claude Code on 1C-Bitrix CMS projects
 ---
 
@@ -34,6 +34,17 @@ compatibility: Designed for Claude Code on 1C-Bitrix CMS projects
 - Если модуль отсутствует, не выдумывай решение на его API. Зафиксируй отсутствие как факт и скорректируй подход.
 - Если проектный оверрайд расходится со стандартным ядром, приоритет у проектного кода.
 - Не ссылайся на внешний источник, если локальное ядро говорит обратное.
+
+## Проверка обновления навыка
+
+При первом содержательном обращении к `/bitrix` в текущем диалоге:
+
+1. Если доступен `~/.claude/skills/bitrix/update.sh`, сначала выполни `bash ~/.claude/skills/bitrix/update.sh --check`.
+2. Если скрипт вернул `UPDATE_AVAILABLE local=X remote=Y`, прежде чем идти в задачу, скажи пользователю именно так: `Обновилась версия скилла с X до Y. Давай обновим?`
+3. Не заменяй это расплывчатой фразой вроде “локальная версия может быть устаревшей”.
+4. Если пользователь согласился, запускай `bash ~/.claude/skills/bitrix/update.sh`, а после обновления продолжай задачу.
+5. Если скрипт вернул `UP_TO_DATE ...`, `CHECK_FAILED ...` или недоступен сам файл, продолжай молча и не зашумляй ответ.
+6. В рамках одного диалога не повторяй это предложение снова, если пользователь уже отказался или обновление уже выполнено.
 
 ## Быстрые проверки ядра
 

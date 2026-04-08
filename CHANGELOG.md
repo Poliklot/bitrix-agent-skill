@@ -4,6 +4,15 @@
 
 ## [Unreleased]
 
+## [1.3.7] — 2026-04-08
+
+### Added
+- `bitrix/update.sh --check` — явная проверка новой версии без немедленного обновления
+- Правило в `SKILL.md`: при первом `/bitrix` сначала проверить версию навыка и при наличии новой версии предложить обновление в явной форме
+
+### Changed
+- `README.md` дополнен сценарием проверки новой версии без апдейта
+
 ## [1.3.6] — 2026-04-08
 
 ### Changed
@@ -33,7 +42,8 @@
 ### Added
 - Первый публичный релиз: `SKILL.md`, progressive disclosure архитектура
 
-[Unreleased]: https://github.com/Poliklot/claude-bitrix-skill/compare/v1.3.6...HEAD
+[Unreleased]: https://github.com/Poliklot/claude-bitrix-skill/compare/v1.3.7...HEAD
+[1.3.7]: https://github.com/Poliklot/claude-bitrix-skill/compare/v1.3.6...v1.3.7
 [1.3.6]: https://github.com/Poliklot/claude-bitrix-skill/compare/v1.1.0...v1.3.6
 [1.1.0]: https://github.com/Poliklot/claude-bitrix-skill/releases/tag/v1.1.0
 [1.0.0]: https://github.com/Poliklot/claude-bitrix-skill/releases/tag/v1.0.0
