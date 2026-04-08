@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+## [1.3.9] — 2026-04-08
+
+### Changed
+- Выпущен повторный тестовый релиз для проверки предложения обновить навык при появлении новой версии
+
 ## [1.3.8] — 2026-04-08
 
 ### Changed
@@ -47,7 +52,8 @@
 ### Added
 - Первый публичный релиз: `SKILL.md`, progressive disclosure архитектура
 
-[Unreleased]: https://github.com/Poliklot/claude-bitrix-skill/compare/v1.3.8...HEAD
+[Unreleased]: https://github.com/Poliklot/claude-bitrix-skill/compare/v1.3.9...HEAD
+[1.3.9]: https://github.com/Poliklot/claude-bitrix-skill/compare/v1.3.8...v1.3.9
 [1.3.8]: https://github.com/Poliklot/claude-bitrix-skill/compare/v1.3.7...v1.3.8
 [1.3.7]: https://github.com/Poliklot/claude-bitrix-skill/compare/v1.3.6...v1.3.7
 [1.3.6]: https://github.com/Poliklot/claude-bitrix-skill/compare/v1.1.0...v1.3.6
