@@ -4,6 +4,15 @@
 
 ## [Unreleased]
 
+## [1.3.10] — 2026-04-08
+
+### Added
+- GitHub Actions workflow, который на push в `master` автоматически публикует tag и GitHub Release для текущей версии из `bitrix/VERSION`, если их ещё нет
+
+### Changed
+- `README.md` дополнен описанием fully-automatic release flow без ручного создания тега и release в GitHub UI
+- В README добавлен шаг с постоянным разрешением на запуск `update.sh`, чтобы агент мог держать навык свежим без повторных запросов
+
 ## [1.3.9] — 2026-04-08
 
 ### Changed
@@ -52,7 +61,8 @@
 ### Added
 - Первый публичный релиз: `SKILL.md`, progressive disclosure архитектура
 
-[Unreleased]: https://github.com/Poliklot/claude-bitrix-skill/compare/v1.3.9...HEAD
+[Unreleased]: https://github.com/Poliklot/claude-bitrix-skill/compare/v1.3.10...HEAD
+[1.3.10]: https://github.com/Poliklot/claude-bitrix-skill/compare/v1.3.9...v1.3.10
 [1.3.9]: https://github.com/Poliklot/claude-bitrix-skill/compare/v1.3.8...v1.3.9
 [1.3.8]: https://github.com/Poliklot/claude-bitrix-skill/compare/v1.3.7...v1.3.8
 [1.3.7]: https://github.com/Poliklot/claude-bitrix-skill/compare/v1.3.6...v1.3.7
