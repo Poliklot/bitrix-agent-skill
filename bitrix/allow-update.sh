@@ -3,7 +3,12 @@
 set -euo pipefail
 
 SETTINGS_FILE="${CLAUDE_SETTINGS_FILE:-${HOME}/.claude/settings.json}"
-RULE="Bash(bash ~/.claude/skills/bitrix/update.sh:*)"
+RULES=(
+  "Bash(bash ~/.claude/skills/bitrix/update.sh:*)"
+  "Bash(powershell -ExecutionPolicy Bypass -File ~/.claude/skills/bitrix/update.ps1:*)"
+  "Bash(powershell.exe -ExecutionPolicy Bypass -File ~/.claude/skills/bitrix/update.ps1:*)"
+  "Bash(pwsh -File ~/.claude/skills/bitrix/update.ps1:*)"
+)
 
 command -v python3 >/dev/null 2>&1 || {
   echo "Ошибка: требуется python3 для обновления ${SETTINGS_FILE}" >&2
@@ -12,13 +17,13 @@ command -v python3 >/dev/null 2>&1 || {
 
 mkdir -p "$(dirname "$SETTINGS_FILE")"
 
-python3 - "$SETTINGS_FILE" "$RULE" <<'PY'
+python3 - "$SETTINGS_FILE" "${RULES[@]}" <<'PY'
 import json
 import os
 import sys
 
 settings_file = sys.argv[1]
-rule = sys.argv[2]
+rules = sys.argv[2:]
 
 data = {}
 if os.path.exists(settings_file):
@@ -39,9 +44,10 @@ if not isinstance(allow, list):
     raise SystemExit("Ошибка: поле permissions.allow должно быть массивом")
 
 changed = False
-if rule not in allow:
-    allow.append(rule)
-    changed = True
+for rule in rules:
+    if rule not in allow:
+        allow.append(rule)
+        changed = True
 
 with open(settings_file, "w", encoding="utf-8") as fh:
     json.dump(data, fh, ensure_ascii=False, indent=2)
@@ -50,4 +56,4 @@ with open(settings_file, "w", encoding="utf-8") as fh:
 print("updated" if changed else "already_present")
 PY
 
-echo "Готово: разрешение для update.sh записано в ${SETTINGS_FILE}"
+echo "Готово: разрешения для update.sh/update.ps1 записаны в ${SETTINGS_FILE}"

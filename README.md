@@ -4,23 +4,41 @@
 
 ## Установка
 
+Навык ставится в домашнюю папку пользователя, в директорию `.claude/skills/bitrix`.
+
+### macOS / Linux
+
 1. Установи навык:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Poliklot/claude-bitrix-skill/master/install.sh | bash
 ```
 
-Навык установится в `~/.claude/skills/bitrix/`.
-
-2. Если хочешь, чтобы Claude сам запускал `update.sh` без лишних запросов на разрешение, включи это одной командой:
+2. Если хочешь, чтобы Claude сам запускал апдейтер без лишних запросов на разрешение, включи это одной командой:
 
 ```bash
 bash ~/.claude/skills/bitrix/allow-update.sh
 ```
 
-Скрипт добавит разрешение глобально в `~/.claude/settings.json`, а не в проект.
+### Windows (PowerShell)
 
-3. После этого в любом проекте на Bitrix просто вызывай:
+1. Установи навык:
+
+```powershell
+irm https://raw.githubusercontent.com/Poliklot/claude-bitrix-skill/master/install.ps1 | iex
+```
+
+2. Если хочешь, чтобы Claude сам запускал апдейтер без лишних запросов на разрешение, включи это одной командой:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File "$HOME\.claude\skills\bitrix\allow-update.ps1"
+```
+
+Оба helper-скрипта добавляют разрешения глобально в `~/.claude/settings.json`, а не в проект.
+
+### После установки
+
+В любом проекте на Bitrix просто вызывай:
 
 ```bash
 /bitrix <ваша задача>
@@ -28,20 +46,20 @@ bash ~/.claude/skills/bitrix/allow-update.sh
 
 ## Обновление
 
+### macOS / Linux
+
 ```bash
 bash ~/.claude/skills/bitrix/update.sh
-```
-
-Скрипт проверяет текущую версию и обновляет только при необходимости. Принудительное обновление:
-
-```bash
 bash ~/.claude/skills/bitrix/update.sh --force
+bash ~/.claude/skills/bitrix/update.sh --check
 ```
 
-Только проверить, появилась ли новая версия:
+### Windows (PowerShell)
 
-```bash
-bash ~/.claude/skills/bitrix/update.sh --check
+```powershell
+powershell -ExecutionPolicy Bypass -File "$HOME\.claude\skills\bitrix\update.ps1"
+powershell -ExecutionPolicy Bypass -File "$HOME\.claude\skills\bitrix\update.ps1" -Force
+powershell -ExecutionPolicy Bypass -File "$HOME\.claude\skills\bitrix\update.ps1" -Check
 ```
 
 Начиная с версии `1.3.7`, при первом содержательном обращении к `/bitrix` навык должен сначала выполнить такую проверку и, если версия выросла, предложить обновление в явной форме: `Обновилась версия скилла с X до Y. Давай обновим?`

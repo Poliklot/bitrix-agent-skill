@@ -4,6 +4,18 @@
 
 ## [Unreleased]
 
+## [1.4.0] — 2026-04-10
+
+### Added
+- `install.ps1` — нативная установка навыка на Windows через PowerShell
+- `bitrix/update.ps1` — нативное обновление и `-Check` для Windows через PowerShell
+- `bitrix/allow-update.ps1` — helper для глобального разрешения автообновления на Windows
+
+### Changed
+- `README.md` переписан под три платформы: macOS, Linux и Windows
+- `bitrix/allow-update.sh` теперь добавляет разрешения и для bash-, и для PowerShell-апдейтера
+- `SKILL.md` учитывает Windows/PowerShell при проверке новой версии навыка
+
 ## [1.3.11] — 2026-04-08
 
 ### Added
@@ -70,7 +82,8 @@
 ### Added
 - Первый публичный релиз: `SKILL.md`, progressive disclosure архитектура
 
-[Unreleased]: https://github.com/Poliklot/claude-bitrix-skill/compare/v1.3.11...HEAD
+[Unreleased]: https://github.com/Poliklot/claude-bitrix-skill/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/Poliklot/claude-bitrix-skill/compare/v1.3.11...v1.4.0
 [1.3.11]: https://github.com/Poliklot/claude-bitrix-skill/compare/v1.3.10...v1.3.11
 [1.3.10]: https://github.com/Poliklot/claude-bitrix-skill/compare/v1.3.9...v1.3.10
 [1.3.9]: https://github.com/Poliklot/claude-bitrix-skill/compare/v1.3.8...v1.3.9
