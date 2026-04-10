@@ -9,7 +9,7 @@ Bitrix Agent Skill для разработки на 1C-Bitrix CMS в `Claude Cod
 - `Claude Code` — `~/.claude/skills/bitrix`
 - `Codex` — `$CODEX_HOME/skills/bitrix` или `~/.codex/skills/bitrix`
 
-До фактического rename репозитория bootstrap URL ещё остаётся старым `claude-bitrix-skill`, но сами install/update-скрипты уже готовы к переходу на `bitrix-agent-skill`: сначала ищут новый slug, потом legacy slug.
+Репозиторий уже переименован в `bitrix-agent-skill`. Bootstrap URL ниже переведены на новый slug, а install/update-скрипты всё ещё сохраняют fallback на legacy `claude-bitrix-skill` для старых установок и мягкой миграции.
 
 ### macOS / Linux
 
@@ -18,15 +18,15 @@ Bitrix Agent Skill для разработки на 1C-Bitrix CMS в `Claude Cod
 По умолчанию installer работает в режиме `auto`: ставит навык во все найденные home-контуры Claude/Codex.
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Poliklot/claude-bitrix-skill/master/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.sh | bash
 ```
 
 2. Если хочешь поставить только в один контур, используй флаги:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Poliklot/claude-bitrix-skill/master/install.sh | bash -s -- --claude
-curl -fsSL https://raw.githubusercontent.com/Poliklot/claude-bitrix-skill/master/install.sh | bash -s -- --codex
-curl -fsSL https://raw.githubusercontent.com/Poliklot/claude-bitrix-skill/master/install.sh | bash -s -- --both
+curl -fsSL https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.sh | bash -s -- --claude
+curl -fsSL https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.sh | bash -s -- --codex
+curl -fsSL https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.sh | bash -s -- --both
 ```
 
 3. Если хочешь, чтобы Claude сам запускал апдейтер без лишних запросов на разрешение, включи это одной командой:
@@ -40,15 +40,15 @@ bash ~/.claude/skills/bitrix/allow-update.sh
 1. Установи навык.
 
 ```powershell
-irm https://raw.githubusercontent.com/Poliklot/claude-bitrix-skill/master/install.ps1 | iex
+irm https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.ps1 | iex
 ```
 
 2. Если хочешь выбрать только один контур, можно вызвать bootstrap-скрипт так:
 
 ```powershell
-& ([scriptblock]::Create((irm https://raw.githubusercontent.com/Poliklot/claude-bitrix-skill/master/install.ps1))) -Claude
-& ([scriptblock]::Create((irm https://raw.githubusercontent.com/Poliklot/claude-bitrix-skill/master/install.ps1))) -Codex
-& ([scriptblock]::Create((irm https://raw.githubusercontent.com/Poliklot/claude-bitrix-skill/master/install.ps1))) -Both
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.ps1))) -Claude
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.ps1))) -Codex
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.ps1))) -Both
 ```
 
 3. Если хочешь, чтобы Claude сам запускал апдейтер без лишних запросов на разрешение, включи это одной командой:

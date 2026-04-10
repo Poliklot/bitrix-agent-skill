@@ -4,6 +4,13 @@
 
 ## [Unreleased]
 
+## [1.5.1] — 2026-04-10
+
+### Changed
+- `README.md` переведён на новый bootstrap URL репозитория `bitrix-agent-skill`
+- changelog compare/release links переведены на новый GitHub slug
+- репозиторий после rename зафиксирован как основной, при этом legacy fallback в install/update-скриптах сохранён для мягкой миграции старых установок
+
 ## [1.5.0] — 2026-04-10
 
 ### Added
@@ -111,15 +118,16 @@
 ### Added
 - Первый публичный релиз: `SKILL.md`, progressive disclosure архитектура
 
-[Unreleased]: https://github.com/Poliklot/claude-bitrix-skill/compare/v1.5.0...HEAD
-[1.5.0]: https://github.com/Poliklot/claude-bitrix-skill/compare/v1.4.1...v1.5.0
-[1.4.1]: https://github.com/Poliklot/claude-bitrix-skill/compare/v1.4.0...v1.4.1
-[1.4.0]: https://github.com/Poliklot/claude-bitrix-skill/compare/v1.3.11...v1.4.0
-[1.3.11]: https://github.com/Poliklot/claude-bitrix-skill/compare/v1.3.10...v1.3.11
-[1.3.10]: https://github.com/Poliklot/claude-bitrix-skill/compare/v1.3.9...v1.3.10
-[1.3.9]: https://github.com/Poliklot/claude-bitrix-skill/compare/v1.3.8...v1.3.9
-[1.3.8]: https://github.com/Poliklot/claude-bitrix-skill/compare/v1.3.7...v1.3.8
-[1.3.7]: https://github.com/Poliklot/claude-bitrix-skill/compare/v1.3.6...v1.3.7
-[1.3.6]: https://github.com/Poliklot/claude-bitrix-skill/compare/v1.1.0...v1.3.6
-[1.1.0]: https://github.com/Poliklot/claude-bitrix-skill/releases/tag/v1.1.0
-[1.0.0]: https://github.com/Poliklot/claude-bitrix-skill/releases/tag/v1.0.0
+[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.5.1...HEAD
+[1.5.1]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.5.0...v1.5.1
+[1.5.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.4.1...v1.5.0
+[1.4.1]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.4.0...v1.4.1
+[1.4.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.3.11...v1.4.0
+[1.3.11]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.3.10...v1.3.11
+[1.3.10]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.3.9...v1.3.10
+[1.3.9]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.3.8...v1.3.9
+[1.3.8]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.3.7...v1.3.8
+[1.3.7]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.3.6...v1.3.7
+[1.3.6]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.1.0...v1.3.6
+[1.1.0]: https://github.com/Poliklot/bitrix-agent-skill/releases/tag/v1.1.0
+[1.0.0]: https://github.com/Poliklot/bitrix-agent-skill/releases/tag/v1.0.0
