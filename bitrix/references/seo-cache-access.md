@@ -125,6 +125,56 @@ $APPLICATION->ShowHead(); // → <meta name="robots" content="noindex, nofollow"
                           //    <link rel="canonical" href="...">
 ```
 
+### OpenGraph и Schema.org
+
+В текущем core подтверждены методы:
+
+- `$APPLICATION->SetPageProperty(...)`
+- `$APPLICATION->AddHeadString(...)`
+- `$APPLICATION->ShowHead()`
+
+Практический путь для OG/JSON-LD здесь такой:
+
+```php
+global $APPLICATION;
+
+$APPLICATION->SetPageProperty('canonical', 'https://example.com/blog/post/');
+$APPLICATION->AddHeadString(
+    '<meta property="og:title" content="' . htmlspecialcharsbx($title) . '">',
+    true
+);
+$APPLICATION->AddHeadString(
+    '<meta property="og:description" content="' . htmlspecialcharsbx($description) . '">',
+    true
+);
+$APPLICATION->AddHeadString(
+    '<meta property="og:image" content="' . htmlspecialcharsbx($imageUrl) . '">',
+    true
+);
+
+$jsonLd = \Bitrix\Main\Web\Json::encode([
+    '@context' => 'https://schema.org',
+    '@type' => 'Article',
+    'headline' => $title,
+    'description' => $description,
+    'image' => [$imageUrl],
+    'url' => $canonicalUrl,
+]);
+
+$APPLICATION->AddHeadString(
+    '<script type="application/ld+json">' . $jsonLd . '</script>',
+    true
+);
+```
+
+Это закрывает типовые задачи:
+
+- OpenGraph для карточки/статьи
+- JSON-LD schema.org
+- canonical + robots в одном месте
+
+Для `landing`-страниц дополнительно сверяй hooks модуля `landing`, а не только шаблон сайта.
+
 ### SetDirProperty — для целых разделов
 
 ```php

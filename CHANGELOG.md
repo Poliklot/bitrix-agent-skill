@@ -4,6 +4,21 @@
 
 ## [Unreleased]
 
+## [1.4.1] — 2026-04-10
+
+### Added
+- `bitrix/references/forum.md` — отдельный core-first справочник по модулю `forum`
+- `bitrix/references/vote.md` — отдельный core-first справочник по модулю `vote`
+- `bitrix/references/landing.md` — отдельный core-first справочник по модулю `landing`
+- `bitrix/references/socialservices.md` — отдельный core-first справочник по модулю `socialservices`
+- `bitrix/references/perfmon.md` — отдельный core-first справочник по модулю `perfmon`
+
+### Changed
+- `bitrix/SKILL.md` расширен на подтверждённые модули `forum`, `vote`, `landing`, `socialservices`, `perfmon`
+- `bitrix/references/search.md` дополнен подтверждённым fast-search маршрутом через `CSearchTitle` и `bitrix:search.suggest.input`
+- `bitrix/references/seo-cache-access.md` дополнен подтверждённым путём для `OpenGraph` и `JSON-LD` через `$APPLICATION->AddHeadString(...)`
+- `README.md` синхронизирован с новым покрытием текущего core без partial-зон в блоговом и стандартном контуре
+
 ## [1.4.0] — 2026-04-10
 
 ### Added
@@ -82,7 +97,8 @@
 ### Added
 - Первый публичный релиз: `SKILL.md`, progressive disclosure архитектура
 
-[Unreleased]: https://github.com/Poliklot/claude-bitrix-skill/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/Poliklot/claude-bitrix-skill/compare/v1.4.1...HEAD
+[1.4.1]: https://github.com/Poliklot/claude-bitrix-skill/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/Poliklot/claude-bitrix-skill/compare/v1.3.11...v1.4.0
 [1.3.11]: https://github.com/Poliklot/claude-bitrix-skill/compare/v1.3.10...v1.3.11
 [1.3.10]: https://github.com/Poliklot/claude-bitrix-skill/compare/v1.3.9...v1.3.10

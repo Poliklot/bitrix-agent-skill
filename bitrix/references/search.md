@@ -150,6 +150,42 @@ $totalCount = $obSearch->GetRecordCount();
 
 ---
 
+## AJAX-подсказки и быстрый поиск: CSearchTitle + search.suggest.input
+
+В текущем core подтверждены:
+
+- `CSearchTitle::Search`
+- стандартный компонент `bitrix:search.suggest.input`
+- шаблоны `bitrix:search.form` и `bitrix:search.page`, которые уже используют `bitrix:search.suggest.input`
+
+```php
+$searchTitle = new CSearchTitle();
+$searchTitle->Search(
+    $phrase,
+    10,
+    ['SITE_ID' => SITE_ID]
+);
+
+while ($item = $searchTitle->GetNext()) {
+    echo $item['NAME'] . PHP_EOL;
+}
+```
+
+Если задача звучит как:
+
+- “сделать быстрый AJAX-поиск”
+- “вывести подсказки под строкой поиска”
+- “почему suggest не отдаёт URL”
+
+то сначала проверь:
+
+1. `bitrix:search.suggest.input`
+2. `CSearchTitle::Search`
+3. событие `OnSearchGetURL`
+4. индексацию сущности и её `SITE_ID`
+
+---
+
 ## Событие BeforeIndex — трансформация перед записью в индекс
 
 Позволяет изменить или отфильтровать данные перед индексацией:
@@ -218,7 +254,7 @@ EventManager::getInstance()->addEventHandler(
 );
 ```
 
-`OnSearch` и `OnSearchGetURL` — разные этапы: первый добавляет query-параметры к URL выдачи, второй может подменить сам URL результата при `Fetch()/GetNext()`.
+`OnSearch` и `OnSearchGetURL` — разные этапы: первый добавляет query-параметры к URL выдачи, второй может подменить сам URL результата при `Fetch()/GetNext()`, в том числе для `CSearchTitle`.
 
 ---
 
