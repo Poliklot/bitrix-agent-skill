@@ -1,6 +1,6 @@
 # Bitrix Agent Skill
 
-Bitrix Agent Skill для разработки на 1C-Bitrix CMS в `Claude Code` и `Codex`. Текущий audited focus: D7 и legacy API для реально установленного core, включая ORM, компоненты, инфоблоки, `photogallery`, блог, форум, голосования, формы, лендинги, соц-авторизацию, `b24connector`, `mobileapp`, `clouds`, `bitrixcloud`, `security`, `fileman`, `location`, `messageservice`, `translate`, HL-блоки, кеширование, события, REST, поиск, SEO и эксплуатационный контур. Ключевой принцип навыка: сначала читать живое ядро проекта и стандартные компоненты в `www/bitrix`, а не полагаться на память или внешние советы.
+Bitrix Agent Skill для разработки на 1C-Bitrix CMS в `Claude Code` и `Codex`. Текущий audited focus: D7 и legacy API для реально установленного core, включая ORM, компоненты, инфоблоки, `photogallery`, блог, форум, голосования, формы, лендинги, `bitrix.sitecorporate`, соц-авторизацию, `b24connector`, `mobileapp`, `clouds`, `bitrixcloud`, `security`, `fileman`, `location`, `messageservice`, `translate`, HL-блоки, кеширование, события, REST, поиск, SEO и эксплуатационный контур. Ключевой принцип навыка: сначала читать живое ядро проекта и стандартные компоненты в `www/bitrix`, а не полагаться на память или внешние советы.
 
 ## Установка
 
@@ -167,6 +167,7 @@ powershell -ExecutionPolicy Bypass -File (Join-Path (Join-Path $CodexHome 'skill
 | `events-routing.md` | EventManager, Engine\Controller, AJAX, роутинг, CSRF |
 | `modules-loader.md` | Структура модуля, Loader, PSR-4, Application, ServiceLocator, Config\Option, Loc |
 | `components.md` | CBitrixComponent, шаблоны, кеш компонента, CComponentEngine |
+| `sitecorporate.md` | `bitrix.sitecorporate`: wizard shell, `corp_services`/`corp_furniture`, `wizard_solution`, panel rerun, stock `furniture.*` components |
 | `cache-infra.md` | Data\Cache, TaggedCache, CAgent, IO\File/Directory/Path |
 | `clouds.md` | Clouds: bucket-ы, external file storage, file hooks, resize/src/makeFileArray, upload queues, failover |
 | `bitrixcloud.md` | Bitrix Cloud: backup quota/files/jobs, monitoring, policy webservice, local option storage, mobile inspector, backup buckets |
@@ -190,7 +191,7 @@ powershell -ExecutionPolicy Bypass -File (Join-Path (Join-Path $CodexHome 'skill
 | `sale.md` | Интернет-магазин [deferred]: только при установленном модуле `sale` |
 | `catalog.md` | Торговый каталог [deferred]: только при установленном модуле `catalog` |
 | `commerce-workflows.md` | Магазинные workflow [deferred]: только после установки магазинного core |
-| `blog-socialnet.md` | Блог и комментарии; `socialnet`-часть условная и используется только при подтверждённом модуле |
+| `blog-socialnet.md` | Блог текущего core: `CBlog*`, D7 read-only таблицы `PostTable`/`CommentTable`, mail reply handlers, search reindex, conditional `socialnet` contour |
 | `push-pull.md` | Push&Pull [deferred]: только при установленном модуле `pull` |
 | `workflow.md` | Бизнес-процессы [deferred]: только при установленном модуле `bizproc` |
 | `subscribe.md` | Рассылки: CRubric, CSubscription, CPosting, CPostingTemplate, подписки и выпуски |
@@ -203,7 +204,7 @@ powershell -ExecutionPolicy Bypass -File (Join-Path (Join-Path $CodexHome 'skill
 | `mail-notifications.md` | CEventType, CEventMessage, Mail\Event::send, SMS-провайдеры |
 | `users.md` | UserTable D7, CUser::Add/Login/Update, группы пользователей, UF-поля, восстановление пароля |
 | `templates.md` | Структура шаблона сайта, Asset D7, $APPLICATION в header/footer, композитный кеш |
-| `webforms.md` | CForm, CFormResult, AJAX-форма через Controller, валидация |
+| `webforms.md` | `form` в реальном core: формы, результаты, статусы, handlers, validators, CRM link, secure file access, стандартные `form.*` компоненты |
 | `search.md` | CSearch::Index/DeleteIndex/ReIndexAll, CSearchTitle, BeforeIndex, OnSearch, OnSearchGetURL, быстрый AJAX-поиск |
 | `import-export.md` | Импорт CSV/URL, многошаговый импорт, CFile::SaveFile/MakeFileArray/ResizeImageGet, потоковый экспорт |
 | `grid-admin-modern.md` | Современный Grid UI: Grid, Settings, Options, ComponentParams, processRequest, getOrmFilter, bitrix:main.ui.grid |

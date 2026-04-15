@@ -1,8 +1,8 @@
-# Веб-формы и обратная связь
+# Веб-формы и результаты в текущем core
 
-> Reference для Bitrix-скилла. Загружай когда задача связана с модулем `form`, результатами веб-форм или простыми формами обратной связи на инфоблоке.
+> Reference для Bitrix-скилла. Загружай, когда задача связана с модулем `form`, формами, вопросами и ответами, результатами, статусами, почтовыми шаблонами, validators, CRM link, secure file download или стандартными `form.*` компонентами.
 >
-> Audit note: проверено по текущему core `form/classes/general/*`, `form/classes/mysql/*`.
+> Audit note: проверено по текущему core `form` версии `25.0.0` через `install/index.php`, `install/components`, `install/tools`, `classes/general/*` и `classes/mysql/*`.
 
 ```php
 use Bitrix\Main\Loader;
@@ -10,294 +10,350 @@ use Bitrix\Main\Loader;
 Loader::includeModule('form');
 ```
 
-## Два подхода к формам в Bitrix
+## Что реально есть в модуле `form`
+
+В текущем core модуль `form` значительно шире, чем "просто отправить письмо":
+
+- формы и их структура: `CForm`
+- результаты: `CFormResult`
+- поля/вопросы: `CFormField`
+- варианты ответов: `CFormAnswer`
+- статусы: `CFormStatus`
+- валидаторы: `CFormValidator`
+- CRM связка: `CFormCrm`
+- стандартные компоненты `form.*`
+- безопасная отдача файлов по hash
+- status handlers до/после смены статуса
+
+Если задача требует права, workflow статусов, повторное редактирование, CRM или безопасную выдачу файлов, это маршрут точно в `form`, а не в "простую форму на инфоблоке".
+
+## Подтверждённые стандартные компоненты
+
+В текущем ядре есть:
+
+- `bitrix:form`
+- `bitrix:form.result.new`
+- `bitrix:form.result.edit`
+- `bitrix:form.result.view`
+- `bitrix:form.result.list`
+- `bitrix:form.result.list.my`
+
+Если задача упирается в типовой UI формы/результатов, сначала считай контракт стандартного компонента, а потом уже проектный шаблон.
+
+## Когда брать `form`, а когда достаточно инфоблока
 
 | Подход | Когда использовать |
 |--------|--------------------|
-| **Модуль `form`** (`CForm`, `CFormResult`) | Нужны вопросы, статусы, права, повторные отправки, админский интерфейс результатов |
-| **Простая форма на инфоблоке** | Нужен лёгкий сбор заявок без сложного form-workflow |
+| `form` | Нужны вопросы/ответы, статусы, права, редактирование результата, почтовые шаблоны, админский список, validators, CRM-link |
+| Инфоблок или свой D7 controller | Нужен простой lead-capture без workflow и без штатной form-админки |
 
----
+## Формы и права
 
-## Модуль `form`
+Подтверждённые методы верхнего слоя:
 
-### Получить список форм
+- `CForm::GetList()`
+- `CForm::GetByID()`
+- `CForm::GetBySID()`
+- `CForm::GetDataByID()`
+- `CForm::Set()`
+- `CForm::Copy()`
+- `CForm::Delete()`
+- `CForm::Reset()`
+- `CForm::SetMailTemplate()`
+- `CForm::GetPermission()`
+- `CForm::GetPermissionList()`
+
+`CForm::GetPermissionList()` в текущем core возвращает уровни:
+
+- `1` — denied
+- `10` — fill
+- `15` — fill + edit own results
+- `20` — view results
+- `25` — view results with additional params
+- `30` — full write/admin on form
 
 ```php
-$res = CForm::GetList(
-    $by = 's_sort',
-    $order = 'asc',
-    $arFilter = ['ACTIVE' => 'Y']
-);
+$permission = CForm::GetPermission($formId);
 
-while ($form = $res->Fetch())
+if ($permission < 10)
 {
-    // $form['ID'], $form['NAME'], $form['SID']
+    throw new \RuntimeException('Недостаточно прав для заполнения формы');
 }
 ```
 
-### Получить структуру формы по ID
+## Получить форму и её структуру
+
+```php
+$forms = CForm::GetList(
+    $by = 's_sort',
+    $order = 'asc',
+    ['ACTIVE' => 'Y']
+);
+
+while ($form = $forms->Fetch())
+{
+    // $form['ID'], $form['SID'], $form['NAME']
+}
+```
 
 ```php
 $arForm = $arQuestions = $arAnswers = $arDropDown = $arMultiSelect = [];
 
-$formId = CForm::GetDataByID(
-    $WEB_FORM_ID,
+CForm::GetDataByID(
+    $formId,
     $arForm,
     $arQuestions,
     $arAnswers,
     $arDropDown,
     $arMultiSelect,
-    'N', // additional
-    'N'  // active
+    'N',
+    'N'
 );
 ```
 
-Это основной способ получить:
+`CForm::GetDataByID()` остаётся основным способом получить полноценную структуру формы с вопросами и вариантами ответов.
 
-- данные формы
-- список вопросов
-- варианты ответов
-- dropdown/multiselect карты
+## Результаты: базовый lifecycle
 
-### Сохранить результат формы
+Подтверждённые методы `CFormResult`:
+
+- `GetList()`
+- `GetByID()`
+- `GetPermissions()`
+- `GetFileByAnswerID()`
+- `GetFileByHash()`
+- `SetEvent()`
+- `GetDataByID()`
+- `GetDataByIDForHTML()`
+- `Add()`
+- `Update()`
+- `SetField()`
+- `Delete()`
+- `Reset()`
+- `SetStatus()`
+- `Mail()`
+- `SetCRMFlag()`
+
+### Создать результат
 
 ```php
 global $strError;
 
-$arrValues = $_POST;
-
 $resultId = CFormResult::Add(
-    $WEB_FORM_ID,
-    $arrValues,
-    'Y',   // проверять права
-    false  // USER_ID; false = текущий пользователь
+    $formId,
+    $_POST,
+    'Y',
+    false
 );
 
 if ((int)$resultId <= 0)
 {
-    $error = $strError;
+    throw new \RuntimeException($strError ?: 'Не удалось сохранить результат формы');
 }
-else
-{
-    CFormResult::Mail($resultId);
-}
+
+CFormResult::Mail($resultId);
 ```
 
-> В текущем core подтверждён метод `CFormResult::Mail($RESULT_ID, $TEMPLATE_ID = false)`. `SendMail()` не подтверждён.
-
-### Получить список результатов формы
+### Получить список результатов
 
 ```php
-$isFiltered = null;
+$isFiltered = false;
 
-$res = CFormResult::GetList(
+$dbResults = CFormResult::GetList(
     $formId,
     $by = 's_timestamp',
     $order = 'desc',
-    $arFilter = [
-        'STATUS_ID' => 1,
-    ],
+    ['STATUS_ID' => 1],
     $isFiltered,
     'Y',
     false
 );
 
-while ($row = $res->Fetch())
+while ($row = $dbResults->Fetch())
 {
-    $arrRES = [];
-    $arrANSWER = [];
+    $resultMeta = [];
+    $answers = [];
 
-    $values = CFormResult::GetDataByID(
-        $row['ID'],
-        [],        // список SID полей; [] = все
-        $arrRES,
-        $arrANSWER
-    );
-
-    // $arrRES    — данные результата
-    // $arrANSWER — ответы по SID
-    // $values    — агрегированный массив значений
+    CFormResult::GetDataByID($row['ID'], [], $resultMeta, $answers);
 }
 ```
 
-> `CFormResult::GetListEx(...)` в текущем core не подтверждён. Используй `CFormResult::GetList(...)`.
+### Обновить отдельные поля результата
 
-### Получить один результат
+`CFormResult::SetField()` в текущем core:
 
-```php
-$resultDb = CFormResult::GetByID($resultId);
-$result = $resultDb->Fetch();
-```
+- отдельно обрабатывает additional fields
+- умеет file/image answers
+- пишет `USER_FILE_HASH`
+- обновляет поисковые поля `ANSWER_TEXT_SEARCH`, `ANSWER_VALUE_SEARCH`, `USER_TEXT_SEARCH`
 
-Если нужно сразу получить и значения вопросов, используй `CFormResult::GetDataByID(...)`.
+Если задача про "дописать одно поле в существующий результат" или "обновить файл без полной перезаписи результата", смотри сюда, а не только в `Update()`.
 
----
+## Статусы и status handlers
 
-## Простая форма на инфоблоке
+Подтверждённые методы `CFormStatus`:
 
-Если форма небольшая и нет смысла тянуть модуль `form`, часто проще писать в инфоблок.
+- `GetList()`
+- `GetByID()`
+- `GetPermissionList()`
+- `GetPermissions()`
+- `GetDefault()`
+- `Set()`
+- `Delete()`
+- `Copy()`
+- `SetMailTemplate()`
 
-```php
-use Bitrix\Main\Application;
-use Bitrix\Main\Loader;
+Статусные permission buckets в текущем core:
 
-Loader::includeModule('iblock');
-
-$request = Application::getInstance()->getContext()->getRequest();
-
-if ($request->isPost() && check_bitrix_sessid())
-{
-    $name = htmlspecialchars($request->getPost('name') ?? '', ENT_QUOTES, 'UTF-8');
-    $email = trim((string)($request->getPost('email') ?? ''));
-    $message = htmlspecialchars($request->getPost('message') ?? '', ENT_QUOTES, 'UTF-8');
-
-    if ($name === '' || !filter_var($email, FILTER_VALIDATE_EMAIL))
-    {
-        $error = 'Заполните обязательные поля';
-    }
-    else
-    {
-        $el = new CIBlockElement();
-        $elementId = $el->Add([
-            'IBLOCK_ID' => FEEDBACK_IBLOCK_ID,
-            'NAME' => $name . ' ' . date('d.m.Y H:i'),
-            'ACTIVE' => 'Y',
-            'PROPERTY_VALUES' => [
-                'NAME' => $name,
-                'EMAIL' => $email,
-                'MESSAGE' => $message,
-                'IP' => $request->getServer()->get('REMOTE_ADDR'),
-            ],
-        ]);
-
-        if ($elementId)
-        {
-            \Bitrix\Main\Mail\Event::send([
-                'EVENT_NAME' => 'FEEDBACK_NEW',
-                'LID' => SITE_ID,
-                'FIELDS' => [
-                    'NAME' => $name,
-                    'EMAIL' => $email,
-                    'MESSAGE' => $message,
-                ],
-            ]);
-
-            $success = true;
-        }
-        else
-        {
-            $error = $el->LAST_ERROR;
-        }
-    }
-}
-```
-
-### HTML-форма с CSRF-защитой
-
-```html
-<form method="POST" action="">
-    <?php echo bitrix_sessid_post(); ?>
-    <input type="text" name="name" required>
-    <input type="email" name="email" required>
-    <textarea name="message"></textarea>
-    <button type="submit">Отправить</button>
-</form>
-```
-
----
-
-## AJAX-форма через D7 Controller
+- `VIEW`
+- `MOVE`
+- `EDIT`
+- `DELETE`
 
 ```php
-namespace MyVendor\MyModule\Controller;
+$defaultStatusId = CFormStatus::GetDefault($formId);
 
-use Bitrix\Main\Engine\Controller;
-use Bitrix\Main\Engine\ActionFilter;
-use Bitrix\Main\Error;
-use Bitrix\Main\Loader;
-
-class Feedback extends Controller
-{
-    public function configureActions(): array
-    {
-        return [
-            'send' => [
-                'prefilters' => [
-                    new ActionFilter\HttpMethod(['POST']),
-                    new ActionFilter\Csrf(),
-                ],
-            ],
-        ];
-    }
-
-    public function sendAction(string $name, string $email, string $message): ?array
-    {
-        if ($name === '')
-        {
-            $this->addError(new Error('Имя обязательно', 'EMPTY_NAME'));
-            return null;
-        }
-
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL))
-        {
-            $this->addError(new Error('Неверный email', 'BAD_EMAIL'));
-            return null;
-        }
-
-        Loader::includeModule('iblock');
-
-        $el = new \CIBlockElement();
-        $id = $el->Add([
-            'IBLOCK_ID' => FEEDBACK_IBLOCK_ID,
-            'NAME' => $name,
-            'PROPERTY_VALUES' => [
-                'EMAIL' => $email,
-                'MESSAGE' => $message,
-            ],
-        ]);
-
-        if (!$id)
-        {
-            $this->addError(new Error($el->LAST_ERROR));
-            return null;
-        }
-
-        \Bitrix\Main\Mail\Event::send([
-            'EVENT_NAME' => 'FEEDBACK_NEW',
-            'LID' => SITE_ID,
-            'FIELDS' => compact('name', 'email', 'message'),
-        ]);
-
-        return ['id' => $id];
-    }
-}
+CFormResult::SetStatus($resultId, $defaultStatusId);
 ```
 
-JS:
+### Что происходит при смене статуса
 
-```javascript
-BX.ajax.runAction('myvendor.mymodule.feedback.send', {
-    data: {
-        sessid: BX.bitrix_sessid(),
-        name: document.getElementById('name').value,
-        email: document.getElementById('email').value,
-        message: document.getElementById('message').value,
-    }
-}).then(function(response) {
-    console.log('ID:', response.data.id);
-}).catch(function(response) {
-    console.error(response.errors);
-});
-```
+`CFormResult::SetStatus()` в текущем core:
 
----
+- проверяет права на форму и результат
+- проверяет право перемещения в новый статус
+- вызывает `onBeforeResultStatusChange`
+- запускает `CForm::ExecHandlerBeforeChangeStatus(..., "SET_STATUS", $NEW_STATUS_ID)`
+- сохраняет статус
+- вызывает `onAfterResultStatusChange`
+- запускает `CForm::ExecHandlerAfterChangeStatus(..., "SET_STATUS")`
+
+### `HANDLER_OUT` / `HANDLER_IN`
+
+У статусов реально есть поля:
+
+- `HANDLER_OUT`
+- `HANDLER_IN`
+
+`CForm::ExecHandlerBeforeChangeStatus()` и `ExecHandlerAfterChangeStatus()` включают эти PHP-файлы из document root. Это не абстрактные callbacks в БД, а реальный `include` файловой логики.
+
+Следствие: задачи по status handlers надо вести как аудит PHP-файлов и их side effects, а не как "настройку строки в админке".
+
+## События результата, удаления и reset
+
+Важные подтверждённые точки lifecycle:
+
+- `Delete()` вызывает `onBeforeResultDelete`
+- `Delete()` запускает `CForm::ExecHandlerBeforeChangeStatus($RESULT_ID, "DELETE")`
+- `SetStatus()` вызывает `onBeforeResultStatusChange` и `onAfterResultStatusChange`
+- `Reset()` умеет очищать ответы выборочно
+- `Reset()` умеет не трогать additional fields, если явно не просили `DELETE_ADDITIONAL = "Y"`
+
+Если задача про "частично очистить результат" или "не потерять служебные поля", сначала смотри `Reset()`, а не делай `Delete()+Add()`.
+
+## Почта и site binding
+
+`CFormResult::Mail($RESULT_ID, $TEMPLATE_ID = false)` подтверждён в текущем core.
+
+Важно: внутри `Mail()` есть проверка, что текущий `SITE_ID` входит в список сайтов формы. Если форма привязана не к тому сайту, письма могут "молча" не уйти.
+
+Это один из первых пунктов диагностики для задачи "результат сохранился, но письмо не отправилось".
+
+## Валидаторы
+
+Подтверждённый validator-layer:
+
+- `CFormValidator::GetList()`
+- `CFormValidator::GetListForm()`
+- `CFormValidator::GetAllList()`
+- `CFormValidator::Execute()`
+- `CFormValidator::Set()`
+- `CFormValidator::SetBatch()`
+
+Реестр валидаторов собирается через module events:
+
+- `GetModuleEvents("form", "onFormValidatorBuildList", true)`
+
+В текущем core уже есть встроенные validator-ы в `modules/form/validators/*`, включая:
+
+- длину текста
+- числовые диапазоны
+- INN
+- размер файла
+- тип файла
+- размер изображения
+- возраст/дату
+
+Если задача про кастомный validator, его надо проектировать как event-driven descriptor с `HANDLER`, а не как произвольную if-ветку в шаблоне формы.
+
+## CRM link
+
+Подтверждённый CRM-layer живёт в `CFormCrm`:
+
+- `GetByID()`
+- `GetByFormID()`
+- `GetFields()`
+- `SetForm()`
+- `onResultAdded()`
+- `AddLead()`
+
+Типы связи:
+
+- `CFormCrm::LINK_AUTO = 'A'`
+- `CFormCrm::LINK_MANUAL = 'M'`
+
+`SetForm()` в текущем core умеет:
+
+- сохранять link формы к CRM-коннектору
+- строить field mapping
+- при необходимости автоматически создавать form field под CRM field
+
+`onResultAdded()` автоматически вызывает `AddLead()` только для `LINK_AUTO`.
+
+Если задача про "почему лид не улетает после отправки формы", сначала проверь:
+
+- есть ли link у формы
+- какой `LINK_TYPE`
+- какие поля реально сматчены
+
+## Файлы и безопасная выдача
+
+Подтверждённые методы:
+
+- `CFormResult::GetFileByAnswerID($RESULT_ID, $ANSWER_ID)`
+- `CFormResult::GetFileByHash($RESULT_ID, $HASH)`
+
+`GetFileByHash()` в текущем core отдаёт файл только если:
+
+- право на форму `>= 20`
+- или право `>= 15` и текущий пользователь владелец результата
+
+Также в модуле есть:
+
+- `install/tools/form_show_file.php`
+
+Но это только wrapper на:
+
+- `/bitrix/modules/form/admin/form_show_file.php`
+
+Если задача про публичную выдачу вложения формы по hash, не ломай этот security-layer ручным `CFile::GetFileArray()` без проверки прав.
+
+## Sender и соседние интеграции
+
+В `install/index.php` подтверждена зависимость:
+
+- `sender:OnConnectorList -> Bitrix\Form\SenderEventHandler::onConnectorListForm`
+
+То есть модуль `form` умеет встраиваться в контур `sender`, но это соседний integration point, а не основная модель формы. Если `sender` не участвует в задаче, не тащи его туда без необходимости.
+
+## Простейший fallback без `form`
+
+Если нужен только лёгкий lead-capture без workflow, прав и статусной машины, действительно можно использовать инфоблок или свой D7 controller. Но это отдельный маршрут, а не замена возможностей `form`.
 
 ## Gotchas
 
-- `CFormResult::GetDataByID()` в текущем core принимает не один `$resultId`, а `($RESULT_ID, $arrFIELD_SID, &$arrRES, &$arrANSWER)`.
-- `CFormResult::Mail()` подтверждён; `CFormResult::SendMail()` и `GetListEx()` в текущем core не подтверждены.
-- `$strError` у `CFormResult::Add()` legacy-глобальный. Если читаешь ошибку, не забудь `global $strError`.
-- `check_bitrix_sessid()` обязателен для обычных POST-форм, даже если форма “простая”.
-- Для AJAX controller сценариев используй `ActionFilter\Csrf`, а не только ручной `sessid`.
-- Если задача не требует статусов, прав и сложной админки формы, инфоблок часто проще и дешевле по сопровождению.
+- Не своди `form` к одной операции `CFormResult::Add()`: в реальном core здесь есть статусы, handlers, validators, CRM, secure files и права.
+- `CFormResult::Mail()` зависит от привязки формы к `SITE_ID`.
+- `GetFileByHash()` уже содержит permission-логику. Не обходи её самописной выдачей файла.
+- Status handlers выполняют PHP-файлы с диска. Их надо ревьюить как код с побочными эффектами.
+- `Reset()` и `Delete()` ведут себя по-разному; для частичного очищения результата не подменяй одно другим.

@@ -1,484 +1,320 @@
-# Bitrix Blog & Socialnet — справочник
+# Блог и комментарии в текущем core
 
-> Reference для Bitrix-скилла. Загружай когда задача связана с блогами, комментариями, рабочими группами, живой лентой, лайками или рейтингом.
+> Reference для Bitrix-скилла. Загружай, когда задача связана с модулем `blog`, постами, комментариями, категориями/тегами, блоговыми компонентами, mail-to-comment, поисковой индексацией блога или условным socialnet-контуром.
 >
-> Audit note: в текущем проверенном core подтверждён модуль `blog`, но модуль `socialnet` в `www/bitrix/modules` не найден. В текущей фазе используй как активный маршрут только `CBlog*`-часть этого файла. Секции `CSocNet*`, живая лента и связанные socialnet-сценарии считай условными до появления модуля.
+> Audit note: в текущем проверенном core подтверждён модуль `blog` версии `24.300.100`. Модуль `socialnetwork` в `www/bitrix/modules` не найден, поэтому socialnet/livefeed-часть этого файла считай условной и подключай только при явном появлении модуля.
 
-## Содержание
-- CBlogPost — создание/получение/удаление постов
-- CBlogComment — комментарии
-- CBlogUser — блог-пользователь
-- CBlogCategory / CBlogPostCategory — теги блога
-- CSocNetGroup — рабочие группы, участники, подписки
-- CSocNetLogDestination — живая лента (лог активности)
-- CLike — лайки
-- CRatings — рейтинг
-- События модуля blog
-- Gotchas
+## Что реально активно в текущем core
 
----
+Подтверждённый рабочий маршрут сейчас такой:
 
-## CBlogPost — посты блога
+- `CBlogPost`
+- `CBlogComment`
+- `CBlogUser`
+- `CBlogCategory`, `CBlogPostCategory`
+- `CBlogSearch::OnSearchReindex`
+- `Bitrix\Blog\Internals\MailHandler::handleReplyReceivedBlogPost`
+- стандартные `blog.*` компоненты
+
+Условный и отложенный маршрут:
+
+- `socialnetwork`
+- livefeed-индексация
+- рассылка/широковещательные уведомления через `im` + `intranet` + `pull`
+- forward-from-mail в новый пост
+
+## D7-слой блога: читать можно, писать нельзя
+
+В текущем core D7-таблицы блога существуют как read-model, а не как полноценный write API.
+
+### `Bitrix\Blog\PostTable`
+
+Подтверждено в `lib/post.php`:
+
+- таблица `b_blog_post`
+- `getUfId()` возвращает `BLOG_POST`
+- есть поля `CODE`, `MICRO`, `DATE_PUBLISH`, `PUBLISH_STATUS`, `ENABLE_COMMENTS`, `NUM_COMMENTS`, `NUM_COMMENTS_ALL`, `VIEWS`, `HAS_SOCNET_ALL`, `HAS_TAGS`, `HAS_IMAGES`, `HAS_PROPS`, `HAS_COMMENT_IMAGES`, `TITLE`, `DETAIL_TEXT`, `CATEGORY_ID`, `BACKGROUND_CODE`
+- `add()`, `update()`, `delete()` бросают `NotImplementedException("Use CBlogPost class.")`
+
+### `Bitrix\Blog\CommentTable`
+
+Подтверждено в `lib/comment.php`:
+
+- таблица `b_blog_comment`
+- `getUfId()` возвращает `BLOG_COMMENT`
+- есть reference `POST => \Bitrix\Blog\Post`
+- `add()`, `update()`, `delete()` бросают `NotImplementedException("Use CBlogComment class.")`
+
+### Практическое правило
+
+- D7 ORM используй для выборок, runtime, join-ов и аналитики
+- запись, обновление и удаление делай через `CBlogPost`, `CBlogComment`, `CBlogUser`
 
 ```php
-use Bitrix\Main\Loader;
+use Bitrix\Blog\PostTable;
 
+$rows = PostTable::getList([
+    'select' => ['ID', 'TITLE', 'DATE_PUBLISH', 'PUBLISH_STATUS', 'NUM_COMMENTS'],
+    'filter' => [
+        '=BLOG_ID' => 5,
+        '=PUBLISH_STATUS' => BLOG_PUBLISH_STATUS_PUBLISH,
+    ],
+    'order' => ['DATE_PUBLISH' => 'DESC'],
+    'limit' => 20,
+])->fetchAll();
+```
+
+```php
 Loader::includeModule('blog');
 
-// Добавить пост
-$blogPost = new CBlogPost();
-$postId = $blogPost->Add([
-    'BLOG_ID'       => 5,          // ID блога
-    'AUTHOR_ID'     => $userId,
-    'TITLE'         => 'Заголовок поста',
-    'DETAIL_TEXT'   => '<p>Текст поста</p>',
-    'DATE_PUBLISH'  => date('d.m.Y H:i:s'),
-    'PUBLISH_STATUS'=> 'P',        // P = published, D = draft
-    'ENABLE_COMMENTS'=> 'Y',
-    'ENABLE_TRACKBACK'=> 'N',
-    'MICRO'         => 'N',        // Y = микропост (без заголовка)
-    'CATEGORY_ID'   => '',
-    'KEYWORDS'      => 'php, bitrix, d7',
-    'UF_BLOG_POST_FILE' => [],     // прикреплённые файлы (UF-поля)
+$postId = CBlogPost::Add([
+    'BLOG_ID' => 5,
+    'AUTHOR_ID' => $userId,
+    'TITLE' => 'Новый пост',
+    'DETAIL_TEXT' => '<p>Текст поста</p>',
+    'DATE_PUBLISH' => date('d.m.Y H:i:s'),
+    'PUBLISH_STATUS' => BLOG_PUBLISH_STATUS_PUBLISH,
+    'ENABLE_COMMENTS' => 'Y',
 ]);
 
-if (!$postId) {
+if (!$postId)
+{
     global $APPLICATION;
     $exception = $APPLICATION->GetException();
-    $error = $exception ? $exception->GetString() : 'Unknown error';
+    throw new \RuntimeException($exception ? $exception->GetString() : 'Blog post add failed');
 }
+```
 
-// Получить пост по ID
-$post = CBlogPost::GetByID($postId);
-// Поля: ID, BLOG_ID, AUTHOR_ID, TITLE, DETAIL_TEXT, DATE_PUBLISH,
-//        PUBLISH_STATUS, VIEWS, NUM_COMMENTS, ENABLE_COMMENTS, ENABLE_TRACKBACK, KEYWORDS, CATEGORY_ID, ...
+## Legacy API, который в этом core остаётся основным
 
-// Получить список постов
-$postList = CBlogPost::GetList(
-    ['DATE_PUBLISH' => 'DESC'],    // сортировка
-    [                              // фильтр
-        'BLOG_ID'        => 5,
-        'PUBLISH_STATUS' => 'P',
-        'ACTIVE'         => 'Y',
-        '>DATE_PUBLISH'  => ConvertTimeStamp(time() - 86400 * 30, 'FULL'),
+### Посты
+
+```php
+Loader::includeModule('blog');
+
+$dbPosts = CBlogPost::GetList(
+    ['DATE_PUBLISH' => 'DESC'],
+    [
+        'BLOG_ID' => 5,
+        'PUBLISH_STATUS' => BLOG_PUBLISH_STATUS_PUBLISH,
+        'ACTIVE' => 'Y',
     ],
-    false,                         // количество (false = без COUNT)
-    ['nTopCount' => 20],           // постраничность: ['nPageSize'=>10, 'iNumPage'=>1]
-    ['ID', 'TITLE', 'DATE_PUBLISH', 'AUTHOR_ID', 'VIEWS']
+    false,
+    ['nPageSize' => 20],
+    ['ID', 'BLOG_ID', 'AUTHOR_ID', 'TITLE', 'DATE_PUBLISH', 'NUM_COMMENTS']
 );
-while ($post = $postList->Fetch()) {
-    // обработка
+
+while ($post = $dbPosts->Fetch())
+{
+    // ...
 }
 
-// Обновить пост
 CBlogPost::Update($postId, [
-    'TITLE'  => 'Новый заголовок',
+    'TITLE' => 'Обновлённый заголовок',
     'DETAIL_TEXT' => '<p>Обновлённый текст</p>',
 ]);
 
-// Удалить пост
 CBlogPost::Delete($postId);
 ```
 
----
-
-## CBlogComment — комментарии к посту
+### Комментарии
 
 ```php
-Loader::includeModule('blog');
-
-// Добавить комментарий
-$blogComment = new CBlogComment();
-$commentId = $blogComment->Add([
-    'POST_ID'   => $postId,
-    'BLOG_ID'   => 5,
+$commentId = CBlogComment::Add([
+    'POST_ID' => $postId,
+    'BLOG_ID' => 5,
     'AUTHOR_ID' => $userId,
-    'AUTHOR_EMAIL' => '', // если не авторизован
-    'AUTHOR_NAME'  => '',
-    'TEXT_TYPE' => 'html',     // html или text
     'POST_TEXT' => '<p>Текст комментария</p>',
+    'TEXT_TYPE' => 'html',
     'DATE_CREATE' => date('d.m.Y H:i:s'),
-    'PARENT_ID' => 0,          // ID родительского комментария (для вложенности)
+    'PARENT_ID' => 0,
 ]);
 
-// Получить комментарии поста
-$commRes = CBlogComment::GetList(
+if (!$commentId)
+{
+    throw new \RuntimeException('Blog comment add failed');
+}
+
+$dbComments = CBlogComment::GetList(
     ['DATE_CREATE' => 'ASC'],
     ['POST_ID' => $postId, 'BLOG_ID' => 5],
     false,
     ['nTopCount' => 50],
-    ['ID', 'POST_ID', 'AUTHOR_ID', 'POST_TEXT', 'DATE_CREATE', 'PARENT_ID']
+    ['ID', 'AUTHOR_ID', 'POST_TEXT', 'DATE_CREATE', 'PARENT_ID', 'PUBLISH_STATUS']
 );
-while ($comm = $commRes->Fetch()) { /* ... */ }
-
-// Удалить комментарий
-CBlogComment::Delete($commentId);
-
-// Количество комментариев бери из поста
-$post = CBlogPost::GetByID($postId);
-$cnt = (int)($post['NUM_COMMENTS'] ?? 0);
 ```
 
----
+### Блог-пользователь
 
-## CBlogUser — блог-пользователь
+В текущем core подтверждён и legacy CRUD через `CBlogUser`, и D7 helper `Bitrix\Blog\BlogUser`.
 
 ```php
-Loader::includeModule('blog');
-
-// Получить блог-пользователя по USER_ID
 $blogUser = CBlogUser::GetByID($userId, BLOG_BY_USER_ID);
 
-// Создать блог-пользователя (если не существует)
-if (!$blogUser) {
+if (!$blogUser)
+{
     $blogUserId = CBlogUser::Add([
         'USER_ID' => $userId,
-        'ALIAS'   => 'user_' . $userId,
+        'ALIAS' => 'user_' . $userId,
     ]);
-} else {
-    $blogUserId = (int)$blogUser['ID'];
 }
-
-// В текущем core подтверждён именно такой явный паттерн:
-// GetByID(..., BLOG_BY_USER_ID) -> при отсутствии CBlogUser::Add(...)
 ```
 
----
+## `Bitrix\Blog\BlogUser` как cache/helper слой
 
-## CBlogCategory / CBlogPostCategory — теги блога
+`Bitrix\Blog\BlogUser` в текущем core нужен не для CRUD, а как сервис вокруг блог-пользователей:
+
+- кеширует список пользователей по `blogId`
+- умеет `setBlogId()`
+- умеет `cleanCache($blogId = null)`
+- отдаёт аватары в предопределённых размерах `COMMENT` и `POST`
+
+Если задача про "почему старый аватар не меняется в комментариях" или "почему блог-пользователь не перечитался", сначала смотри этот cache/helper слой.
+
+## Теги и категории блога
 
 ```php
-Loader::includeModule('blog');
-
-// Получить список тегов (категорий) блога
-$tagRes = CBlogCategory::GetList(
-    ['NAME' => 'ASC'],
-    ['BLOG_ID' => 5],
-    false,
-    ['nTopCount' => 30],
-    ['ID', 'NAME', 'BLOG_ID']
-);
-while ($tag = $tagRes->Fetch()) {
-    echo $tag['NAME'];
-}
-
-// Создать новый тег-категорию
 $tagId = CBlogCategory::Add([
     'BLOG_ID' => 5,
-    'NAME'    => 'bitrix',
+    'NAME' => 'bitrix',
 ]);
 
-// Привязать тег к посту
 CBlogPostCategory::Add([
-    'BLOG_ID'     => 5,
-    'POST_ID'     => $postId,
+    'BLOG_ID' => 5,
+    'POST_ID' => $postId,
     'CATEGORY_ID' => $tagId,
 ]);
-
-// Получить теги конкретного поста
-$postTags = CBlogPostCategory::GetList(
-    ['NAME' => 'ASC'],
-    ['POST_ID' => $postId, 'BLOG_ID' => 5],
-    false,
-    false,
-    ['CATEGORY_ID', 'NAME']
-);
-while ($tag = $postTags->Fetch()) {
-    echo $tag['NAME'];
-}
 ```
 
----
+`CATEGORY_ID` у поста и отдельные связи через `CBlogPostCategory` в текущем core живут параллельно. Если нужно нормализовать/починить теги, не ограничивайся только одним из слоёв.
 
-## CSocNetGroup — рабочие группы
+## Стандартные `blog.*` компоненты, подтверждённые в ядре
 
-```php
-Loader::includeModule('socialnet');
+В текущем core реально присутствуют:
 
-// Создать рабочую группу
-$socNetGroup = new CSocNetGroup();
-$groupId = $socNetGroup->Add([
-    'SITE_ID'        => SITE_ID,
-    'NAME'           => 'Название группы',
-    'DESCRIPTION'    => 'Описание группы',
-    'OWNER_ID'       => $userId,           // создатель = владелец
-    'VISIBLE'        => 'Y',               // Y/N — публичная видимость
-    'OPENED'         => 'Y',               // Y = открытая, N = закрытая
-    'SUBJECT_ID'     => 1,                 // тематика (ID из CSocNetGroup::GetSubjectList)
-    'SPAM_PERMS'     => 'E',               // кто может приглашать: E=все, L=участники, N=никто
-    'IMAGE_ID'       => 0,
-    'KEYWORDS'       => 'ключевые слова',
-    'INITIATE_PERMS' => CSocNetGroup::INITIATE_PERMS_CLOSED, // OPEN/CLOSED/MODERATORS
-    'MODERATE_NEW_MESSAGES' => 'N',
-    'ALLOW_MESSAGE_PIN'     => 'Y',
-]);
+- `blog`
+- `blog.blog`
+- `blog.blog.draft`
+- `blog.blog.edit`
+- `blog.blog.favorite`
+- `blog.blog.moderation`
+- `blog.calendar`
+- `blog.category`
+- `blog.commented_posts`
+- `blog.friends`
+- `blog.group.blog`
+- `blog.groups`
+- `blog.info`
+- `blog.menu`
+- `blog.metaweblog`
+- `blog.new_blogs`
+- `blog.new_comments`
+- `blog.new_posts`
+- `blog.new_posts.list`
+- `blog.popular_blogs`
+- `blog.popular_posts`
+- `blog.post`
+- `blog.post.comment`
+- `blog.post.comment.list`
+- `blog.post.edit`
+- `blog.post.trackback`
+- `blog.post.trackback.get`
+- `blog.rss`
+- `blog.rss.all`
+- `blog.rss.link`
+- `blog.search`
+- `blog.user`
+- `blog.user.group`
+- `blog.user.settings`
+- `blog.user.settings.edit`
 
-if (!$groupId) {
-    global $APPLICATION;
-    $err = $APPLICATION->GetException();
-}
+Если задача про типовой UI блога, сначала считай контракт именно из соответствующего `install/components/bitrix/blog.*`.
 
-// Получить группу по ID
-$groupRes = CSocNetGroup::GetByID($groupId);
+## Пинг, размеры изображений и системные util-методы
 
-// Получить список групп с фильтром
-$groupList = CSocNetGroup::GetList(
-    ['DATE_CREATE' => 'DESC'],
-    ['VISIBLE' => 'Y', 'ACTIVE' => 'Y'],
-    false,
-    ['nTopCount' => 20],
-    ['ID', 'NAME', 'DESCRIPTION', 'OWNER_ID', 'NUMBER_OF_MEMBERS']
-);
-while ($g = $groupList->Fetch()) { /* ... */ }
+`Bitrix\Blog\Util` подтверждён в текущем core и даёт:
 
-// Удалить группу
-CSocNetGroup::Delete($groupId);
-```
+- `getImageMaxWidth()`
+- `getImageMaxHeight()`
+- `sendBlogPing($params)`
 
-### Участники группы
+`sendBlogPing()`:
 
-```php
-Loader::includeModule('socialnet');
+- использует опцию `blog/send_blog_ping`
+- пытается получить `server_name` из сайта, `SITE_SERVER_NAME`, `main:server_name` или `$_SERVER["SERVER_NAME"]`
+- в итоге вызывает `CBlog::sendPing(...)`
 
-// Добавить пользователя в группу
-$rel = CSocNetUserToGroup::Add([
-    'GROUP_ID'  => $groupId,
-    'USER_ID'   => $userId,
-    'ROLE'      => SONET_ROLES_USER,       // SONET_ROLES_OWNER / SONET_ROLES_MODERATOR / SONET_ROLES_USER
-    'INITIATED_BY_TYPE' => SONET_INITIATED_BY_GROUP, // или SONET_INITIATED_BY_USER
-    'INITIATED_BY_USER_ID' => $currentUserId,
-    'DATE_CREATE' => date('d.m.Y H:i:s'),
-]);
+Если задача про "почему ping не уходит после публикации", сначала смотри не внешний сервис, а этот флаг и резолв `server_name`.
 
-// Ожидающий участник (запрос на вступление)
-CSocNetUserToGroup::Add([
-    'GROUP_ID' => $groupId,
-    'USER_ID'  => $userId,
-    'ROLE'     => SONET_ROLES_REQUEST,
-    'INITIATED_BY_TYPE' => SONET_INITIATED_BY_USER,
-    'INITIATED_BY_USER_ID' => $userId,
-    'DATE_CREATE' => date('d.m.Y H:i:s'),
-]);
+## Почтовые обработчики, которые реально есть
 
-// Получить участников группы
-$members = CSocNetUserToGroup::GetList(
-    ['DATE_CREATE' => 'ASC'],
-    ['GROUP_ID' => $groupId, 'ROLE' => SONET_ROLES_USER],
-    false, false,
-    ['USER_ID', 'ROLE', 'DATE_CREATE']
-);
-while ($m = $members->Fetch()) { /* ... */ }
+В `install/index.php` подтверждены обработчики:
 
-// Удалить участника из группы
-CSocNetUserToGroup::Delete($groupId, $userId);
+- `mail:onReplyReceivedBLOG_POST -> Bitrix\Blog\Internals\MailHandler::handleReplyReceivedBlogPost`
+- `mail:onForwardReceivedBLOG_POST -> Bitrix\Blog\Internals\MailHandler::handleForwardReceivedBlogPost`
 
-// Константы ролей:
-// SONET_ROLES_OWNER      = 'A' (владелец)
-// SONET_ROLES_MODERATOR  = 'E' (модератор)
-// SONET_ROLES_USER       = 'K' (участник)
-// SONET_ROLES_REQUEST    = 'R' (запрос)
-// SONET_ROLES_BAN        = 'B' (заблокирован)
-```
+### Reply from mail -> новый комментарий
 
-### Подписки на события группы
+`handleReplyReceivedBlogPost()` в текущем core:
 
-```php
-Loader::includeModule('socialnet');
+- получает `site_id`, `entity_id`, `from`, `content`, `attachments`
+- валидирует сообщение и автора
+- ищет пост через `CBlogPost::getList(...)`
+- считает права через `CBlogPost::getSocNetPostPerms()` и `CBlogComment::getSocNetUserPerms()`
+- проверяет дубль через `Bitrix\Blog\Item\Comment::checkDuplicate(...)`
+- выбирает UF-код для файлов: `UF_BLOG_COMMENT_FILE` или `UF_BLOG_COMMENT_DOC`
+- сохраняет вложения через `CSocNetLogComponent::saveFileToUF(...)`
+- может поставить `PUBLISH_STATUS = BLOG_PUBLISH_STATUS_READY` при premoderate
+- в конце создаёт комментарий через `CBlogComment::add(...)`
 
-// Подписать пользователя на событие группы
-CSocNetSubscription::Add([
-    'USER_ID'      => $userId,
-    'EVENT_ID'     => 'BLOG_POST',          // тип события
-    'ENTITY_TYPE'  => SONET_ENTITY_GROUP,   // 'G' для группы
-    'ENTITY_ID'    => $groupId,
-]);
+Это важный реальный маршрут. Если задача про email-reply в блог, не нужно придумывать кастомный парсер с нуля, пока не проверен этот core handler.
 
-// Отписать
-CSocNetSubscription::Delete([
-    'USER_ID'     => $userId,
-    'EVENT_ID'    => 'BLOG_POST',
-    'ENTITY_TYPE' => SONET_ENTITY_GROUP,
-    'ENTITY_ID'   => $groupId,
-]);
-```
+### Forward from mail -> новый пост
 
----
+`handleForwardReceivedBlogPost()` существует, но требует `Loader::includeModule('socialnetwork')`. Если модуля нет, он бросает `SystemException`.
 
-## CSocNetLogDestination — живая лента
+Для текущего audited core этот путь считай deferred.
 
-```php
-Loader::includeModule('socialnet');
+## Поисковая индексация и module events
 
-// Добавить запись в живую ленту (лог активности)
-$logId = CSocNetLog::Add([
-    'ENTITY_TYPE'  => SONET_ENTITY_GROUP,  // 'G' — группа, 'U' — пользователь
-    'ENTITY_ID'    => $groupId,
-    'EVENT_ID'     => 'blog_post',          // идентификатор типа события
-    'LOG_DATE'     => date('d.m.Y H:i:s'),
-    'TITLE'        => 'Новый пост',
-    'MESSAGE'      => 'Краткое описание',
-    'URL'          => '/blog/post/' . $postId . '/',
-    'MODULE_ID'    => 'blog',
-    'USER_ID'      => $userId,
-    'CLASS_NAME'   => 'CBlogPost',
-    'METHOD_NAME'  => 'log',
-    'PARAMS'       => serialize(['POST_ID' => $postId]),
-    'RATING_TYPE_ID'    => 'BLOG_POST',
-    'RATING_ENTITY_ID'  => $postId,
-]);
+Подтверждённые зависимости модуля в `install/index.php`:
 
-// Назначить получателей записи ленты
-if ($logId) {
-    CSocNetLogDestination::Add([
-        'LOG_ID'      => $logId,
-        'SOURCE_TYPE' => 'G',              // G = группа
-        'SOURCE_ID'   => $groupId,
-    ]);
+- `search:OnReindex -> CBlogSearch::OnSearchReindex`
+- `main:OnUserDelete -> Bitrix\Blog\BlogUser::onUserDelete`
+- `main:OnSiteDelete -> CBlogSitePath::DeleteBySiteID`
+- mail handlers для reply/forward
 
-    // Отправить уведомления подписчикам
-    CSocNetLog::SendEvent('BLOG_POST', $logId, $userId);
-}
+Следствие: после нестандартных массовых правок постов/комментариев не забывай про поисковый индекс блога, а не только про саму таблицу.
 
-// Получить записи ленты для пользователя
-$logRes = CSocNetLog::GetList(
-    ['LOG_DATE' => 'DESC'],
-    ['USER_ID' => $userId],
-    false,
-    ['nTopCount' => 20],
-    ['ID', 'ENTITY_TYPE', 'ENTITY_ID', 'EVENT_ID', 'TITLE', 'LOG_DATE', 'USER_ID']
-);
-while ($log = $logRes->Fetch()) { /* ... */ }
-```
+## Broadcast и livefeed-index классы: существуют, но сейчас условны
 
----
+В текущем core реально есть:
 
-## CLike — лайки
+- `Bitrix\Blog\Broadcast`
+- `Bitrix\Blog\Update\LivefeedIndexPost`
+- `Bitrix\Blog\Update\LivefeedIndexComment`
 
-```php
-Loader::includeModule('socialnet'); // CLike входит в socialnet
+Но они завязаны на соседние модули и опции:
 
-// Поставить лайк
-$result = CLike::Add([
-    'ENTITY_TYPE' => 'BLOG_POST',  // тип сущности
-    'ENTITY_ID'   => $postId,
-    'USER_ID'     => $userId,
-]);
-// $result: true при успехе, false если уже лайкнуто
+- `Broadcast` использует `im`, `intranet`, `pull` и данные `PostSocnetRights`
+- steppers смотрят `Option::get('blog', 'needLivefeedIndexPost', 'Y')` и `needLivefeedIndexComment`
 
-// Убрать лайк
-CLike::Delete([
-    'ENTITY_TYPE' => 'BLOG_POST',
-    'ENTITY_ID'   => $postId,
-    'USER_ID'     => $userId,
-]);
+Пока `socialnetwork` в core отсутствует, эти сценарии не делай основным маршрутом задачи.
 
-// Получить количество лайков
-$count = CLike::GetCount('BLOG_POST', $postId);
-// возвращает int
+## Что делать с socialnet-частью
 
-// Проверить, лайкнул ли пользователь
-$hasLike = CLike::CheckForLike('BLOG_POST', $postId, $userId);
-// возвращает bool
+Пока `socialnetwork` отсутствует:
 
-// Популярные типы ENTITY_TYPE:
-// 'BLOG_POST'    — пост блога
-// 'BLOG_COMMENT' — комментарий блога
-// 'SONET_LOG'    — запись ленты
-// 'FORUM_MESSAGE'— сообщение форума
-// 'NEWS'         — новость
-// 'PHOTO'        — фотография
-```
+- не веди задачу в `CSocNet*`
+- не описывай livefeed как гарантированно рабочий слой
+- не предлагай forward-to-post, широковещательные уведомления и livefeed indexing как основной сценарий
 
----
-
-## CRatings — рейтинг
-
-```php
-Loader::includeModule('socialnet');
-
-// Голосование за сущность
-$voteResult = CRatings::Vote([
-    'ENTITY_TYPE_ID' => 'BLOG_POST',
-    'ENTITY_ID'      => $postId,
-    'USER_ID'        => $userId,
-    'VALUE'          => 1,           // 1 = положительно, -1 = отрицательно
-]);
-// $voteResult: ['RESULT_VALUE' => 5, 'VOTES' => 10] или false при ошибке
-
-// Получить средний рейтинг (если доступно в конфигурации типа)
-$rating = CRatings::GetEntityRating('BLOG_POST', $postId);
-// ['TOTAL_VALUE' => 15, 'VOTES' => 10, 'AVERAGE' => 1.5]
-
-// Получить голос пользователя
-$userVote = CRatings::GetUserVote('BLOG_POST', $postId, $userId);
-// int: 1, -1 или 0 если не голосовал
-
-// Настройки типа рейтинга (CRatingType) задаются в /bitrix/admin/rating_types.php
-// Тип должен быть зарегистрирован через CBitrixComponent или install/index.php
-```
-
----
-
-## События модуля blog
-
-```php
-use Bitrix\Main\EventManager;
-use Bitrix\Main\Event;
-use Bitrix\Main\EventResult;
-
-$em = EventManager::getInstance();
-
-// OnBeforeBlogPostAdd — вызывается перед добавлением поста
-// можно изменить данные или отменить добавление
-$em->addEventHandler('blog', 'OnBeforeBlogPostAdd', function(array &$fields) {
-    // Изменить данные
-    $fields['TITLE'] = trim($fields['TITLE']);
-
-    // Отменить добавление — вернуть false
-    if (mb_strlen($fields['TITLE']) < 3) {
-        return false;
-    }
-
-    return true;
-});
-
-// OnAfterBlogPostAdd — вызывается после успешного добавления
-$em->addEventHandler('blog', 'OnAfterBlogPostAdd', function(int $postId, array $fields) {
-    // Отправить уведомление, очистить кеш, etc.
-    // $postId — ID добавленного поста
-});
-
-// OnBeforeBlogPostUpdate — перед обновлением
-$em->addEventHandler('blog', 'OnBeforeBlogPostUpdate', function(int $postId, array &$fields) {
-    return true; // false = отмена
-});
-
-// OnAfterBlogPostDelete — после удаления
-$em->addEventHandler('blog', 'OnAfterBlogPostDelete', function(int $postId) {
-    // очистка связанных данных
-});
-
-// Регистрация в install/index.php (постоянная, хранится в БД):
-EventManager::getInstance()->registerEventHandler(
-    'blog', 'OnAfterBlogPostAdd',
-    'vendor.mymodule',
-    \Vendor\Mymodule\BlogHandler::class,
-    'onAfterBlogPostAdd'
-);
-```
-
----
+Если модуль появится позже, этот reference можно снова расширять socialnet-контуром уже по живому core.
 
 ## Gotchas
 
-- **`Loader::includeModule('blog')`** обязателен перед любым использованием `CBlogPost`, `CBlogComment`, `CBlogUser`, `CBlogCategory`, `CBlogPostCategory`. Без него классы не будут определены.
-- **`Loader::includeModule('socialnet')`** обязателен для `CSocNetGroup`, `CSocNetLog`, `CLike`, `CRatings`, но в текущей фазе эти части reference считай отложенными, потому что модуля `socialnet` в проверенном core нет.
-- **D7-переноса почти нет**: `CBlogPost`, `CBlogComment` и весь Blog API — legacy, D7-обёрток нет. `CSocNetGroup` тоже legacy. Используй как есть.
-- **Автосоздание `CBlogUser` helper-ом в текущем core не подтверждено**: используй явный паттерн `CBlogUser::GetByID(..., BLOG_BY_USER_ID)` и затем `CBlogUser::Add(...)`.
-- **Теги блога в текущем core** хранятся через `CBlogCategory` + связь `CBlogPostCategory`, а у поста видны как `CATEGORY_ID`. Не опирайся на несуществующий `CBlogTag`.
-- **`PUBLISH_STATUS`**: `'P'` = опубликован, `'D'` = черновик. Только статус `'P'` виден публично.
-- **`CSocNetLog::Add()`** + **`CSocNetLogDestination::Add()`** нужно вызывать вместе — запись лога без назначения получателей не попадёт ни в чью ленту.
-- **`CLike::CheckForLike()`** возвращает `bool` — не путай с `GetCount()` (возвращает `int`).
-- **`CRatings::Vote()`** бросает исключение если тип рейтинга `ENTITY_TYPE_ID` не зарегистрирован — оборачивай в try/catch.
-- **Роли в группах**: константы `SONET_ROLES_*` определены только после `includeModule('socialnet')`.
-- **Кеш живой ленты** хранится в managed cache — при добавлении через `CSocNetLog::Add()` он инвалидируется автоматически. Не вызывай `BXClearCache()` вручную для лент.
+- `PostTable::add/update/delete()` и `CommentTable::add/update/delete()` в текущем core не поддержаны и специально бросают `NotImplementedException`.
+- UF-коды важны: `BLOG_POST` и `BLOG_COMMENT` нужны для UF и файловых вложений.
+- Маршрут "ответ письмом -> комментарий" уже есть в core. Не надо дублировать его без необходимости.
+- Поиск по блогу завязан на `CBlogSearch::OnSearchReindex`, поэтому массовые изменения без переиндексации могут дать расхождение "в базе есть, в поиске нет".
+- `socialnet`-логика в этом файле сейчас намеренно вторична: модуль отсутствует в проверенном ядре.

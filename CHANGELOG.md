@@ -4,6 +4,17 @@
 
 ## [Unreleased]
 
+## [1.12.0] — 2026-04-15
+
+### Added
+- `bitrix/references/sitecorporate.md` — отдельный core-first справочник по модулю `bitrix.sitecorporate`, wizard-решениям `corp_services` / `corp_furniture` и stock `furniture.*` компонентам
+
+### Changed
+- `bitrix/references/blog-socialnet.md` переписан под реально установленный `blog`: D7 read-only таблицы, `CBlog*`, mail reply handlers, search reindex и условный `socialnet`-контур
+- `bitrix/references/webforms.md` расширен до реального `form`-workflow: статусы, handlers, validators, CRM link, secure file access и стандартные `form.*` компоненты
+- `bitrix/SKILL.md` теперь явно маршрутизирует задачи в `sitecorporate.md` и фиксирует core-first ограничения для `blog` и `form`
+- `README.md` синхронизирован с новым покрытием текущего core и обновлёнными описаниями `sitecorporate`, `blog` и `form`
+
 ## [1.11.0] — 2026-04-15
 
 ### Added
@@ -184,7 +195,8 @@
 ### Added
 - Первый публичный релиз: `SKILL.md`, progressive disclosure архитектура
 
-[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.11.0...HEAD
+[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.12.0...HEAD
+[1.12.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.11.0...v1.12.0
 [1.11.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.10.0...v1.11.0
 [1.10.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.9.0...v1.10.0
 [1.9.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.8.0...v1.9.0

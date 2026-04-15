@@ -1,9 +1,9 @@
 ---
 name: bitrix
-description: Provides expertise in 1C-Bitrix CMS development using the actual project core as the primary source of truth. Use when working with currently installed core modules, standard components, iblocks, highloadblocks, photogallery, blog, forum, vote, forms, landing, social auth, Bitrix24 connector widgets, mobileapp/JN, fileman/editor, cloud storage/files, bitrixcloud backup/monitoring, security/WAF/MFA, locations, message service, localization/translate, HL blocks, templates, import/export, caching, performance diagnostics, agents, events, controllers, search, SEO, users, or infrastructure. First inspect installed modules and components under `www/bitrix` before relying on memory. Missing modules such as `catalog`, `sale`, `bizproc`, `pull`, or `socialnet` must be treated as deferred until they appear in the core.
+description: Provides expertise in 1C-Bitrix CMS development using the actual project core as the primary source of truth. Use when working with currently installed core modules, standard components, iblocks, highloadblocks, photogallery, blog, forum, vote, forms, landing, sitecorporate solution wizards, social auth, Bitrix24 connector widgets, mobileapp/JN, fileman/editor, cloud storage/files, bitrixcloud backup/monitoring, security/WAF/MFA, locations, message service, localization/translate, HL blocks, templates, import/export, caching, performance diagnostics, agents, events, controllers, search, SEO, users, or infrastructure. First inspect installed modules and components under `www/bitrix` before relying on memory. Missing modules such as `catalog`, `sale`, `bizproc`, `pull`, or `socialnet` must be treated as deferred until they appear in the core.
 metadata:
   author: poliklot
-  version: "1.11.0"
+  version: "1.12.0"
 compatibility: Designed for Claude Code and Codex on 1C-Bitrix CMS projects
 ---
 
@@ -13,7 +13,7 @@ compatibility: Designed for Claude Code and Codex on 1C-Bitrix CMS projects
 
 ## Текущая фаза
 
-В текущей фазе проекта активным маршрутом считай только то, что подтверждается уже установленным ядром. По аудиту текущего core основной рабочий слой сейчас: `main`, `iblock`, `highloadblock`, `photogallery`, `blog`, `forum`, `vote`, `form`, `landing`, `socialservices`, `b24connector`, `mobileapp`, `clouds`, `bitrixcloud`, `security`, `fileman`, `location`, `messageservice`, `translate`, `rest`, `search`, `seo`, `subscribe`, `ui`, `perfmon`, а также проектные `local/*`-оверрайды.
+В текущей фазе проекта активным маршрутом считай только то, что подтверждается уже установленным ядром. По аудиту текущего core основной рабочий слой сейчас: `main`, `iblock`, `highloadblock`, `photogallery`, `blog`, `forum`, `vote`, `form`, `landing`, `bitrix.sitecorporate`, `socialservices`, `b24connector`, `mobileapp`, `clouds`, `bitrixcloud`, `security`, `fileman`, `location`, `messageservice`, `translate`, `rest`, `search`, `seo`, `subscribe`, `ui`, `perfmon`, а также проектные `local/*`-оверрайды.
 
 Домены `catalog`, `sale`, `bizproc`, `pull` и `socialnet` считай условными. Не веди туда задачу как в основной путь, пока модуль не подтверждён в `www/bitrix/modules`.
 
@@ -118,6 +118,7 @@ if (!Loader::includeModule('iblock')) {
 | Модель данных сайта и инфоблоков | [references/iblocks.md](references/iblocks.md), [references/entities-migrations.md](references/entities-migrations.md), [references/import-export.md](references/import-export.md), [references/sef-urls.md](references/sef-urls.md) |
 | HL-блоки, directory, права, selector, UF | [references/highloadblock.md](references/highloadblock.md), [references/iblock-hl-relations.md](references/iblock-hl-relations.md), [references/custom-uf-types.md](references/custom-uf-types.md) |
 | Фото-галереи, альбомы, upload, slideshow, photo comments | [references/photogallery.md](references/photogallery.md), [references/components.md](references/components.md), [references/templates.md](references/templates.md), [references/blog-socialnet.md](references/blog-socialnet.md), [references/forum.md](references/forum.md) |
+| Корпоративное решение, wizard, demo-data, `furniture.*` stock components | [references/sitecorporate.md](references/sitecorporate.md), [references/components.md](references/components.md), [references/templates.md](references/templates.md), [references/entities-migrations.md](references/entities-migrations.md) |
 | Security, WAF, OTP, redirect/IP rules, session hardening, xscan | [references/security.md](references/security.md), [references/access-rbac.md](references/access-rbac.md), [references/session-auth.md](references/session-auth.md) |
 | Mobile app, admin mobile, JN/native components, designer, push settings | [references/mobileapp.md](references/mobileapp.md), [references/components.md](references/components.md), [references/events-routing.md](references/events-routing.md), [references/templates.md](references/templates.md) |
 | Bitrix24 connector, widgets, openlines/chat/recall/forms, site restrictions | [references/b24connector.md](references/b24connector.md), [references/socialservices.md](references/socialservices.md), [references/rest.md](references/rest.md), [references/admin-ui.md](references/admin-ui.md) |
@@ -143,6 +144,7 @@ if (!Loader::includeModule('iblock')) {
 - Архитектура модуля, `Loader`, PSR-4, `ServiceLocator`, `Option` — [references/modules-loader.md](references/modules-loader.md)
 - Безопасность, CSRF, права, текущий пользователь — [references/security.md](references/security.md), [references/access-rbac.md](references/access-rbac.md)
 - Security module: WAF, redirect, IP rules, OTP/MFA, recovery codes, site checker, xscan — [references/security.md](references/security.md)
+- SiteCorporate: `wizard_solution`, `corp_services` / `corp_furniture`, rerun master, stock `furniture.*` components — [references/sitecorporate.md](references/sitecorporate.md), [references/components.md](references/components.md), [references/templates.md](references/templates.md)
 - MobileApp: admin mobile, JN/router, designer apps, push settings, token registration — [references/mobileapp.md](references/mobileapp.md), [references/components.md](references/components.md), [references/events-routing.md](references/events-routing.md)
 - Bitrix24 connector: remote portal binding, widgets, openline info, per-site restrictions, local activation state — [references/b24connector.md](references/b24connector.md), [references/socialservices.md](references/socialservices.md), [references/admin-ui.md](references/admin-ui.md)
 - HTTP, `DateTime`, запросы, ответы, интеграционный транспорт — [references/http.md](references/http.md), [references/session-auth.md](references/session-auth.md)
@@ -173,8 +175,11 @@ if (!Loader::includeModule('iblock')) {
 ## Content-first эвристики
 
 - Для задач контента сначала проверь модель данных: тип инфоблока, `API_CODE`, символьные коды, XML ID, свойства, пользовательские поля разделов, файловые поля, привязки.
+- Для задач `bitrix.sitecorporate` сначала проверь `main:wizard_solution`, нужный wizard (`corp_services` / `corp_furniture`), include-файлы решения и stock `furniture.*`-компоненты. Не своди модуль к выдуманному runtime API.
 - Для блоговых задач сначала проверь наличие модуля `blog` и используй `CBlog*`; не переходи к `CSocNet*`, пока `socialnet` не подтверждён в core.
+- Для задач по блогу помни, что `Bitrix\\Blog\\PostTable` и `CommentTable` в текущем core годятся для чтения, но запись там заблокирована `NotImplementedException`; для мутаций используй `CBlogPost` / `CBlogComment`.
 - Для форумов и голосований сначала считай контракт стандартных компонентов и legacy API из модуля, потому что типовой UI здесь всё ещё жёстко завязан на `CForum*` и `CVote*`.
+- Для задач по `form` сначала разделяй форму, результат, статус, validator и CRM link. Не своди модуль к одной отправке письма через `CFormResult::Add()`.
 - Для `landing` сначала проверь права, hooks и режим мутаций; прямые `Block::add/update/delete` в текущем core защищены `LANDING_MUTATOR_MODE`.
 - Для витрины и стандартных компонентов сначала считай контракт компонента из ядра, затем ищи проектный шаблон, `result_modifier.php`, `component_epilog.php` и только потом меняй логику.
 - Для чистых задач по HL-блокам сначала разделяй три слоя: сам блок и его ORM, связь HL ↔ ИБ/UF и UI/selector. Не смешивай их в один “справочник”.
@@ -196,9 +201,12 @@ if (!Loader::includeModule('iblock')) {
 
 - Не выдумывать API, события, классы и параметры, которые не подтверждены локальным ядром.
 - Не предполагать наличие `catalog`, `sale` или другого модуля без проверки.
+- Не трактовать `bitrix.sitecorporate` как общий business/runtime-модуль: в текущем core это wizard-shell плюс solution-specific `furniture.*` helpers.
 - Не предполагать, что файл физически лежит локально, если активен `clouds` или у записи есть `HANDLER_ID`.
+- Не использовать `Bitrix\\Blog\\PostTable::add/update/delete()` и `CommentTable::add/update/delete()` для записи, если сам core велит идти через `CBlog*`.
 - Не сводить `photogallery` к “обычным элементам инфоблока”, если задача реально упирается в `USER_ALIAS`, section-UF, upload или photo comments.
 - Не сводить задачи по `security` к одному только `HtmlFilter` и `check_bitrix_sessid()`, если в core реально активен модульный WAF/MFA/redirect слой.
+- Не сводить задачи по `form` к одной отправке результата, если проблема лежит в статусах, `HANDLER_IN/HANDLER_OUT`, validator-ах, CRM link или secure file access.
 - Не отправлять все задачи по `mobileapp` в deferred-маршрут `pull`, если проблема лежит в `JN`, admin mobile или стандартных mobile-компонентах самого модуля.
 - Не путать существование remote widget в Bitrix24 с локальной активацией и site-restriction слоем `b24connector`.
 - Не путать `bitrixcloud` backup/monitoring с обычными bucket-ами `clouds`.
