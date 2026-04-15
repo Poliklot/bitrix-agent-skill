@@ -4,6 +4,15 @@
 
 ## [Unreleased]
 
+## [1.13.0] — 2026-04-15
+
+### Changed
+- `bitrix/references/sitecorporate.md` дополнен реальным wizard template/public слоем и зафиксированным фактом, что `corp_furniture` skeleton местами тянет `bitrix:catalog`, не доказывая наличие магазинного core
+- `bitrix/references/blog-socialnet.md` дополнен stock template layer для случая без `www/local`: `micro`, `old_version`, `socialnetwork`, `result_modifier.php`, JS и upload hooks
+- `bitrix/references/webforms.md` дополнен stock component/template layer для случая без `www/local`: `intranet`-templates, cache/tags/error-style слой и component-level развилки `form.result.new`
+- `bitrix/SKILL.md` теперь явно учитывает checkout без `local/*` и ведёт аудит в stock templates и wizard assets текущего core
+- `README.md` синхронизирован с новым покрытием template/public слоя поверх уже проверенного core
+
 ## [1.12.0] — 2026-04-15
 
 ### Added
@@ -195,7 +204,8 @@
 ### Added
 - Первый публичный релиз: `SKILL.md`, progressive disclosure архитектура
 
-[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.12.0...HEAD
+[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.13.0...HEAD
+[1.13.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.12.0...v1.13.0
 [1.12.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.11.0...v1.12.0
 [1.11.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.10.0...v1.11.0
 [1.10.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.9.0...v1.10.0

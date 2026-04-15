@@ -40,6 +40,37 @@ Loader::includeModule('form');
 
 Если задача упирается в типовой UI формы/результатов, сначала считай контракт стандартного компонента, а потом уже проектный шаблон.
 
+## Stock component/template layer, если `local/*` отсутствует
+
+В текущем checkout нет `www/local`, поэтому у форм следующий truth layer после module API — это stock components и их templates.
+
+Подтверждено:
+
+- `bitrix:form.result.new` имеет `.default`
+- `bitrix:form.result.edit` имеет `.default`
+- `bitrix:form.result.list` имеет `.default` и `intranet`
+- `bitrix:form.result.view` имеет `.default` и `intranet`
+- `bitrix:form.result.list.my` имеет `.default`
+- `bitrix:form` имеет `.default`
+
+Если нет project override-слоя, надо смотреть сразу три места:
+
+- `component.php`
+- конкретный template variant
+- `style.css` и соседние assets компонента
+
+## Что делает `form.result.new` на уровне компонента
+
+В `component.php` у `bitrix:form.result.new` подтверждены важные нефронтовые вещи:
+
+- `WEB_FORM_ID` может резолвиться по SID через `CForm::GetBySID()`
+- компонент отключает кеш на POST и на `formresult=ADDOK`
+- при кешировании регистрирует теги `forms` и `form_<ID>`
+- поддерживает `IGNORE_CUSTOM_TEMPLATE = N` и умеет уходить в шаблон формы из настроек самой формы
+- на ошибках подключает `error.css`
+
+Следствие: диагностика формы не сводится к `template.php`. Иногда проблема лежит в component-level cache, разрешении custom template или в самом `component.php`.
+
 ## Когда брать `form`, а когда достаточно инфоблока
 
 | Подход | Когда использовать |
@@ -338,6 +369,16 @@ CFormResult::SetStatus($resultId, $defaultStatusId);
 
 Если задача про публичную выдачу вложения формы по hash, не ломай этот security-layer ручным `CFile::GetFileArray()` без проверки прав.
 
+## Что учитывать в template variants `list` и `view`
+
+У `form.result.list` и `form.result.view` подтверждены отдельные templates `intranet`.
+
+Практический вывод:
+
+- если список/просмотр результата "выглядит не как .default", это может быть штатный intranet-template, а не проектный override
+- проверяй template variant до того, как объявлять поведение кастомным
+- у `form.result.list/templates/intranet/template.php` есть отдельная filter/list UI-логика, включая cookie-состояние фильтра и массовые действия
+
 ## Sender и соседние интеграции
 
 В `install/index.php` подтверждена зависимость:
@@ -357,3 +398,5 @@ CFormResult::SetStatus($resultId, $defaultStatusId);
 - `GetFileByHash()` уже содержит permission-логику. Не обходи её самописной выдачей файла.
 - Status handlers выполняют PHP-файлы с диска. Их надо ревьюить как код с побочными эффектами.
 - `Reset()` и `Delete()` ведут себя по-разному; для частичного очищения результата не подменяй одно другим.
+- При отсутствии `local/*` следующий truth layer для form-задач — stock component.php, template variant и component assets, а не только одна `.default`-вёрстка.
+- `form.result.new` и `form.result.edit` имеют собственный error-style слой и component-level cache rules, которые часто важнее шаблонной косметики.

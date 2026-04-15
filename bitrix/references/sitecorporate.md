@@ -141,13 +141,71 @@ if (in_array($solution, ['corp_services', 'corp_furniture'], true))
 
 Если задача звучит как "в админке вакансии есть, а на сайте корпоративного решения не видны", сначала проверяй именно эту связку.
 
+## Если `local/*` отсутствует: где следующий слой истины
+
+В текущем checkout проектного `www/local` вообще нет. Для `bitrix.sitecorporate` это значит, что после модульного кода следующим правдивым слоем становятся сами wizard assets:
+
+- `install/wizards/bitrix/corp_services/site/templates/corp_services`
+- `install/wizards/bitrix/corp_furniture/site/templates/furniture`
+- `install/wizards/bitrix/corp_services/site/public/{lang}/...`
+- `install/wizards/bitrix/corp_furniture/site/public/{lang}/...`
+
+Здесь подтверждены:
+
+- `header.php` / `footer.php`
+- `common.css`, `styles.css`, `template_styles.css`
+- theme-папки `themes/*/colors.css`
+- preview/screen assets и language-описания шаблонов
+
+Если на проекте нет `local/templates` и `local/components`, именно этот wizard/template слой надо читать перед любыми предположениями о том, "как должен выглядеть типовой сайт решения".
+
+## Public skeleton решения тоже часть контракта
+
+Public-файлы решения в `site/public/*` не абстрактные заглушки, а реальные страницы, которые:
+
+- подключают `/bitrix/header.php` и `/bitrix/footer.php`
+- включают стандартные компоненты
+- задают первоначальную карту страниц и разделов решения
+
+Подтверждённые include-ы в public skeleton:
+
+- `bitrix:furniture.catalog.index`
+- `bitrix:furniture.catalog.random`
+- `bitrix:furniture.vacancies`
+- `bitrix:news`
+- `bitrix:news.list`
+- `bitrix:main.feedback`
+- `bitrix:main.map`
+- `bitrix:map.google.view`
+- `bitrix:search.page`
+- `bitrix:catalog`
+
+Это важно для аудита "почему страница из мастера не работает": иногда проблема не в wizard и не в template, а в том, что stock public-страница тянет стандартный компонент, который требует соседний модуль.
+
+## Важное ограничение `corp_furniture`
+
+В public skeleton `corp_furniture` подтверждены страницы `services/index.php` и `products/index.php`, которые включают `bitrix:catalog`.
+
+Следствие для текущего audited core:
+
+- сам модуль `bitrix.sitecorporate` подтверждён и активен
+- но часть stock public-страниц `corp_furniture` опирается на магазинный контур
+- это не доказывает наличие `catalog` в проекте
+
+Поэтому для задач вокруг `corp_furniture` всегда разделяй:
+
+- wizard и template layer решения
+- собственные `furniture.*` helpers
+- внешние зависимости public skeleton на `catalog` и другие модули
+
 ## Что смотреть в проекте первым
 
 1. `main:wizard_solution` для текущего `SITE_ID`
 2. Есть ли в публичке вызов `wizard_install.php` или panel button
 3. Какие include-файлы уже созданы мастером в `SITE_DIR/include/*`
-4. Какие public-страницы решения лежат в `install/wizards/.../site/public/*`
-5. Есть ли оверрайд `furniture.*` компонентов в `local/components` или шаблонах
+4. Какие stock template-файлы решения лежат в `install/wizards/.../site/templates/*`
+5. Какие public-страницы решения лежат в `install/wizards/.../site/public/*`
+6. Есть ли оверрайд `furniture.*` компонентов в `local/components` или шаблонах
 
 ## Типовые маршруты задач
 
@@ -176,3 +234,5 @@ if (in_array($solution, ['corp_services', 'corp_furniture'], true))
 - Кнопка в panel зависит от `main:wizard_solution`, а не от "наличия шаблона" как такового.
 - `corp_services` и `corp_furniture` надо различать: у них разный набор site settings.
 - `furniture.*`-компоненты legacy и solution-specific. Не нужно описывать их как общий API каталога.
+- В отсутствие `local/*` следующим truth layer становятся wizard `site/templates/*` и `site/public/*`, а не выдуманные project overrides.
+- Stock public-страницы `corp_furniture` используют `bitrix:catalog`; это условная зависимость skeleton-слоя, а не доказательство, что магазинный core уже установлен.

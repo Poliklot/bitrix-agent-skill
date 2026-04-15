@@ -3,7 +3,7 @@ name: bitrix
 description: Provides expertise in 1C-Bitrix CMS development using the actual project core as the primary source of truth. Use when working with currently installed core modules, standard components, iblocks, highloadblocks, photogallery, blog, forum, vote, forms, landing, sitecorporate solution wizards, social auth, Bitrix24 connector widgets, mobileapp/JN, fileman/editor, cloud storage/files, bitrixcloud backup/monitoring, security/WAF/MFA, locations, message service, localization/translate, HL blocks, templates, import/export, caching, performance diagnostics, agents, events, controllers, search, SEO, users, or infrastructure. First inspect installed modules and components under `www/bitrix` before relying on memory. Missing modules such as `catalog`, `sale`, `bizproc`, `pull`, or `socialnet` must be treated as deferred until they appear in the core.
 metadata:
   author: poliklot
-  version: "1.12.0"
+  version: "1.13.0"
 compatibility: Designed for Claude Code and Codex on 1C-Bitrix CMS projects
 ---
 
@@ -33,6 +33,7 @@ compatibility: Designed for Claude Code and Codex on 1C-Bitrix CMS projects
 - Сначала проверяй, что нужный модуль или стандартный компонент реально присутствует в проекте.
 - Если модуль отсутствует, не выдумывай решение на его API. Зафиксируй отсутствие как факт и скорректируй подход.
 - Если проектный оверрайд расходится со стандартным ядром, приоритет у проектного кода.
+- Если `local/*` в checkout отсутствует как факт, следующим truth layer считай stock component templates, wizard `site/public/*` и `site/templates/*`, а не предполагаемые project overrides.
 - Не ссылайся на внешний источник, если локальное ядро говорит обратное.
 
 ## Проверка обновления навыка
@@ -176,8 +177,10 @@ if (!Loader::includeModule('iblock')) {
 
 - Для задач контента сначала проверь модель данных: тип инфоблока, `API_CODE`, символьные коды, XML ID, свойства, пользовательские поля разделов, файловые поля, привязки.
 - Для задач `bitrix.sitecorporate` сначала проверь `main:wizard_solution`, нужный wizard (`corp_services` / `corp_furniture`), include-файлы решения и stock `furniture.*`-компоненты. Не своди модуль к выдуманному runtime API.
+- Для задач `bitrix.sitecorporate` отдельно проверяй public skeleton решения: он может ссылаться на стандартные компоненты соседних модулей, включая `catalog`, и это не доказывает, что модуль реально установлен в текущем core.
 - Для блоговых задач сначала проверь наличие модуля `blog` и используй `CBlog*`; не переходи к `CSocNet*`, пока `socialnet` не подтверждён в core.
 - Для задач по блогу помни, что `Bitrix\\Blog\\PostTable` и `CommentTable` в текущем core годятся для чтения, но запись там заблокирована `NotImplementedException`; для мутаций используй `CBlogPost` / `CBlogComment`.
+- Если `local/components` нет, для `blog` и `form` считай следующим слоем истины stock template variants компонента, включая `micro`, `intranet`, `old_version` и условные `socialnetwork`-ветки.
 - Для форумов и голосований сначала считай контракт стандартных компонентов и legacy API из модуля, потому что типовой UI здесь всё ещё жёстко завязан на `CForum*` и `CVote*`.
 - Для задач по `form` сначала разделяй форму, результат, статус, validator и CRM link. Не своди модуль к одной отправке письма через `CFormResult::Add()`.
 - Для `landing` сначала проверь права, hooks и режим мутаций; прямые `Block::add/update/delete` в текущем core защищены `LANDING_MUTATOR_MODE`.
@@ -202,8 +205,10 @@ if (!Loader::includeModule('iblock')) {
 - Не выдумывать API, события, классы и параметры, которые не подтверждены локальным ядром.
 - Не предполагать наличие `catalog`, `sale` или другого модуля без проверки.
 - Не трактовать `bitrix.sitecorporate` как общий business/runtime-модуль: в текущем core это wizard-shell плюс solution-specific `furniture.*` helpers.
+- Не считать ссылки из wizard/public skeleton на `bitrix:catalog`, `bitrix:news` или другие компоненты доказательством, что соответствующий модуль установлен в проекте.
 - Не предполагать, что файл физически лежит локально, если активен `clouds` или у записи есть `HANDLER_ID`.
 - Не использовать `Bitrix\\Blog\\PostTable::add/update/delete()` и `CommentTable::add/update/delete()` для записи, если сам core велит идти через `CBlog*`.
+- Не объявлять поведение кастомным только потому, что в проекте нет `local/*`: сначала проверь stock template variant стандартного компонента и wizard public/template слой.
 - Не сводить `photogallery` к “обычным элементам инфоблока”, если задача реально упирается в `USER_ALIAS`, section-UF, upload или photo comments.
 - Не сводить задачи по `security` к одному только `HtmlFilter` и `check_bitrix_sessid()`, если в core реально активен модульный WAF/MFA/redirect слой.
 - Не сводить задачи по `form` к одной отправке результата, если проблема лежит в статусах, `HANDLER_IN/HANDLER_OUT`, validator-ах, CRM link или secure file access.

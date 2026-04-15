@@ -230,6 +230,39 @@ CBlogPostCategory::Add([
 
 Если задача про типовой UI блога, сначала считай контракт именно из соответствующего `install/components/bitrix/blog.*`.
 
+## Stock template layer, если `local/*` отсутствует
+
+В текущем checkout нет `www/local`, поэтому для блоговых задач следующим truth layer после module API становятся stock component templates самого core.
+
+Подтверждённые template-ветки:
+
+- у агрегирующего `bitrix:blog` есть `.default`, `general_page`, `one_blog`, `one_blog_with_main_page`, а также legacy `old_version`
+- у `bitrix:blog.post` есть `.default` и `micro`
+- у `bitrix:blog.post.edit` есть `.default` и `micro`
+- у ряда компонентов есть отдельные `old_version` templates
+- у `bitrix:blog.category` есть template `socialnetwork`
+
+Практическое следствие: когда в проекте нет `local/components`, надо аудировать не только `component.php`, но и конкретный stock template variant, который реально используется.
+
+## Где у шаблонов блога лежит логика, кроме `template.php`
+
+Это особенно важно для `bitrix:blog.post.edit`:
+
+- в `.default` подтверждён `result_modifier.php`
+- там же есть `script.php`, `script.js`, `neweditor.php`, `style.css`
+- в `micro`-ветке подтверждены отдельные `template.php`, `script.js`, `lhe.php`
+
+То есть шаблонный слой здесь не сводится к одной вёрстке.
+
+Дополнительно подтверждено:
+
+- `result_modifier.php` в `.default` подключает resize/upload обработчик через `main.file.input.upload`
+- `micro` template использует `bitrix:main.userconsent.request`
+- `micro` template умеет тянуть `bitrix:socialnetwork.group.selector`, если разрешён групповой постинг
+- `blog.category/templates/socialnetwork` прямо подключает CSS socialnetwork-компонентов
+
+Если модуль `socialnetwork` в проекте отсутствует, template `socialnetwork` и socialnetwork-фрагменты внутри micro-режима считай условными.
+
 ## Пинг, размеры изображений и системные util-методы
 
 `Bitrix\Blog\Util` подтверждён в текущем core и даёт:
@@ -318,3 +351,5 @@ CBlogPostCategory::Add([
 - Маршрут "ответ письмом -> комментарий" уже есть в core. Не надо дублировать его без необходимости.
 - Поиск по блогу завязан на `CBlogSearch::OnSearchReindex`, поэтому массовые изменения без переиндексации могут дать расхождение "в базе есть, в поиске нет".
 - `socialnet`-логика в этом файле сейчас намеренно вторична: модуль отсутствует в проверенном ядре.
+- При отсутствии `local/*` следующий truth layer для блога — stock templates компонента, включая `micro`, `old_version` и `socialnetwork`-ветки.
+- В `blog.post.edit` и соседних шаблонах логика живёт не только в `template.php`, но и в `result_modifier.php`, JS и upload hooks.
