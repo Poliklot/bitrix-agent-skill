@@ -1,9 +1,9 @@
 ---
 name: bitrix
-description: Provides expertise in 1C-Bitrix CMS development using the actual project core as the primary source of truth. Use when working with currently installed core modules, standard components, iblocks, highloadblocks, photogallery, blog, forum, vote, forms, landing, social auth, fileman/editor, cloud storage/files, locations, message service, localization/translate, HL blocks, templates, import/export, caching, performance diagnostics, agents, events, controllers, search, SEO, users, or infrastructure. First inspect installed modules and components under `www/bitrix` before relying on memory. Missing modules such as `catalog`, `sale`, `bizproc`, `pull`, or `socialnet` must be treated as deferred until they appear in the core.
+description: Provides expertise in 1C-Bitrix CMS development using the actual project core as the primary source of truth. Use when working with currently installed core modules, standard components, iblocks, highloadblocks, photogallery, blog, forum, vote, forms, landing, social auth, fileman/editor, cloud storage/files, bitrixcloud backup/monitoring, security/WAF/MFA, locations, message service, localization/translate, HL blocks, templates, import/export, caching, performance diagnostics, agents, events, controllers, search, SEO, users, or infrastructure. First inspect installed modules and components under `www/bitrix` before relying on memory. Missing modules such as `catalog`, `sale`, `bizproc`, `pull`, or `socialnet` must be treated as deferred until they appear in the core.
 metadata:
   author: poliklot
-  version: "1.9.0"
+  version: "1.10.0"
 compatibility: Designed for Claude Code and Codex on 1C-Bitrix CMS projects
 ---
 
@@ -13,7 +13,7 @@ compatibility: Designed for Claude Code and Codex on 1C-Bitrix CMS projects
 
 ## Текущая фаза
 
-В текущей фазе проекта активным маршрутом считай только то, что подтверждается уже установленным ядром. По аудиту текущего core основной рабочий слой сейчас: `main`, `iblock`, `highloadblock`, `photogallery`, `blog`, `forum`, `vote`, `form`, `landing`, `socialservices`, `clouds`, `fileman`, `location`, `messageservice`, `translate`, `rest`, `search`, `seo`, `subscribe`, `ui`, `perfmon`, а также проектные `local/*`-оверрайды.
+В текущей фазе проекта активным маршрутом считай только то, что подтверждается уже установленным ядром. По аудиту текущего core основной рабочий слой сейчас: `main`, `iblock`, `highloadblock`, `photogallery`, `blog`, `forum`, `vote`, `form`, `landing`, `socialservices`, `clouds`, `bitrixcloud`, `security`, `fileman`, `location`, `messageservice`, `translate`, `rest`, `search`, `seo`, `subscribe`, `ui`, `perfmon`, а также проектные `local/*`-оверрайды.
 
 Домены `catalog`, `sale`, `bizproc`, `pull` и `socialnet` считай условными. Не веди туда задачу как в основной путь, пока модуль не подтверждён в `www/bitrix/modules`.
 
@@ -118,6 +118,7 @@ if (!Loader::includeModule('iblock')) {
 | Модель данных сайта и инфоблоков | [references/iblocks.md](references/iblocks.md), [references/entities-migrations.md](references/entities-migrations.md), [references/import-export.md](references/import-export.md), [references/sef-urls.md](references/sef-urls.md) |
 | HL-блоки, directory, права, selector, UF | [references/highloadblock.md](references/highloadblock.md), [references/iblock-hl-relations.md](references/iblock-hl-relations.md), [references/custom-uf-types.md](references/custom-uf-types.md) |
 | Фото-галереи, альбомы, upload, slideshow, photo comments | [references/photogallery.md](references/photogallery.md), [references/components.md](references/components.md), [references/templates.md](references/templates.md), [references/blog-socialnet.md](references/blog-socialnet.md), [references/forum.md](references/forum.md) |
+| Security, WAF, OTP, redirect/IP rules, session hardening, xscan | [references/security.md](references/security.md), [references/access-rbac.md](references/access-rbac.md), [references/session-auth.md](references/session-auth.md) |
 | Блог и комментарии | [references/blog-socialnet.md](references/blog-socialnet.md) — используй `CBlog*`-часть, а `socialnet`-часть только при подтверждённом модуле |
 | Форумы и обсуждения | [references/forum.md](references/forum.md), [references/blog-socialnet.md](references/blog-socialnet.md), [references/search.md](references/search.md) |
 | Голосования и опросы | [references/vote.md](references/vote.md), [references/templates.md](references/templates.md), [references/events-routing.md](references/events-routing.md) |
@@ -131,6 +132,7 @@ if (!Loader::includeModule('iblock')) {
 | События и кастомная логика | [references/events-routing.md](references/events-routing.md), [references/modules-loader.md](references/modules-loader.md), [references/iblocks.md](references/iblocks.md), [references/users.md](references/users.md) |
 | Адреса, карты, редактор, SMS, геоданные | [references/fileman.md](references/fileman.md), [references/location.md](references/location.md), [references/messageservice.md](references/messageservice.md), [references/mail-notifications.md](references/mail-notifications.md) |
 | Файлы, облачное хранилище, resize, внешний `SRC` | [references/clouds.md](references/clouds.md), [references/import-export.md](references/import-export.md), [references/file-upload-modern.md](references/file-upload-modern.md), [references/cache-infra.md](references/cache-infra.md) |
+| Bitrix Cloud backup, monitoring и mobile inspector | [references/bitrixcloud.md](references/bitrixcloud.md), [references/clouds.md](references/clouds.md), [references/admin-ui.md](references/admin-ui.md), [references/cache-infra.md](references/cache-infra.md) |
 | Локализация, языковые файлы, экспорт/импорт фраз | [references/translate.md](references/translate.md), [references/import-export.md](references/import-export.md), [references/search.md](references/search.md) |
 
 Дополнительно подгружай технические reference-файлы по необходимости:
@@ -138,6 +140,7 @@ if (!Loader::includeModule('iblock')) {
 - ORM, runtime-поля, связи и `Result/Error` — [references/orm.md](references/orm.md)
 - Архитектура модуля, `Loader`, PSR-4, `ServiceLocator`, `Option` — [references/modules-loader.md](references/modules-loader.md)
 - Безопасность, CSRF, права, текущий пользователь — [references/security.md](references/security.md), [references/access-rbac.md](references/access-rbac.md)
+- Security module: WAF, redirect, IP rules, OTP/MFA, recovery codes, site checker, xscan — [references/security.md](references/security.md)
 - HTTP, `DateTime`, запросы, ответы, интеграционный транспорт — [references/http.md](references/http.md), [references/session-auth.md](references/session-auth.md)
 - HL-блоки и сложные связи/UF — [references/iblock-hl-relations.md](references/iblock-hl-relations.md), [references/custom-uf-types.md](references/custom-uf-types.md)
 - Чистые задачи по highloadblock: CRUD блока, dynamic ORM, права, selector, стандартные `highloadblock.*` компоненты — [references/highloadblock.md](references/highloadblock.md)
@@ -146,6 +149,7 @@ if (!Loader::includeModule('iblock')) {
 - Веб-формы, подписки и блоговый контур — [references/webforms.md](references/webforms.md), [references/subscribe.md](references/subscribe.md), [references/blog-socialnet.md](references/blog-socialnet.md)
 - Адресные userfield, карты, HTML editor, SMS-провайдеры и callback-и — [references/fileman.md](references/fileman.md), [references/location.md](references/location.md), [references/messageservice.md](references/messageservice.md), [references/mail-notifications.md](references/mail-notifications.md)
 - Облачные bucket-ы, внешний `SRC`, `HANDLER_ID`, delayed resize и file hooks — [references/clouds.md](references/clouds.md), [references/import-export.md](references/import-export.md), [references/file-upload-modern.md](references/file-upload-modern.md)
+- Bitrix Cloud backup policy, monitoring, stored alerts, remote buckets и mobile inspector — [references/bitrixcloud.md](references/bitrixcloud.md), [references/clouds.md](references/clouds.md)
 - Локализация, языковые файлы, переводческий UI, индекс фраз, CSV import/export — [references/translate.md](references/translate.md), [references/import-export.md](references/import-export.md)
 - Форумы, опросы, соц-авторизация, лендинги, perf — [references/forum.md](references/forum.md), [references/vote.md](references/vote.md), [references/socialservices.md](references/socialservices.md), [references/landing.md](references/landing.md), [references/perfmon.md](references/perfmon.md)
 - `workflow` и `push/pull` — только как deferred-reference после подтверждения модулей `bizproc` и `pull`
@@ -171,8 +175,10 @@ if (!Loader::includeModule('iblock')) {
 - Для витрины и стандартных компонентов сначала считай контракт компонента из ядра, затем ищи проектный шаблон, `result_modifier.php`, `component_epilog.php` и только потом меняй логику.
 - Для чистых задач по HL-блокам сначала разделяй три слоя: сам блок и его ORM, связь HL ↔ ИБ/UF и UI/selector. Не смешивай их в один “справочник”.
 - Для `photogallery` сначала разделяй четыре слоя: галерея как root-section, альбом как вложенный section, фото как element и comments/upload как соседние контуры. Не своди это к “ещё одному iblock с картинками”.
+- Для задач WAF, OTP, redirect hardening, session storage, antivirus и сканеров сначала смотри именно модуль `security`, а не ограничивайся общими советами по `main`.
 - Для адресных форм, карт, HTML editor и медиа-полей почти всегда сначала проверяй связку `fileman` + `location`, а не только проектный шаблон.
 - Для файлов с `HANDLER_ID`, внешним `SRC`, bucket rules, delayed resize и `MakeFileArray` сначала смотри `clouds`, а не исходи из предположения, что всё живёт локально в `/upload`.
+- Для backup/monitoring Bitrix Cloud сначала смотри `bitrixcloud`, а `clouds` подключай только как соседний bucket-layer.
 - Для SMS, провайдеров, ограничений и callback-ов сначала смотри `messageservice`, а почтовый контур `main/mail` подключай только как соседний слой, а не замену.
 - Для локализации и переводов сначала различай два контура: обычный `Loc::getMessage()`/lang-файлы и модуль `translate` с индексом фраз, CSV import/export, controller/stepper-процессами и edit UI.
 - Для поиска и фильтрации всегда учитывай не только код, но и индексаторы, права, сайт, ЧПУ и кеш.
@@ -186,6 +192,8 @@ if (!Loader::includeModule('iblock')) {
 - Не предполагать наличие `catalog`, `sale` или другого модуля без проверки.
 - Не предполагать, что файл физически лежит локально, если активен `clouds` или у записи есть `HANDLER_ID`.
 - Не сводить `photogallery` к “обычным элементам инфоблока”, если задача реально упирается в `USER_ALIAS`, section-UF, upload или photo comments.
+- Не сводить задачи по `security` к одному только `HtmlFilter` и `check_bitrix_sessid()`, если в core реально активен модульный WAF/MFA/redirect слой.
+- Не путать `bitrixcloud` backup/monitoring с обычными bucket-ами `clouds`.
 - Не переписывать стандартный компонент вслепую, если можно расширить его контракт или изменить шаблон/модификатор.
 - Не складывать бизнес-логику в `template.php`, если она должна жить в сервисе, `result_modifier.php` или обработчике.
 - Не игнорировать `$result->isSuccess()`, `LAST_ERROR`, ошибки валидации и несовместимость сущностей.

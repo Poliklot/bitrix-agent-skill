@@ -1,8 +1,8 @@
-# Bitrix Безопасность — справочник
+# Bitrix Безопасность и модуль security — справочник
 
-> Reference для Bitrix-скилла. Загружай когда задача связана с защитой от XSS, SQL-инъекций, CSRF, проверкой прав доступа, аутентификацией или работой с текущим пользователем.
+> Reference для Bitrix-скилла. Загружай когда задача связана с защитой от XSS, SQL-инъекций, CSRF, проверкой прав доступа, аутентификацией, WAF/OTP/session hardening, redirect/IP rules, antivirus, site checker или xscan.
 >
-> Audit note (core-verified, current project): справочник сверялся по `www/bitrix/modules/main/lib/text/htmlfilter.php`, `engine/actionfilter/{csrf,authentication}.php`, `main/tools.php`, `main/classes/general/user.php` и `iblock/classes/general/iblock.php`.
+> Audit note (core-verified, current project): справочник сверялся по `www/bitrix/modules/main/lib/text/htmlfilter.php`, `engine/actionfilter/{csrf,authentication}.php`, `main/tools.php`, `main/classes/general/user.php`, `iblock/classes/general/iblock.php`, а также по текущему `www/bitrix/modules/security` версии `24.0.300`, включая `include.php`, `install/index.php`, `classes/general/{filter,redirect,iprule,session,antivirus,user,site_checker,xscan}.php`, `lib/mfa/{otp,recoverycodes}.php` и стандартные `security.*` компоненты.
 
 ## Содержание
 - XSS: HtmlFilter::encode(), htmlspecialchars, контекстное экранирование
@@ -11,6 +11,9 @@
 - Текущий пользователь: CurrentUser (D7), глобальный $USER (legacy)
 - Проверка прав: IsAdmin, CanDoOperation, CIBlock::GetPermission
 - ActionFilter: Authentication, Csrf, HttpMethod в Controllers
+- Модуль `security`: WAF filter, redirect/IP rules, antivirus, frame headers
+- MFA/OTP: `Bitrix\Security\Mfa\Otp`, recovery codes, `security.user.*` компоненты
+- Site checker и `xscan`
 - Общие gotchas безопасности
 
 ---
@@ -338,6 +341,281 @@ $hashedPassword = Password::hash($plainPassword);
 
 ---
 
+## Когда именно нужен модуль `security`
+
+Общий appsec-слой из `main` и реальный модуль `security` - это два разных контура.
+
+Модуль `security` нужен, если задача звучит как:
+
+- “включить или отладить WAF / security filter”
+- “разобраться с open redirect защитой”
+- “настроить OTP / mandatory OTP / recovery codes”
+- “включить session hardening”
+- “почему сработало IP rule”
+- “проверить antivirus / site checker / xscan”
+
+Если задача уже про это, не ограничивайся `HtmlFilter`, `check_bitrix_sessid()` и общими советами по `$USER`.
+
+### Права и операции модуля
+
+Инсталлятор подтверждает задачи:
+
+- `security_denied`
+- `security_filter`
+- `security_otp`
+- `security_view_all_settings`
+- `security_full_access`
+
+И подтверждённые операции:
+
+- `security_filter_bypass`
+- `security_edit_user_otp`
+- `security_module_settings_read/write`
+- `security_filter_settings_read/write`
+- `security_otp_settings_read/write`
+- `security_iprule_admin_settings_read/write`
+- `security_session_settings_read/write`
+- `security_redirect_settings_read/write`
+- `security_stat_activity_settings_read/write`
+- `security_iprule_settings_read/write`
+- `security_antivirus_settings_read/write`
+- `security_frame_settings_read/write`
+- `security_file_verifier_sign/collect/verify`
+
+Практический вывод:
+
+- для security-admin задач обычно недостаточно просто быть авторизованным;
+- проверяй либо `$APPLICATION->GetGroupRight('security')`, либо конкретные `CanDoOperation(...)`.
+
+## WAF и `CSecurityFilter`
+
+Подтверждён `CSecurityFilter` и его связка с `Bitrix\Security\Filter\Request/Server`.
+
+Ключевые точки:
+
+- `OnBeforeProlog()`
+- `IsActive()`
+- `SetActive($bActive = false)`
+- `GetAuditTypes()`
+- `OnAdminInformerInsertItems()`
+- `processVar(...)`
+
+Что важно:
+
+- по умолчанию аудиторы WAF включают `XSS`, `SQL` и `PHP/path`;
+- `SetActive(true)` регистрирует `main:OnBeforeProlog` и `main:OnEndBufferContent` для `CSecurityXSSDetect`;
+- mask bypass идёт через `CSecurityFilterMask::Check(SITE_ID, $_SERVER["REQUEST_URI"])`;
+- при `check_bitrix_sessid()` и праве `security_filter_bypass` ядро может пропускать фильтр.
+
+Это значит:
+
+- задачи “почему filter пропускает/блокирует запрос” надо разбирать через сам модульный pipeline, а не только через код контроллера.
+
+## Redirect/IP rules/frame/antivirus
+
+В модуле это отдельные подсистемы, а не один “security toggle”.
+
+### `CSecurityRedirect`
+
+Подтверждены:
+
+- `BeforeLocalRedirect(&$url, $skip_security_check)`
+- `EndBufferContent(&$content)`
+- `IsActive()`
+- `SetActive($bActive = false)`
+
+Подтверждено:
+
+- защита сидит на `main:OnBeforeLocalRedirect` и `main:OnEndBufferContent`;
+- модуль проверяет referer/site/sign seed и может логировать `SECURITY_REDIRECT`;
+- при плохом redirect либо отдаёт warning page, либо подменяет URL на option `security:redirect_url`.
+
+### `CSecurityIPRule`
+
+Подтверждены:
+
+- `GetActiveCount()`
+- `IsActive()`
+- `SetActive($bActive = false, $end_time = 0)`
+- `CheckAntiFile($return_message = false)`
+- `OnPageStart($use_query = false)`
+- `CleanUpAgent()`
+
+Что важно:
+
+- активная защита вешается на `main:OnPageStart`;
+- disable-file (`ipcheck_disable_file`) реально выключает IP check;
+- модуль нормализует URI и может увести на `security_403.php`.
+
+### `CSecurityFrame`
+
+Подтверждены:
+
+- `IsActive()`
+- `SetActive($bActive = false)`
+
+`SetActive(true)` регистрирует `main:OnPageStart` -> `CSecurityFrame::SetHeader`.
+
+### `CSecurityAntiVirus`
+
+Подтверждены:
+
+- `IsActive()`
+- `SetActive($bActive = false)`
+- `GetAuditTypes()`
+- `OnPageStart()`
+
+Что важно:
+
+- модуль вешается сразу на три события: `OnPageStart`, `OnEndBufferContent`, `OnAfterEpilog`;
+- audit type `SECURITY_VIRUS` реально пишется модулем;
+- в install events отдельно заводится почтовый контур `VIRUS_DETECTED`.
+
+## Session hardening и `CSecuritySession`
+
+Подтверждён legacy-класс `CSecuritySession` с пометкой `@deprecated`, но он всё ещё живой в модуле.
+
+Ключевые методы:
+
+- `Init()`
+- `CleanUpAgent()`
+- `UpdateSessID()`
+- `checkSessionId($id)`
+- `activate()`
+- `deactivate()`
+- `createSid()`
+
+Что важно:
+
+- storage выбирается между `Virtual`, `MC`, `Redis` и `DB` handlers;
+- `activate()` включает option `security:session`, регистрирует handler и GC agent;
+- old session ID хранится отдельно до момента записи.
+
+Практическое правило:
+
+- для новых задач сначала предпочитай `\Bitrix\Main\Session\Session`;
+- но если трогаешь legacy security settings или отладку session hardening, смотреть надо именно в `CSecuritySession`.
+
+## MFA / OTP
+
+В текущем core основной OTP-контур уже в `Bitrix\Security\Mfa\Otp`, а `CSecurityUser` отмечен как deprecated-обёртка.
+
+### `Bitrix\Security\Mfa\Otp`
+
+Подтверждены:
+
+- `getByUser($userId)`
+- `getByType($type)`
+- `getProvisioningUri(array $opts = [])`
+- `regenerate($newSecret = null)`
+- `verify($input, $updateParams = true)`
+- `activate()`
+- `deactivate($days = 0)`
+- `verifyUser(array $params)`
+- `setSkipMandatoryDays($days = 2)`
+- `setMandatoryUsing($isMandatory = true)`
+- `isMandatoryUsing()`
+- `setMandatoryRights(array $rights)`
+- `getMandatoryRights()`
+
+Что важно:
+
+- доступны типы `hotp` и `totp`;
+- mandatory OTP реально управляется через options `otp_mandatory_using`, `otp_mandatory_skip_days`, `otp_mandatory_rights`;
+- provisioning URI и app secret - штатный путь для подключения устройства.
+
+### `CSecurityUser`
+
+Подтверждены:
+
+- `getCachedOtp($userId)`
+- `onBeforeUserLogin(&$arParams)`
+- `update($arFields)`
+- `onUserDelete($userId)`
+- `isActive()`
+- `setActive($pActive = false)`
+- `OnAfterUserLogout()`
+
+Что важно:
+
+- при старых login forms OTP может браться из хвоста `PASSWORD`;
+- `setActive(true)` регистрирует login/logout hooks и recheck-agent `Bitrix\Security\Mfa\OtpEvents::onRecheckDeactivate();`.
+
+### Recovery codes
+
+Подтверждён `Bitrix\Security\Mfa\RecoveryCodesTable`:
+
+- `CODES_PER_USER = 10`
+- `CODE_PATTERN = '#^[a-z0-9]{4}-[a-z0-9]{4}$#D'`
+- `clearByUser($userId)`
+- `regenerateCodes($userId)`
+- `useCode($userId, $searchCode)`
+
+Это значит:
+
+- recovery codes - не произвольная логика проекта, а штатная ORM-таблица `b_sec_recovery_codes`.
+
+## Стандартные security-компоненты
+
+Подтверждены:
+
+- `bitrix:security.user.otp.init`
+- `bitrix:security.user.recovery.codes`
+- `bitrix:security.auth.otp.mandatory`
+
+### `security.user.otp.init`
+
+Компонент:
+
+- требует авторизованного пользователя;
+- использует `Otp::getByUser(...)->regenerate()`;
+- отдаёт `PROVISION_URI`, app secret и флаг `TWO_CODE_REQUIRED`;
+- POST-ветка проверяет `check_bitrix_sessid()` и действие `otp_check_activate`.
+
+### `security.user.recovery.codes`
+
+Компонент:
+
+- работает только если OTP уже активирован;
+- умеет `view`, `print`, `download`;
+- при отсутствии кодов может регенерировать их через `RecoveryCodesTable::regenerateCodes(...)`.
+
+## Site checker и `xscan`
+
+### `CSecuritySiteChecker`
+
+Подтверждены:
+
+- `runTestPackage($type = "", $isFirstStart = false, $isCheckRequirementsNeeded = true)`
+- `addResults($results)`
+- `getLastTestingInfo()`
+- `clearTemporaryData()`
+- `isNewTestNeeded()`
+- `OnAdminInformerInsertItems()`
+
+Что важно:
+
+- результаты живут в ORM `SiteCheckTable`;
+- модуль кеширует last check и сам решает, когда нужен новый прогон.
+
+### `CBitrixXscan`
+
+Подтверждён отдельный malware/static-analysis контур:
+
+- `clean()`
+- `CheckEvents()`
+- `CheckAgents()`
+
+И ORM-таблица результатов:
+
+- `Bitrix\Security\XScanResultTable`
+
+Практический вывод:
+
+- задачи “просканировать ядро/проект на вредоносный код” в этом core уже имеют штатный модульный маршрут, а не только внешний grep.
+
+---
+
 ## Gotchas безопасности
 
 - **`HtmlFilter::encode()` использует `ENT_COMPAT`** по умолчанию (не `ENT_QUOTES`) — экранирует `"` но не `'`. Для атрибутов с одинарными кавычками передай флаг явно: `HtmlFilter::encode($v, ENT_QUOTES)`
@@ -348,6 +626,9 @@ $hashedPassword = Password::hash($plainPassword);
 - **`CurrentUser::get()` никогда не возвращает null** — возвращает объект у которого `getId()` вернёт `null`. Всегда проверяй `$user->getId()` а не наличие объекта.
 - **`$USER->IsAdmin()`** возвращает `true` только если пользователь в группе с ID=1 (администраторы) — обычные `bitrix_admin` операции этого не дают.
 - **Не полагайся на `$_SESSION`** напрямую для хранения прав — используй только механизмы Bitrix (`$USER`, `$APPLICATION->GetGroupRight`).
+- **`CSecurityUser` и `CSecuritySession` частично deprecated**, но в текущем core всё ещё участвуют в реальном security-flow. Не вырезай их из диагностики только потому, что рядом есть D7.
+- **`security` модуль состоит из нескольких независимых подсистем**. “Включить безопасность” не равно автоматически включить filter, redirect, IP rules, antivirus и frame headers.
+- **`bitrix:security.user.recovery.codes` зависит от уже активированного OTP**. Если OTP не поднят, компонент корректно вернёт модульную ошибку, а не пустой список.
 
 ---
 

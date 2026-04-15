@@ -4,6 +4,16 @@
 
 ## [Unreleased]
 
+## [1.10.0] — 2026-04-15
+
+### Added
+- `bitrix/references/bitrixcloud.md` — отдельный core-first справочник по модулю `bitrixcloud`
+
+### Changed
+- `bitrix/references/security.md` расширен до реально установленного модуля `security`: WAF, redirect/IP rules, session hardening, OTP/MFA, recovery codes, antivirus, site checker и xscan
+- `bitrix/SKILL.md` теперь явно считает `security` и `bitrixcloud` активными модулями текущего core и маршрутизирует задачи в правильные reference-файлы
+- `README.md` синхронизирован с новым покрытием текущего core и дополнен `bitrixcloud.md`
+
 ## [1.9.0] — 2026-04-15
 
 ### Added
@@ -164,7 +174,8 @@
 ### Added
 - Первый публичный релиз: `SKILL.md`, progressive disclosure архитектура
 
-[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.9.0...HEAD
+[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.10.0...HEAD
+[1.10.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.9.0...v1.10.0
 [1.9.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.8.0...v1.9.0
 [1.8.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.7.0...v1.8.0
 [1.7.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.6.0...v1.7.0

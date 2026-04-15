@@ -1,6 +1,6 @@
 # Bitrix Agent Skill
 
-Bitrix Agent Skill для разработки на 1C-Bitrix CMS в `Claude Code` и `Codex`. Текущий audited focus: D7 и legacy API для реально установленного core, включая ORM, компоненты, инфоблоки, `photogallery`, блог, форум, голосования, формы, лендинги, соц-авторизацию, `clouds`, `fileman`, `location`, `messageservice`, `translate`, HL-блоки, кеширование, события, REST, поиск, SEO и эксплуатационный контур. Ключевой принцип навыка: сначала читать живое ядро проекта и стандартные компоненты в `www/bitrix`, а не полагаться на память или внешние советы.
+Bitrix Agent Skill для разработки на 1C-Bitrix CMS в `Claude Code` и `Codex`. Текущий audited focus: D7 и legacy API для реально установленного core, включая ORM, компоненты, инфоблоки, `photogallery`, блог, форум, голосования, формы, лендинги, соц-авторизацию, `clouds`, `bitrixcloud`, `security`, `fileman`, `location`, `messageservice`, `translate`, HL-блоки, кеширование, события, REST, поиск, SEO и эксплуатационный контур. Ключевой принцип навыка: сначала читать живое ядро проекта и стандартные компоненты в `www/bitrix`, а не полагаться на память или внешние советы.
 
 ## Установка
 
@@ -169,6 +169,7 @@ powershell -ExecutionPolicy Bypass -File (Join-Path (Join-Path $CodexHome 'skill
 | `components.md` | CBitrixComponent, шаблоны, кеш компонента, CComponentEngine |
 | `cache-infra.md` | Data\Cache, TaggedCache, CAgent, IO\File/Directory/Path |
 | `clouds.md` | Clouds: bucket-ы, external file storage, file hooks, resize/src/makeFileArray, upload queues, failover |
+| `bitrixcloud.md` | Bitrix Cloud: backup quota/files/jobs, monitoring, policy webservice, local option storage, mobile inspector, backup buckets |
 | `fileman.md` | Fileman: HTML editor, address/geo userfields, map/video property types, PDF/player/map компоненты |
 | `http.md` | Type\DateTime, HttpClient, HttpRequest, HttpResponse |
 | `iblocks.md` | Инфоблоки legacy + D7 ORM, свойства, HL-блоки, события инфоблоков |
@@ -191,7 +192,7 @@ powershell -ExecutionPolicy Bypass -File (Join-Path (Join-Path $CodexHome 'skill
 | `push-pull.md` | Push&Pull [deferred]: только при установленном модуле `pull` |
 | `workflow.md` | Бизнес-процессы [deferred]: только при установленном модуле `bizproc` |
 | `subscribe.md` | Рассылки: CRubric, CSubscription, CPosting, CPostingTemplate, подписки и выпуски |
-| `security.md` | XSS, SQL injection, CSRF, контроль доступа, CurrentUser, ActionFilter |
+| `security.md` | AppSec + модуль `security`: WAF, redirect/IP rules, session hardening, OTP/MFA, recovery codes, antivirus, site checker, xscan |
 | `rest.md` | REST-методы, OnRestServiceBuildDescription, REST-события, Webhook, OAuth |
 | `admin-ui.md` | Админ-страницы, CAdminList, CAdminForm, CAdminTabControl, кастомные UF-типы в админке |
 | `entities-migrations.md` | Создание инфоблоков/типов/свойств, групп, пользователей, прав доступа, SQL-миграции |
