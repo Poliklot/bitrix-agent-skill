@@ -4,6 +4,16 @@
 
 ## [Unreleased]
 
+## [1.11.0] — 2026-04-15
+
+### Added
+- `bitrix/references/mobileapp.md` — отдельный core-first справочник по модулю `mobileapp`
+- `bitrix/references/b24connector.md` — отдельный core-first справочник по модулю `b24connector`
+
+### Changed
+- `bitrix/SKILL.md` теперь явно считает `mobileapp` и `b24connector` активными модулями текущего core и маршрутизирует задачи в правильные reference-файлы
+- `README.md` синхронизирован с новым покрытием текущего core и дополнен `mobileapp.md` и `b24connector.md`
+
 ## [1.10.0] — 2026-04-15
 
 ### Added
@@ -174,7 +184,8 @@
 ### Added
 - Первый публичный релиз: `SKILL.md`, progressive disclosure архитектура
 
-[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.10.0...HEAD
+[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.11.0...HEAD
+[1.11.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.10.0...v1.11.0
 [1.10.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.9.0...v1.10.0
 [1.9.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.8.0...v1.9.0
 [1.8.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.7.0...v1.8.0
