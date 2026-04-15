@@ -4,6 +4,18 @@
 
 ## [Unreleased]
 
+## [1.8.0] — 2026-04-15
+
+### Added
+- `bitrix/references/highloadblock.md` — отдельный core-first справочник по модулю `highloadblock`
+- `bitrix/references/clouds.md` — отдельный core-first справочник по модулю `clouds`
+
+### Changed
+- `bitrix/SKILL.md` расширен на подтверждённый активный модуль `clouds`, получил отдельные маршруты для `highloadblock` и `clouds`, а также новые core-first эвристики для HL и внешнего файлового хранения
+- `bitrix/references/iblock-hl-relations.md` явно разведён с новым `highloadblock.md`
+- `bitrix/references/import-export.md` явно разведён с новым `clouds.md`, чтобы задачи по `HANDLER_ID` и cloud-storage не ехали в общий `CFile`-маршрут
+- `README.md` синхронизирован с новым покрытием текущего core и дополнен новыми reference-файлами
+
 ## [1.7.0] — 2026-04-15
 
 ### Added
@@ -143,7 +155,8 @@
 ### Added
 - Первый публичный релиз: `SKILL.md`, progressive disclosure архитектура
 
-[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.7.0...HEAD
+[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.8.0...HEAD
+[1.8.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.7.0...v1.8.0
 [1.7.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.5.1...v1.6.0
 [1.5.1]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.5.0...v1.5.1
