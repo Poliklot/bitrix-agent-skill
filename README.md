@@ -7,7 +7,7 @@ Core-first skill for `1C-Bitrix CMS` and `Bitrix24` in `Claude Code` and `Codex`
 `Bitrix Agent Skill` учит `Claude Code` и `Codex` работать с 1C-Bitrix core-first: агент сначала смотрит в реально установленное ядро, stock templates и wizard assets, а не сочиняет ответы по форумным обрывкам.
 
 <p align="center">
-  <img src="assets/bitrix-demo-v2.gif" alt="Bitrix Agent Skill terminal demo showing how to make Bitrix customizations survive updates" width="100%" />
+  <img src="assets/bitrix-demo-v4.gif" alt="Bitrix Agent Skill terminal demo showing how to make Bitrix customizations survive updates" width="100%" />
 </p>
 
 - Поддерживает `D7` и legacy API в одном маршруте.
