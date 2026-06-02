@@ -4,6 +4,15 @@
 
 ## [Unreleased]
 
+## [1.19.0] — 2026-06-02
+
+### Added
+- `bitrix/references/shop-core-module-inventory.md` — полный inventory 49 модулей shop-core: версии, counts по components/admin/lib/classes, shop/1С relevance, coverage status и ordered roadmap для `storeassist`, shop standard components, marketing/analytics, automation и webservice.
+
+### Changed
+- `bitrix/SKILL.md`, `shop-task-matrix.md`, `core-audit-matrix.md`, `README.md`, `PLAN.md`, `bitrix/VERSION` и MCP Market compact bundles синхронизированы с module-inventory baseline `1.19.0`.
+- Shop-route теперь явно не обещает глубокое покрытие `storeassist`, `sender`, `report`, `statistic`, `conversion`, `abtest`, `advertising`, `bizproc`, `webservice` без отдельного deep-reference.
+
 ## [1.18.0] — 2026-06-02
 
 ### Added
@@ -265,7 +274,8 @@
 ### Added
 - Первый публичный релиз: `SKILL.md`, progressive disclosure архитектура
 
-[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.18.0...HEAD
+[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.19.0...HEAD
+[1.19.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.18.0...v1.19.0
 [1.18.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.17.0...v1.18.0
 [1.17.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.16.0...v1.17.0
 [1.16.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.15.0...v1.16.0

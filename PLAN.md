@@ -7,13 +7,14 @@
 ## Текущий статус
 
 На дату этого плана:
-- актуальная версия навыка: `1.18.0`;
+- актуальная версия навыка: `1.19.0`;
 - точка входа: `bitrix/SKILL.md`;
 - reference-слой: `bitrix/references/*.md`;
 - non-commerce reference-слой прошёл ревизию против установленного core;
 - PHP workflow/testing/quality, legacy modernization, diagnostics, standard components и operations-runbook закрыты как активный non-commerce контур;
-- отдельный shop-core установлен и переаудирован: `catalog` 25.550.0, `sale` 26.0.0, `currency` 26.0.0, `bitrix.eshop` 25.0.0, 1С/CommerceML components;
+- отдельный shop-core установлен и переаудирован inventory-слоем: 49 модулей, включая `catalog` 25.550.0, `sale` 26.0.0, `currency` 26.0.0, `bitrix.eshop` 25.0.0, 1С/CommerceML components;
 - магазинный контур активируется только после проверки этих модулей в конкретном проекте;
+- полный shop-core module inventory вынесен в `shop-core-module-inventory.md`: versions, component/admin counts, coverage status и ordered roadmap uncovered зон;
 - пагинационный слой переаудирован по `main` 26.150.0 и shop-core: legacy `CDBResult`, D7 `PageNavigation`, `system.pagenavigation`, `main.pagenavigation`, admin/grid и ajax/lazy load.
 
 ## Активный и условный контур
@@ -129,8 +130,19 @@ bitrix-agent-skill/
 
 1. Держать non-commerce reference-слой консистентным при следующих правках.
 2. Держать `pagination.md` связанным с `iblocks.md`, `components.md`, `admin-ui.md`, `grid-admin-modern.md`, `sef-urls.md` и `diagnostic-visibility.md` при новых находках.
-3. При появлении новых локальных модулей или project overrides добавлять их в маршрут только после проверки по коду.
-4. Собрать небольшой набор smoke-задач для ручной проверки качества навыка на текущем non-commerce core.
+3. Держать `shop-core-module-inventory.md` как source-of-truth по coverage gaps и не обещать глубокое покрытие uncovered-модулей без отдельного reference.
+4. При появлении новых локальных модулей или project overrides добавлять их в маршрут только после проверки по коду.
+5. Собрать небольшой набор smoke-задач для ручной проверки качества навыка на текущем non-commerce core.
+
+### Завершённый целевой этап: Shop-core module inventory
+
+На версии `1.19.0` добавлен полный inventory 49 модулей shop-core. Закрыты:
+
+1. Версии всех модулей из `/Users/igormajorov/Downloads/Telegram Desktop/bitrix-shop-core/www/bitrix/modules`.
+2. Counts по standard components, admin entrypoints, `lib`, `classes`, install/db files.
+3. Shop/1С relevance по модулям: runtime, solution/bootstrap, 1С/exchange, marketing/analytics, automation, content/front adjacent, platform/integration/safety.
+4. Coverage status: `covered`, `covered-partial`, `needs deep audit`, `deferred per project`.
+5. Ordered roadmap: `storeassist.md` → `shop-standard-components.md` → `shop-marketing-analytics.md` → `shop-automation-bizproc.md` → `shop-integrations-webservice.md`.
 
 ### Завершённый целевой этап: Pagination core-layer
 
@@ -179,12 +191,14 @@ bitrix-agent-skill/
    - конфликтует кастомный обработчик/override.
 4. Зафиксирован безопасный verification-flow: логи, временные файлы, таблицы, agents/events, component cache, managed/tagged cache, search/index/SEO side effects.
 
-### Следующие шаги после baseline 1.18.0
+### Следующие шаги после baseline 1.19.0
 
-1. Поднять Docker/runtime shop-core и проверить, есть ли живой DB dump или нужна свежая установка.
-2. Собрать smoke fixtures для каталога, offer, цены, остатка, корзины, checkout, заказа и CommerceML.
-3. Прогнать ручные smoke-задачи навыка на shop-core.
-4. После runtime-smoke при необходимости расширить reference-файлы конкретными DB/runtime findings.
+1. Следующим ordered deep-dive сделать `storeassist.md`, потому что `storeassist_1c_*` напрямую связан с 1С onboarding.
+2. Затем сделать `shop-standard-components.md` по public/admin storefront components.
+3. Поднять Docker/runtime shop-core и проверить, есть ли живой DB dump или нужна свежая установка.
+4. Собрать smoke fixtures для каталога, offer, цены, остатка, корзины, checkout, заказа и CommerceML.
+5. Прогнать ручные smoke-задачи навыка на shop-core.
+6. После runtime-smoke при необходимости расширить reference-файлы конкретными DB/runtime findings.
 
 ## Definition of done для текущей фазы
 

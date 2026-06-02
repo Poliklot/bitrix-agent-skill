@@ -1,13 +1,13 @@
 # Core Audit Matrix — active core, shop-core и deferred zones
 
-> Reference для Bitrix-скилла. Загружай, когда нужно понять, что реально установлено в текущем core, какие домены активны, какие условны и куда вести задачу. Матрица теперь поддерживает две подтверждённые фазы: non-commerce core и отдельный shop-core для интернет-магазина/1С.
+> Reference для Bitrix-скилла. Загружай, когда нужно понять, что реально установлено в текущем core, какие домены активны, какие условны и куда вести задачу. Матрица теперь поддерживает две подтверждённые фазы: non-commerce core и отдельный shop-core для интернет-магазина/1С. Для полного списка 49 модулей shop-core, версий, coverage status и очереди доаудита смотри `shop-core-module-inventory.md`.
 
 ## 0. Фазовый принцип
 
 Bitrix skill остаётся **core-first**, а не “версией по памяти”. Есть два подтверждённых truth layer:
 
 1. **Non-commerce checkout** — активны контентные/системные модули, commerce был deferred.
-2. **Shop-core checkout** `/Users/igormajorov/Downloads/Telegram Desktop/bitrix-shop-core` — подтверждены `catalog`, `sale`, `currency`, `bitrix.eshop`, `pull`, `bizproc`, `sender`, `storeassist`, 1С/CommerceML components.
+2. **Shop-core checkout** `/Users/igormajorov/Downloads/Telegram Desktop/bitrix-shop-core` — подтверждены 49 модулей; deep baseline готов для `catalog`, `sale`, `currency`, `bitrix.eshop`, pagination и 1С/CommerceML components, а полный coverage status вынесен в `shop-core-module-inventory.md`.
 
 В каждом новом пользовательском проекте сначала проверяй локальный `www/bitrix/modules`. Нельзя переносить активность `sale/catalog` из shop-core на другой проект без проверки.
 
@@ -30,6 +30,8 @@ done
 Для `main` не требуй обычный `install/version.php`: в проверенном shop-core версия лежит в `www/bitrix/modules/main/classes/general/version.php` (`SM_VERSION 26.150.0`).
 
 ## 2. Подтверждённый shop-core
+
+Полный inventory всех 49 модулей, counts по components/admin/lib/classes и очередность uncovered зон хранится в `shop-core-module-inventory.md`. Ниже — краткий shop-critical срез.
 
 Shop-core facts:
 
@@ -137,6 +139,7 @@ Admin entrypoints:
 | Admin/ops | active | `admin-ui.md`, `grid-admin-modern.md`, `pagination.md`, `operations-runbook.md`, `perfmon.md`, `update-stepper.md` |
 | Commerce/shop | active after local module confirmation | `shop-task-matrix.md`, `catalog.md`, `sale.md`, `currency.md`, `commerce-workflows.md` |
 | 1С/CommerceML | active after component confirmation | `commerce-1c-integration.md` |
+| Full shop-core inventory | routing map | `shop-core-module-inventory.md` |
 
 ## 8. Как обновлять матрицу
 

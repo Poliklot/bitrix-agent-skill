@@ -1,11 +1,12 @@
 # Shop task matrix — routing интернет-магазина
 
-> Используй этот файл как быстрый роутер для задач по интернет-магазину. Truth layer для нового этапа: shop-core `/Users/igormajorov/Downloads/Telegram Desktop/bitrix-shop-core` с подтверждёнными `catalog` 25.550.0, `sale` 26.0.0, `currency` 26.0.0, `bitrix.eshop` 25.0.0, `pull`, `bizproc`, `sender`, `storeassist`.
+> Используй этот файл как быстрый роутер для задач по интернет-магазину. Truth layer для нового этапа: shop-core `/Users/igormajorov/Downloads/Telegram Desktop/bitrix-shop-core` с 49 подтверждёнными модулями. Полный inventory и coverage status смотри в `shop-core-module-inventory.md`.
 
 ## 1. Быстрый routing
 
 | Запрос пользователя | Сначала читать | Затем |
 |---|---|---|
+| “Все ли модули магазина/1С покрыты?” | `shop-core-module-inventory.md` | `core-audit-matrix.md`, затем нужный deep-reference |
 | Товары, свойства, разделы, SKU | `catalog.md`, `iblocks.md` | `commerce-1c-integration.md`, если есть 1С/XML_ID |
 | Цена не та / не показывается | `catalog.md`, `currency.md` | `sale.md`, `search-seo-ops` bundles для кеша |
 | Остатки, склады, доступность | `catalog.md` | `sale.md` для reservation/order effects |
@@ -16,6 +17,9 @@
 | Скидки / купоны | `sale.md`, `catalog.md` | `currency.md` |
 | 1С выгрузка товаров | `commerce-1c-integration.md`, `catalog.md` | `currency.md`, `cache-infra.md` |
 | Заказы в 1С | `commerce-1c-integration.md`, `sale.md` | `http.md`, `operations-runbook.md` |
+| StoreAssist / мастер настройки 1С | `shop-core-module-inventory.md`, `commerce-1c-integration.md` | будущий `storeassist.md` |
+| Рассылки, follow-up, маркетинг | `shop-core-module-inventory.md`, `mail-notifications.md`, `messageservice.md` | будущий `shop-marketing-analytics.md` |
+| Автоматизация заказа / роботы | `shop-core-module-inventory.md`, `workflow.md`, `sale.md` | будущий `shop-automation-bizproc.md` |
 | “В админке есть, на сайте нет” для товара | `catalog.md`, `diagnostic-visibility.md` | `index-cache-diagnostics.md`, `component-dataflow-debugging.md` |
 | Вторая страница каталога пустая, lazy load сломан | `pagination.md`, `catalog.md`, `component-dataflow-debugging.md` | `sef-urls.md`, `cache-infra.md` |
 | Производительность каталога | `catalog.md`, `perfmon.md`, `cache-infra.md` | `search.md`, `seo-cache-access.md` |
