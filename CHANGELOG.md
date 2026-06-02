@@ -4,8 +4,20 @@
 
 ## [Unreleased]
 
+## [1.17.0] — 2026-06-02
+
 ### Added
-- `mcpmarket/bitrix/` — компактная read-only версия навыка для импорта через MCP Market: 64 reference-файла сгруппированы в 10 bundles, чтобы skill folder оставался ниже лимита 50 файлов.
+- `bitrix/references/currency.md` — отдельный core-first reference по модулю `currency` 26.0.0: валюты, курсы, форматирование денег, `CurrencyManager`, `CurrencyTable`, `CurrencyRateTable`, связь с catalog prices и sale sums.
+- `bitrix/references/commerce-1c-integration.md` — отдельный reference по 1С / CommerceML: `catalog.import.1c`, `catalog.export.1c`, `sale.export.1c`, `checkauth/init/file/import`, `BX_CML2_IMPORT`, `BX_CML2_EXPORT`, temp files, zip/chunks, `secure_1c_exchange`, exchange logs.
+- `bitrix/references/shop-task-matrix.md` — быстрый routing интернет-магазина: товары, SKU, цены, остатки, корзина, checkout, оплата, доставка, скидки, заказы и 1С diagnostics.
+- `mcpmarket/bitrix/` — компактная read-only версия навыка для импорта через MCP Market: reference-файлы сгруппированы в bundles, чтобы skill folder оставался ниже лимита 50 файлов.
+
+### Changed
+- `bitrix/references/catalog.md` переаудирован по shop-core с `catalog` 25.550.0: product/SKU/price/store/store document/measure/VAT/admin component/1C import layers.
+- `bitrix/references/sale.md` переаудирован по shop-core с `sale` 26.0.0: basket/order/payment/shipment/discount/location/cashbox/exchange side effects.
+- `bitrix/references/commerce-workflows.md` переведён из deferred в подтверждённый shop-route после локальной проверки `catalog`, `sale`, `currency` и 1С components.
+- `bitrix/references/core-audit-matrix.md` теперь описывает фазовую матрицу: active non-commerce route, active shop-core route и deferred zones per project.
+- `bitrix/SKILL.md`, `README.md`, `PLAN.md` и `bitrix/VERSION` синхронизированы с commerce/1С baseline `1.17.0`.
 
 ## [1.16.0] — 2026-04-24
 
@@ -244,7 +256,8 @@
 ### Added
 - Первый публичный релиз: `SKILL.md`, progressive disclosure архитектура
 
-[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.16.0...HEAD
+[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.17.0...HEAD
+[1.17.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.16.0...v1.17.0
 [1.16.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.15.0...v1.16.0
 [1.15.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.14.0...v1.15.0
 [1.14.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.13.0...v1.14.0

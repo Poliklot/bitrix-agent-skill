@@ -7,14 +7,15 @@
 ## Текущий статус
 
 На дату этого плана:
-- актуальная версия навыка: `1.16.0`;
+- актуальная версия навыка: `1.17.0`;
 - точка входа: `bitrix/SKILL.md`;
 - reference-слой: `bitrix/references/*.md`;
 - non-commerce reference-слой прошёл ревизию против установленного core;
 - PHP workflow/testing/quality, legacy modernization, diagnostics, standard components и operations-runbook закрыты как активный non-commerce контур;
-- магазинный контур, обмен с 1С и другие отсутствующие модули вынесены в deferred-режим до установки отдельного shop-core.
+- отдельный shop-core установлен и переаудирован: `catalog` 25.550.0, `sale` 26.0.0, `currency` 26.0.0, `bitrix.eshop` 25.0.0, 1С/CommerceML components;
+- магазинный контур активируется только после проверки этих модулей в конкретном проекте.
 
-## Активный и отложенный контур
+## Активный и условный контур
 
 ### Активный non-commerce маршрут
 
@@ -49,9 +50,9 @@
 - operations: agents/cron/stepper, backup/monitoring, переносы, perf diagnostics
 - проектные оверрайды в `local/*`
 
-### Deferred-маршрут
+### Условный commerce/deferred-маршрут
 
-Эти домены не считаются базовым путём, пока соответствующий модуль не подтверждён в `www/bitrix/modules`:
+Эти домены становятся активными только после подтверждения соответствующего модуля в `www/bitrix/modules`:
 - `catalog`
 - `sale`
 - `currency`
@@ -60,6 +61,8 @@
 - `socialnet`
 - обмен с `1С` / `CommerceML`
 - магазинные workflow в целом: торговые предложения, цены, остатки, склады, корзина, checkout, оплата, доставка, скидки, заказы, отгрузки, возвраты
+
+Для shop-core-аудита эти домены уже подтверждены и описаны в `catalog.md`, `sale.md`, `currency.md`, `commerce-workflows.md`, `commerce-1c-integration.md`, `shop-task-matrix.md`.
 
 Важно: наличие `catalog.*` standard components внутри `iblock` или шаблонов не доказывает наличие полноценного магазинного core. Активировать commerce-маршрут можно только после проверки реальных модулей и их runtime-контрактов.
 
@@ -105,7 +108,7 @@ bitrix-agent-skill/
 
 ### Документация репозитория
 
-- `README.md` синхронизирован с текущим покрытием и deferred-доменами.
+- `README.md` синхронизирован с текущим non-commerce и commerce/1С покрытием.
 - `CHANGELOG.md` отражает актуальную версию и волну core-аудита.
 - install/update слой стал rename-safe для будущего перехода репозитория на `bitrix-agent-skill`.
 - Этот `PLAN.md` переведён из исторического roadmap в living-status документ.
@@ -124,17 +127,17 @@ bitrix-agent-skill/
 ### Ближайшие
 
 1. Держать non-commerce reference-слой консистентным при следующих правках.
-2. Синхронизировать этот living-plan с текущей версией `1.16.0` и больше не оставлять исторические версии в статусном блоке.
+2. Синхронизировать этот living-plan с текущей версией `1.17.0` и больше не оставлять исторические версии в статусном блоке.
 3. При появлении новых локальных модулей или project overrides добавлять их в маршрут только после проверки по коду.
 4. Собрать небольшой набор smoke-задач для ручной проверки качества навыка на текущем non-commerce core.
 
-### Новый целевой этап: Commerce + 1С Integration
+### Завершённый целевой этап: Commerce + 1С Integration
 
-Цель этапа — превратить deferred commerce-контур в подтверждённый active-route только после аудита живого ядра интернет-магазина.
+Цель этапа — превратить deferred commerce-контур в подтверждённый active-route после аудита живого ядра интернет-магазина. На версии `1.17.0` baseline выполнен по локальному shop-core.
 
 #### Подготовка sandbox
 
-1. Поставить отдельный Bitrix sandbox с редакцией/решением, где реально присутствуют `catalog`, `sale`, `currency` и связанные магазинные модули.
+1. Отдельный Bitrix shop-core sandbox найден/подключён: `/Users/igormajorov/Downloads/Telegram Desktop/bitrix-shop-core`, где реально присутствуют `catalog`, `sale`, `currency` и связанные магазинные модули.
 2. Держать sandbox отдельно от репозитория `bitrix-agent-skill`: отдельная директория, контейнер или VM.
 3. Зафиксировать версию продукта, состав `www/bitrix/modules`, активные сайты, выбранный wizard/solution и PHP/DB окружение.
 4. Не подключать production 1С, реальные платежи, реальные службы доставки и данные клиентов; использовать тестовые настройки и fixtures.
@@ -147,15 +150,15 @@ bitrix-agent-skill/
    - `currency`: валюты, курсы, форматирование, связь с ценами;
    - standard components и stock templates магазина;
    - admin UI/grid/actions для каталога, заказов и настроек магазина.
-2. Переаудировать `bitrix/references/catalog.md`, `bitrix/references/sale.md`, `bitrix/references/commerce-workflows.md`.
-3. Добавить отдельный reference-файл для обмена с 1С, например `bitrix/references/commerce-1c-integration.md`.
-4. Сформировать `shop-task-matrix.md` или расширить существующую task matrix: каталог, SKU, цены, остатки, корзина, checkout, оплаты, доставки, скидки, заказы, обмен с 1С, диагностика CommerceML.
+2. Переаудированы `bitrix/references/catalog.md`, `bitrix/references/sale.md`, `bitrix/references/commerce-workflows.md`.
+3. Добавлен отдельный reference-файл для обмена с 1С: `bitrix/references/commerce-1c-integration.md`.
+4. Сформирован `shop-task-matrix.md`: каталог, SKU, цены, остатки, корзина, checkout, оплаты, доставки, скидки, заказы, обмен с 1С, диагностика CommerceML.
 
 #### Аудит обмена с 1С
 
-1. Найти в shop-core реальные endpoints, компоненты, обработчики и настройки обмена с 1С.
-2. Развести импорт каталога, экспорт/обмен заказами, файлы CommerceML, zip/chunk-upload, авторизацию и progressive import steps.
-3. Описать диагностику типовых проблем:
+1. Найдены в shop-core реальные endpoints, компоненты, обработчики и настройки обмена с 1С.
+2. Разведены импорт каталога, экспорт/обмен заказами, файлы CommerceML, zip/chunk-upload, авторизация и progressive import steps.
+3. Описана диагностика типовых проблем:
    - 1С выгрузила товар, но он не виден на сайте;
    - товар виден, но не покупается;
    - цены/остатки не обновились;
@@ -163,14 +166,14 @@ bitrix-agent-skill/
    - exchange падает на больших файлах или повторных чанках;
    - заказы не уходят обратно в 1С;
    - конфликтует кастомный обработчик/override.
-4. Зафиксировать безопасный verification-flow: логи, временные файлы, таблицы, agents/events, component cache, managed/tagged cache, search/index/SEO side effects.
+4. Зафиксирован безопасный verification-flow: логи, временные файлы, таблицы, agents/events, component cache, managed/tagged cache, search/index/SEO side effects.
 
-### После установки магазинного core
+### Следующие шаги после baseline 1.17.0
 
-1. Выполнить Commerce + 1С audit по sandbox.
-2. Обновить `SKILL.md`, чтобы commerce-задачи маршрутизировались в подтверждённые reference-файлы.
-3. Обновить `README.md`, `CHANGELOG.md`, `bitrix/VERSION` и при необходимости release notes.
-4. Только после этого расширять skill на полный e-commerce контур.
+1. Поднять Docker/runtime shop-core и проверить, есть ли живой DB dump или нужна свежая установка.
+2. Собрать smoke fixtures для каталога, offer, цены, остатка, корзины, checkout, заказа и CommerceML.
+3. Прогнать ручные smoke-задачи навыка на shop-core.
+4. После runtime-smoke при необходимости расширить reference-файлы конкретными DB/runtime findings.
 
 ## Definition of done для текущей фазы
 

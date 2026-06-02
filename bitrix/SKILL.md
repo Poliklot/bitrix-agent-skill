@@ -1,9 +1,9 @@
 ---
 name: bitrix
-description: Provides expertise in 1C-Bitrix CMS development using the actual project core as the primary source of truth. Use when working with currently installed core modules, standard components, iblocks, highloadblocks, photogallery, blog, forum, vote, forms, landing, sitecorporate solution wizards, social auth, Bitrix24 connector widgets, mobileapp/JN, fileman/editor, cloud storage/files, bitrixcloud backup/monitoring, security/WAF/MFA, locations, message service, localization/translate, HL blocks, templates, import/export, caching, index diagnostics, performance diagnostics, agents, events, controllers, search, SEO, users, infrastructure, operations, or PHP-heavy Bitrix tasks such as local modules, services, DTOs, event handlers, controller actions, validation, composer/phpunit/phpstan/php-cs-fixer toolchains, PHP testing/verification, legacy modernization, and legacy-to-D7 boundaries. First inspect installed modules and components under `www/bitrix` before relying on memory. Missing modules such as `catalog`, `sale`, `bizproc`, `pull`, or `socialnet` must be treated as deferred until they appear in the core.
+description: Provides expertise in 1C-Bitrix CMS development using the actual project core as the primary source of truth. Use when working with installed core modules, standard components, iblocks, highloadblocks, catalog, sale, currency, internet shop workflows, 1C/CommerceML exchange, catalog.import.1c, sale.export.1c, basket, orders, payments, delivery, discounts, SKU/offers, prices, stocks, stores, blog, forum, vote, forms, landing, sitecorporate, REST, SEO, cache/index diagnostics, operations, and PHP-heavy Bitrix tasks. First inspect installed modules and components under `www/bitrix` before relying on memory. Missing modules such as `catalog`, `sale`, `currency`, `bizproc`, `pull`, or `socialnet` must be treated as deferred until they appear in the local core.
 metadata:
   author: poliklot
-  version: "1.16.0"
+  version: "1.17.0"
 compatibility: Designed for Claude Code and Codex on 1C-Bitrix CMS projects
 ---
 
@@ -13,9 +13,12 @@ compatibility: Designed for Claude Code and Codex on 1C-Bitrix CMS projects
 
 ## Текущая фаза
 
-В текущей фазе проекта активным маршрутом считай только то, что подтверждается уже установленным ядром. По аудиту текущего core основной рабочий слой сейчас: `main`, `iblock`, `highloadblock`, `photogallery`, `blog`, `forum`, `vote`, `form`, `landing`, `bitrix.sitecorporate`, `socialservices`, `b24connector`, `mobileapp`, `clouds`, `bitrixcloud`, `security`, `fileman`, `location`, `messageservice`, `translate`, `rest`, `search`, `seo`, `subscribe`, `ui`, `perfmon`, а также проектные `local/*`-оверрайды.
+В текущей фазе есть два подтверждённых маршрута:
 
-Домены `catalog`, `sale`, `bizproc`, `pull` и `socialnet` считай условными. Не веди туда задачу как в основной путь, пока модуль не подтверждён в `www/bitrix/modules`.
+1. **Non-commerce route**: `main`, `iblock`, `highloadblock`, `photogallery`, `blog`, `forum`, `vote`, `form`, `landing`, `bitrix.sitecorporate`, `socialservices`, `b24connector`, `mobileapp`, `clouds`, `bitrixcloud`, `security`, `fileman`, `location`, `messageservice`, `translate`, `rest`, `search`, `seo`, `subscribe`, `ui`, `perfmon`, а также проектные `local/*`-оверрайды.
+2. **Shop-core route**: если в локальном проекте подтверждены `catalog`, `sale` и `currency`, активируй интернет-магазин: товары, SKU/торговые предложения, цены, остатки, склады, корзина, checkout, заказы, оплаты, доставки, скидки, 1С/CommerceML. Новый shop truth layer проверен на core с `catalog` 25.550.0, `sale` 26.0.0, `currency` 26.0.0, `bitrix.eshop` 25.0.0.
+
+Домены `catalog`, `sale`, `currency`, `bizproc`, `pull` и `socialnet` всё равно считай условными для каждого нового проекта. Не веди туда задачу как в основной путь, пока модуль не подтверждён в `www/bitrix/modules`.
 
 ## Источник истины
 
@@ -83,7 +86,7 @@ if (!Loader::includeModule('iblock')) {
 
 ## Рабочий алгоритм
 
-1. Определи домен задачи: модель данных, блог/контент, компоненты, поиск, SEO, синхронизация, пользователи, админка, производительность.
+1. Определи домен задачи: модель данных, блог/контент, компоненты, поиск, SEO, синхронизация, пользователи, админка, производительность, PHP-heavy, интернет-магазин или 1С/CommerceML.
 2. Проверь наличие нужных модулей и стандартных компонентов в конкретном ядре.
 3. Посмотри проектные оверрайды и glue-code в `local/`.
 4. Для PHP-heavy задачи отдельно проверь project toolchain: `composer.json`, `phpunit.xml*`, `phpstan*`, `psalm*`, fixer/sniffer, `rector.php`.
@@ -119,8 +122,11 @@ if (!Loader::includeModule('iblock')) {
 
 | Домен | Файлы |
 |------|------|
-| Audit текущего core и non-commerce task matrix | [references/core-audit-matrix.md](references/core-audit-matrix.md), [references/noncommerce-task-matrix.md](references/noncommerce-task-matrix.md) |
+| Audit текущего core, фазовая матрица и task routing | [references/core-audit-matrix.md](references/core-audit-matrix.md), [references/noncommerce-task-matrix.md](references/noncommerce-task-matrix.md), [references/shop-task-matrix.md](references/shop-task-matrix.md) |
 | Модель данных сайта и инфоблоков | [references/iblocks.md](references/iblocks.md), [references/entities-migrations.md](references/entities-migrations.md), [references/import-export.md](references/import-export.md), [references/sef-urls.md](references/sef-urls.md) |
+| Интернет-магазин: товары, SKU, цены, остатки, склады | [references/shop-task-matrix.md](references/shop-task-matrix.md), [references/catalog.md](references/catalog.md), [references/currency.md](references/currency.md), [references/iblocks.md](references/iblocks.md) |
+| Sale: корзина, checkout, заказ, оплата, доставка, скидки | [references/shop-task-matrix.md](references/shop-task-matrix.md), [references/sale.md](references/sale.md), [references/catalog.md](references/catalog.md), [references/currency.md](references/currency.md), [references/commerce-workflows.md](references/commerce-workflows.md) |
+| 1С / CommerceML: catalog import/export, order exchange | [references/commerce-1c-integration.md](references/commerce-1c-integration.md), [references/catalog.md](references/catalog.md), [references/sale.md](references/sale.md), [references/currency.md](references/currency.md), [references/operations-runbook.md](references/operations-runbook.md) |
 | HL-блоки, directory, права, selector, UF | [references/highloadblock.md](references/highloadblock.md), [references/iblock-hl-relations.md](references/iblock-hl-relations.md), [references/custom-uf-types.md](references/custom-uf-types.md) |
 | Фото-галереи, альбомы, upload, slideshow, photo comments | [references/photogallery.md](references/photogallery.md), [references/components.md](references/components.md), [references/templates.md](references/templates.md), [references/blog-socialnet.md](references/blog-socialnet.md), [references/forum.md](references/forum.md) |
 | Корпоративное решение, wizard, demo-data, `furniture.*` stock components | [references/sitecorporate.md](references/sitecorporate.md), [references/components.md](references/components.md), [references/templates.md](references/templates.md), [references/entities-migrations.md](references/entities-migrations.md) |
@@ -147,7 +153,7 @@ if (!Loader::includeModule('iblock')) {
 
 Дополнительно подгружай технические reference-файлы по необходимости:
 
-- Audit текущего core, активные/deferred зоны и task routing без магазина — [references/core-audit-matrix.md](references/core-audit-matrix.md), [references/noncommerce-task-matrix.md](references/noncommerce-task-matrix.md)
+- Audit текущего core, активные/deferred зоны, shop-core и task routing — [references/core-audit-matrix.md](references/core-audit-matrix.md), [references/noncommerce-task-matrix.md](references/noncommerce-task-matrix.md), [references/shop-task-matrix.md](references/shop-task-matrix.md)
 - Диагностика видимости, кешей, индексов и data flow — [references/diagnostic-visibility.md](references/diagnostic-visibility.md), [references/index-cache-diagnostics.md](references/index-cache-diagnostics.md), [references/component-dataflow-debugging.md](references/component-dataflow-debugging.md)
 - ORM, runtime-поля, связи и `Result/Error` — [references/orm.md](references/orm.md)
 - Архитектура модуля, `Loader`, PSR-4, `ServiceLocator`, `Option` — [references/modules-loader.md](references/modules-loader.md)
@@ -171,20 +177,24 @@ if (!Loader::includeModule('iblock')) {
 - Bitrix Cloud backup policy, monitoring, stored alerts, remote buckets и mobile inspector — [references/bitrixcloud.md](references/bitrixcloud.md), [references/clouds.md](references/clouds.md)
 - Локализация, языковые файлы, переводческий UI, индекс фраз, CSV import/export — [references/translate.md](references/translate.md), [references/import-export.md](references/import-export.md)
 - Форумы, опросы, соц-авторизация, лендинги, perf — [references/forum.md](references/forum.md), [references/vote.md](references/vote.md), [references/socialservices.md](references/socialservices.md), [references/landing.md](references/landing.md), [references/perfmon.md](references/perfmon.md)
+- Интернет-магазин, SKU, цены, остатки, корзина, checkout, заказы — [references/shop-task-matrix.md](references/shop-task-matrix.md), [references/catalog.md](references/catalog.md), [references/sale.md](references/sale.md), [references/currency.md](references/currency.md), [references/commerce-workflows.md](references/commerce-workflows.md)
+- 1С / CommerceML, `catalog.import.1c`, `catalog.export.1c`, `sale.export.1c`, `BX_CML2_IMPORT`, `BX_CML2_EXPORT` — [references/commerce-1c-integration.md](references/commerce-1c-integration.md), [references/catalog.md](references/catalog.md), [references/sale.md](references/sale.md), [references/currency.md](references/currency.md)
 - `workflow` и `push/pull` — только как deferred-reference после подтверждения модулей `bizproc` и `pull`
 - Современный grid, file uploader, нумераторы, user consent, низкоуровневый DB — [references/grid-admin-modern.md](references/grid-admin-modern.md), [references/file-upload-modern.md](references/file-upload-modern.md), [references/numerator.md](references/numerator.md), [references/userconsent.md](references/userconsent.md), [references/database-layer.md](references/database-layer.md)
 - Эксплуатация, переносы, agents/cron/stepper, backup/monitoring и perf — [references/operations-runbook.md](references/operations-runbook.md), [references/update-stepper.md](references/update-stepper.md), [references/perfmon.md](references/perfmon.md), [references/bitrixcloud.md](references/bitrixcloud.md)
 
-## Отложенные домены
+## Условные домены
 
-Эти reference-файлы не должны быть основным маршрутом в текущей фазе проекта:
+Эти reference-файлы активируются только после проверки соответствующих модулей в локальном проекте:
 
-- [references/catalog.md](references/catalog.md) — только после появления модуля `catalog`
-- [references/sale.md](references/sale.md) — только после появления модуля `sale`
-- [references/commerce-workflows.md](references/commerce-workflows.md) — только после установки магазинного core
-- [references/workflow.md](references/workflow.md) — только после появления модуля `bizproc`
-- [references/push-pull.md](references/push-pull.md) — только после появления модуля `pull`
-- `socialnet`-часть [references/blog-socialnet.md](references/blog-socialnet.md) — только после появления модуля `socialnet`
+- [references/catalog.md](references/catalog.md), [references/currency.md](references/currency.md), [references/shop-task-matrix.md](references/shop-task-matrix.md) — после появления `catalog` и `currency`.
+- [references/sale.md](references/sale.md), [references/commerce-workflows.md](references/commerce-workflows.md) — после появления `sale` вместе с `catalog`/`currency`.
+- [references/commerce-1c-integration.md](references/commerce-1c-integration.md) — после появления `catalog.import.1c`, `catalog.export.1c` или `sale.export.1c`.
+- [references/workflow.md](references/workflow.md) — после появления модуля `bizproc`.
+- [references/push-pull.md](references/push-pull.md) — после появления модуля `pull`.
+- `socialnet`-часть [references/blog-socialnet.md](references/blog-socialnet.md) — после появления модуля `socialnet`.
+
+Если модуль отсутствует, зафиксируй ограничение и не заменяй его похожим компонентом или wizard-ссылкой.
 
 ## Content-first эвристики
 
@@ -198,6 +208,10 @@ if (!Loader::includeModule('iblock')) {
 - Для задач “в админке есть, на сайте нет” сначала иди по цепочке data source → permissions/site binding → component params → filters → `result_modifier.php` → template → cache/index/SEO.
 - Для cache/index задач сначала определи конкретный слой: component cache, tagged cache, managed cache, composite/static HTML, search index, SEO artifacts, landing cache.
 - Для стандартных компонентов без `local/*` сначала смотри stock component templates и `bitrix/templates/*`; наличие `catalog.*` в `iblock` не означает установленный модуль `catalog`.
+- Для shop-задач сначала подтверждай `catalog`, `sale`, `currency`; затем разделяй product, offer, price, stock, basket, order и exchange side effects.
+- Для задач по 1С сначала определяй поток: `catalog.import.1c`, `catalog.export.1c` или `sale.export.1c`; проверяй `checkauth → init → file → import`, session cookies, `sessid`, temp files, XML_ID/CML2_LINK и логи.
+- Для задач “товар есть, но не покупается” проверяй parent product vs offer, доступную цену, валюту, остаток, reservation, `CAN_BUY_ZERO`, provider и sale basket events.
+- Для задач checkout сначала проверяй basket refresh, person type, обязательные свойства заказа, delivery/payment restrictions, discounts/coupons, `Order::save()` errors и side effects.
 - Для эксплуатационных задач требуй воспроизводимый route: migration/install step, CLI, agent/stepper, documented rollback и повторный запуск без дублей.
 - Для задач контента сначала проверь модель данных: тип инфоблока, `API_CODE`, символьные коды, XML ID, свойства, пользовательские поля разделов, файловые поля, привязки.
 - Для задач `bitrix.sitecorporate` сначала проверь `main:wizard_solution`, нужный wizard (`corp_services` / `corp_furniture`), include-файлы решения и stock `furniture.*`-компоненты. Не своди модуль к выдуманному runtime API.
@@ -227,10 +241,14 @@ if (!Loader::includeModule('iblock')) {
 ## Что никогда не делать
 
 - Не выдумывать API, события, классы и параметры, которые не подтверждены локальным ядром.
-- Не предполагать наличие `catalog`, `sale` или другого модуля без проверки.
+- Не предполагать наличие `catalog`, `sale`, `currency`, `bizproc`, `pull` или другого модуля без проверки.
 - Не трактовать `bitrix.sitecorporate` как общий business/runtime-модуль: в текущем core это wizard-shell плюс solution-specific `furniture.*` helpers.
 - Не считать ссылки из wizard/public skeleton на `bitrix:catalog`, `bitrix:news` или другие компоненты доказательством, что соответствующий модуль установлен в проекте.
 - Не считать физическое наличие `catalog.*` компонентов в `iblock/install/components/bitrix` доказательством установленного модуля `catalog`.
+- Не менять `b_sale_order`, basket, payment, shipment, catalog price или stock прямым SQL, если есть API и side effects.
+- Не подключать production 1С, реальные платежи, доставки или кассы для smoke без явного подтверждения.
+- Не считать успех `mode=file` в 1С обмене успешным импортом: проверяй `mode=import`, session state, таблицы и логи.
+- Не удалять и не переименовывать `XML_ID`/`CML2_LINK` без плана миграции обмена.
 - Не предполагать, что файл физически лежит локально, если активен `clouds` или у записи есть `HANDLER_ID`.
 - Не использовать `Bitrix\\Blog\\PostTable::add/update/delete()` и `CommentTable::add/update/delete()` для записи, если сам core велит идти через `CBlog*`.
 - Не объявлять поведение кастомным только потому, что в проекте нет `local/*`: сначала проверь stock template variant стандартного компонента и wizard public/template слой.

@@ -2,7 +2,7 @@
 
 > Reference для Bitrix-скилла. Загружай когда задача связана с бизнес-процессами, CBPRuntime, кастомными активностями, запуском BP из кода или управлением статусами.
 >
-> Audit note: в текущем проверенном core модуль `bizproc` в `www/bitrix/modules` не найден. Этот файл сейчас отложен и не должен использоваться как основной маршрут, пока модуль не установлен и не подтверждён в ядре.
+> Audit note: в shop-core `/Users/igormajorov/Downloads/Telegram Desktop/bitrix-shop-core` модуль `bizproc` подтверждён, версия `26.200.0`. В каждом проекте всё равно сначала проверяй `www/bitrix/modules/bizproc`; без модуля этот файл остаётся условным reference.
 
 ## Содержание
 - Архитектура: CBPRuntime, IBPActivity, Document

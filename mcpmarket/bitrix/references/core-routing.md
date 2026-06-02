@@ -5,84 +5,133 @@
 
 ## Source: `core-audit-matrix.md`
 
-# Core Audit Matrix без магазина — справочник
+# Core Audit Matrix — active core, shop-core и deferred zones
 
-> Reference для Bitrix-скилла. Загружай, когда нужно понять, что реально установлено в текущем core, какие домены активны, какие условны, и куда вести задачу без `catalog`/`sale`.
->
-> Матрица основана на текущем checkout `www/bitrix` и должна обновляться после установки новых модулей.
+> Reference для Bitrix-скилла. Загружай, когда нужно понять, что реально установлено в текущем core, какие домены активны, какие условны и куда вести задачу. Матрица теперь поддерживает две подтверждённые фазы: non-commerce core и отдельный shop-core для интернет-магазина/1С.
 
-## Содержание
-- Быстрые проверки
-- Активные модули текущего core
-- Условные и отложенные домены
-- Ловушки текущего core
-- Покрытие reference-файлами
-- Как обновлять матрицу
+## 0. Фазовый принцип
 
-## Быстрые проверки
+Bitrix skill остаётся **core-first**, а не “версией по памяти”. Есть два подтверждённых truth layer:
+
+1. **Non-commerce checkout** — активны контентные/системные модули, commerce был deferred.
+2. **Shop-core checkout** `/Users/igormajorov/Downloads/Telegram Desktop/bitrix-shop-core` — подтверждены `catalog`, `sale`, `currency`, `bitrix.eshop`, `pull`, `bizproc`, `sender`, `storeassist`, 1С/CommerceML components.
+
+В каждом новом пользовательском проекте сначала проверяй локальный `www/bitrix/modules`. Нельзя переносить активность `sale/catalog` из shop-core на другой проект без проверки.
+
+## 1. Быстрые проверки
 
 ```bash
 find www/bitrix/modules -maxdepth 1 -mindepth 1 -type d -exec basename {} \; | sort
 
-find www/bitrix/modules -maxdepth 3 -path '*/install/version.php' -print | sort
-
-find www/bitrix/modules -path '*/install/components/bitrix/*/.parameters.php' -print \
-  | sed 's#.*/install/components/bitrix/##; s#/.parameters.php##' \
-  | sort
+for m in main iblock currency catalog sale bizproc pull socialnet; do
+  if test -f "www/bitrix/modules/$m/install/version.php"; then
+    echo "--- $m ---" && sed -n '1,40p' "www/bitrix/modules/$m/install/version.php"
+  elif test -f "www/bitrix/modules/$m/classes/general/version.php"; then
+    echo "--- $m ---" && sed -n '1,20p' "www/bitrix/modules/$m/classes/general/version.php"
+  else
+    echo "MISS $m"
+  fi
+done
 ```
 
-Для `main` не требуй `www/bitrix/modules/main/install/version.php`: в текущем core у него есть `classes/general/version.php`, а не обычный `install/version.php`.
+Для `main` не требуй обычный `install/version.php`: в проверенном shop-core версия лежит в `www/bitrix/modules/main/classes/general/version.php` (`SM_VERSION 26.150.0`).
 
-## Активные модули текущего core
+## 2. Подтверждённый shop-core
+
+Shop-core facts:
+
+| Модуль | Версия | Статус | Reference |
+|---|---:|---|---|
+| `main` | `26.150.0` | active | `modules-loader.md`, `session-auth.md`, `database-layer.md` |
+| `iblock` | `25.300.0` | active | `iblocks.md`, `entities-migrations.md` |
+| `currency` | `26.0.0` | active shop | `currency.md` |
+| `catalog` | `25.550.0` | active shop | `catalog.md` |
+| `sale` | `26.0.0` | active shop | `sale.md` |
+| `bitrix.eshop` | `25.0.0` | active shop solution | `commerce-workflows.md`, `shop-task-matrix.md` |
+| `storeassist` | `24.0.0` | active shop assistant | `commerce-1c-integration.md`, `commerce-workflows.md` |
+| `pull` | `25.300.0` | active in shop-core | `push-pull.md` after local confirmation |
+| `bizproc` | `26.200.0` | active in shop-core | `workflow.md` after local confirmation |
+| `sender` | `26.0.0` | active in shop-core | `mail-notifications.md`, `sale.md` side effects |
+
+Shop-core содержит exchange components:
+
+- `catalog.import.1c`
+- `catalog.export.1c`
+- `sale.export.1c`
+
+Admin entrypoints:
+
+- `/bitrix/admin/1c_import.php`
+- `/bitrix/admin/1c_exchange.php`
+- `/bitrix/admin/1c_admin.php`
+- `/bitrix/admin/sale_exchange_log.php`
+
+## 3. Активные non-commerce модули
 
 | Модуль | Статус | Основной reference | Что проверять первым |
 |---|---|---|---|
 | `main` | active | `modules-loader.md`, `orm.md`, `session-auth.md`, `database-layer.md`, `access-rbac.md` | `lib/`, `classes/general`, компоненты `main.*`, user/session/cache/ORM |
-| `iblock` | active | `iblocks.md`, `iblock-hl-relations.md`, `entities-migrations.md` | `install/components/bitrix`, properties, sections, UF, legacy + D7 |
-| `highloadblock` | active | `highloadblock.md` | dynamic ORM, rights, UI selector, relation to iblock directory |
-| `form` | active | `webforms.md`, `standard-components-noncommerce.md` | form/result/status/validators/handlers/CRM link, stock templates |
-| `blog` | active | `blog-socialnet.md`, `standard-components-noncommerce.md` | `CBlog*` write path, D7 read-only tables, templates, search reindex |
-| `forum` | active | `forum.md`, `standard-components-noncommerce.md` | `CForum*`, forum components, permissions, topic/message flow |
-| `vote` | active | `vote.md`, `standard-components-noncommerce.md` | `CVote*`, channels/questions/answers, `voting.*` components |
-| `subscribe` | active | `subscribe.md`, `mail-notifications.md` | rubrics, subscriptions, postings, templates |
-| `search` | active | `search.md`, `index-cache-diagnostics.md` | `CSearch`, title search, `BeforeIndex`, URL generation, rights |
-| `seo` | active | `seo-cache-access.md`, `index-cache-diagnostics.md` | sitemap, robots/noindex, canonical, OpenGraph, SEO admin tools |
-| `landing` | active | `landing.md`, `standard-components-noncommerce.md` | Site/Landing/Block/Hook/Rights, mutator mode, templates |
-| `bitrix.sitecorporate` | active | `sitecorporate.md`, `standard-components-noncommerce.md` | wizard shell, `corp_furniture`, public skeleton, stock `furniture.*` |
-| `fileman` | active | `fileman.md`, `templates.md` | editor, address/map/video fields, visual assets |
-| `location` | active | `location.md`, `fileman.md` | address/location services, formats, widgets |
-| `messageservice` | active | `messageservice.md`, `mail-notifications.md` | SMS providers, limits, callbacks, REST |
-| `socialservices` | active | `socialservices.md`, `users.md` | OAuth providers, user links, auth flow |
-| `rest` | active | `rest.md`, `events-routing.md` | REST methods/events/webhooks/OAuth |
-| `security` | active | `security.md`, `diagnostic-visibility.md` | WAF, OTP/MFA, redirect/IP rules, scanner/checker |
-| `perfmon` | active | `perfmon.md`, `operations-runbook.md` | SQL/hit/cache diagnostics, schema/index insights |
-| `clouds` | active | `clouds.md`, `file-upload-modern.md` | external storage, `HANDLER_ID`, resize/src/MakeFileArray |
-| `bitrixcloud` | active | `bitrixcloud.md`, `operations-runbook.md` | backup policy, monitoring, mobile inspector |
-| `mobileapp` | active | `mobileapp.md`, `standard-components-noncommerce.md` | admin mobile, JN/native components, push settings |
-| `b24connector` | active | `b24connector.md` | remote portal binding, buttons, openline info, site restrictions |
-| `translate` | active | `translate.md` | lang files, phrase index, CSV import/export, UI |
-| `photogallery` | active | `photogallery.md`, `blog-socialnet.md`, `forum.md` | gallery root section, albums, upload, comments |
+| `iblock` | active | `iblocks.md`, `iblock-hl-relations.md`, `entities-migrations.md` | components, properties, sections, UF, legacy + D7 |
+| `highloadblock` | active | `highloadblock.md` | dynamic ORM, rights, UI selector |
+| `form` | active | `webforms.md` | form/result/status/validators/handlers/CRM link |
+| `blog` | active | `blog-socialnet.md` | `CBlog*` write path, D7 read-only tables |
+| `forum` | active | `forum.md` | `CForum*`, forum components, permissions |
+| `vote` | active | `vote.md` | `CVote*`, channels/questions/answers |
+| `subscribe` | active | `subscribe.md`, `mail-notifications.md` | rubrics, subscriptions, postings |
+| `search` | active | `search.md`, `index-cache-diagnostics.md` | `CSearch`, title search, `BeforeIndex`, rights |
+| `seo` | active | `seo-cache-access.md` | sitemap, robots/noindex, canonical, OpenGraph |
+| `landing` | active | `landing.md` | Site/Landing/Block/Hook/Rights, mutator mode |
+| `bitrix.sitecorporate` | active | `sitecorporate.md` | wizard shell, public skeleton, stock components |
+| `fileman` | active | `fileman.md` | editor, address/map/video fields |
+| `location` | active | `location.md` | address/location services, formats, widgets |
+| `messageservice` | active | `messageservice.md` | SMS providers, limits, callbacks |
+| `socialservices` | active | `socialservices.md` | OAuth providers, user links |
+| `rest` | active | `rest.md` | REST methods/events/webhooks/OAuth |
+| `security` | active | `security.md` | WAF, OTP/MFA, redirect/IP rules |
+| `perfmon` | active | `perfmon.md` | SQL/hit/cache diagnostics |
+| `clouds` | active | `clouds.md` | external storage, `HANDLER_ID`, resize/src |
+| `bitrixcloud` | active | `bitrixcloud.md` | backup policy, monitoring |
+| `mobileapp` | active | `mobileapp.md` | admin mobile, JN/native components |
+| `b24connector` | active | `b24connector.md` | portal binding, buttons, site restrictions |
+| `translate` | active | `translate.md` | lang files, phrase index, import/export |
+| `photogallery` | active | `photogallery.md` | gallery root, albums, upload, comments |
 | `ui` | active | `grid-admin-modern.md`, `file-upload-modern.md` | grid/filter/uploader/entity selector |
 
-## Условные и отложенные домены
+## 4. Shop task routing
 
-| Домен | Почему отложен | Что делать в ответе |
+| Домен | Активируется когда | Читать |
 |---|---|---|
-| `catalog` module | модуля `www/bitrix/modules/catalog` нет | не вести задачу в торговый каталог; если вопрос про `catalog.*` component, проверить владельца компонента |
-| `sale` module | модуля `www/bitrix/modules/sale` нет | не обещать корзину/заказ/оплаты/доставку |
-| `bizproc` | модуля нет | держать `workflow.md` как deferred |
-| `pull` | модуля нет | не строить realtime/push route на `pull` |
-| `socialnet` | модуля нет | использовать только условную часть `blog-socialnet.md` после подтверждения |
+| Товары/SKU/цены/остатки | `catalog` + `currency` есть | `catalog.md`, `currency.md`, `shop-task-matrix.md` |
+| Корзина/order/checkout | `sale` + `catalog` + `currency` есть | `sale.md`, `commerce-workflows.md` |
+| 1С/CommerceML | `catalog.import.1c` или `sale.export.1c` есть | `commerce-1c-integration.md` |
+| Store documents | `catalog.store.document.*` есть | `catalog.md`, `commerce-workflows.md` |
+| Bizproc/order automation | `bizproc` есть | `workflow.md`, `sale.md` |
+| Pull/realtime shop UI | `pull` есть | `push-pull.md`, конкретный component |
+| Eshop wizard/template | `bitrix.eshop` есть | `commerce-workflows.md`, `templates.md` |
 
-## Ловушки текущего core
+## 5. Условные и отложенные домены
 
-- `catalog.*` стандартные компоненты физически лежат в `www/bitrix/modules/iblock/install/components/bitrix`, но это не доказывает наличие модуля `catalog`.
-- `corp_furniture` wizard может ссылаться на `bitrix:catalog`, но это skeleton решения, а не подтверждение установленного магазинного core.
-- Отсутствие `www/local` означает, что следующий слой истины — stock component templates, `bitrix/templates/*` и wizard assets.
-- Vendor-файлы внутри `www/bitrix/modules/main/vendor/*` не являются project tooling.
-- Наличие JS test directories в core не означает, что PHP test contour проекта настроен.
+| Домен | Когда deferred | Что делать |
+|---|---|---|
+| `catalog` | нет `www/bitrix/modules/catalog` | не обещать цены/SKU/остатки; `catalog.*` из `iblock` считать только component-family без commerce API |
+| `sale` | нет `www/bitrix/modules/sale` | не обещать basket/order/payment/delivery |
+| `currency` | нет `www/bitrix/modules/currency` | не рассчитывать цены как полноценный commerce |
+| `bizproc` | нет модуля | держать `workflow.md` как deferred |
+| `pull` | нет модуля | не строить realtime/push route |
+| `socialnet` | нет модуля | использовать только `blog`-часть `blog-socialnet.md` |
+| 1С exchange | нет `catalog.import.1c`/`sale.export.1c` | описывать только generic import/export, не CommerceML route |
 
-## Покрытие reference-файлами
+## 6. Ловушки
+
+- Наличие `catalog.*` components внутри `iblock` или шаблонов не доказывает установленный `catalog` module.
+- Наличие shop-core в одном checkout не доказывает commerce-модули в другом проекте.
+- Parent product и offer — разные product IDs; цена/остаток часто живут на offer.
+- `currency` обязателен для корректного понимания catalog prices и sale sums.
+- `sale` side effects нельзя заменить SQL-правкой: order history, reservation, payment, shipment, cashbox, exchange.
+- 1С exchange success на `file` не означает успешный import: проверяй `mode=import`, session state, tables, logs.
+- Vendor-файлы внутри `www/bitrix/modules/*/vendor` не являются project tooling.
+
+## 7. Покрытие reference-файлами
 
 | Зона | Статус покрытия | Файлы |
 |---|---|---|
@@ -92,17 +141,19 @@ find www/bitrix/modules -path '*/install/components/bitrix/*/.parameters.php' -p
 | Content modules | active | `iblocks.md`, `highloadblock.md`, `webforms.md`, `blog-socialnet.md`, `forum.md`, `vote.md`, `subscribe.md` |
 | Search/SEO/cache | active | `search.md`, `seo-cache-access.md`, `cache-infra.md`, `index-cache-diagnostics.md` |
 | Admin/ops | active | `admin-ui.md`, `operations-runbook.md`, `perfmon.md`, `update-stepper.md` |
-| Commerce | deferred | `catalog.md`, `sale.md`, `commerce-workflows.md` |
+| Commerce/shop | active after local module confirmation | `shop-task-matrix.md`, `catalog.md`, `sale.md`, `currency.md`, `commerce-workflows.md` |
+| 1С/CommerceML | active after component confirmation | `commerce-1c-integration.md` |
 
-## Как обновлять матрицу
+## 8. Как обновлять матрицу
 
 После установки новых модулей:
 
 1. повторно снять список `www/bitrix/modules`;
-2. проверить `install/version.php` или модульный аналог версии;
-3. найти компоненты и stock templates;
-4. обновить эту матрицу и `SKILL.md`;
-5. снять deferred-флаг только для реально появившегося модуля.
+2. проверить version files;
+3. найти components and stock templates;
+4. проверить admin entrypoints;
+5. обновить эту матрицу, `SKILL.md`, `README.md`, `CHANGELOG.md`, `VERSION`;
+6. снять deferred-флаг только для реально появившегося модуля.
 
 ---
 
@@ -201,9 +252,114 @@ find www/bitrix/modules -path '*/install/components/bitrix/*/.parameters.php' -p
 | не сломать Bitrix-boundary | `php-workflow.md`, `component-dataflow-debugging.md` |
 | проверить vendor noise | `php-testing.md`, `php-quality.md` |
 
-## Что остаётся deferred
+## Commerce boundary
 
-Интернет-магазин, цены, остатки, SKU, корзина, заказ, оплата, доставка, скидки и checkout остаются deferred до установки `catalog` и `sale`.
+Этот файл остаётся роутером именно для задач **без интернет-магазина**. Если в проекте подтверждены `catalog`, `sale` и `currency`, для магазинных задач переходи в `shop-task-matrix.md`, `catalog.md`, `sale.md`, `currency.md`, `commerce-workflows.md` и `commerce-1c-integration.md`. Если модулей нет — commerce остаётся deferred и не должен подменяться `iblock`-компонентами.
+
+---
+
+## Source: `shop-task-matrix.md`
+
+# Shop task matrix — routing интернет-магазина
+
+> Используй этот файл как быстрый роутер для задач по интернет-магазину. Truth layer для нового этапа: shop-core `/Users/igormajorov/Downloads/Telegram Desktop/bitrix-shop-core` с подтверждёнными `catalog` 25.550.0, `sale` 26.0.0, `currency` 26.0.0, `bitrix.eshop` 25.0.0, `pull`, `bizproc`, `sender`, `storeassist`.
+
+## 1. Быстрый routing
+
+| Запрос пользователя | Сначала читать | Затем |
+|---|---|---|
+| Товары, свойства, разделы, SKU | `catalog.md`, `iblocks.md` | `commerce-1c-integration.md`, если есть 1С/XML_ID |
+| Цена не та / не показывается | `catalog.md`, `currency.md` | `sale.md`, `search-seo-ops` bundles для кеша |
+| Остатки, склады, доступность | `catalog.md` | `sale.md` для reservation/order effects |
+| Корзина не работает | `sale.md`, `catalog.md` | `components.md`, `events-routing.md` |
+| Checkout / оформление заказа | `sale.md` | `users.md`, `validation.md`, `templates.md` |
+| Оплата / callback | `sale.md` | `http.md`, `events-routing.md`, cashbox section в `sale.md` |
+| Доставка / locations | `sale.md`, `location.md` | `components.md`, `validation.md` |
+| Скидки / купоны | `sale.md`, `catalog.md` | `currency.md` |
+| 1С выгрузка товаров | `commerce-1c-integration.md`, `catalog.md` | `currency.md`, `cache-infra.md` |
+| Заказы в 1С | `commerce-1c-integration.md`, `sale.md` | `http.md`, `operations-runbook.md` |
+| “В админке есть, на сайте нет” для товара | `catalog.md`, `diagnostic-visibility.md` | `index-cache-diagnostics.md`, `component-dataflow-debugging.md` |
+| Производительность каталога | `catalog.md`, `perfmon.md`, `cache-infra.md` | `search.md`, `seo-cache-access.md` |
+
+## 2. Минимальная проверка shop-core
+
+```bash
+for m in main iblock currency catalog sale; do
+  if test -f "www/bitrix/modules/$m/install/version.php"; then
+    sed -n '1,40p' "www/bitrix/modules/$m/install/version.php"
+  elif test -f "www/bitrix/modules/$m/classes/general/version.php"; then
+    sed -n '1,20p' "www/bitrix/modules/$m/classes/general/version.php"
+  else
+    echo "MISS $m"
+  fi
+done
+```
+
+Если `catalog`, `sale` или `currency` отсутствуют, возвращайся к non-commerce маршруту и не веди задачу как магазинную.
+
+## 3. Диагностические цепочки
+
+### Товар есть в админке, но не виден на сайте
+
+1. `iblock`: element active, section active, site binding, dates, rights.
+2. `catalog`: product row, type, offer relation, price, currency, availability.
+3. `component`: params, filter, selected price types, offers props.
+4. `template`: `result_modifier.php`, скрытие пустых props, JS SKU switcher.
+5. `cache`: component/tagged/managed, facet/search index, composite.
+6. `seo`: SEF/urlrewrite/canonical, 404 handling.
+
+### Товар виден, но не покупается
+
+1. Product/offer ID: добавляется parent или offer?
+2. Price exists and accessible for user group.
+3. Currency valid and formatted.
+4. Quantity/availability/can buy zero/reservation.
+5. Catalog provider returns item data for basket.
+6. Sale basket event handlers and AJAX response.
+
+### Checkout падает
+
+1. Basket is not empty and refreshed.
+2. Person type and mandatory order properties.
+3. Delivery restrictions and location.
+4. Payment restrictions and currency.
+5. Discounts/coupons recalculation.
+6. `Order::save()` errors.
+7. Component AJAX template and JS.
+
+### 1С обмен падает
+
+1. Which flow: catalog import, catalog export, sale export/import.
+2. `checkauth` response and cookie persistence.
+3. `init` response: zip, file limit, sessid.
+4. `file`: upload/chunk/temp dir permissions.
+5. `import`: XML parsing, session state, last entry.
+6. Mapping: XML_ID, CML2_LINK, price type, store.
+7. Logs: `b_sale_exchange_log`, temp files, PHP/Apache errors.
+8. Side effects: cache, indexes, order status/reservation.
+
+## 4. Smoke fixtures для будущего теста
+
+Минимальный sandbox-набор:
+
+- один раздел каталога;
+- один простой товар;
+- один товар с двумя offers;
+- базовая цена в `RUB`;
+- один склад и остаток;
+- один тестовый пользователь;
+- одна корзина;
+- один заказ с доставкой и оплатой;
+- один CommerceML import fixture;
+- один order export/import fixture.
+
+## 5. Safety rules
+
+- Production data changes require explicit confirmation.
+- No real 1С, payments, delivery services, cashbox without confirmation.
+- Prefer migrations/CLI/fixtures over admin clicks.
+- Any exchange test must have cleanup and rollback.
+- Never trust memory over `www/bitrix` code.
 
 ---
 

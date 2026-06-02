@@ -1,154 +1,180 @@
 # Магазин, витрина и кросс-доменные workflow
 
-> Загружай этот файл, когда задача затрагивает сразу несколько слоёв интернет-магазина: модель данных, витрину, поиск, фильтрацию, SEO, корзину, оформление заказа, обмены или эксплуатацию.
->
-> Audit note: этот файл целиком отложен до установки магазинного core. В текущем проверенном ядре модули `catalog` и `sale` не подтверждены, поэтому магазинные workflow не должны быть активным маршрутом на этой фазе проекта.
+> Truth layer: shop-core `/Users/igormajorov/Downloads/Telegram Desktop/bitrix-shop-core`. Подтверждены `catalog` 25.550.0, `sale` 26.0.0, `currency` 26.0.0, `bitrix.eshop` 25.0.0, `pull`, `bizproc`, `sender`, `storeassist`, компоненты `catalog.import.1c`, `catalog.export.1c`, `sale.export.1c`, storefront components `sale.*`, admin catalog/store/productcard components. Этот файл больше не deferred для shop-core-аудита, но в каждом проекте сначала проверяй наличие модулей.
 
 ## 1. Порядок чтения проекта
 
-Для магазинных задач сначала смотри не API-справочник, а живой код проекта:
+Для магазинных задач сначала смотри живой код проекта:
 
-1. `www/bitrix/modules/<module>/install/version.php`
-2. `www/bitrix/modules/<module>/lib/`
+1. `www/bitrix/modules/main/classes/general/version.php` или `www/bitrix/modules/<module>/install/version.php`
+2. `www/bitrix/modules/catalog/lib/`, `www/bitrix/modules/sale/lib/`, `www/bitrix/modules/currency/lib/`
 3. `www/bitrix/modules/<module>/install/components/bitrix/<component>/`
-4. `local/components/<vendor>/<component>/`
-5. `local/templates/<site>/components/bitrix/<component>/`
-6. `local/php_interface/`, `local/modules/`, `urlrewrite.php`
+4. `www/bitrix/admin/1c_import.php`, `1c_exchange.php`, `sale_exchange_log.php` и реальные module-admin файлы
+5. `local/components/<vendor>/<component>/`
+6. `local/templates/<site>/components/bitrix/<component>/`
+7. `local/php_interface/`, `local/modules/`, `urlrewrite.php`
 
-Минимальный набор проверок:
+Минимальный модульный gate:
 
-- установлен ли модуль;
-- есть ли нужный стандартный компонент;
-- есть ли проектный оверрайд компонента или шаблона;
-- не разъехались ли параметры компонента, данные и шаблон;
-- какие кеши и индексы участвуют в цепочке.
+```bash
+for m in iblock currency catalog sale; do
+  test -d "www/bitrix/modules/$m" && echo "OK $m" || echo "MISS $m"
+done
+```
+
+Если `catalog`, `sale` или `currency` отсутствуют — не веди задачу как полноценный интернет-магазин.
 
 ## 2. Карта слоёв магазина
 
-| Слой | Что обычно лежит здесь | Основные reference-файлы |
-|------|-------------------------|---------------------------|
-| Контентный | инфоблоки, разделы, элементы, свойства, UF разделов, файлы, символьные коды, XML ID | `iblocks.md`, `entities-migrations.md`, `import-export.md`, `sef-urls.md` |
-| Коммерческий | тип товара, офферы, цены, типы цен, остатки, склады, доступность | `catalog.md`, `iblocks.md` |
-| Транзакционный | корзина, свойства заказа, оплата, доставка, скидки, купоны, статусы | `sale.md`, `users.md`, `validation.md` |
-| Поисковый | smart filter, facet, search index, URL фильтра, релевантность | `search.md`, `seo-cache-access.md`, `sef-urls.md`, `cache-infra.md` |
-| Презентационный | стандартный компонент, `arResult`, `result_modifier.php`, шаблон, `component_epilog.php`, AJAX | `components.md`, `templates.md`, `cache-infra.md` |
-| Операционный | обмены, агенты, stepper, cron, админка, миграции, логи | `update-stepper.md`, `admin-ui.md`, `entities-migrations.md`, `cache-infra.md` |
+| Слой | Что лежит здесь | Reference |
+|---|---|---|
+| Контентный | ИБ, разделы, элементы, свойства, UF, файлы, XML_ID | `iblocks.md`, `entities-migrations.md`, `import-export.md` |
+| Catalog | товар, offer, цена, тип цены, остаток, склад, measure, VAT | `catalog.md`, `currency.md` |
+| Sale | basket, order, shipment, payment, discount, coupon, person type, locations | `sale.md`, `users.md`, `validation.md` |
+| 1С / CommerceML | `catalog.import.1c`, `catalog.export.1c`, `sale.export.1c`, `BX_CML2_*` | `commerce-1c-integration.md` |
+| Витрина | complex catalog, list/detail, smart filter, SKU JS, basket line, checkout | `components.md`, `templates.md`, `component-dataflow-debugging.md` |
+| Индексы/кеш | component/tagged/managed/cache, facet, search, composite, SEO | `cache-infra.md`, `index-cache-diagnostics.md`, `search.md`, `seo-cache-access.md` |
+| Ops | agents, cron, stepper, import queues, logs, perf, backup | `operations-runbook.md`, `update-stepper.md`, `perfmon.md` |
 
 ## 3. Как выбирать точку изменения
 
-### Если меняется модель данных
+### Модель товара / SKU / свойства
 
-Предпочитай:
+1. Проверить iblock и offers iblock.
+2. Проверить `CCatalogSKU::GetInfoByProductIBlock()`.
+3. Проверить, где живёт цена/остаток: parent product или offer.
+4. Для повторяемого изменения писать migration/install step/CLI, а не клик в админке.
+5. Для 1С учитывать `XML_ID` и `CML2_LINK`.
 
-- миграцию;
-- установщик/обновлятор модуля;
-- отдельный CLI-скрипт для разового переноса;
-- stepper/агент для тяжёлой пакетной операции.
+### Цена / валюта / скидка
 
-Не полагайся на разовые клики в админке, если изменение должно повторяться на других стендах.
+1. `currency.md`: базовая валюта, формат, курс.
+2. `catalog.md`: `b_catalog_price`, `CATALOG_GROUP_ID`, права типа цены.
+3. `sale.md`: скидки, купоны, финальный расчёт basket/order.
+4. Кеш компонента и managed cache.
 
-### Если меняется поведение витрины
+### Остатки / склады / доступность
 
-Порядок проверки обычно такой:
+1. Общий `b_catalog_product.QUANTITY`.
+2. Складской `b_catalog_store_product.AMOUNT`.
+3. Reservation из sale/order/basket.
+4. Store documents/batches/barcodes, если включён складской учёт.
+5. `CAN_BUY_ZERO`, `QUANTITY_TRACE`, availability.
 
-1. стандартный компонент и его параметры;
-2. проектный шаблон компонента;
-3. `result_modifier.php`;
-4. `component_epilog.php`;
-5. сервисный слой и отдельные репозитории;
-6. кеш и AJAX-контур.
+### Корзина / checkout / заказ
 
-Тяжёлую выборку и бизнес-правила старайся держать вне `template.php`.
+1. `sale.md`: `Fuser`, `Basket`, provider, `Order` object graph.
+2. Проверить component: `sale.basket.*`, `sale.order.ajax`, `sale.order.checkout`, `sale.order.full`.
+3. Проверить person type, свойства заказа, delivery/payment restrictions.
+4. Проверить order save result и event handlers.
+5. Проверить side effects: stock reservation, mail, sender, cashbox, exchange.
 
-### Если меняется обмен или синхронизация
+### Обмен с 1С
 
-Процесс должен быть:
+1. Определить поток: catalog import, catalog export, sale exchange.
+2. Проверить `checkauth → init → file → import`.
+3. Проверить session/cookies/sessid/secure exchange.
+4. Проверить temp files, zip, chunk upload, PHP limits.
+5. Проверить mapping XML_ID/CML2_LINK/price type/store.
+6. Проверить post-import indexes/cache.
+7. Для orders проверить `b_sale_exchange_log`, критерии выгрузки, обратные документы.
 
-- идемпотентным;
-- пакетным;
-- логируемым;
-- безопасным к повторному запуску;
-- понятным по стратегии повторной обработки ошибок.
+## 4. Diagnostic routes
 
-После синхронизации учитывай зависимые индексы и кеши.
+### “В админке товар есть, на сайте нет”
 
-## 4. Диагностические маршруты
+```text
+iblock entity
+→ section/site/activity/rights
+→ catalog row/type/SKU
+→ price/currency/price group rights
+→ stock/availability
+→ component params/filter/select
+→ result_modifier/template/SKU JS
+→ component/tagged/facet/search/composite cache
+→ SEF/urlrewrite/SEO
+```
 
-### Расхождение между админкой и витриной
+### “Товар виден, но не покупается”
 
-Проверь по цепочке:
+```text
+product vs offer ID
+→ catalog provider
+→ accessible price
+→ stock/reservation/can-buy-zero
+→ basket item creation
+→ sale events/validators
+→ AJAX response/template
+```
 
-1. активность сущности, сайт, раздел, даты активности, права;
-2. фильтр и `select` в компоненте;
-3. проектный `result_modifier.php` и шаблон;
-4. кеш компонента, тегированный кеш, composite;
-5. ЧПУ, `urlrewrite.php`, обработку 404 и canonical.
+### “Checkout разваливается”
 
-### Расхождение между данными товара и отображением
+```text
+basket refresh
+→ person type
+→ required order props
+→ location/delivery restrictions
+→ payment restrictions
+→ discounts/coupons
+→ order save errors
+→ event handlers
+→ mail/payment/cashbox/exchange side effects
+```
 
-Проверь:
+### “1С выгрузила, но данные не обновились”
 
-1. структуру модели: простой товар или родитель/оффер;
-2. источник цены, доступности, картинок и свойств;
-3. какой слой собирает итоговый `arResult`;
-4. не фильтрует ли шаблон “пустые” поля;
-5. не остался ли старый кеш после обновления данных.
+```text
+checkauth/session
+→ init limits/zip
+→ file upload/temp dir
+→ import XML step
+→ XML_ID mapping
+→ product/offer/price/store tables
+→ custom event handlers
+→ indexes/cache
+```
 
-### Расхождение в поиске и фильтрации
+## 5. Components map
 
-Проверь:
+Catalog/admin:
 
-1. настройки свойств и их пригодность для фильтра/индекса;
-2. актуальность facet/search индекса;
-3. соответствие URL-правил и параметров компонента;
-4. права и привязку к сайту;
-5. кеш, который может отдавать старую форму фильтра или выдачу.
+- `catalog.product.grid`, `catalog.productcard.details`, `catalog.productcard.variation.grid`, `catalog.productcard.store.amount*`;
+- `catalog.store.*`, `catalog.store.document.*`;
+- `catalog.report.store_*`;
+- `catalog.import.1c`, `catalog.export.1c`.
 
-### Расхождение в цепочке оформления заказа
+Sale/storefront:
 
-Проверь:
+- `sale.basket.basket`, `sale.basket.basket.line`, `sale.basket.basket.small`, `sale.basket.order.ajax`;
+- `sale.order.ajax`, `sale.order.checkout`, `sale.order.full`;
+- `sale.personal.order*`, `sale.personal.profile*`, `sale.personal.account`, `sale.personal.section`;
+- `sale.order.payment*`, `sale.account.pay`, `sale.delivery.request*`, `sale.location.*`;
+- `sale.export.1c`.
 
-1. тип плательщика и коллекцию свойств заказа;
-2. совместимость службы доставки и платёжной системы;
-3. финальный пересчёт заказа перед сохранением;
-4. обработчики `sale`, которые могут дозаполнять или ломать данные;
-5. внешние callback и логи обмена, если проблема проявляется уже после создания заказа.
+Currency:
 
-### Расхождение после обмена или импорта
+- `currency.field.money`, `currency.money.input`, `currency.rates`.
 
-Проверь:
+Всегда читай `.parameters.php`, `component.php/class.php`, `templates/*`, затем project override.
 
-1. стратегию сопоставления внутренних и внешних идентификаторов;
-2. работу с файлами и множественными свойствами;
-3. повторяемость апдейта и пропуск уже обработанных данных;
-4. переиндексацию поиска/фасета и очистку кешей;
-5. отложенные задачи, которые завершают обработку не в том же запросе.
+## 6. Что проговаривать в ответе
 
-## 5. Компоненты и реальные контракты
+Для любой кросс-доменной shop-задачи явно укажи:
 
-Когда задача касается стандартного компонента, читай его контракт из ядра:
+- какие модули и версии подтверждены;
+- product vs offer ID;
+- где цена, валюта, остаток и доступность;
+- какой компонент и template участвуют;
+- какие order/basket side effects есть;
+- какие кеши/индексы надо обновить;
+- есть ли 1С/CommerceML или внешний sync;
+- что можно менять кодом, а что требует подтверждения как data mutation.
 
-- `.parameters.php` — доступные параметры;
-- `component.php` или `class.php` — сборка данных;
-- `templates/` — реальная структура шаблонов;
-- `.description.php` — позиционирование компонента и назначение.
+## 7. Safety
 
-Для каталогоподобной витрины обычно критичны:
-
-- корневой комплексный компонент;
-- список раздела;
-- детальная карточка;
-- фильтр;
-- поисковый компонент каталога.
-
-Сначала подтверди их наличие в текущем ядре, потом проектные переопределения.
-
-## 6. Что нужно проговаривать в ответе
-
-Для кросс-доменных задач ответ должен явно содержать:
-
-- какие модули и компоненты были проверены в ядре;
-- какой слой является источником данных;
-- где именно вносить изменение;
-- какие кеши и индексы завязаны на это изменение;
-- какие ограничения есть из-за отсутствующего модуля или проектной архитектуры.
+- Не меняй production catalog/sale данные без подтверждения.
+- Не подключай реальную 1С, платежи, доставки, кассы без подтверждения.
+- Не делай прямой SQL для order/basket/payment/shipment/product price/stock, если есть API и side effects.
+- Не удаляй XML_ID/CML2_LINK без плана миграции обмена.
+- Не чисти глобально все кеши первым действием; определи слой.
+- Не используй один shop-core как универсальную истину для всех версий: всегда перепроверяй локальный проект.

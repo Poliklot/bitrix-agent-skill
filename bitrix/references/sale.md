@@ -1,110 +1,95 @@
-# Модуль Sale — заказы, корзина, оплата, доставка
+# Sale — корзина, заказ, оплата, доставка (`sale` 26.0.0)
+
+> Truth layer: shop-core `/Users/igormajorov/Downloads/Telegram Desktop/bitrix-shop-core`, модуль `sale` версии `26.0.0` (`install/version.php`, дата `2026-01-12`). В этом core `sale`, `catalog`, `currency`, `pull`, `bizproc`, `sender` присутствуют. В каждом проекте сначала проверяй наличие `www/bitrix/modules/sale` и конкретных компонентов.
+
+## 0. Обязательная проверка перед sale-задачей
+
+```bash
+test -d www/bitrix/modules/sale && sed -n '1,40p' www/bitrix/modules/sale/install/version.php
+find www/bitrix/modules/sale/install/components/bitrix -maxdepth 1 -type d | sort | rg '^.*/sale\.'
+find www/bitrix/modules/sale/lib -maxdepth 2 -type f | sort | sed -n '1,120p'
+```
 
 ```php
 use Bitrix\Main\Loader;
-Loader::includeModule('sale');
-Loader::includeModule('catalog'); // для работы с товарами
+
+foreach (['sale', 'catalog', 'currency'] as $module) {
+    if (!Loader::includeModule($module)) {
+        throw new \RuntimeException("Module {$module} is not installed");
+    }
+}
 ```
 
-> Audit note: в текущем проверенном core модули `sale` и `catalog` в `www/bitrix/modules` не найдены. Этот файл сейчас отложен до установки магазинного core и не должен быть активным маршрутом в текущей фазе проекта.
+## 1. D7 object graph
 
-## Архитектура Sale D7
-
-```
-Order (заказ)
-├── Basket (корзина)
-│   └── BasketItem[] (позиции)
-├── PropertyCollection (свойства заказа — ФИО, адрес, телефон)
-├── ShipmentCollection
-│   └── Shipment[] (отправления)
-│       └── ShipmentItemCollection → ShipmentItem[]
-└── PaymentCollection
-    └── Payment[] (оплаты)
+```text
+Order
+├── Basket / BasketItem
+├── PropertyCollection / PropertyValue
+├── ShipmentCollection / Shipment / ShipmentItemCollection
+├── PaymentCollection / Payment
+├── Discount / OrderDiscount
+├── Tax / Location / PersonType
+└── Status lifecycle + history/change log
 ```
 
----
+Подтверждённые классы/файлы:
 
-## Корзина
+- `Bitrix\Sale\Order` — `sale/lib/order.php`;
+- `Bitrix\Sale\Basket`, `BasketItem`, `Fuser` — `sale/lib/basket*.php`, `sale/lib/fuser.php`;
+- `Shipment`, `ShipmentCollection`, `ShipmentItemCollection` — `sale/lib/shipment*.php`;
+- `Payment`, `PaymentCollection` — `sale/lib/payment*.php`;
+- `Discount`, `OrderDiscount`, `OrderDiscountManager` — `sale/lib/discount.php`, `orderdiscount*.php`;
+- `OrderStatus`, `DeliveryStatus`, `StatusBase` — `sale/lib/*status*.php`;
+- `Location\*` — `sale/lib/location/*`;
+- `Cashbox\*` — `sale/lib/cashbox/*`;
+- exchange/1C — `sale/lib/exchange/*`, `sale/lib/exchange/onec/*`.
 
-### Добавить товар в корзину текущего пользователя
+## 2. Главные таблицы
+
+| Слой | Таблицы |
+|---|---|
+| Посетитель/корзина | `b_sale_fuser`, `b_sale_basket`, `b_sale_basket_props`, `b_sale_basket_reservation`, `b_sale_basket_reservation_history` |
+| Заказ | `b_sale_order`, `b_sale_order_props*`, `b_sale_order_history`, `b_sale_order_change`, `b_sale_order_entities_custom_fields` |
+| Отгрузки | `b_sale_order_delivery`, `b_sale_order_dlv_basket`, `b_sale_order_delivery_req*` |
+| Оплаты | `b_sale_order_payment`, `b_sale_order_payment_item`, `b_sale_pay_system_action`, `b_sale_pay_system_err_log` |
+| Скидки | `b_sale_discount*`, `b_sale_order_discount`, `b_sale_order_coupons`, `b_sale_order_rules*` |
+| Статусы | `b_sale_status`, `b_sale_status_lang`, `b_sale_status_group_task` |
+| Локации | `b_sale_location*`, `b_sale_loc_*`, `b_sale_location_group*` |
+| Профили | `b_sale_user_props`, `b_sale_user_props_value`, `b_sale_person_type*` |
+| 1С/exchange | `b_sale_export`, `b_sale_exchange_log`, `b_sale_synchronizer_log`, `b_sale_bizval_code_1c` |
+| Кассы | `b_sale_cashbox*`, `b_sale_check*`, `b_sale_check_related_entities` |
+
+## 3. Корзина
 
 ```php
 use Bitrix\Sale\Basket;
-use Bitrix\Sale\BasketItem;
-use Bitrix\Main\Context;
+use Bitrix\Sale\Fuser;
 
-$basket = Basket::loadItemsForFUser(
-    \CSaleBasket::GetBasketUserID(), // fuser_id текущего посетителя
-    SITE_ID
-);
-
-// Проверить, есть ли товар уже в корзине
-$existingItem = null;
-foreach ($basket as $item) {
-    if ($item->getField('PRODUCT_ID') == $productId) {
-        $existingItem = $item;
-        break;
-    }
-}
-
-if ($existingItem) {
-    // Увеличить количество
-    $existingItem->setField('QUANTITY', $existingItem->getQuantity() + $quantity);
-} else {
-    // Новая позиция
-    $item = $basket->createItem('catalog', $productId);
-    $item->setFields([
-        'QUANTITY'   => $quantity,
-        'CURRENCY'   => \Bitrix\Currency\CurrencyManager::getBaseCurrency(),
-        'LID'        => SITE_ID,
-        'PRODUCT_ID' => $productId,
-        'NAME'       => $productName,
-        'PRICE'      => $price,
-        'PRODUCT_PROVIDER_CLASS' => '\CCatalogProductProvider',
-    ]);
-}
+$basket = Basket::loadItemsForFUser(Fuser::getId(), SITE_ID);
+$item = $basket->createItem('catalog', $productId);
+$item->setFields([
+    'QUANTITY' => 1,
+    'CURRENCY' => \Bitrix\Currency\CurrencyManager::getBaseCurrency(),
+    'LID' => SITE_ID,
+    'PRODUCT_PROVIDER_CLASS' => \CCatalogProductProvider::class,
+]);
 
 $result = $basket->save();
 if (!$result->isSuccess()) {
-    // обработка ошибок
+    throw new \RuntimeException(implode('; ', $result->getErrorMessages()));
 }
 ```
 
-### Получить корзину
+Для production-кода не заполняй `PRICE` вручную без причины: provider/catalog должен пересчитать цену, доступность, вес и скидки. Если создаёшь service-layer, отдели:
 
-```php
-$fUserId = \CSaleBasket::GetBasketUserID();
-$basket  = Basket::loadItemsForFUser($fUserId, SITE_ID);
+- получение/создание `Fuser`;
+- добавление item;
+- refresh/recalculate;
+- сохранение;
+- обработку `Result/Error`.
 
-$total   = $basket->getPrice();    // итоговая сумма с учётом скидок
-$weight  = $basket->getWeight();   // вес
-
-foreach ($basket as $item) {
-    $productId = $item->getProductId();
-    $name      = $item->getField('NAME');
-    $quantity  = $item->getQuantity();
-    $price     = $item->getPrice();       // цена за единицу
-    $finalPrice = $item->getFinalPrice(); // с учётом скидок
-}
-```
-
-### Удалить позицию из корзины
-
-```php
-foreach ($basket as $item) {
-    if ($item->getProductId() == $productId) {
-        $item->delete();
-        break;
-    }
-}
-$basket->save();
-```
-
----
-
-## Заказы
-
-### Создать заказ из корзины
+## 4. Создание заказа
 
 ```php
 use Bitrix\Sale\Order;
@@ -112,264 +97,144 @@ use Bitrix\Sale\Basket;
 use Bitrix\Sale\Delivery;
 use Bitrix\Sale\PaySystem;
 
-$userId = (int)$GLOBALS['USER']->GetID();
-
-// 1. Создать заказ
 $order = Order::create(SITE_ID, $userId);
-$order->setPersonTypeId(1); // 1 — физ.лицо, 2 — юр.лицо (зависит от настроек)
+$order->setPersonTypeId($personTypeId);
+$order->setBasket(Basket::loadItemsForFUser(\Bitrix\Sale\Fuser::getId(), SITE_ID));
 
-// 2. Привязать корзину
-$basket = Basket::loadItemsForFUser(\CSaleBasket::GetBasketUserID(), SITE_ID);
-$order->setBasket($basket);
-
-// 3. Свойства заказа (ФИО, телефон, адрес и т.д.)
 $propertyCollection = $order->getPropertyCollection();
-foreach ($propertyCollection as $prop) {
-    $code = $prop->getField('CODE');
-    if ($code === 'NAME') {
-        $prop->setValue('Иван Иванов');
-    } elseif ($code === 'EMAIL') {
-        $prop->setValue('ivan@example.com');
-    } elseif ($code === 'PHONE') {
-        $prop->setValue('+79991234567');
-    }
+$email = $propertyCollection->getUserEmail();
+if ($email) {
+    $email->setValue($userEmail);
 }
 
-// 4. Доставка
 $shipmentCollection = $order->getShipmentCollection();
 $shipment = $shipmentCollection->createItem();
-
-$deliveryService = Delivery\Services\Manager::getById(1); // ID службы доставки
+$delivery = Delivery\Services\Manager::getById($deliveryId);
 $shipment->setFields([
-    'DELIVERY_ID'   => $deliveryService['ID'],
-    'DELIVERY_NAME' => $deliveryService['NAME'],
-    'CURRENCY'      => $order->getCurrency(),
-    'PRICE_DELIVERY'=> 300.00,
+    'DELIVERY_ID' => $delivery['ID'],
+    'DELIVERY_NAME' => $delivery['NAME'],
+    'CURRENCY' => $order->getCurrency(),
 ]);
 
-// Перенести позиции корзины в отправление
-$shipmentItemCollection = $shipment->getShipmentItemCollection();
-foreach ($basket as $basketItem) {
-    $shipmentItem = $shipmentItemCollection->createItem($basketItem);
+foreach ($order->getBasket() as $basketItem) {
+    $shipmentItem = $shipment->getShipmentItemCollection()->createItem($basketItem);
     $shipmentItem->setQuantity($basketItem->getQuantity());
 }
 
-// 5. Оплата
-$paymentCollection = $order->getPaymentCollection();
-$payment = $paymentCollection->createItem();
-
-$paySystemService = PaySystem\Manager::getById(1); // ID платёжной системы
+$payment = $order->getPaymentCollection()->createItem();
+$paySystem = PaySystem\Manager::getObjectById($paySystemId);
 $payment->setFields([
-    'PAY_SYSTEM_ID'   => $paySystemService['ID'],
-    'PAY_SYSTEM_NAME' => $paySystemService['NAME'],
-    'SUM'             => $order->getPrice(),
-    'CURRENCY'        => $order->getCurrency(),
+    'PAY_SYSTEM_ID' => $paySystem->getField('ID'),
+    'PAY_SYSTEM_NAME' => $paySystem->getField('NAME'),
+    'SUM' => $order->getPrice(),
+    'CURRENCY' => $order->getCurrency(),
 ]);
 
-// 6. Сохранить
-$result = $order->save();
-if ($result->isSuccess()) {
-    $orderId = $order->getId();
-} else {
-    $errors = $result->getErrorMessages();
-}
-```
-
-### Получить заказ
-
-```php
-use Bitrix\Sale\Order;
-
-$order = Order::load($orderId);
-
-if ($order) {
-    $userId   = $order->getUserId();
-    $status   = $order->getField('STATUS_ID');   // N, P, F и т.д.
-    $price    = $order->getPrice();              // сумма
-    $currency = $order->getCurrency();
-    $paid     = $order->isPaid();                // bool
-    $canceled = $order->isCanceled();            // bool
-
-    // Свойства
-    $propCollection = $order->getPropertyCollection();
-    $email = $propCollection->getUserEmail();    // специальный метод
-    $name  = $propCollection->getPayerName();
-    $phone = $propCollection->getPhone();
-}
-```
-
-### Список заказов через ORM
-
-```php
-use Bitrix\Sale\Internals\OrderTable;
-
-$result = OrderTable::getList([
-    'select' => ['ID', 'USER_ID', 'PRICE', 'CURRENCY', 'STATUS_ID', 'DATE_INSERT'],
-    'filter' => [
-        '=USER_ID'   => $userId,
-        '=STATUS_ID' => ['N', 'P'],   // новые и оплаченные
-    ],
-    'order'  => ['DATE_INSERT' => 'DESC'],
-    'limit'  => 20,
-]);
-while ($row = $result->fetch()) { ... }
-```
-
-### Изменить статус заказа
-
-```php
-use Bitrix\Sale\Order;
-
-$order = Order::load($orderId);
-$order->setField('STATUS_ID', 'F'); // F = завершён
 $result = $order->save();
 ```
 
-### Отменить заказ
+Перед сохранением заказа проверь совместимость:
+
+- `PERSON_TYPE_ID` ↔ свойства заказа;
+- служба доставки ↔ location/person type/состав корзины;
+- платёжная система ↔ person type/site/currency/sum;
+- final basket refresh;
+- обработчики `sale` events.
+
+## 5. Статусы, оплата, отгрузка
 
 ```php
-$order = Order::load($orderId);
-$order->setField('CANCELED', 'Y');
-$order->setField('REASON_CANCELED', 'Отказ клиента');
-$order->save();
-```
+$order = \Bitrix\Sale\Order::load($orderId);
+$order->setField('STATUS_ID', 'P');
 
----
+foreach ($order->getPaymentCollection() as $payment) {
+    $payment->setPaid('Y');
+}
 
-## Оплата (Payment)
-
-### Отметить платёж как оплаченный
-
-```php
-use Bitrix\Sale\Order;
-
-$order = Order::load($orderId);
-$paymentCollection = $order->getPaymentCollection();
-
-foreach ($paymentCollection as $payment) {
-    if (!$payment->isPaid()) {
-        $result = $payment->setPaid('Y');
-        if ($result->isSuccess()) {
-            $order->save();
-        }
+foreach ($order->getShipmentCollection() as $shipment) {
+    if (!$shipment->isSystem()) {
+        $shipment->setField('DEDUCTED', 'Y');
     }
 }
+
+$result = $order->save();
 ```
 
-### Статусы Payment
+Не меняй `b_sale_order.STATUS_ID`, `PAYED`, `DEDUCTED` прямым SQL: потеряешь events, history, exchange flags, reservation/cashbox side effects.
 
-| Метод | Описание |
-|-------|---------|
-| `$payment->isPaid()` | оплачен |
-| `$payment->getSum()` | сумма платежа |
-| `$payment->getField('PAY_SYSTEM_ID')` | ID платёжной системы |
-| `$payment->getField('DATE_PAID')` | дата оплаты |
+## 6. Standard components
 
----
+Подтверждённые storefront/account components:
 
-## Скидки и купоны
+- корзина: `sale.basket.basket`, `sale.basket.basket.line`, `sale.basket.basket.small`, `sale.basket.order.ajax`;
+- оформление: `sale.order.ajax`, `sale.order.checkout`, `sale.order.full`;
+- оплата: `sale.order.payment`, `sale.order.payment.change`, `sale.order.payment.receive`, `sale.account.pay`;
+- личный кабинет: `sale.personal.order*`, `sale.personal.profile*`, `sale.personal.account`, `sale.personal.section`, `sale.personal.subscribe*`;
+- доставка/локации: `sale.ajax.delivery.calculator`, `sale.location.*`, `sale.store.choose`, `sale.delivery.request*`;
+- подарки/рекомендации: `sale.gift.*`, `sale.products.gift*`, `sale.recommended.products`;
+- 1С: `sale.export.1c`.
 
-### Применить купон к заказу
+Для checkout-багов всегда читай `.parameters.php`, `class.php/component.php`, `templates/*`, затем project template override.
 
-```php
-use Bitrix\Sale\DiscountCouponsManager;
+## 7. Events и side effects
 
-// Добавить купон (привязывается к fuser)
-$result = DiscountCouponsManager::add($couponCode);
-if (!$result) {
-    // неверный купон
-}
+Sale-задачи почти всегда имеют побочные эффекты:
 
-// Применяется автоматически при расчёте заказа через Order::refreshData()
-```
+- reservation и доступный остаток catalog;
+- скидки и купоны;
+- почтовые события и sender triggers;
+- payment callbacks;
+- delivery requests;
+- cashbox/check generation;
+- exchange log и 1С-синхронизация;
+- order history/change log;
+- managed cache, personal account pages, basket line AJAX.
 
-### Проверить купон вручную
+При изменении order lifecycle проговаривай, какие side effects нужны, а какие нельзя запускать.
 
-```php
-use Bitrix\Sale\Discount\Discount;
+## 8. 1С exchange для заказов
 
-$couponInfo = \CSaleDiscount::GetCoupon($couponCode, SITE_ID);
-// $couponInfo['ID'], ['DISCOUNT_ID'], ['TYPE'] (1=один раз, 2=многократно, 3=на одного)
-```
+Маршрутизируй в `commerce-1c-integration.md`. В shop-core подтверждены:
 
----
+- компонент `sale.export.1c`;
+- admin entrypoint `/bitrix/admin/1c_exchange.php`;
+- `/bitrix/admin/sale_exchange_log.php`;
+- `sale/lib/exchange/*`, `sale/lib/exchange/onec/*`;
+- таблицы `b_sale_exchange_log`, `b_sale_synchronizer_log`, `b_sale_bizval_code_1c`.
 
-## События Sale
+Ключевые режимы `sale.export.1c/component.php`: `mode=checkauth`, `mode=init`, `mode=file`, `mode=import`; сессия `$_SESSION['BX_CML2_EXPORT']`; `secure_1c_exchange`; `sessid`; zip/unzip; `last_xml_entry` для продолжения импорта.
 
-Регистрация в `include.php` модуля:
+## 9. Диагностика sale-багов
 
-```php
-use Bitrix\Main\EventManager;
+### Товар не добавляется в корзину
 
-// Перед сохранением заказа
-EventManager::getInstance()->addEventHandler('sale', 'OnSaleOrderBeforeSaved', [\My\Handler::class, 'onBeforeSave']);
+1. Проверь catalog product/offer, цену, остаток, provider.
+2. Проверь `Fuser::getId()` и site ID.
+3. Проверь `PRODUCT_PROVIDER_CLASS` и `MODULE` item.
+4. Проверь sale basket component AJAX и CSRF/session.
+5. Проверь event handlers, которые валидируют basket item.
 
-// После сохранения заказа
-EventManager::getInstance()->addEventHandler('sale', 'OnSaleOrderSaved', [\My\Handler::class, 'onSaved']);
+### Checkout не создаёт заказ
 
-// Смена статуса
-EventManager::getInstance()->addEventHandler('sale', 'OnSaleStatusOrder', [\My\Handler::class, 'onStatus']);
+1. Проверь `PERSON_TYPE_ID` и обязательные свойства.
+2. Проверь location и delivery restrictions.
+3. Проверь payment system restrictions.
+4. Проверь basket refresh и coupons.
+5. Проверь ошибки `$result->getErrorMessages()` от `Order::save()`.
+6. Проверь component template и AJAX response.
 
-// Оплата
-EventManager::getInstance()->addEventHandler('sale', 'OnSalePaymentPaid', [\My\Handler::class, 'onPaid']);
-```
+### Заказ создан, но не уходит в 1С
 
-```php
-// Обработчик
-class Handler
-{
-    public static function onSaved(\Bitrix\Main\Event $event): void
-    {
-        /** @var \Bitrix\Sale\Order $order */
-        $order  = $event->getParameter('ENTITY');
-        $isNew  = $event->getParameter('IS_NEW');   // bool — новый заказ?
-        $values = $event->getParameter('VALUES');    // изменённые поля
+1. Проверь настройки компонента `sale.export.1c` и группы доступа.
+2. Проверь `b_sale_exchange_log` / `/bitrix/admin/sale_exchange_log.php`.
+3. Проверь `DATE_UPDATE`, статус, оплату/отгрузку и критерии выгрузки.
+4. Проверь `secure_1c_exchange`, `sessid`, cookies/session.
+5. Проверь временные файлы `upload/1c_exchange` или temp-dir.
 
-        $orderId = $order->getId();
-    }
-}
-```
+## 10. Что не делать
 
-### Ключевые события
-
-| Событие | Когда |
-|---------|-------|
-| `OnSaleOrderBeforeSaved` | перед сохранением (можно отменить) |
-| `OnSaleOrderSaved` | после сохранения |
-| `OnSaleStatusOrder` | смена статуса заказа |
-| `OnSalePaymentPaid` | заказ отмечен как оплаченный |
-| `OnSaleBasketItemSaved` | сохранение позиции корзины |
-| `OnSaleShipmentSaved` | сохранение отправления |
-
----
-
-## Legacy API (встречается в старых проектах)
-
-```php
-// Получить список заказов пользователя
-$res = CSaleOrder::GetList(
-    ['ID' => 'DESC'],
-    ['USER_ID' => $userId, 'STATUS_ID' => 'N'],
-    false,
-    ['nPageSize' => 20]
-);
-while ($order = $res->GetNext()) {
-    echo $order['ID'] . ' — ' . $order['PRICE'];
-}
-
-// Изменить статус
-CSaleOrder::StatusOrder($orderId, 'F');
-
-// Отменить
-CSaleOrder::CancelOrder($orderId, 'Y', 'Причина');
-```
-
----
-
-## Gotchas
-
-- `Order::create` не сохраняет — нужен явный `$order->save()`
-- При добавлении товара в корзину обязательно указывай `PRODUCT_PROVIDER_CLASS` — без него не будет проверки остатков и расчёта скидок
-- `$basket->getPrice()` возвращает цену **с учётом скидок** — только после `$order->doFinalAction(true)` пересчитываются скидки заказа
-- `isPaid()` на Order проверяет **все** платежи. Если один из нескольких платежей не оплачен — `isPaid()` = false
-- `PersonType` (физ/юр. лицо) влияет на набор свойств заказа — всегда проверяй какие типы настроены на сайте
+- Не писать заказ/оплату/отгрузку прямым SQL.
+- Не создавать заказ без финального refresh basket/order.
+- Не считать, что `sale.order.ajax` и `sale.order.checkout` имеют одинаковый контракт: проверяй конкретный component.
+- Не подключать real pay systems/delivery/1С для smoke без явного подтверждения.
+- Не игнорировать user/person type/site restrictions.

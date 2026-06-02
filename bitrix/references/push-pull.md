@@ -2,7 +2,7 @@
 
 > Reference для Bitrix-скилла. Загружай когда задача связана с real-time уведомлениями, Push&Pull, WebSocket, отправкой событий из PHP в браузер или настройкой каналов.
 >
-> Audit note: в текущем проверенном core модуль `pull` в `www/bitrix/modules` не найден. Этот файл сейчас отложен и не должен быть основным маршрутом, пока модуль не установлен и не подтверждён в ядре.
+> Audit note: в shop-core `/Users/igormajorov/Downloads/Telegram Desktop/bitrix-shop-core` модуль `pull` подтверждён, версия `25.300.0`. В каждом проекте всё равно сначала проверяй `www/bitrix/modules/pull`; без модуля этот файл остаётся условным reference.
 
 ## Содержание
 - Архитектура Push&Pull

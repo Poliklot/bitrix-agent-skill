@@ -14,6 +14,7 @@ Core-first skill for `1C-Bitrix CMS` and `Bitrix24` in `Claude Code` and `Codex`
 - Учитывает ситуации, когда в checkout вообще нет `www/local`.
 - Подхватывает существующий PHP toolchain проекта: `composer`, `phpunit`, `phpstan`/`psalm`, fixer/sniffer, `rector` — только если он реально есть, и не путает его с vendor-шумом внутри core.
 - Закрывает безмагазинные диагностики: “в админке есть, на сайте нет”, кеши, индексы, standard components, legacy modernization и эксплуатационные операции.
+- Закрывает shop-core: `catalog`, `sale`, `currency`, SKU/торговые предложения, цены, остатки, склады, корзину, checkout, заказы, оплаты, доставки, скидки и 1С/CommerceML exchange — только после проверки модулей в конкретном проекте.
 - Ставит навык в `Claude Code` и `Codex` на macOS, Linux и Windows.
 - При первом содержательном `/bitrix` должен предложить обновление, если release уже вырос.
 
@@ -31,7 +32,7 @@ Core-first skill for `1C-Bitrix CMS` and `Bitrix24` in `Claude Code` and `Codex`
 https://github.com/Poliklot/bitrix-agent-skill/tree/master/mcpmarket/bitrix
 ```
 
-Полная папка `bitrix/` содержит update/install/uninstall-скрипты и 64 отдельных reference-файла, поэтому превышает лимит MCP Market в 50 файлов. `mcpmarket/bitrix/` содержит тот же reference-слой, сгруппированный в compact bundles.
+Полная папка `bitrix/` содержит update/install/uninstall-скрипты и 67 отдельных reference-файлов, поэтому превышает лимит MCP Market в 50 файлов. `mcpmarket/bitrix/` содержит тот же reference-слой, сгруппированный в compact bundles.
 
 ### macOS / Linux
 
@@ -126,6 +127,7 @@ curl -fsSL https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/
 /bitrix Покажи stock template layer для form и объясни, что реально есть в intranet-варианте
 /bitrix Разбери bitrix.sitecorporate в этом ядре и скажи, где wizard кладёт public и templates
 /bitrix Проверь, есть ли в этом core sale/catalog и можно ли уже идти в магазинные задачи
+/bitrix Разбери, почему 1С выгрузила товар, но на сайте нет цены и остатка
 ```
 
 ## Проверено на живом core
@@ -136,16 +138,18 @@ curl -fsSL https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/
 - PHP-слой проекта: service-layer, DTO/value-object границы, exceptions vs `Result/Error`, project tooling, testing/verification, quality gates и legacy modernization без конфликта с Bitrix-нормами
 - контентные и системные модули: инфоблоки, HL-блоки, формы, блог, форум, голосования, photogallery, landing, fileman, translate, search, SEO, import/export
 - интеграционный, диагностический и эксплуатационный слой: REST, socialservices, b24connector, mobileapp, clouds, bitrixcloud, messageservice, perfmon, admin UI, migrations, agents/cron/stepper, cache/index troubleshooting
+- интернет-магазин на отдельном shop-core: `catalog` 25.550.0, `sale` 26.0.0, `currency` 26.0.0, `bitrix.eshop` 25.0.0, SKU/offers, цены, остатки, склады, basket/order/checkout, payment/delivery/discounts, `catalog.import.1c`, `catalog.export.1c`, `sale.export.1c`
 
-Магазинный контур остаётся отдельным этапом и подключается только после установки соответствующего core.
+Commerce-маршрут активируется только после проверки `catalog`, `sale`, `currency` и нужных компонентов в конкретном проекте. Если модулей нет, навык остаётся в non-commerce маршруте и не выдумывает магазинный API.
 
 <details>
 <summary>Полная матрица reference-файлов и тем</summary>
 
 | Файл справки | Темы |
 |--------------|------|
-| `core-audit-matrix.md` | Матрица текущего non-commerce core: активные модули, deferred-домены, ловушки вроде `catalog.*` внутри `iblock` без модуля `catalog` |
+| `core-audit-matrix.md` | Фазовая матрица текущего core: active non-commerce, active shop-core, deferred-домены и ловушки вроде `catalog.*` без модуля `catalog` |
 | `noncommerce-task-matrix.md` | Быстрое сопоставление типовых и нетиповых задач без магазина с правильными reference-файлами |
+| `shop-task-matrix.md` | Быстрый routing интернет-магазина: товары, SKU, цены, остатки, корзина, checkout, оплата, доставка, скидки, заказы, 1С/CommerceML |
 | `diagnostic-visibility.md` | Диагностика “в админке есть, на сайте нет”: права, site binding, параметры компонента, фильтры, шаблон, кеши, индексы |
 | `index-cache-diagnostics.md` | Component cache, tagged/managed cache, composite/static HTML, search index, SEO artifacts, landing cache |
 | `component-dataflow-debugging.md` | Трассировка standard component flow: `.parameters.php`, `component.php`, `result_modifier.php`, `template.php`, `component_epilog.php`, AJAX |
@@ -158,6 +162,7 @@ curl -fsSL https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/
 | `php-legacy-modernization.md` | Безопасная модернизация legacy: boundary extraction, D7 vs `C*` write paths, DTO/strict_types только в подходящих слоях |
 | `standard-components-noncommerce.md` | Standard components без магазина: active component families, stock templates, `catalog.*` как iblock-компоненты без commerce-обещаний |
 | `operations-runbook.md` | Эксплуатация без магазина: переносы, agents/cron/stepper, импорты, backup/monitoring, perf diagnostics, core updates |
+| `currency.md` | Валюты, курсы, форматирование денег, `CurrencyManager`, `CurrencyTable`, `CurrencyRateTable`, связь с catalog prices и sale sums |
 | `components.md` | CBitrixComponent, шаблоны, кеш компонента, CComponentEngine |
 | `sitecorporate.md` | `bitrix.sitecorporate`: wizard shell, `corp_services`/`corp_furniture`, `wizard_solution`, panel rerun, stock `furniture.*`, wizard `site/public` и `site/templates`, conditional `catalog` dependency в `corp_furniture` skeleton |
 | `cache-infra.md` | Data\Cache, TaggedCache, CAgent, IO\File/Directory/Path |
@@ -180,9 +185,10 @@ curl -fsSL https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/
 | `messageservice.md` | MessageService: SMS-провайдеры, Message, SmsManager, ограничения, REST, callback-и, config components |
 | `translate.md` | Translate: lang-файлы, индекс фраз, translate UI, CSV import/export, translate:index, права и panel hooks |
 | `perfmon.md` | Perfmon: SQL/hit/cache diagnostics, схема, индексы, admin-страницы производительности |
-| `sale.md` | Интернет-магазин [deferred]: только при установленном модуле `sale` |
-| `catalog.md` | Торговый каталог [deferred]: только при установленном модуле `catalog` |
-| `commerce-workflows.md` | Магазинные workflow [deferred]: только после установки магазинного core |
+| `sale.md` | Sale: basket, order, shipment, payment, delivery, discounts, coupons, statuses, locations, cashbox, 1С order exchange side effects |
+| `catalog.md` | Торговый каталог: product, SKU/offers, price types, prices, stores, stock, measure, VAT, store documents, catalog import/export |
+| `commerce-workflows.md` | Кросс-доменные магазинные workflow: product → offer → price → stock → basket → checkout → order → payment/delivery → cache/index/exchange |
+| `commerce-1c-integration.md` | 1С / CommerceML: `catalog.import.1c`, `catalog.export.1c`, `sale.export.1c`, `checkauth/init/file/import`, `BX_CML2_IMPORT`, `BX_CML2_EXPORT`, exchange logs |
 | `blog-socialnet.md` | Блог текущего core: `CBlog*`, D7 read-only таблицы `PostTable`/`CommentTable`, mail reply handlers, search reindex, stock template variants (`micro`, `old_version`, `socialnetwork`), conditional `socialnet` contour |
 | `push-pull.md` | Push&Pull [deferred]: только при установленном модуле `pull` |
 | `workflow.md` | Бизнес-процессы [deferred]: только при установленном модуле `bizproc` |

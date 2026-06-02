@@ -1,324 +1,198 @@
-# Торговый каталог (модуль Catalog)
+# Торговый каталог — `catalog` 25.550.0
+
+> Truth layer: shop-core `/Users/igormajorov/Downloads/Telegram Desktop/bitrix-shop-core`, модуль `catalog` версии `25.550.0` (`install/version.php`, дата `2026-02-17`). В этом core `catalog`, `sale`, `currency`, `bitrix.eshop`, `pull`, `bizproc`, `storeassist` реально присутствуют. Этот файл больше не deferred для shop-core-аудита, но в каждом клиентском проекте всё равно сначала проверяй `www/bitrix/modules/catalog`.
+
+## 0. Обязательная проверка перед catalog-задачей
+
+```bash
+test -d www/bitrix/modules/catalog && sed -n '1,40p' www/bitrix/modules/catalog/install/version.php
+find www/bitrix/modules/catalog/install/components/bitrix -maxdepth 1 -type d | sort
+find local/components bitrix/templates local/templates -maxdepth 4 -type d 2>/dev/null | rg 'catalog|sale'
+```
 
 ```php
 use Bitrix\Main\Loader;
-Loader::includeModule('catalog');
-Loader::includeModule('iblock');
-```
 
-> Audit note: в текущем проверенном core модуль `catalog` в `www/bitrix/modules` не найден. Этот файл сейчас отложен до установки магазинного core и не должен быть активным маршрутом в текущей фазе проекта.
-
-## Архитектура
-
-Модуль `catalog` работает поверх инфоблоков:
-- **Товар** — элемент инфоблока с типом `D7_PRODUCT_TYPE = 1` (простой) или `6` (с ТП)
-- **Торговое предложение (SKU/offer)** — элемент дочернего инфоблока типа `2`
-- **Цена** — таблица `b_catalog_price`, связана с товаром по `PRODUCT_ID`
-- **Склад** — таблица `b_catalog_store`, остатки в `b_catalog_store_product`
-
----
-
-## Цены
-
-### Прочитать цену товара
-
-```php
-use Bitrix\Catalog\PriceTable;
-
-// Получить все цены товара
-$result = PriceTable::getList([
-    'select' => ['ID', 'PRODUCT_ID', 'CATALOG_GROUP_ID', 'PRICE', 'CURRENCY', 'QUANTITY_FROM', 'QUANTITY_TO'],
-    'filter' => ['=PRODUCT_ID' => $productId],
-    'order'  => ['CATALOG_GROUP_ID' => 'ASC'],
-]);
-while ($row = $result->fetch()) {
-    // $row['CATALOG_GROUP_ID'] — ID типа цены (прайс-листа)
-    // $row['PRICE'] — цена
-    // $row['CURRENCY'] — валюта
+foreach (['iblock', 'currency', 'catalog'] as $module) {
+    if (!Loader::includeModule($module)) {
+        throw new \RuntimeException("Module {$module} is not installed");
+    }
 }
 ```
 
-### Получить цену для текущего пользователя (с учётом группы/скидок)
+Проверенный shop-core содержит стандартные catalog-компоненты: `catalog.import.1c`, `catalog.export.1c`, `catalog.product.grid`, `catalog.productcard.*`, `catalog.store.*`, `catalog.store.document.*`, `catalog.report.store_*`, `catalog.product.subscribe*`, `catalog.viewed.products`, `currency.field.money`, `currency.money.input`, `currency.rates`.
 
-```php
-// Массив цен по всем типам для одного товара
-$prices = \CCatalogProduct::GetOptimalPrice(
-    $productId,
-    1,                         // количество
-    $USER->GetUserGroupArray(), // группы пользователя
-    'N',                       // 'N' — без повторного расчёта
-    [],                        // дополнительные параметры
-    SITE_ID,
-    []
-);
-// $prices['PRICE']['PRICE'] — итоговая цена
-// $prices['PRICE']['DISCOUNT_PRICE'] — цена до скидки
-// $prices['PRICE']['PERCENT'] — % скидки
-```
+## 1. Модель данных catalog
 
-### Установить / обновить цену
+Catalog живёт поверх `iblock`, но коммерческие данные лежат в собственных таблицах:
 
-```php
-use Bitrix\Catalog\PriceTable;
+| Слой | Таблицы / файлы | Что проверять |
+|---|---|---|
+| Привязка catalog к ИБ | `b_catalog_iblock`, `Bitrix\Catalog\CatalogIblockTable`, `CCatalogSKU` | `PRODUCT_IBLOCK_ID`, offers iblock, `SKU_PROPERTY_ID`, `YANDEX_EXPORT` |
+| Товар | `b_catalog_product`, `Bitrix\Catalog\ProductTable`, `Bitrix\Catalog\Model\Product` | тип товара, количество, резерв, вес, VAT, quantity trace |
+| Цена | `b_catalog_price`, `Bitrix\Catalog\PriceTable`, `Bitrix\Catalog\Model\Price` | тип цены, валюта, quantity range, base price |
+| Тип цены | `b_catalog_group`, `b_catalog_group_lang`, `Bitrix\Catalog\GroupTable` | базовая цена, права групп, язык/название |
+| SKU/offers | `CCatalogSKU`, `Bitrix\Catalog\Product\Sku`, свойство `CML2_LINK` | связь offer → product, отдельные цены/остатки offer |
+| Остатки | `b_catalog_store`, `b_catalog_store_product`, `StoreTable`, `StoreProductTable` | складской остаток vs общий `QUANTITY` |
+| Складские документы | `b_catalog_store_docs`, `b_catalog_docs_element`, `Storedocument*Table` | приход/расход/перемещение, batch, barcode |
+| Единицы | `b_catalog_measure`, `b_catalog_measure_ratio`, `MeasureTable`, `MeasureRatioTable` | базовая единица, коэффициент продажи |
+| НДС | `b_catalog_vat`, `VatTable` | ставка, включённость в цену |
+| Скидки catalog | `b_catalog_discount*`, `Discount*` | legacy/catalog discounts, связь с sale discounts |
+| Доступ | `b_catalog_role`, `b_catalog_permission` | catalog RBAC отдельно от iblock rights |
 
-// Найти существующую цену
-$existing = PriceTable::getList([
-    'filter' => ['=PRODUCT_ID' => $productId, '=CATALOG_GROUP_ID' => 1],
-])->fetch();
+Не путай `iblock`-активность (`ACTIVE`, `ACTIVE_FROM/TO`, права разделов) с коммерческой доступностью (`QUANTITY`, `CAN_BUY_ZERO`, `AVAILABLE`, `SUBSCRIBE`, складские остатки).
 
-if ($existing) {
-    // Обновить
-    $result = PriceTable::update($existing['ID'], [
-        'PRICE'    => 1500.00,
-        'CURRENCY' => 'RUB',
-    ]);
-} else {
-    // Создать
-    $result = PriceTable::add([
-        'PRODUCT_ID'       => $productId,
-        'CATALOG_GROUP_ID' => 1,    // ID прайс-листа
-        'PRICE'            => 1500.00,
-        'CURRENCY'         => 'RUB',
-        'QUANTITY_FROM'    => null, // нет ограничения по количеству
-        'QUANTITY_TO'      => null,
-    ]);
-}
+## 2. Товар, offer и тип продукта
 
-if (!$result->isSuccess()) {
-    // обработка ошибок
-}
-```
-
-### Типы цен (прайс-листы)
-
-```php
-use Bitrix\Catalog\GroupTable;
-
-$result = GroupTable::getList([
-    'select' => ['ID', 'NAME', 'BASE'],
-    'order'  => ['SORT' => 'ASC'],
-]);
-while ($row = $result->fetch()) {
-    // $row['BASE'] == 'Y' — базовый прайс-лист
-}
-```
-
----
-
-## Торговые предложения (SKU / Offers)
-
-Торговые предложения — это элементы **дочернего инфоблока** с типом продукта `2`. Связь с родительским товаром через свойство типа `E` (привязка к элементу).
-
-### Получить список ТП для товара
-
-```php
-// Найти инфоблок ТП
-$offersIblockId = \CCatalogSKU::GetInfoByProductIBlock($productIblockId);
-// $offersIblockId['IBLOCK_ID'] — ID инфоблока ТП
-// $offersIblockId['SKU_PROPERTY_ID'] — ID свойства-связки
-
-// Получить ТП для конкретного товара
-$res = CIBlockElement::GetList(
-    ['SORT' => 'ASC'],
-    [
-        'IBLOCK_ID'                              => $offersIblockId['IBLOCK_ID'],
-        'ACTIVE'                                 => 'Y',
-        'PROPERTY_' . $offersIblockId['SKU_PROPERTY_ID'] => $productId,
-    ],
-    false,
-    false,
-    ['ID', 'NAME', 'PROPERTY_COLOR', 'PROPERTY_SIZE']
-);
-while ($offer = $res->GetNext()) {
-    $offerId = $offer['ID'];
-    // Получить цену ТП
-    $prices = PriceTable::getList(['filter' => ['=PRODUCT_ID' => $offerId]])->fetch();
-}
-```
-
-### D7 для инфоблока с API_CODE
-
-```php
-// Если инфоблок ТП имеет API_CODE='catalog_offers':
-use Bitrix\Iblock\Elements\ElementCatalogOffersTable;
-
-$result = ElementCatalogOffersTable::getList([
-    'select' => ['ID', 'NAME', 'COLOR' => 'COLOR.VALUE', 'SIZE' => 'SIZE.VALUE'],
-    'filter' => [
-        '=ACTIVE' => 'Y',
-        '=PARENT_PRODUCT.ID' => $productId, // через reference
-    ],
-]);
-```
-
----
-
-## Склады и остатки
-
-### Получить остатки на всех складах
-
-```php
-use Bitrix\Catalog\StoreProductTable;
-
-$result = StoreProductTable::getList([
-    'select' => ['STORE_ID', 'AMOUNT', 'STORE_TITLE' => 'STORE.TITLE'],
-    'filter' => ['=PRODUCT_ID' => $productId],
-]);
-while ($row = $result->fetch()) {
-    // $row['STORE_TITLE'] — название склада
-    // $row['AMOUNT'] — количество
-}
-```
-
-### Суммарный остаток
+В этом core есть D7-слой `Bitrix\Catalog\ProductTable`, `Bitrix\Catalog\Model\Product`, `Bitrix\Catalog\Product\Sku`, но стандартные компоненты и старые обмены всё ещё часто идут через legacy `CCatalogProduct`, `CCatalogSKU`, `CIBlockElement`.
 
 ```php
 use Bitrix\Catalog\ProductTable;
 
 $product = ProductTable::getRow([
-    'select' => ['ID', 'QUANTITY', 'QUANTITY_RESERVED'],
+    'select' => ['ID', 'TYPE', 'QUANTITY', 'QUANTITY_RESERVED', 'AVAILABLE', 'CAN_BUY_ZERO', 'WEIGHT'],
     'filter' => ['=ID' => $productId],
 ]);
-// $product['QUANTITY'] — общий остаток
-// $product['QUANTITY'] - $product['QUANTITY_RESERVED'] — доступный
 ```
 
-### Обновить остаток на складе
+Типы не хардкодь по памяти: проверяй константы в `ProductTable` текущего ядра. Для диагностики SKU сначала найди offers-ИБ:
+
+```php
+$skuInfo = \CCatalogSKU::GetInfoByProductIBlock($productIblockId);
+if ($skuInfo) {
+    $offersIblockId = (int)$skuInfo['IBLOCK_ID'];
+    $skuPropertyId = (int)$skuInfo['SKU_PROPERTY_ID'];
+}
+```
+
+Для 1С-связки критичны `XML_ID`, external IDs и свойство offer → product. В шаблонах sale встречается фильтрация свойства `CML2_LINK`, поэтому не удаляй/не переименовывай это свойство без аудита обмена.
+
+## 3. Цены и типы цен
+
+Цены требуют модуля `currency`; валюта лежит в `b_catalog_currency*`, сами цены — в `b_catalog_price`.
+
+```php
+use Bitrix\Catalog\PriceTable;
+use Bitrix\Catalog\GroupTable;
+
+$prices = PriceTable::getList([
+    'select' => ['ID', 'PRODUCT_ID', 'CATALOG_GROUP_ID', 'PRICE', 'CURRENCY', 'QUANTITY_FROM', 'QUANTITY_TO'],
+    'filter' => ['=PRODUCT_ID' => $productId],
+    'order' => ['CATALOG_GROUP_ID' => 'ASC', 'QUANTITY_FROM' => 'ASC'],
+]);
+
+$priceTypes = GroupTable::getList([
+    'select' => ['ID', 'NAME', 'BASE', 'SORT'],
+    'order' => ['SORT' => 'ASC'],
+]);
+```
+
+Для витрины не показывай “первую попавшуюся” цену. Проверяй:
+
+1. какие `CATALOG_GROUP_ID` переданы в компонент;
+2. права группы пользователя на тип цены (`b_catalog_group2group`, `b_catalog_product2group`);
+3. quantity range;
+4. валюту и форматирование;
+5. скидки `sale`/`catalog`, если цена выводится через компонент.
+
+Для записи цены предпочитай D7 `PriceTable::add/update`, но перед боевым изменением проговаривай обратимость и чисть зависимые кеши.
+
+## 4. Остатки, склады и availability
+
+Общий остаток товара: `ProductTable::QUANTITY`. Складские остатки: `StoreProductTable` / `b_catalog_store_product`.
 
 ```php
 use Bitrix\Catalog\StoreProductTable;
 
-$existing = StoreProductTable::getList([
-    'filter' => ['=PRODUCT_ID' => $productId, '=STORE_ID' => $storeId],
-])->fetch();
+$rows = StoreProductTable::getList([
+    'select' => ['STORE_ID', 'PRODUCT_ID', 'AMOUNT', 'STORE_TITLE' => 'STORE.TITLE'],
+    'filter' => ['=PRODUCT_ID' => $productId],
+]);
+```
 
-if ($existing) {
-    StoreProductTable::update($existing['ID'], ['AMOUNT' => $newQuantity]);
-} else {
-    StoreProductTable::add([
-        'PRODUCT_ID' => $productId,
-        'STORE_ID'   => $storeId,
-        'AMOUNT'     => $newQuantity,
-    ]);
-}
+После ручной правки складского остатка не забывай пересчёт товара:
 
-// Пересчитать общий остаток в b_catalog_product
+```php
 \CCatalogProduct::recalcQuantityProduct($productId);
 ```
 
----
+Для задач “товар виден, но не покупается” проверяй вместе:
 
-## Типы продуктов
+- `ACTIVE` элемента и раздела;
+- `TYPE` товара: простой/parent SKU/offer;
+- цена доступна текущей группе;
+- `QUANTITY`, `QUANTITY_RESERVED`, `CAN_BUY_ZERO`, `QUANTITY_TRACE`;
+- есть ли активный offer с ценой и остатком;
+- не ломает ли `CatalogProvider` добавление в basket;
+- кеш catalog-компонента и managed/tagged cache.
 
-```php
-use Bitrix\Catalog\ProductTable;
+## 5. Складские документы, batch, barcode
 
-// Константы типа продукта
-ProductTable::TYPE_PRODUCT      // 1 — простой товар
-ProductTable::TYPE_SET          // 2 — комплект (устарело)
-ProductTable::TYPE_SKU          // 3 — товар с ТП (родительский)
-ProductTable::TYPE_OFFER        // 4 — торговое предложение
-ProductTable::TYPE_FREE_OFFER   // 5 — свободное ТП
-ProductTable::TYPE_EMPTY_SKU    // 6 — товар без ТП (новый тип)
-```
+В shop-core есть `catalog.store.document.*` компоненты и таблицы `b_catalog_store_docs`, `b_catalog_docs_element`, `b_catalog_store_batch`, `b_catalog_store_barcode`, `b_catalog_docs_barcode`. Для задач по складам не своди всё к `QUANTITY`.
 
-### Получить тип товара
+Проверяй:
 
-```php
-use Bitrix\Catalog\ProductTable;
+- включён ли складской учёт в настройках catalog;
+- тип документа: приход, расход, перемещение, списание;
+- contractor (`b_catalog_contractor`);
+- batch/barcode, если используются партии или маркировка;
+- пересчёт общего остатка и reserved quantity.
 
-$product = ProductTable::getRow([
-    'select' => ['TYPE', 'AVAILABLE'],
-    'filter' => ['=ID' => $productId],
-]);
-// $product['TYPE'] — тип
-// $product['AVAILABLE'] == 'Y' — в наличии (по остаткам)
-```
+## 6. Standard components и admin UI
 
----
+Подтверждённые component families в shop-core:
 
-## Скидки каталога
+- импорт/экспорт: `catalog.import.1c`, `catalog.export.1c`, `catalog.import.hl`;
+- карточка/грид товара: `catalog.product.grid`, `catalog.productcard.details`, `catalog.productcard.variation.grid`, `catalog.productcard.variation.details`, `catalog.grid.product.field`;
+- склады: `catalog.store.*`, `catalog.store.document.*`, `catalog.productcard.store.amount*`;
+- отчёты: `catalog.report.store_*`;
+- подписки/viewed/recommended: `catalog.product.subscribe*`, `catalog.viewed.products`, `catalog.bigdata.products`.
 
-### Список скидок
+Для стандартного компонента всегда читай:
 
-```php
-use Bitrix\Catalog\DiscountTable;
+1. `.description.php`;
+2. `.parameters.php`;
+3. `component.php` / `class.php`;
+4. `templates/*`;
+5. project override в `local/templates/.../components/bitrix/...`.
 
-$result = DiscountTable::getList([
-    'select' => ['ID', 'NAME', 'ACTIVE', 'DISCOUNT_TYPE', 'DISCOUNT_VALUE'],
-    'filter' => ['=ACTIVE' => 'Y', '=SITE_ID' => SITE_ID],
-    'order'  => ['SORT' => 'ASC'],
-]);
-```
+## 7. CommerceML и 1С
 
-### Применить скидки каталога к ценам (при отображении)
+Catalog-часть обмена подтверждена через `catalog.import.1c` и `catalog.export.1c`. Детали маршрутизируй в `commerce-1c-integration.md`.
 
-```php
-// Инициализировать движок скидок для пользователя
-\CCatalogDiscount::SetDiscountGroups($USER->GetUserGroupArray());
+Ключевые режимы `catalog.import.1c/component.php`: `mode=checkauth`, `mode=init`, `mode=file`, `mode=import`; сессия `$_SESSION['BX_CML2_IMPORT']`; `sessid` и проверка источника. Для экспорта каталога аналогично смотри `catalog.export.1c`.
 
-// Получить цену с учётом скидок каталога
-$discountPrice = \CCatalogProduct::GetOptimalPrice(
-    $productId,
-    1,
-    $USER->GetUserGroupArray(),
-    'N',
-    [],
-    SITE_ID,
-    []
-);
-```
+## 8. Диагностика типовых catalog-багов
 
----
+### 1С выгрузила товар, но его нет на сайте
 
-## Товар и его свойства — полный набор данных
+1. Найди элемент по `XML_ID`/external ID в iblock.
+2. Проверь `ACTIVE`, section binding, site binding, права.
+3. Проверь `b_catalog_product` для element ID.
+4. Если это offer — проверь связь `CML2_LINK` / `SKU_PROPERTY_ID`.
+5. Проверь цену в нужном `CATALOG_GROUP_ID` и валюту.
+6. Проверь остатки и `AVAILABLE`.
+7. Пересобери search/facet index и очисти component/tagged cache.
 
-```php
-// Получить элемент инфоблока + данные каталога
-$element = CIBlockElement::GetByID($productId)->GetNextElement();
-if ($element) {
-    $fields     = $element->GetFields();        // стандартные поля
-    $properties = $element->GetProperties();    // свойства
+### Цена не обновилась
 
-    // Данные из catalog
-    $catalogData = \CCatalogProduct::GetByID($productId);
-    // $catalogData['WEIGHT'], ['WIDTH'], ['HEIGHT'], ['LENGTH'], ['CAN_BUY_ZERO']
+1. Убедись, что обновлялся product ID нужного offer, а не parent product.
+2. Проверь `CATALOG_GROUP_ID`, quantity range и `CURRENCY`.
+3. Проверь права текущей группы на тип цены.
+4. Проверь, не применена ли скидка sale/catalog.
+5. Проверь кеш компонента и managed cache.
 
-    // Цена
-    $price = \CPrice::GetBasePrice($productId);
-    // $price['PRICE'], $price['CURRENCY']
-}
-```
+### Остаток не совпадает
 
----
+1. Разведи общий `b_catalog_product.QUANTITY` и складской `b_catalog_store_product.AMOUNT`.
+2. Проверь reserved quantity через sale/basket/order.
+3. Проверь складские документы, если включён складской учёт.
+4. Запусти безопасный пересчёт, а не прямую SQL-правку.
 
-## Работа с группами покупателей и типами цен
+## 9. Что не делать
 
-```php
-// Список групп покупателей для прайс-листа
-use Bitrix\Catalog\GroupAccessTable;
-
-$result = GroupAccessTable::getList([
-    'select' => ['GROUP_ID', 'CATALOG_GROUP_ID', 'ACCESS'],
-    'filter' => ['=CATALOG_GROUP_ID' => $priceTypeId],
-]);
-// ACCESS: 'D' — запрет, 'V' — просмотр, 'B' — покупка
-
-// Назначить группу пользователей на тип цены
-GroupAccessTable::add([
-    'GROUP_ID'         => $userGroupId,     // ID группы пользователей Bitrix
-    'CATALOG_GROUP_ID' => $priceTypeId,
-    'ACCESS'           => 'B',              // покупка
-]);
-```
-
----
-
-## Gotchas
-
-- Функция `\CCatalogProduct::GetOptimalPrice` сама применяет все скидки каталога — не нужно применять их вручную
-- `ProductTable::TYPE_SKU` (3) — товар с торговыми предложениями. У него **нет собственной цены** — цены у ТП (`TYPE_OFFER`)
-- `QUANTITY` в `ProductTable` — суммарный по всем складам, обновляется через `recalcQuantityProduct`
-- `StoreProductTable` работает только если включён складской учёт в настройках каталога
-- При импорте товаров всегда вызывай `\CCatalogProduct::recalcQuantityProduct($id)` после обновления остатков на складах
-- `CAN_BUY_ZERO = 'Y'` — позволяет добавлять в корзину товар с нулевым остатком
+- Не считать наличие `catalog.*` компонента внутри `iblock` доказательством установленного `catalog` в чужом проекте.
+- Не писать цены/остатки прямым SQL, если можно использовать table/model/API и пересчёт.
+- Не смешивать parent product и offer: цена/остаток часто живут на offer.
+- Не чистить весь `/bitrix/cache` как первый шаг; сначала определи component/tagged/managed/facet/search слой.
+- Не подключать production 1С или реальные платежи для smoke без явного подтверждения пользователя.

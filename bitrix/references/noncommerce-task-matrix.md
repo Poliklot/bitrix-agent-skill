@@ -91,6 +91,6 @@
 | не сломать Bitrix-boundary | `php-workflow.md`, `component-dataflow-debugging.md` |
 | проверить vendor noise | `php-testing.md`, `php-quality.md` |
 
-## Что остаётся deferred
+## Commerce boundary
 
-Интернет-магазин, цены, остатки, SKU, корзина, заказ, оплата, доставка, скидки и checkout остаются deferred до установки `catalog` и `sale`.
+Этот файл остаётся роутером именно для задач **без интернет-магазина**. Если в проекте подтверждены `catalog`, `sale` и `currency`, для магазинных задач переходи в `shop-task-matrix.md`, `catalog.md`, `sale.md`, `currency.md`, `commerce-workflows.md` и `commerce-1c-integration.md`. Если модулей нет — commerce остаётся deferred и не должен подменяться `iblock`-компонентами.
