@@ -40,7 +40,7 @@ $res = CIBlockElement::GetList(
         'PROPERTY_SIZE'  => [42, 44],      // массив значений (IN)
     ],
     false,                                 // groupBy: false = нет, [] = COUNT
-    ['nPageSize' => 20, 'iNumPage' => 1],  // пагинация; nTopCount = LIMIT без пагинации
+    ['nPageSize' => 20, 'iNumPage' => 1],  // пагинация; nTopCount = LIMIT без NavString
     [
         'ID', 'NAME', 'CODE', 'SORT',
         'PREVIEW_TEXT', 'DETAIL_TEXT',
@@ -74,6 +74,8 @@ $res2 = CIBlockElement::GetList([], ['IBLOCK_ID' => 5], []);
 $row = $res2->Fetch();
 echo $row['CNT'];
 ```
+
+Для сложной пагинации, `PAGEN_N`, `NavNum`, lazy load и диагностики пустой второй страницы смотри `pagination.md`. Важно: `nTopCount` в core — это ограничение выборки, а не полноценная постраничная навигация.
 
 ### Множественные свойства в GetList
 

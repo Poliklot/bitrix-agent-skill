@@ -127,6 +127,8 @@ final class ItemGrid extends Grid
 
 ## Pagination и Options
 
+Подробный core-first слой по `PageNavigation`, `main.pagenavigation`, admin/grid navigation, `PAGEN_N` и lazy load вынесен в `pagination.md`.
+
 `Options` в текущем core наследуется от `CGridOptions` и даёт, среди прочего:
 - `getSorting(...)`
 - `GetVisibleColumns()`

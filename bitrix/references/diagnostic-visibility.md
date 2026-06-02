@@ -46,7 +46,7 @@ rg -n 'ACTIVE|ACTIVE_FROM|ACTIVE_TO|SITE_ID|LID|GROUP_ID|PERMISSION|RIGHT|CHECK_
 | В админке есть, на публичке пусто | `ACTIVE`, даты активности, site binding, section active chain, права |
 | У админа видно, у гостя нет | группы пользователя, `CHECK_PERMISSIONS`, inherited rights, component params |
 | После правки не меняется | component cache, tagged cache, managed cache, composite/static cache |
-| В списке нет, детальная открывается | фильтр списка, section filter, pagination, sort, `INCLUDE_SUBSECTIONS` |
+| В списке нет, детальная открывается | фильтр списка, section filter, `pagination.md`, sort, `INCLUDE_SUBSECTIONS` |
 | В поиске нет | search index, module `search`, `BeforeIndex`, rights, site, URL function |
 | SEO/URL странный | `urlrewrite.php`, SEF params, canonical, redirects, robots/noindex |
 | Файл не открывается | `clouds`, `HANDLER_ID`, secure file access, `CFile` path, rights |

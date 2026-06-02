@@ -4,6 +4,15 @@
 
 ## [Unreleased]
 
+## [1.18.0] — 2026-06-02
+
+### Added
+- `bitrix/references/pagination.md` — отдельный core-first reference по пагинации из `main` 26.150.0: `CDBResult::NavStart`, `GetNavPrint`, `PAGEN_N`/`SIZEN_N`/`SHOWALL_N`, `system.pagenavigation`, D7 `PageNavigation`, `AdminPageNavigation`, `ReversePageNavigation`, `main.pagenavigation`, admin/grid navigation и ajax/lazy load.
+
+### Changed
+- `bitrix/SKILL.md` теперь явно маршрутизирует задачи про пустые/дублирующие страницы, `PAGEN_N`, lazy load, admin/grid navigation и `PageNavigation` в отдельный pagination-layer.
+- `README.md`, `PLAN.md`, `bitrix/VERSION` и MCP Market compact bundles синхронизированы с pagination baseline `1.18.0`.
+
 ## [1.17.0] — 2026-06-02
 
 ### Added
@@ -256,7 +265,8 @@
 ### Added
 - Первый публичный релиз: `SKILL.md`, progressive disclosure архитектура
 
-[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.17.0...HEAD
+[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.18.0...HEAD
+[1.18.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.17.0...v1.18.0
 [1.17.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.16.0...v1.17.0
 [1.16.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.15.0...v1.16.0
 [1.15.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.14.0...v1.15.0

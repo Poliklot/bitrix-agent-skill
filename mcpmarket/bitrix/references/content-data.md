@@ -47,7 +47,7 @@ $res = CIBlockElement::GetList(
         'PROPERTY_SIZE'  => [42, 44],      // массив значений (IN)
     ],
     false,                                 // groupBy: false = нет, [] = COUNT
-    ['nPageSize' => 20, 'iNumPage' => 1],  // пагинация; nTopCount = LIMIT без пагинации
+    ['nPageSize' => 20, 'iNumPage' => 1],  // пагинация; nTopCount = LIMIT без NavString
     [
         'ID', 'NAME', 'CODE', 'SORT',
         'PREVIEW_TEXT', 'DETAIL_TEXT',
@@ -81,6 +81,8 @@ $res2 = CIBlockElement::GetList([], ['IBLOCK_ID' => 5], []);
 $row = $res2->Fetch();
 echo $row['CNT'];
 ```
+
+Для сложной пагинации, `PAGEN_N`, `NavNum`, lazy load и диагностики пустой второй страницы смотри `pagination.md`. Важно: `nTopCount` в core — это ограничение выборки, а не полноценная постраничная навигация.
 
 ### Множественные свойства в GetList
 
@@ -747,7 +749,7 @@ if (!$result->isSuccess())
 - при `CHECK_PERMISSIONS='Y'` проверяет права;
 - строит запрос через `Entity\Query`;
 - поддерживает фильтр через `FILTER_NAME`;
-- пагинацию через `\Bitrix\Main\UI\PageNavigation`;
+- пагинацию через `\Bitrix\Main\UI\PageNavigation` (детальный контракт см. `pagination.md`);
 - рендерит list values через `getadminlistviewhtml`.
 
 ### `highloadblock.view`
@@ -2794,14 +2796,19 @@ $sortOrder = strtoupper($request->getQuery('ORDER') ?? 'ASC');
 if (!in_array($sortField, $allowedSort, true))  { $sortField = 'SORT'; }
 if (!in_array($sortOrder, $allowedOrder, true)) { $sortOrder = 'ASC'; }
 
-$arSort = [$sortField => $sortOrder];
+$arSort = [$sortField => $sortOrder, 'ID' => 'ASC'];
+
+$navParams = CDBResult::GetNavParams([
+    'nPageSize' => 20,
+    'bShowAll' => false,
+]);
 
 // Запрос
 $res = CIBlockElement::GetList(
     $arSort,
     $arFilter,
     false,
-    ['nPageSize' => 20, 'iNumPage' => max(1, (int)$request->getQuery('PAGEN_1'))],
+    ['nPageSize' => 20, 'iNumPage' => $navParams['PAGEN'], 'bShowAll' => false],
     ['ID', 'NAME', 'PROPERTY_BRAND', 'PROPERTY_COLOR']
 );
 ```
@@ -2809,7 +2816,7 @@ $res = CIBlockElement::GetList(
 **Gotchas:**
 - Никогда не передавай `$_GET`/`$_POST` напрямую в arFilter — только через белый список
 - `CATALOG_PRICE_1` — цена прайс-листа с ID=1; для других прайс-листов меняй цифру
-- Пагинация Bitrix: `PAGEN_1` — номер страницы для первого компонента постранички на странице
+- Пагинация Bitrix: не хардкодь `PAGEN_1`, если на странице может быть несколько списков; смотри `pagination.md` про `NavNum`, `CDBResult::GetNavParams()` и D7 `PageNavigation`
 
 ### SEF + фильтр вместе
 

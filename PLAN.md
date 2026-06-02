@@ -7,13 +7,14 @@
 ## Текущий статус
 
 На дату этого плана:
-- актуальная версия навыка: `1.17.0`;
+- актуальная версия навыка: `1.18.0`;
 - точка входа: `bitrix/SKILL.md`;
 - reference-слой: `bitrix/references/*.md`;
 - non-commerce reference-слой прошёл ревизию против установленного core;
 - PHP workflow/testing/quality, legacy modernization, diagnostics, standard components и operations-runbook закрыты как активный non-commerce контур;
 - отдельный shop-core установлен и переаудирован: `catalog` 25.550.0, `sale` 26.0.0, `currency` 26.0.0, `bitrix.eshop` 25.0.0, 1С/CommerceML components;
-- магазинный контур активируется только после проверки этих модулей в конкретном проекте.
+- магазинный контур активируется только после проверки этих модулей в конкретном проекте;
+- пагинационный слой переаудирован по `main` 26.150.0 и shop-core: legacy `CDBResult`, D7 `PageNavigation`, `system.pagenavigation`, `main.pagenavigation`, admin/grid и ajax/lazy load.
 
 ## Активный и условный контур
 
@@ -46,7 +47,7 @@
 - `photogallery`
 - `translate`
 - PHP workflow/testing/quality и legacy modernization
-- diagnostics: visibility, cache/index, component dataflow
+- diagnostics: visibility, pagination, cache/index, component dataflow
 - operations: agents/cron/stepper, backup/monitoring, переносы, perf diagnostics
 - проектные оверрайды в `local/*`
 
@@ -96,7 +97,7 @@ bitrix-agent-skill/
 
 Проверены и скорректированы текущие non-commerce reference-файлы, включая:
 - модель данных и инфоблоки;
-- компоненты, шаблоны и ЧПУ;
+- компоненты, шаблоны, ЧПУ и пагинация;
 - поиск, SEO, кеш и агенты;
 - сессии, авторизацию, доступ и RBAC;
 - веб-формы, почту, подписки;
@@ -127,9 +128,19 @@ bitrix-agent-skill/
 ### Ближайшие
 
 1. Держать non-commerce reference-слой консистентным при следующих правках.
-2. Синхронизировать этот living-plan с текущей версией `1.17.0` и больше не оставлять исторические версии в статусном блоке.
+2. Держать `pagination.md` связанным с `iblocks.md`, `components.md`, `admin-ui.md`, `grid-admin-modern.md`, `sef-urls.md` и `diagnostic-visibility.md` при новых находках.
 3. При появлении новых локальных модулей или project overrides добавлять их в маршрут только после проверки по коду.
 4. Собрать небольшой набор smoke-задач для ручной проверки качества навыка на текущем non-commerce core.
+
+### Завершённый целевой этап: Pagination core-layer
+
+На версии `1.18.0` добавлен отдельный pagination-layer по `main` 26.150.0 и shop-core. Закрыты:
+
+1. Legacy DB result: `CDBResult::NavStart`, `GetNavParams`, `GetNavPrint`, `GetPageNavStringEx`, `PAGEN_N`, `SIZEN_N`, `SHOWALL_N`, `NavNum`, session-сохранение и reverse paging.
+2. Visual components: `bitrix:system.pagenavigation` и `bitrix:main.pagenavigation`, их параметры, result-поля и stock templates.
+3. D7 navigation: `Bitrix\Main\UI\PageNavigation`, `AdminPageNavigation`, `ReversePageNavigation`, `getLimit()`, `getOffset()`, `addParams()` и `clearParams()`.
+4. Admin/grid слой: `CAdminResult::NavStart`, `CAdminList::NavText`, `CAdminUiList::getPageNavigation`, `main.ui.grid` + `NAV_OBJECT`.
+5. Iblock/catalog component слой: `nPageSize` vs `nTopCount`, `PAGEN_<NavNum>` в ajax/lazy load и диагностика пустых/дублирующих страниц.
 
 ### Завершённый целевой этап: Commerce + 1С Integration
 
@@ -168,7 +179,7 @@ bitrix-agent-skill/
    - конфликтует кастомный обработчик/override.
 4. Зафиксирован безопасный verification-flow: логи, временные файлы, таблицы, agents/events, component cache, managed/tagged cache, search/index/SEO side effects.
 
-### Следующие шаги после baseline 1.17.0
+### Следующие шаги после baseline 1.18.0
 
 1. Поднять Docker/runtime shop-core и проверить, есть ли живой DB dump или нужна свежая установка.
 2. Собрать smoke fixtures для каталога, offer, цены, остатка, корзины, checkout, заказа и CommerceML.
@@ -189,4 +200,4 @@ Commerce/1C фаза считается завершённой, когда:
 - `catalog.md`, `sale.md`, `commerce-workflows.md` переаудированы;
 - создан или обновлён reference по `1С`/`CommerceML`;
 - skill умеет маршрутизировать магазинные задачи без догадок и без смешивания non-commerce core с shop-core;
-- есть smoke-задачи для каталога, корзины, checkout, заказа, обмена с 1С и диагностики цен/остатков/SKU.
+- есть smoke-задачи для каталога, корзины, checkout, заказа, обмена с 1С, пагинации, lazy load и диагностики цен/остатков/SKU.

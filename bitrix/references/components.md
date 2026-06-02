@@ -211,6 +211,8 @@ global $CACHE_MANAGER;
 $CACHE_MANAGER->ClearByTag('iblock_id_5');
 ```
 
+Если компонент строит список с `NavNum`, `PAGEN_N`, `NavStart()`, `main.pagenavigation` или ajax “Показать ещё”, подгружай `pagination.md` вместе с этим файлом.
+
 **Gotcha: `arParams['~KEY']`** — после `onPrepareComponentParams()` и `__prepareComponentParams()` все строковые параметры HTML-экранируются. Raw-значение доступно через `$this->arParams['~IBLOCK_ID']`. Это сделано для безопасности шаблонов.
 
 **Gotcha: `arResultCacheKeys`** — после шаблона Bitrix урежет `arResult` до перечисленных ключей и уже этот сокращённый набор сохранит в кеш. Сам шаблон при этом ещё видит полный `arResult`.

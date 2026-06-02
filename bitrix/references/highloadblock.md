@@ -189,7 +189,7 @@ if (!$result->isSuccess())
 - при `CHECK_PERMISSIONS='Y'` проверяет права;
 - строит запрос через `Entity\Query`;
 - поддерживает фильтр через `FILTER_NAME`;
-- пагинацию через `\Bitrix\Main\UI\PageNavigation`;
+- пагинацию через `\Bitrix\Main\UI\PageNavigation` (детальный контракт см. `pagination.md`);
 - рендерит list values через `getadminlistviewhtml`.
 
 ### `highloadblock.view`

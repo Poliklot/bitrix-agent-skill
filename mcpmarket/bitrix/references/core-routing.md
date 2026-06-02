@@ -42,7 +42,7 @@ Shop-core facts:
 
 | Модуль | Версия | Статус | Reference |
 |---|---:|---|---|
-| `main` | `26.150.0` | active | `modules-loader.md`, `session-auth.md`, `database-layer.md` |
+| `main` | `26.150.0` | active | `modules-loader.md`, `session-auth.md`, `database-layer.md`, `pagination.md` |
 | `iblock` | `25.300.0` | active | `iblocks.md`, `entities-migrations.md` |
 | `currency` | `26.0.0` | active shop | `currency.md` |
 | `catalog` | `25.550.0` | active shop | `catalog.md` |
@@ -70,7 +70,7 @@ Admin entrypoints:
 
 | Модуль | Статус | Основной reference | Что проверять первым |
 |---|---|---|---|
-| `main` | active | `modules-loader.md`, `orm.md`, `session-auth.md`, `database-layer.md`, `access-rbac.md` | `lib/`, `classes/general`, компоненты `main.*`, user/session/cache/ORM |
+| `main` | active | `modules-loader.md`, `orm.md`, `session-auth.md`, `database-layer.md`, `access-rbac.md`, `pagination.md` | `lib/`, `classes/general`, компоненты `main.*`, user/session/cache/ORM/navigation |
 | `iblock` | active | `iblocks.md`, `iblock-hl-relations.md`, `entities-migrations.md` | components, properties, sections, UF, legacy + D7 |
 | `highloadblock` | active | `highloadblock.md` | dynamic ORM, rights, UI selector |
 | `form` | active | `webforms.md` | form/result/status/validators/handlers/CRM link |
@@ -130,17 +130,18 @@ Admin entrypoints:
 - `sale` side effects нельзя заменить SQL-правкой: order history, reservation, payment, shipment, cashbox, exchange.
 - 1С exchange success на `file` не означает успешный import: проверяй `mode=import`, session state, tables, logs.
 - Vendor-файлы внутри `www/bitrix/modules/*/vendor` не являются project tooling.
+- Пагинация не сводится к `PAGEN_1`: legacy `NavNum` может породить `PAGEN_2+`, D7 использует строковый id `PageNavigation`, а `nTopCount` — это limit без полноценного NavString.
 
 ## 7. Покрытие reference-файлами
 
 | Зона | Статус покрытия | Файлы |
 |---|---|---|
 | Core/modules/components | full-route | `core-audit-matrix.md`, `standard-components-noncommerce.md` |
-| Diagnostics | full-route | `diagnostic-visibility.md`, `index-cache-diagnostics.md`, `component-dataflow-debugging.md` |
+| Diagnostics | full-route | `diagnostic-visibility.md`, `pagination.md`, `index-cache-diagnostics.md`, `component-dataflow-debugging.md` |
 | PHP architecture/testing/quality | full-route | `php-workflow.md`, `php-testing.md`, `php-quality.md`, `php-legacy-modernization.md` |
 | Content modules | active | `iblocks.md`, `highloadblock.md`, `webforms.md`, `blog-socialnet.md`, `forum.md`, `vote.md`, `subscribe.md` |
 | Search/SEO/cache | active | `search.md`, `seo-cache-access.md`, `cache-infra.md`, `index-cache-diagnostics.md` |
-| Admin/ops | active | `admin-ui.md`, `operations-runbook.md`, `perfmon.md`, `update-stepper.md` |
+| Admin/ops | active | `admin-ui.md`, `grid-admin-modern.md`, `pagination.md`, `operations-runbook.md`, `perfmon.md`, `update-stepper.md` |
 | Commerce/shop | active after local module confirmation | `shop-task-matrix.md`, `catalog.md`, `sale.md`, `currency.md`, `commerce-workflows.md` |
 | 1С/CommerceML | active after component confirmation | `commerce-1c-integration.md` |
 
@@ -193,6 +194,8 @@ Admin entrypoints:
 | вынести логику из шаблона | `php-workflow.md`, `php-legacy-modernization.md` |
 | настроить `result_modifier.php` | `component-dataflow-debugging.md` |
 | добавить breadcrumbs/meta | `component-dataflow-debugging.md`, `seo-cache-access.md` |
+| исправить пустую/дублирующую вторую страницу | `pagination.md`, `component-dataflow-debugging.md`, `iblocks.md` |
+| настроить `PageNavigation`, `PAGEN_N` или “Показать ещё” | `pagination.md`, `components.md`, `grid-admin-modern.md` |
 | сделать AJAX endpoint | `events-routing.md`, `security.md` |
 | проверить отсутствие `local/*` | `core-audit-matrix.md`, `standard-components-noncommerce.md` |
 
@@ -279,6 +282,7 @@ Admin entrypoints:
 | 1С выгрузка товаров | `commerce-1c-integration.md`, `catalog.md` | `currency.md`, `cache-infra.md` |
 | Заказы в 1С | `commerce-1c-integration.md`, `sale.md` | `http.md`, `operations-runbook.md` |
 | “В админке есть, на сайте нет” для товара | `catalog.md`, `diagnostic-visibility.md` | `index-cache-diagnostics.md`, `component-dataflow-debugging.md` |
+| Вторая страница каталога пустая, lazy load сломан | `pagination.md`, `catalog.md`, `component-dataflow-debugging.md` | `sef-urls.md`, `cache-infra.md` |
 | Производительность каталога | `catalog.md`, `perfmon.md`, `cache-infra.md` | `search.md`, `seo-cache-access.md` |
 
 ## 2. Минимальная проверка shop-core
@@ -413,7 +417,7 @@ rg -n 'ACTIVE|ACTIVE_FROM|ACTIVE_TO|SITE_ID|LID|GROUP_ID|PERMISSION|RIGHT|CHECK_
 | В админке есть, на публичке пусто | `ACTIVE`, даты активности, site binding, section active chain, права |
 | У админа видно, у гостя нет | группы пользователя, `CHECK_PERMISSIONS`, inherited rights, component params |
 | После правки не меняется | component cache, tagged cache, managed cache, composite/static cache |
-| В списке нет, детальная открывается | фильтр списка, section filter, pagination, sort, `INCLUDE_SUBSECTIONS` |
+| В списке нет, детальная открывается | фильтр списка, section filter, `pagination.md`, sort, `INCLUDE_SUBSECTIONS` |
 | В поиске нет | search index, module `search`, `BeforeIndex`, rights, site, URL function |
 | SEO/URL странный | `urlrewrite.php`, SEF params, canonical, redirects, robots/noindex |
 | Файл не открывается | `clouds`, `HANDLER_ID`, secure file access, `CFile` path, rights |
@@ -527,6 +531,8 @@ rg -n 'ACTIVE|ACTIVE_FROM|ACTIVE_TO|SITE_ID|LID|GROUP_ID|PERMISSION|RIGHT|CHECK_
 # Component и Data Flow Debugging — справочник
 
 > Reference для Bitrix-скилла. Загружай для задач по стандартным компонентам, шаблонам, `result_modifier.php`, `component_epilog.php`, AJAX и трассировке данных от API до HTML.
+>
+> Если симптом связан со второй страницей, `PAGEN_N`, `NavNum`, `PageNavigation`, lazy load или `main.pagenavigation`, дополнительно загружай `pagination.md`.
 
 ## Содержание
 - Truth layers

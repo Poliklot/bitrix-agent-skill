@@ -1,6 +1,6 @@
 # Поиск (модуль search)
 
-> Audit note: ниже сверено с текущим `www/bitrix/modules/search`. Подтверждены события `BeforeIndex`, `OnSearch`, `OnSearchGetURL` и типовой порядок `Search(...) -> NavStart(...) -> GetNext()`.
+> Audit note: ниже сверено с текущим `www/bitrix/modules/search`. Подтверждены события `BeforeIndex`, `OnSearch`, `OnSearchGetURL` и типовой порядок `Search(...) -> NavStart(...) -> GetNext()`. Детальный контракт `NavStart`, `PAGEN_N` и `GetNavPrint` смотри в `pagination.md`.
 
 ```php
 use Bitrix\Main\Loader;

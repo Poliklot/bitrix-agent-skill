@@ -156,6 +156,8 @@ $rows = StoreProductTable::getList([
 4. `templates/*`;
 5. project override в `local/templates/.../components/bitrix/...`.
 
+Если проблема в page 2, “Показать ещё”, infinite scroll или `PAGEN_<NavNum>` у `catalog.section`, дополнительно открывай `pagination.md`: stock templates текущего shop-core отправляют следующую страницу через `PAGEN_` + `NavNum` и зависят от актуальных `navParams`, cache key, filter и sort.
+
 ## 7. CommerceML и 1С
 
 Catalog-часть обмена подтверждена через `catalog.import.1c` и `catalog.export.1c`. Детали маршрутизируй в `commerce-1c-integration.md`.

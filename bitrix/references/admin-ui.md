@@ -838,7 +838,7 @@ public function UnInstallFiles(): bool
 
 - **Имена переменных фильтра глобальные** — `InitFilter(['find_id', 'find_name'])` создаёт `global $find_id, $find_name`. Без `global $$f` в своём коде они недоступны. Всегда делай `foreach ($arFilterFields as $f) global $$f;` после `InitFilter`.
 - **`check_bitrix_sessid()` обязателен** перед любым изменением данных через POST. Без него — уязвимость CSRF. Всегда пиши `check_bitrix_sessid()` в условии сохранения.
-- **`CAdminResult::NavStart()`** — вызывать до `AddHeaders` и цикла по строкам. Без вызова пагинация не работает.
+- **`CAdminResult::NavStart()`** — вызывать до `AddHeaders` и цикла по строкам. Без вызова пагинация не работает. Для `PAGEN_N`/`SIZEN_N`, session page size и modern `PageNavigation` смотри `pagination.md`.
 - **`global $by, $order`** — эти глобальные переменные устанавливает `CAdminSorting`. Используй их в ORM `order` параметре после инициализации `CAdminSorting`.
 - **`$row->AddField()` vs `$row->AddViewField()`** — `AddField(id, viewText, editValue)` добавляет и view, и edit (inline); `AddViewField(id, html)` — только view, не участвует в инлайн-редактировании.
 - **`AddSelectField` / `AddInputField`** — добавляют только edit-вариант поля, без view. Нужен `AddField` или `AddViewField` для отображения.

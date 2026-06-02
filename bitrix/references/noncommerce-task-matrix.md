@@ -32,6 +32,8 @@
 | вынести логику из шаблона | `php-workflow.md`, `php-legacy-modernization.md` |
 | настроить `result_modifier.php` | `component-dataflow-debugging.md` |
 | добавить breadcrumbs/meta | `component-dataflow-debugging.md`, `seo-cache-access.md` |
+| исправить пустую/дублирующую вторую страницу | `pagination.md`, `component-dataflow-debugging.md`, `iblocks.md` |
+| настроить `PageNavigation`, `PAGEN_N` или “Показать ещё” | `pagination.md`, `components.md`, `grid-admin-modern.md` |
 | сделать AJAX endpoint | `events-routing.md`, `security.md` |
 | проверить отсутствие `local/*` | `core-audit-matrix.md`, `standard-components-noncommerce.md` |
 
