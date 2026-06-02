@@ -17,7 +17,7 @@
 | Скидки / купоны | `sale.md`, `catalog.md` | `currency.md` |
 | 1С выгрузка товаров | `commerce-1c-integration.md`, `catalog.md` | `currency.md`, `cache-infra.md` |
 | Заказы в 1С | `commerce-1c-integration.md`, `sale.md` | `http.md`, `operations-runbook.md` |
-| StoreAssist / мастер настройки 1С | `shop-core-module-inventory.md`, `commerce-1c-integration.md` | будущий `storeassist.md` |
+| StoreAssist / мастер настройки 1С | `storeassist.md`, `shop-core-module-inventory.md` | `commerce-1c-integration.md` для реального exchange |
 | Рассылки, follow-up, маркетинг | `shop-core-module-inventory.md`, `mail-notifications.md`, `messageservice.md` | будущий `shop-marketing-analytics.md` |
 | Автоматизация заказа / роботы | `shop-core-module-inventory.md`, `workflow.md`, `sale.md` | будущий `shop-automation-bizproc.md` |
 | “В админке есть, на сайте нет” для товара | `catalog.md`, `diagnostic-visibility.md` | `index-cache-diagnostics.md`, `component-dataflow-debugging.md` |

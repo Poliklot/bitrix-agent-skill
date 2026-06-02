@@ -7,7 +7,7 @@
 ## Текущий статус
 
 На дату этого плана:
-- актуальная версия навыка: `1.19.0`;
+- актуальная версия навыка: `1.20.0`;
 - точка входа: `bitrix/SKILL.md`;
 - reference-слой: `bitrix/references/*.md`;
 - non-commerce reference-слой прошёл ревизию против установленного core;
@@ -15,6 +15,7 @@
 - отдельный shop-core установлен и переаудирован inventory-слоем: 49 модулей, включая `catalog` 25.550.0, `sale` 26.0.0, `currency` 26.0.0, `bitrix.eshop` 25.0.0, 1С/CommerceML components;
 - магазинный контур активируется только после проверки этих модулей в конкретном проекте;
 - полный shop-core module inventory вынесен в `shop-core-module-inventory.md`: versions, component/admin counts, coverage status и ordered roadmap uncovered зон;
+- `storeassist` 24.0.0 глубоко разобран как мастер/чеклист магазина и 1С onboarding, а не exchange engine;
 - пагинационный слой переаудирован по `main` 26.150.0 и shop-core: legacy `CDBResult`, D7 `PageNavigation`, `system.pagenavigation`, `main.pagenavigation`, admin/grid и ajax/lazy load.
 
 ## Активный и условный контур
@@ -134,6 +135,16 @@ bitrix-agent-skill/
 4. При появлении новых локальных модулей или project overrides добавлять их в маршрут только после проверки по коду.
 5. Собрать небольшой набор smoke-задач для ручной проверки качества навыка на текущем non-commerce core.
 
+### Завершённый целевой этап: StoreAssist
+
+На версии `1.20.0` добавлен отдельный reference `storeassist.md`. Закрыты:
+
+1. Установка модуля: autoload, JS extension, copy admin/js/panel/tools, `OnPrologAdminTitle`, `OnBuildGlobalMenu`, daily agent.
+2. `CStoreAssist`: task whitelist, `setSettingOption`, `getDocumentationLink`, admin toolbar, menu hook, progress percent и order-count agent.
+3. Admin wizard structure: `MAIN`, `WORK`, `HEALTH`, включая блок `Интеграция с 1С:Предприятие 8`.
+4. Разведены `storeassist_1c_*` onboarding pages и реальный CommerceML exchange в `catalog`/`sale`.
+5. Диагностика: task completion, toolbar/menu visibility, progress agent, ложное ожидание exchange в StoreAssist.
+
 ### Завершённый целевой этап: Shop-core module inventory
 
 На версии `1.19.0` добавлен полный inventory 49 модулей shop-core. Закрыты:
@@ -191,14 +202,15 @@ bitrix-agent-skill/
    - конфликтует кастомный обработчик/override.
 4. Зафиксирован безопасный verification-flow: логи, временные файлы, таблицы, agents/events, component cache, managed/tagged cache, search/index/SEO side effects.
 
-### Следующие шаги после baseline 1.19.0
+### Следующие шаги после baseline 1.20.0
 
-1. Следующим ordered deep-dive сделать `storeassist.md`, потому что `storeassist_1c_*` напрямую связан с 1С onboarding.
-2. Затем сделать `shop-standard-components.md` по public/admin storefront components.
-3. Поднять Docker/runtime shop-core и проверить, есть ли живой DB dump или нужна свежая установка.
-4. Собрать smoke fixtures для каталога, offer, цены, остатка, корзины, checkout, заказа и CommerceML.
-5. Прогнать ручные smoke-задачи навыка на shop-core.
-6. После runtime-smoke при необходимости расширить reference-файлы конкретными DB/runtime findings.
+1. Следующим ordered deep-dive сделать `shop-standard-components.md` по public/admin storefront components.
+2. Затем сделать `shop-marketing-analytics.md` по `sender`, `mail`, `messageservice`, `report`, `statistic`, `conversion`, `abtest`, `advertising`.
+3. Затем сделать `shop-automation-bizproc.md` по `bizproc`, `bizprocdesigner`, `workflow`, `lists`, `pull`.
+4. Поднять Docker/runtime shop-core и проверить, есть ли живой DB dump или нужна свежая установка.
+5. Собрать smoke fixtures для каталога, offer, цены, остатка, корзины, checkout, заказа и CommerceML.
+6. Прогнать ручные smoke-задачи навыка на shop-core.
+7. После runtime-smoke при необходимости расширить reference-файлы конкретными DB/runtime findings.
 
 ## Definition of done для текущей фазы
 

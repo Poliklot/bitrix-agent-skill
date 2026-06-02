@@ -81,7 +81,7 @@ Truth layer: `/Users/igormajorov/Downloads/Telegram Desktop/bitrix-shop-core/www
 | `seo` | `25.100.400` | 2 | 15 | SEO, meta, sitemap, catalog SEO side effects | covered | `seo-cache-access.md`, `catalog.md` | нет срочного shop deep dive |
 | `socialservices` | `26.0.0` | 3 | 0 | OAuth/social login | covered | `socialservices.md`, `users.md` | нет срочного shop deep dive |
 | `statistic` | `26.0.0` | 1 | 66 | traffic/statistics, reports/conversion | needs deep audit | `shop-core-module-inventory.md` | `shop-marketing-analytics.md` |
-| `storeassist` | `24.0.0` | 0 | 15 | shop setup assistant, 1С onboarding pages | needs deep audit | `shop-core-module-inventory.md`, `commerce-1c-integration.md` | `storeassist.md` |
+| `storeassist` | `24.0.0` | 0 | 15 | shop setup assistant, 1С onboarding pages | covered | `storeassist.md`, `commerce-1c-integration.md` | держать связанным с 1С diagnostics |
 | `subscribe` | `25.0.0` | 5 | 12 | legacy subscriptions/mailings | covered | `subscribe.md`, `mail-notifications.md` | связать с sender при задаче |
 | `support` | `26.0.0` | 5 | 27 | support/tickets/coupons, не core shop | needs deep audit | `shop-core-module-inventory.md` | deferred |
 | `translate` | `25.100.0` | 2 | 6 | localization/lang files | covered | `translate.md` | нет срочного shop deep dive |
@@ -122,25 +122,7 @@ Good enough for catalog prices and sale sums.
 
 ## Modules that must be next in order
 
-### 1. `storeassist` 24.0.0 — highest priority after inventory
-
-Why: it is small, explicitly shop/1С-facing, and currently not separately documented.
-
-Admin entrypoints:
-- `storeassist.php`
-- `storeassist_1c_catalog_fill.php`
-- `storeassist_1c_exchange_realtime.php`
-- `storeassist_1c_small_firm.php`
-- `storeassist_1c_unloading.php`
-- `storeassist_marketing.php`
-- `storeassist_new_items.php`
-- `storeassist_seo_settings.php`
-- `storeassist_context_adv.php`
-- `storeassist_virtual.php`
-
-Next reference: `storeassist.md`.
-
-### 2. Shop standard components
+### 1. Shop standard components
 
 Why: user tasks usually come through public components, not raw APIs.
 
@@ -151,7 +133,7 @@ Target families:
 
 Next reference: `shop-standard-components.md`.
 
-### 3. Marketing/analytics
+### 2. Marketing/analytics
 
 Target modules:
 - `sender` 26.0.0;
@@ -166,7 +148,7 @@ Target modules:
 
 Next reference: `shop-marketing-analytics.md`.
 
-### 4. Automation
+### 3. Automation
 
 Target modules:
 - `bizproc` 26.200.0;
@@ -177,7 +159,7 @@ Target modules:
 
 Next reference: `shop-automation-bizproc.md`.
 
-### 5. Webservice/integration extras
+### 4. Webservice/integration extras
 
 Target modules/components:
 - `webservice.sale`;
@@ -189,15 +171,14 @@ Next reference: `shop-integrations-webservice.md` or merge into `commerce-1c-int
 
 ## Do not overclaim
 
-- Do not say “все shop-core модули глубоко покрыты” until `storeassist`, standard shop components, marketing/analytics and automation references exist.
+- Do not say “все shop-core модули глубоко покрыты” until standard shop components, marketing/analytics and automation references exist.
 - Do not activate `bizproc`, `pull`, `sender`, `report`, `statistic`, `abtest`, `conversion`, `advertising`, `webservice` in another project unless the module exists locally.
 - Do not infer `sale/catalog` from `iblock` components alone: `iblock` ships `catalog.*` public components even when the `catalog` module may be missing in another checkout.
 - Do not use this inventory as API documentation for `needs deep audit` modules. It is a routing map.
 
 ## Ordered roadmap from this inventory
 
-1. `storeassist.md` — because it is small, explicit and directly 1С/shop setup related.
-2. `shop-standard-components.md` — because most real storefront bugs happen in components/templates.
-3. `shop-marketing-analytics.md` — because `sender/report/statistic/conversion/abtest/advertising` are present and uncovered.
-4. `shop-automation-bizproc.md` — because order workflows/robots need careful module-dependent routing.
-5. `shop-integrations-webservice.md` — because `webservice.sale` exists and should not be confused with 1С CommerceML.
+1. `shop-standard-components.md` — because most real storefront bugs happen in components/templates.
+2. `shop-marketing-analytics.md` — because `sender/report/statistic/conversion/abtest/advertising` are present and uncovered.
+3. `shop-automation-bizproc.md` — because order workflows/robots need careful module-dependent routing.
+4. `shop-integrations-webservice.md` — because `webservice.sale` exists and should not be confused with 1С CommerceML.

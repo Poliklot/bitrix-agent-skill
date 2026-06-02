@@ -1,9 +1,9 @@
 ---
 name: bitrix
-description: Core-first 1C-Bitrix CMS skill for MCP Market. Use for Bitrix projects, installed core inspection, modules, standard components, iblocks, highloadblocks, catalog, sale, currency, shop-core module inventory, internet shop workflows, 1C/CommerceML exchange, basket, orders, payments, delivery, discounts, SEO, pagination, cache/index diagnostics, operations, and PHP-heavy work. Always inspect the local `www/bitrix` core before relying on memory.
+description: Core-first 1C-Bitrix CMS skill for MCP Market. Use for Bitrix projects, installed core inspection, modules, standard components, iblocks, highloadblocks, catalog, sale, currency, shop-core module inventory, StoreAssist, internet shop workflows, 1C/CommerceML exchange, basket, orders, payments, delivery, discounts, SEO, pagination, cache/index diagnostics, operations, and PHP-heavy work. Always inspect the local `www/bitrix` core before relying on memory.
 metadata:
   author: poliklot
-  version: "1.19.0"
+  version: "1.20.0"
 compatibility: MCP Market compact read-only import; full lifecycle edition lives in `bitrix/`
 ---
 
@@ -11,7 +11,7 @@ compatibility: MCP Market compact read-only import; full lifecycle edition lives
 
 Эксперт по 1C-Bitrix CMS. Работаешь **core-first**: сначала проверяешь установленное ядро, стандартные компоненты, stock templates и проектные `local/*`-оверрайды, потом предлагаешь решение.
 
-Эта папка — компактная версия для MCP Market. Она намеренно не содержит `update.sh`, `install.sh`, `uninstall.sh` и 69 отдельных reference-файлов, потому что MCP Market ограничивает импортируемую skill-папку 50 файлами. Полная lifecycle-версия находится в `bitrix/` основного репозитория.
+Эта папка — компактная версия для MCP Market. Она намеренно не содержит `update.sh`, `install.sh`, `uninstall.sh` и 70 отдельных reference-файлов, потому что MCP Market ограничивает импортируемую skill-папку 50 файлами. Полная lifecycle-версия находится в `bitrix/` основного репозитория.
 
 ## Текущая фаза
 
@@ -93,8 +93,9 @@ foreach (['iblock'] as $module) {
 - Для задач “в админке есть, на сайте нет” иди по цепочке: data source → permissions/site binding → component params → filters → pagination/sort → `result_modifier.php` → template → cache/index/SEO.
 - Наличие `catalog.*` в `iblock` или templates не доказывает установленный commerce core.
 - Для shop-задач сначала подтверждай `catalog`, `sale`, `currency`; затем разделяй product, offer, price, stock, basket, order и exchange side effects.
-- Для вопросов полного покрытия shop-core сначала смотри inventory bundle: не обещай deep audit `storeassist`, `sender`, `report`, `statistic`, `conversion`, `abtest`, `advertising`, `bizproc`, `webservice` без отдельного reference.
+- Для вопросов полного покрытия shop-core сначала смотри inventory bundle: не обещай deep audit `sender`, `report`, `statistic`, `conversion`, `abtest`, `advertising`, `bizproc`, `webservice` без отдельного reference.
 - Для 1С задач проверяй `checkauth → init → file → import`, cookies/session, `sessid`, temp files, XML_ID/CML2_LINK и exchange logs.
+- Если задача про StoreAssist или `storeassist_1c_*`, помни: это мастер/чеклист и onboarding, а не exchange engine.
 - Для пагинации разводи legacy `PAGEN_N`/`NavStart()` и D7 `PageNavigation`: проверяй unique nav id, count/filter, stable sort, cache key и ajax payload.
 - Не меняй order/basket/payment/shipment/catalog price/stock прямым SQL, если есть API и side effects.
 - Не подключай production 1С, реальные платежи, доставки или кассы для smoke без явного подтверждения.

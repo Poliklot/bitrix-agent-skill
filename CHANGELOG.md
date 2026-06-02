@@ -4,6 +4,15 @@
 
 ## [Unreleased]
 
+## [1.20.0] — 2026-06-02
+
+### Added
+- `bitrix/references/storeassist.md` — отдельный core-first reference по `storeassist` 24.0.0: мастер магазина, `storeassist_1c_*` onboarding pages, admin toolbar, task whitelist, options `storeassist_settings`/`progress_percent`/`num_orders`, AJAX endpoint `/bitrix/tools/storeassist.php`, menu hooks и daily order-progress agent.
+
+### Changed
+- `shop-core-module-inventory.md` теперь считает `storeassist` покрытым и сдвигает ordered roadmap к `shop-standard-components.md`, marketing/analytics, automation и webservice.
+- `bitrix/SKILL.md`, `shop-task-matrix.md`, `README.md`, `PLAN.md`, `bitrix/VERSION` и MCP Market compact bundles синхронизированы со StoreAssist baseline `1.20.0`.
+
 ## [1.19.0] — 2026-06-02
 
 ### Added
@@ -274,7 +283,8 @@
 ### Added
 - Первый публичный релиз: `SKILL.md`, progressive disclosure архитектура
 
-[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.19.0...HEAD
+[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.20.0...HEAD
+[1.20.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.19.0...v1.20.0
 [1.19.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.18.0...v1.19.0
 [1.18.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.17.0...v1.18.0
 [1.17.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.16.0...v1.17.0
