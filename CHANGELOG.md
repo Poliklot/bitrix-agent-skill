@@ -4,6 +4,9 @@
 
 ## [Unreleased]
 
+### Added
+- `mcpmarket/bitrix/` — компактная read-only версия навыка для импорта через MCP Market: 64 reference-файла сгруппированы в 10 bundles, чтобы skill folder оставался ниже лимита 50 файлов.
+
 ## [1.16.0] — 2026-04-24
 
 ### Added

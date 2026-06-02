@@ -23,6 +23,16 @@ Core-first skill for `1C-Bitrix CMS` and `Bitrix24` in `Claude Code` and `Codex`
 
 Обычная команда установки сама ставит навык во все найденные домашние контуры `Claude Code` и `Codex`.
 
+### MCP Market
+
+Для импорта через MCP Market используй компактную read-only папку, а не полный lifecycle-контур `bitrix/`:
+
+```text
+https://github.com/Poliklot/bitrix-agent-skill/tree/master/mcpmarket/bitrix
+```
+
+Полная папка `bitrix/` содержит update/install/uninstall-скрипты и 64 отдельных reference-файла, поэтому превышает лимит MCP Market в 50 файлов. `mcpmarket/bitrix/` содержит тот же reference-слой, сгруппированный в compact bundles.
+
 ### macOS / Linux
 
 1. Установи последнюю release-версию навыка.
