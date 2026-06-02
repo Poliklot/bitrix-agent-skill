@@ -20,6 +20,69 @@ $ClaudeInstallDir = Join-Path (Join-Path (Join-Path $HOME '.claude') 'skills') '
 $CodexHome = if ($env:CODEX_HOME) { $env:CODEX_HOME } else { Join-Path $HOME '.codex' }
 $CodexInstallDir = Join-Path (Join-Path $CodexHome 'skills') 'bitrix'
 
+# Compatibility with update.ps1 releases that forwarded installer switches
+# through positional array splatting. In Windows PowerShell that can arrive as
+# Version='-Claude'/'-Codex' instead of the intended target switch.
+$legacyForwardedArgs = @($args)
+if (-not [string]::IsNullOrWhiteSpace($Version)) {
+    $legacyForwardedTarget = $Version.Trim()
+
+    switch -Regex ($legacyForwardedTarget) {
+        '^-?Claude$' {
+            $Claude = $true
+            $Codex = $false
+            $Both = $false
+            $Auto = $false
+            $Version = ''
+            break
+        }
+        '^-?Codex$' {
+            $Claude = $false
+            $Codex = $true
+            $Both = $false
+            $Auto = $false
+            $Version = ''
+            break
+        }
+        '^-?Both$' {
+            $Claude = $false
+            $Codex = $false
+            $Both = $true
+            $Auto = $false
+            $Version = ''
+            break
+        }
+        '^-?Auto$' {
+            $Claude = $false
+            $Codex = $false
+            $Both = $false
+            $Auto = $true
+            $Version = ''
+            break
+        }
+    }
+
+    if ([string]::IsNullOrWhiteSpace($Version) -and $legacyForwardedArgs.Count -gt 0) {
+        for ($i = 0; $i -lt $legacyForwardedArgs.Count; $i++) {
+            $legacyArg = "$($legacyForwardedArgs[$i])"
+
+            switch -Regex ($legacyArg) {
+                '^-?Force$' {
+                    $Force = $true
+                    continue
+                }
+                '^-?Version$' {
+                    if (($i + 1) -lt $legacyForwardedArgs.Count) {
+                        $Version = "$($legacyForwardedArgs[$i + 1])"
+                        $i++
+                    }
+                    continue
+                }
+            }
+        }
+    }
+}
+
 function Write-Step {
     param([string]$Message)
     Write-Host "`n==> $Message" -ForegroundColor Cyan

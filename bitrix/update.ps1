@@ -239,24 +239,23 @@ try {
     Invoke-WebRequestCompat -Uri $installScriptUrl -OutFile $tempScriptPath | Out-Null
 
     $installScript = [scriptblock]::Create((Get-Content -LiteralPath $tempScriptPath -Raw))
-    $args = @()
+    $installParams = @{}
 
     switch ($targetMode) {
-        'claude' { $args += '-Claude' }
-        'codex' { $args += '-Codex' }
-        default { $args += '-Auto' }
+        'claude' { $installParams['Claude'] = $true }
+        'codex' { $installParams['Codex'] = $true }
+        default { $installParams['Auto'] = $true }
     }
 
     if ($Force) {
-        $args += '-Force'
+        $installParams['Force'] = $true
     }
 
     if (-not [string]::IsNullOrWhiteSpace($requestedVersion)) {
-        $args += '-Version'
-        $args += $requestedVersion
+        $installParams['Version'] = $requestedVersion
     }
 
-    & $installScript @args
+    & $installScript @installParams
 }
 finally {
     if (Test-Path -LiteralPath $tempRoot) {

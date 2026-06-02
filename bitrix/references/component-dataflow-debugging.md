@@ -2,7 +2,7 @@
 
 > Reference для Bitrix-скилла. Загружай для задач по стандартным компонентам, шаблонам, `result_modifier.php`, `component_epilog.php`, AJAX и трассировке данных от API до HTML.
 >
-> Если симптом связан со второй страницей, `PAGEN_N`, `NavNum`, `PageNavigation`, lazy load или `main.pagenavigation`, дополнительно загружай `pagination.md`.
+> Если симптом связан со второй страницей, `PAGEN_N`, `NavNum`, `PageNavigation`, lazy load или `main.pagenavigation`, дополнительно загружай `pagination.md`. Если симптом в интернет-магазине (`catalog.section`, `catalog.element`, `smart.filter`, basket, checkout, personal order), дополнительно загружай `shop-standard-components.md`.
 
 ## Содержание
 - Truth layers

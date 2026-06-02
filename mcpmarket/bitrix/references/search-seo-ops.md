@@ -1758,3 +1758,5 @@ $hits = CPerfomanceHit::GetList(
 - Cloud files — [clouds.md](clouds.md)
 - Bitrix Cloud — [bitrixcloud.md](bitrixcloud.md)
 - Security — [security.md](security.md)
+
+---

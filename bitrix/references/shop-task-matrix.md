@@ -7,21 +7,21 @@
 | Запрос пользователя | Сначала читать | Затем |
 |---|---|---|
 | “Все ли модули магазина/1С покрыты?” | `shop-core-module-inventory.md` | `core-audit-matrix.md`, затем нужный deep-reference |
-| Товары, свойства, разделы, SKU | `catalog.md`, `iblocks.md` | `commerce-1c-integration.md`, если есть 1С/XML_ID |
+| Товары, свойства, разделы, SKU | `catalog.md`, `shop-standard-components.md`, `iblocks.md` | `commerce-1c-integration.md`, если есть 1С/XML_ID |
 | Цена не та / не показывается | `catalog.md`, `currency.md` | `sale.md`, `search-seo-ops` bundles для кеша |
-| Остатки, склады, доступность | `catalog.md` | `sale.md` для reservation/order effects |
-| Корзина не работает | `sale.md`, `catalog.md` | `components.md`, `events-routing.md` |
-| Checkout / оформление заказа | `sale.md` | `users.md`, `validation.md`, `templates.md` |
+| Остатки, склады, доступность | `catalog.md`, `shop-standard-components.md` | `sale.md` для reservation/order effects |
+| Корзина не работает | `shop-standard-components.md`, `sale.md`, `catalog.md` | `components.md`, `events-routing.md` |
+| Checkout / оформление заказа | `shop-standard-components.md`, `sale.md` | `users.md`, `validation.md`, `templates.md` |
 | Оплата / callback | `sale.md` | `http.md`, `events-routing.md`, cashbox section в `sale.md` |
-| Доставка / locations | `sale.md`, `location.md` | `components.md`, `validation.md` |
+| Доставка / locations | `shop-standard-components.md`, `sale.md`, `location.md` | `components.md`, `validation.md` |
 | Скидки / купоны | `sale.md`, `catalog.md` | `currency.md` |
 | 1С выгрузка товаров | `commerce-1c-integration.md`, `catalog.md` | `currency.md`, `cache-infra.md` |
 | Заказы в 1С | `commerce-1c-integration.md`, `sale.md` | `http.md`, `operations-runbook.md` |
-| StoreAssist / мастер настройки 1С | `storeassist.md`, `shop-core-module-inventory.md` | `commerce-1c-integration.md` для реального exchange |
+| StoreAssist / мастер настройки 1С | `storeassist.md`, `shop-standard-components.md`, `shop-core-module-inventory.md` | `commerce-1c-integration.md` для реального exchange |
 | Рассылки, follow-up, маркетинг | `shop-core-module-inventory.md`, `mail-notifications.md`, `messageservice.md` | будущий `shop-marketing-analytics.md` |
 | Автоматизация заказа / роботы | `shop-core-module-inventory.md`, `workflow.md`, `sale.md` | будущий `shop-automation-bizproc.md` |
-| “В админке есть, на сайте нет” для товара | `catalog.md`, `diagnostic-visibility.md` | `index-cache-diagnostics.md`, `component-dataflow-debugging.md` |
-| Вторая страница каталога пустая, lazy load сломан | `pagination.md`, `catalog.md`, `component-dataflow-debugging.md` | `sef-urls.md`, `cache-infra.md` |
+| “В админке есть, на сайте нет” для товара | `shop-standard-components.md`, `catalog.md`, `diagnostic-visibility.md` | `index-cache-diagnostics.md`, `component-dataflow-debugging.md` |
+| Вторая страница каталога пустая, lazy load сломан | `pagination.md`, `shop-standard-components.md`, `catalog.md`, `component-dataflow-debugging.md` | `sef-urls.md`, `cache-infra.md` |
 | Производительность каталога | `catalog.md`, `perfmon.md`, `cache-infra.md` | `search.md`, `seo-cache-access.md` |
 
 ## 2. Минимальная проверка shop-core
@@ -46,7 +46,7 @@ done
 
 1. `iblock`: element active, section active, site binding, dates, rights.
 2. `catalog`: product row, type, offer relation, price, currency, availability.
-3. `component`: params, filter, selected price types, offers props.
+3. `component`: open `shop-standard-components.md`, then params, filter, selected price types, offers props.
 4. `template`: `result_modifier.php`, скрытие пустых props, JS SKU switcher.
 5. `cache`: component/tagged/managed, facet/search index, composite.
 6. `seo`: SEF/urlrewrite/canonical, 404 handling.
@@ -68,7 +68,7 @@ done
 4. Payment restrictions and currency.
 5. Discounts/coupons recalculation.
 6. `Order::save()` errors.
-7. Component AJAX template and JS.
+7. Component AJAX template and JS (`shop-standard-components.md` → stock template/project override).
 
 ### 1С обмен падает
 

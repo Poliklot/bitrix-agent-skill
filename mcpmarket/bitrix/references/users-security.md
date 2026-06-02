@@ -1883,3 +1883,5 @@ $links = UserLinkTable::getList([
 - Не смешивай `socialservices` с `socialnet`: это разные контуры. В текущей фазе `socialservices` активен, `socialnet` всё ещё deferred.
 - Если авторизация “иногда ломается”, почти всегда смотри `state`, redirect URI и связку `UserLinkTable`/provider settings раньше, чем шаблон кнопки.
 - Не хардкодь URL callback, если провайдер уже умеет собрать его сам.
+
+---

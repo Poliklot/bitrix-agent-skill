@@ -20,7 +20,7 @@ foreach (['iblock', 'currency', 'catalog'] as $module) {
 }
 ```
 
-Проверенный shop-core содержит стандартные catalog-компоненты: `catalog.import.1c`, `catalog.export.1c`, `catalog.product.grid`, `catalog.productcard.*`, `catalog.store.*`, `catalog.store.document.*`, `catalog.report.store_*`, `catalog.product.subscribe*`, `catalog.viewed.products`, `currency.field.money`, `currency.money.input`, `currency.rates`.
+Проверенный shop-core содержит стандартные catalog-компоненты: `catalog.import.1c`, `catalog.export.1c`, `catalog.product.grid`, `catalog.productcard.*`, `catalog.store.*`, `catalog.store.document.*`, `catalog.report.store_*`, `catalog.product.subscribe*`, `catalog.viewed.products`, `currency.field.money`, `currency.money.input`, `currency.rates`. Для public `bitrix:catalog`, `catalog.section`, `catalog.element`, `catalog.smart.filter`, compare и eShop wizard/templates дополнительно открывай `shop-standard-components.md`, потому что эти витринные `catalog.*` лежат в `iblock`.
 
 ## 1. Модель данных catalog
 
@@ -140,6 +140,8 @@ $rows = StoreProductTable::getList([
 
 ## 6. Standard components и admin UI
 
+Для component-by-component карты public/admin магазина сначала открывай `shop-standard-components.md`. Здесь оставлен API-oriented catalog слой.
+
 Подтверждённые component families в shop-core:
 
 - импорт/экспорт: `catalog.import.1c`, `catalog.export.1c`, `catalog.import.hl`;
@@ -156,7 +158,7 @@ $rows = StoreProductTable::getList([
 4. `templates/*`;
 5. project override в `local/templates/.../components/bitrix/...`.
 
-Если проблема в page 2, “Показать ещё”, infinite scroll или `PAGEN_<NavNum>` у `catalog.section`, дополнительно открывай `pagination.md`: stock templates текущего shop-core отправляют следующую страницу через `PAGEN_` + `NavNum` и зависят от актуальных `navParams`, cache key, filter и sort.
+Если проблема в page 2, “Показать ещё”, infinite scroll или `PAGEN_<NavNum>` у `catalog.section`, открывай `shop-standard-components.md` и `pagination.md`: stock templates текущего shop-core отправляют следующую страницу через `PAGEN_` + `NavNum` и зависят от актуальных `navParams`, cache key, filter и sort.
 
 ## 7. CommerceML и 1С
 

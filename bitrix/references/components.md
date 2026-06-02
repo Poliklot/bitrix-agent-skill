@@ -2,7 +2,7 @@
 
 > Reference для Bitrix-скилла. Загружай когда задача связана с компонентами, CBitrixComponent, шаблонами, кешированием в компонентах, CComponentEngine или Edit Area.
 >
-> Audit note: ниже сверено с текущим `main/classes/general/component.php`. В этой версии класс компонента действительно ищется через diff `get_declared_classes()` после `include_once(class.php)`, а `startResultCache()` сам открывает tag cache при `BX_COMP_MANAGED_CACHE`.
+> Audit note: ниже сверено с текущим `main/classes/general/component.php`. В этой версии класс компонента действительно ищется через diff `get_declared_classes()` после `include_once(class.php)`, а `startResultCache()` сам открывает tag cache при `BX_COMP_MANAGED_CACHE`. Для public/admin компонентов интернет-магазина дополнительно читай `shop-standard-components.md`.
 
 ## Содержание
 - Структура компонента: .parameters.php, .description.php, class.php, шаблоны

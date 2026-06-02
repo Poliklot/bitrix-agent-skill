@@ -1801,3 +1801,5 @@ CPostingTemplate::Execute();
 - `CPosting::ChangeStatus($id, 'P')` — нормальная точка входа в очередь отправки. Не выдумывай отдельную сущность “sending job”.
 - `SendMessage()` синхронен. Для боевой рассылки ориентируйся на queue/agent/cron workflow.
 - Если включаешь `SEND_CONFIRM`, не забывай, что подписка останется неподтверждённой до прохождения confirm-flow.
+
+---

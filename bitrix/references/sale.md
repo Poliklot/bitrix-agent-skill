@@ -20,6 +20,9 @@ foreach (['sale', 'catalog', 'currency'] as $module) {
 }
 ```
 
+
+Для задач по стандартным компонентам sale (`sale.basket.*`, `sale.order.ajax`, `sale.order.checkout`, `sale.personal.*`, `sale.order.payment*`, delivery/location/gifts) сначала открывай `shop-standard-components.md`, а этот файл используй для D7 API, lifecycle и side effects корзины/заказа.
+
 ## 1. D7 object graph
 
 ```text

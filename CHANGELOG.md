@@ -4,6 +4,16 @@
 
 ## [Unreleased]
 
+## [1.21.0] — 2026-06-02
+
+### Added
+- `bitrix/references/shop-standard-components.md` — отдельный core-first reference по стандартным компонентам интернет-магазина: `bitrix:catalog`, `catalog.section`, `catalog.element`, `catalog.smart.filter`, compare, basket, `sale.order.ajax`, `sale.order.checkout`, personal order pages, catalog productcard/store/report components, `bitrix.eshop` wizard layer и quick map параметров 1С components.
+
+### Changed
+- `shop-core-module-inventory.md` теперь считает standard shop components покрытыми и сдвигает ordered roadmap к marketing/analytics, automation и webservice.
+- `bitrix/SKILL.md`, `shop-task-matrix.md`, `README.md`, `PLAN.md`, `bitrix/VERSION` и MCP Market compact bundles синхронизированы со standard-components baseline `1.21.0`.
+- Windows `update.ps1` больше не передаёт `-Claude`/`-Codex` в installer как версию; `install.ps1` также умеет восстановиться после старого broken forwarding из уже установленных updater-копий.
+
 ## [1.20.0] — 2026-06-02
 
 ### Added
@@ -283,7 +293,8 @@
 ### Added
 - Первый публичный релиз: `SKILL.md`, progressive disclosure архитектура
 
-[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.20.0...HEAD
+[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.21.0...HEAD
+[1.21.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.20.0...v1.21.0
 [1.20.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.19.0...v1.20.0
 [1.19.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.18.0...v1.19.0
 [1.18.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.17.0...v1.18.0

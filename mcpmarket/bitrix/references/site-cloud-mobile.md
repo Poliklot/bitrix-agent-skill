@@ -2615,3 +2615,5 @@ php <console-entrypoint> translate:index --path=/local/modules
 - После программного изменения lang-файла не забывай про `updatePhraseIndex()`, если задача затрагивает поиск/translate UI.
 - `saveSource` и обычное `save` — не одно и то же: у них разные permission-level.
 - Если панель/редактор “есть у админа, но нет у редактора”, смотри `Permission` и модульные права `translate`, а не только компонент.
+
+---
