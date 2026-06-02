@@ -7,15 +7,16 @@
 ## Текущий статус
 
 На дату этого плана:
-- актуальная версия навыка: `1.5.0`;
+- актуальная версия навыка: `1.16.0`;
 - точка входа: `bitrix/SKILL.md`;
 - reference-слой: `bitrix/references/*.md`;
-- все текущие reference-файлы прошли ревизию против установленного core;
-- магазинный контур и другие отсутствующие модули вынесены в deferred-режим.
+- non-commerce reference-слой прошёл ревизию против установленного core;
+- PHP workflow/testing/quality, legacy modernization, diagnostics, standard components и operations-runbook закрыты как активный non-commerce контур;
+- магазинный контур, обмен с 1С и другие отсутствующие модули вынесены в deferred-режим до установки отдельного shop-core.
 
 ## Активный и отложенный контур
 
-### Активный маршрут
+### Активный non-commerce маршрут
 
 Сейчас навык должен вести задачи прежде всего в подтверждённые домены:
 - `main`
@@ -33,6 +34,19 @@
 - `subscribe`
 - `ui`
 - `perfmon`
+- `security`
+- `clouds`
+- `bitrixcloud`
+- `fileman`
+- `location`
+- `messageservice`
+- `mobileapp`
+- `b24connector`
+- `photogallery`
+- `translate`
+- PHP workflow/testing/quality и legacy modernization
+- diagnostics: visibility, cache/index, component dataflow
+- operations: agents/cron/stepper, backup/monitoring, переносы, perf diagnostics
 - проектные оверрайды в `local/*`
 
 ### Deferred-маршрут
@@ -40,10 +54,14 @@
 Эти домены не считаются базовым путём, пока соответствующий модуль не подтверждён в `www/bitrix/modules`:
 - `catalog`
 - `sale`
+- `currency`
 - `bizproc`
 - `pull`
 - `socialnet`
-- магазинные workflow в целом
+- обмен с `1С` / `CommerceML`
+- магазинные workflow в целом: торговые предложения, цены, остатки, склады, корзина, checkout, оплата, доставка, скидки, заказы, отгрузки, возвраты
+
+Важно: наличие `catalog.*` standard components внутри `iblock` или шаблонов не доказывает наличие полноценного магазинного core. Активировать commerce-маршрут можно только после проверки реальных модулей и их runtime-контрактов.
 
 ## Структура репозитория
 
@@ -73,7 +91,7 @@ bitrix-agent-skill/
 
 ### Reference-аудит
 
-Проверены и скорректированы все текущие reference-файлы, включая:
+Проверены и скорректированы текущие non-commerce reference-файлы, включая:
 - модель данных и инфоблоки;
 - компоненты, шаблоны и ЧПУ;
 - поиск, SEO, кеш и агенты;
@@ -81,7 +99,9 @@ bitrix-agent-skill/
 - веб-формы, почту, подписки;
 - REST, HTTP, low-level DB;
 - admin UI, modern grid, file uploader;
-- validation, numerators, steppers, import/export.
+- validation, numerators, steppers, import/export;
+- PHP workflow/testing/quality, safe legacy modernization;
+- non-commerce diagnostics, standard components и operations-runbook.
 
 ### Документация репозитория
 
@@ -95,27 +115,75 @@ bitrix-agent-skill/
 1. Любое новое утверждение в reference-файлах должно подтверждаться локальным core или явно помечаться как version/module-dependent.
 2. Если API найден только в другом Bitrix-стеке, но не в установленном ядре, его нельзя описывать как штатный контракт.
 3. Если проектный код расходится со стандартным ядром, приоритет у проектного кода, но с явной пометкой об оверрайде.
-4. Магазинные задачи не должны становиться частью активного маршрута до установки магазинного core.
+4. Магазинные задачи и обмен с 1С не должны становиться частью активного маршрута до установки отдельного shop-core и ревизии по реальному коду.
 5. После каждой волны ревизии должны синхронно обновляться `SKILL.md`, `VERSION`, а при необходимости `README.md` и `CHANGELOG.md`.
+6. Для commerce/1C-аудита нельзя использовать production-данные, живые ключи и реальные персональные данные клиентов; нужны sandbox и тестовые CommerceML fixtures.
 
 ## Следующие шаги
 
 ### Ближайшие
 
-1. Держать reference-слой консистентным при следующих правках и новых задачах по блогу/контенту.
-2. При появлении новых локальных модулей или project overrides добавлять их в маршрут только после проверки по коду.
-3. При необходимости собрать небольшой набор smoke-задач для ручной проверки качества навыка на текущем core.
+1. Держать non-commerce reference-слой консистентным при следующих правках.
+2. Синхронизировать этот living-plan с текущей версией `1.16.0` и больше не оставлять исторические версии в статусном блоке.
+3. При появлении новых локальных модулей или project overrides добавлять их в маршрут только после проверки по коду.
+4. Собрать небольшой набор smoke-задач для ручной проверки качества навыка на текущем non-commerce core.
+
+### Новый целевой этап: Commerce + 1С Integration
+
+Цель этапа — превратить deferred commerce-контур в подтверждённый active-route только после аудита живого ядра интернет-магазина.
+
+#### Подготовка sandbox
+
+1. Поставить отдельный Bitrix sandbox с редакцией/решением, где реально присутствуют `catalog`, `sale`, `currency` и связанные магазинные модули.
+2. Держать sandbox отдельно от репозитория `bitrix-agent-skill`: отдельная директория, контейнер или VM.
+3. Зафиксировать версию продукта, состав `www/bitrix/modules`, активные сайты, выбранный wizard/solution и PHP/DB окружение.
+4. Не подключать production 1С, реальные платежи, реальные службы доставки и данные клиентов; использовать тестовые настройки и fixtures.
+
+#### Аудит shop-core
+
+1. Подтвердить реальные contracts для:
+   - `catalog`: товары, SKU/торговые предложения, свойства, цены, типы цен, остатки, склады, measure/unit слой, import/export;
+   - `sale`: basket, order, shipment, payment, delivery, discounts, coupons, status lifecycle, user profiles;
+   - `currency`: валюты, курсы, форматирование, связь с ценами;
+   - standard components и stock templates магазина;
+   - admin UI/grid/actions для каталога, заказов и настроек магазина.
+2. Переаудировать `bitrix/references/catalog.md`, `bitrix/references/sale.md`, `bitrix/references/commerce-workflows.md`.
+3. Добавить отдельный reference-файл для обмена с 1С, например `bitrix/references/commerce-1c-integration.md`.
+4. Сформировать `shop-task-matrix.md` или расширить существующую task matrix: каталог, SKU, цены, остатки, корзина, checkout, оплаты, доставки, скидки, заказы, обмен с 1С, диагностика CommerceML.
+
+#### Аудит обмена с 1С
+
+1. Найти в shop-core реальные endpoints, компоненты, обработчики и настройки обмена с 1С.
+2. Развести импорт каталога, экспорт/обмен заказами, файлы CommerceML, zip/chunk-upload, авторизацию и progressive import steps.
+3. Описать диагностику типовых проблем:
+   - 1С выгрузила товар, но он не виден на сайте;
+   - товар виден, но не покупается;
+   - цены/остатки не обновились;
+   - SKU/предложения сломали карточку;
+   - exchange падает на больших файлах или повторных чанках;
+   - заказы не уходят обратно в 1С;
+   - конфликтует кастомный обработчик/override.
+4. Зафиксировать безопасный verification-flow: логи, временные файлы, таблицы, agents/events, component cache, managed/tagged cache, search/index/SEO side effects.
 
 ### После установки магазинного core
 
-1. Подтвердить наличие `sale`, `catalog` и связанных модулей в реальном ядре.
-2. Отдельно переаудировать `sale.md`, `catalog.md` и `commerce-workflows.md`.
-3. Только после этого расширять skill на полный e-commerce контур: цены, остатки, корзина, checkout, оплата, доставка, скидки и интеграции магазина.
+1. Выполнить Commerce + 1С audit по sandbox.
+2. Обновить `SKILL.md`, чтобы commerce-задачи маршрутизировались в подтверждённые reference-файлы.
+3. Обновить `README.md`, `CHANGELOG.md`, `bitrix/VERSION` и при необходимости release notes.
+4. Только после этого расширять skill на полный e-commerce контур.
 
 ## Definition of done для текущей фазы
 
-Текущая фаза считается завершённой, когда:
+Non-commerce фаза считается завершённой, когда:
 - reference-файлы не содержат неподтверждённых API без явной пометки;
 - `SKILL.md` маршрутизирует задачи только в подтверждённые домены;
 - служебные документы репозитория не спорят с фактическим состоянием навыка;
 - deferred-домены явно отделены от активного маршрута.
+
+Commerce/1C фаза считается завершённой, когда:
+- установлен и задокументирован отдельный shop-core sandbox;
+- `catalog`, `sale`, `currency` и обмен с 1С подтверждены по реальному коду;
+- `catalog.md`, `sale.md`, `commerce-workflows.md` переаудированы;
+- создан или обновлён reference по `1С`/`CommerceML`;
+- skill умеет маршрутизировать магазинные задачи без догадок и без смешивания non-commerce core с shop-core;
+- есть smoke-задачи для каталога, корзины, checkout, заказа, обмена с 1С и диагностики цен/остатков/SKU.
