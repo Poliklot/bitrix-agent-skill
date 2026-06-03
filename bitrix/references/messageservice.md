@@ -1,6 +1,6 @@
 # Сообщения, SMS-провайдеры и ограничения (модуль messageservice)
 
-> Audit note: ниже сверено с текущим `www/bitrix/modules/messageservice` версии `24.900.100`. Подтверждены `\Bitrix\MessageService\Message`, `Sender\SmsManager`, абстракции `Sender\Base` и `BaseConfigurable`, `Restriction\RestrictionManager`, `RestService`, controller `\Bitrix\MessageService\Controller\Sender`, internal ORM-таблицы сообщений и ограничений, стандартные компоненты `bitrix:messageservice.config.sender.sms` и `bitrix:messageservice.config.sender.limits`, а также callback-tools `tools/callback_*.php`.
+> Audit note: ниже сверено с текущим `www/bitrix/modules/messageservice` версии `24.900.100`. Подтверждены `\Bitrix\MessageService\Message`, `Sender\SmsManager`, абстракции `Sender\Base` и `BaseConfigurable`, `Restriction\RestrictionManager`, `RestService`, controller `\Bitrix\MessageService\Controller\Sender`, internal ORM-таблицы сообщений и ограничений, стандартные компоненты `bitrix:messageservice.config.sender.sms` и `bitrix:messageservice.config.sender.limits`, а также callback-tools `tools/callback_*.php`. Для shop-core связки `messageservice` 25.200.100 с `sender` и SMS-лимитами смотри `shop-marketing-analytics.md`.
 
 ## Для чего использовать
 

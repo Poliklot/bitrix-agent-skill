@@ -1136,7 +1136,7 @@ CFormResult::SetStatus($resultId, $defaultStatusId);
 
 # Почтовые события и уведомления
 
-> Reference для Bitrix-скилла. Загружай когда задача связана с `CEvent`, `Bitrix\Main\Mail\Event`, шаблонами почтовых событий или перехватом отправки. Если задача уже про SMS-провайдера, ограничения, callback-и, sender management или REST-интеграцию, дополнительно загружай `messageservice.md`: это отдельный модульный слой, а не просто расширение mail-событий.
+> Reference для Bitrix-скилла. Загружай когда задача связана с `CEvent`, `Bitrix\Main\Mail\Event`, шаблонами почтовых событий или перехватом отправки. Если задача уже про SMS-провайдера, ограничения, callback-и, sender management или REST-интеграцию, дополнительно загружай `messageservice.md`: это отдельный модульный слой, а не просто расширение mail-событий. Если задача shop-specific про рассылки, сегменты, клики/opens, отписки, sender triggers или report/statistic side effects, дополнительно загружай `shop-marketing-analytics.md`.
 >
 > Audit note: проверено по текущему core `main/lib/mail/event.php`, `main/classes/general/event.php`.
 
@@ -1416,7 +1416,7 @@ while ($row = $result->fetch())
 
 > Reference для Bitrix-скилла. Загружай когда задача связана с рубриками рассылок, подписками, posting-рассылками и auto-template workflow модуля `subscribe`.
 >
-> Audit note: проверено по текущему core `subscribe/classes/general/*`, `subscribe/install/components/*`.
+> Audit note: проверено по текущему core `subscribe/classes/general/*`, `subscribe/install/components/*`. Для shop-core различий между legacy `subscribe.*`, modern `sender.subscribe` и `catalog.product.subscribe*` дополнительно открывай `shop-marketing-analytics.md`.
 
 ## Содержание
 - Архитектура модуля `subscribe`

@@ -18,7 +18,10 @@
 | 1С выгрузка товаров | `commerce-1c-integration.md`, `catalog.md` | `currency.md`, `cache-infra.md` |
 | Заказы в 1С | `commerce-1c-integration.md`, `sale.md` | `http.md`, `operations-runbook.md` |
 | StoreAssist / мастер настройки 1С | `storeassist.md`, `shop-standard-components.md`, `shop-core-module-inventory.md` | `commerce-1c-integration.md` для реального exchange |
-| Рассылки, follow-up, маркетинг | `shop-core-module-inventory.md`, `mail-notifications.md`, `messageservice.md` | будущий `shop-marketing-analytics.md` |
+| Рассылки, follow-up, маркетинг | `shop-marketing-analytics.md` | `mail-notifications.md`, `messageservice.md`, `sale.md` |
+| Форма подписки / отписка | `shop-marketing-analytics.md`, `subscribe.md` | `userconsent.md`, `mail-notifications.md` |
+| SMS / message provider / лимиты | `shop-marketing-analytics.md`, `messageservice.md` | REST/provider config, `mail-notifications.md` |
+| Баннеры, A/B, conversion, reports, statistic | `shop-marketing-analytics.md` | `templates.md`, `seo-cache-access.md`, `perfmon.md` |
 | Автоматизация заказа / роботы | `shop-core-module-inventory.md`, `workflow.md`, `sale.md` | будущий `shop-automation-bizproc.md` |
 | “В админке есть, на сайте нет” для товара | `shop-standard-components.md`, `catalog.md`, `diagnostic-visibility.md` | `index-cache-diagnostics.md`, `component-dataflow-debugging.md` |
 | Вторая страница каталога пустая, lazy load сломан | `pagination.md`, `shop-standard-components.md`, `catalog.md`, `component-dataflow-debugging.md` | `sef-urls.md`, `cache-infra.md` |

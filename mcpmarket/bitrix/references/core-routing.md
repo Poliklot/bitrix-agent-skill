@@ -14,7 +14,7 @@
 Bitrix skill остаётся **core-first**, а не “версией по памяти”. Есть два подтверждённых truth layer:
 
 1. **Non-commerce checkout** — активны контентные/системные модули, commerce был deferred.
-2. **Shop-core checkout** `/Users/igormajorov/Downloads/Telegram Desktop/bitrix-shop-core` — подтверждены 49 модулей; deep baseline готов для `catalog`, `sale`, `currency`, standard shop components, `bitrix.eshop`, pagination и 1С/CommerceML components, а полный coverage status вынесен в `shop-core-module-inventory.md`.
+2. **Shop-core checkout** `/Users/igormajorov/Downloads/Telegram Desktop/bitrix-shop-core` — подтверждены 49 модулей; deep baseline готов для `catalog`, `sale`, `currency`, standard shop components, shop marketing/analytics, `bitrix.eshop`, pagination и 1С/CommerceML components, а полный coverage status вынесен в `shop-core-module-inventory.md`.
 
 В каждом новом пользовательском проекте сначала проверяй локальный `www/bitrix/modules`. Нельзя переносить активность `sale/catalog` из shop-core на другой проект без проверки.
 
@@ -53,7 +53,11 @@ Shop-core facts:
 | `storeassist` | `24.0.0` | active shop assistant | `commerce-1c-integration.md`, `commerce-workflows.md` |
 | `pull` | `25.300.0` | active in shop-core | `push-pull.md` after local confirmation |
 | `bizproc` | `26.200.0` | active in shop-core | `workflow.md` after local confirmation |
-| `sender` | `26.0.0` | active in shop-core | `mail-notifications.md`, `sale.md` side effects |
+| `sender` | `26.0.0` | active shop marketing | `shop-marketing-analytics.md`, `mail-notifications.md`, `messageservice.md` |
+| `mail` | `26.100.200` | active shop marketing channel | `shop-marketing-analytics.md`, `mail-notifications.md` |
+| `messageservice` | `25.200.100` | active shop SMS/provider channel | `shop-marketing-analytics.md`, `messageservice.md` |
+| `subscribe` | `25.0.0` | active legacy subscriptions | `shop-marketing-analytics.md`, `subscribe.md` |
+| `advertising`/`abtest`/`conversion`/`report`/`statistic` | confirmed | active analytics/ads layer | `shop-marketing-analytics.md` |
 
 Shop-core содержит exchange components:
 
@@ -110,6 +114,7 @@ Admin entrypoints:
 | Bizproc/order automation | `bizproc` есть | `workflow.md`, `sale.md` |
 | Pull/realtime shop UI | `pull` есть | `push-pull.md`, конкретный component |
 | Eshop wizard/template | `bitrix.eshop` есть | `shop-standard-components.md`, `commerce-workflows.md`, `templates.md` |
+| Маркетинг/аналитика магазина | `sender`, `messageservice`, `subscribe`, `advertising`, `abtest`, `conversion`, `report` или `statistic` есть | `shop-marketing-analytics.md`, `mail-notifications.md`, `messageservice.md`, `subscribe.md` |
 
 ## 5. Условные и отложенные домены
 
@@ -133,6 +138,7 @@ Admin entrypoints:
 - 1С exchange success на `file` не означает успешный import: проверяй `mode=import`, session state, tables, logs.
 - Vendor-файлы внутри `www/bitrix/modules/*/vendor` не являются project tooling.
 - Пагинация не сводится к `PAGEN_1`: legacy `NavNum` может породить `PAGEN_2+`, D7 использует строковый id `PageNavigation`, а `nTopCount` — это limit без полноценного NavString.
+- `sender.subscribe`, `subscribe.form/edit` и `catalog.product.subscribe*` — разные подсистемы подписок, не заменяй одну другой.
 
 ## 7. Покрытие reference-файлами
 
@@ -144,7 +150,7 @@ Admin entrypoints:
 | Content modules | active | `iblocks.md`, `highloadblock.md`, `webforms.md`, `blog-socialnet.md`, `forum.md`, `vote.md`, `subscribe.md` |
 | Search/SEO/cache | active | `search.md`, `seo-cache-access.md`, `cache-infra.md`, `index-cache-diagnostics.md` |
 | Admin/ops | active | `admin-ui.md`, `grid-admin-modern.md`, `pagination.md`, `operations-runbook.md`, `perfmon.md`, `update-stepper.md` |
-| Commerce/shop | active after local module confirmation | `shop-task-matrix.md`, `shop-standard-components.md`, `catalog.md`, `sale.md`, `currency.md`, `commerce-workflows.md` |
+| Commerce/shop | active after local module confirmation | `shop-task-matrix.md`, `shop-standard-components.md`, `shop-marketing-analytics.md`, `catalog.md`, `sale.md`, `currency.md`, `commerce-workflows.md` |
 | 1С/CommerceML | active after component confirmation | `commerce-1c-integration.md` |
 | Full shop-core inventory | routing map | `shop-core-module-inventory.md` |
 
@@ -206,8 +212,8 @@ Truth layer: `/Users/igormajorov/Downloads/Telegram Desktop/bitrix-shop-core/www
 
 | Модуль | Версия | Components | Admin | Shop/1С relevance | Coverage | Читать сейчас | Следующий шаг |
 |---|---:|---:|---:|---|---|---|---|
-| `abtest` | `26.0.0` | 0 | 5 | A/B тесты, отчёты, связка с conversion | needs deep audit | `shop-core-module-inventory.md` | `shop-marketing-analytics.md` |
-| `advertising` | `24.200.0` | 2 | 14 | баннеры/реклама, public components `advertising.banner*` | needs deep audit | `shop-core-module-inventory.md` | `shop-marketing-analytics.md` |
+| `abtest` | `26.0.0` | 0 | 5 | A/B тесты, отчёты, связка с conversion | covered | `shop-marketing-analytics.md` | держать вместе с conversion diagnostics |
+| `advertising` | `24.200.0` | 2 | 14 | баннеры/реклама, public components `advertising.banner*` | covered | `shop-marketing-analytics.md` | держать связанным с eShop banner calls |
 | `b24connector` | `25.0.0` | 2 | 9 | CRM/forms/widgets bridge, косвенно shop leads | covered-partial | `b24connector.md`, `rest.md` | проверить shop lead/forms сценарии |
 | `bitrix.eshop` | `25.0.0` | 3 | 1 | готовое eShop-решение, public/templates/demo data | covered | `shop-standard-components.md`, `commerce-workflows.md`, `templates.md` | держать wizard/templates связанными с shop components |
 | `bitrix.sitecorporate` | `26.0.0` | 3 | 0 | corporate wizard, местами `furniture.catalog.*` | covered | `sitecorporate.md` | держать как non-shop с conditional catalog |
@@ -216,9 +222,9 @@ Truth layer: `/Users/igormajorov/Downloads/Telegram Desktop/bitrix-shop-core/www
 | `bizprocdesigner` | `26.0.0` | 2 | 4 | редактор workflow templates | needs deep audit | `workflow.md` | вместе с `bizproc` audit |
 | `blog` | `26.400.0` | 35 | 6 | комментарии/контент вокруг витрины | covered | `blog-socialnet.md` | нет срочного shop deep dive |
 | `calendar` | `25.170.0` | 16 | 3 | mail/calendar side-channel, не core shop | needs deep audit | `shop-core-module-inventory.md` | deferred, если будет задача |
-| `catalog` | `25.550.0` | 62 | 44 | товары, SKU, цены, склады, 1С catalog exchange | covered | `catalog.md`, `shop-standard-components.md`, `commerce-1c-integration.md` | marketing/report side effects при следующем аудите |
+| `catalog` | `25.550.0` | 62 | 44 | товары, SKU, цены, склады, 1С catalog exchange | covered | `catalog.md`, `shop-standard-components.md`, `commerce-1c-integration.md` | product subscription/report side effects см. `shop-marketing-analytics.md` |
 | `clouds` | `25.100.0` | 0 | 8 | external file storage для catalog images/imports | covered | `clouds.md`, `file-upload-modern.md` | нет срочного shop deep dive |
-| `conversion` | `25.0.0` | 0 | 4 | конверсия магазина, связка с A/B/statistic | needs deep audit | `shop-core-module-inventory.md` | `shop-marketing-analytics.md` |
+| `conversion` | `25.0.0` | 0 | 4 | конверсия магазина, связка с A/B/statistic | covered | `shop-marketing-analytics.md` | держать вместе с A/B/statistic diagnostics |
 | `currency` | `26.0.0` | 3 | 6 | валюты/курсы/форматирование денег | covered | `currency.md` | нет срочного shop deep dive |
 | `fileman` | `25.200.200` | 11 | 37 | editor/files/maps, вспомогательно для витрины | covered | `fileman.md`, `templates.md` | нет срочного shop deep dive |
 | `form` | `26.0.0` | 6 | 17 | формы, CRM bridge, заявки/лиды | covered | `webforms.md`, `b24connector.md` | проверить shop lead forms при задаче |
@@ -230,24 +236,24 @@ Truth layer: `/Users/igormajorov/Downloads/Telegram Desktop/bitrix-shop-core/www
 | `learning` | `25.0.0` | 15 | 23 | обучение, не core shop | needs deep audit | `shop-core-module-inventory.md` | deferred |
 | `lists` | `25.600.100` | 19 | 0 | processes/lists, связка с bizproc/CRM | needs deep audit | `workflow.md` | вместе с automation audit |
 | `location` | `25.400.0` | 0 | 0 | адреса и locations для доставки/checkout | covered | `location.md`, `sale.md` | нет срочного shop deep dive |
-| `mail` | `26.100.200` | 18 | 14 | mailbox/client/signatures, sender/mail pipeline | covered-partial | `mail-notifications.md` | `shop-marketing-analytics.md` или `shop-mail-sender.md` |
+| `mail` | `26.100.200` | 18 | 14 | mailbox/client/signatures, sender/mail pipeline | covered | `mail-notifications.md`, `shop-marketing-analytics.md` | нет срочного shop deep dive |
 | `main` | `26.150.0` | 82 | 112 | runtime, users, sessions, cache, pagination, mail helpers | covered | `modules-loader.md`, `pagination.md`, `session-auth.md` | нет срочного shop deep dive |
-| `messageservice` | `25.200.100` | 2 | 2 | SMS providers, sender limits/config | covered | `messageservice.md`, `mail-notifications.md` | проверить sender-связку |
+| `messageservice` | `25.200.100` | 2 | 2 | SMS providers, sender limits/config | covered | `messageservice.md`, `mail-notifications.md`, `shop-marketing-analytics.md` | нет срочного shop deep dive |
 | `mobileapp` | `25.0.100` | 15 | 2 | mobile/admin mobile, sale mobile components используют `sale` | covered-partial | `mobileapp.md`, `sale.md` | проверить mobile orders при задаче |
 | `perfmon` | `25.300.0` | 0 | 22 | performance diagnostics для магазина | covered | `perfmon.md`, `operations-runbook.md` | нет срочного shop deep dive |
 | `photogallery` | `25.100.0` | 17 | 0 | galleries, не core shop | covered | `photogallery.md` | нет срочного shop deep dive |
 | `pull` | `25.300.0` | 1 | 0 | realtime/push, потенциально admin/mobile order updates | covered-partial | `push-pull.md` | проверить sale/mobile связку при задаче |
-| `report` | `25.100.0` | 19 | 0 | report builder / visualconstructor | needs deep audit | `shop-core-module-inventory.md` | `shop-marketing-analytics.md` |
+| `report` | `25.100.0` | 19 | 0 | report builder / visualconstructor | covered | `shop-marketing-analytics.md` | domain-specific helper class по задаче |
 | `rest` | `26.0.0` | 42 | 2 | webhooks/OAuth/apps, внешние shop integrations | covered | `rest.md`, `http.md` | проверить sale/catalog REST при задаче |
-| `sale` | `26.0.0` | 78 | 172 | basket/order/checkout/payment/delivery/discounts/1С | covered | `sale.md`, `shop-standard-components.md`, `commerce-workflows.md`, `commerce-1c-integration.md` | automation/marketing side effects при следующем аудите |
+| `sale` | `26.0.0` | 78 | 172 | basket/order/checkout/payment/delivery/discounts/1С | covered | `sale.md`, `shop-standard-components.md`, `commerce-workflows.md`, `commerce-1c-integration.md`, `shop-marketing-analytics.md` | automation side effects при следующем аудите |
 | `search` | `25.200.0` | 6 | 9 | product search/index | covered | `search.md`, `index-cache-diagnostics.md` | нет срочного shop deep dive |
 | `security` | `25.0.0` | 3 | 25 | WAF/OTP/security hardening for exchange/admin | covered | `security.md` | проверить 1С security toggles в exchange audit |
-| `sender` | `26.0.0` | 65 | 13 | campaigns, triggers, templates, contact segments | covered-partial | `mail-notifications.md`, `messageservice.md` | `shop-marketing-analytics.md` |
+| `sender` | `26.0.0` | 65 | 13 | campaigns, triggers, templates, contact segments | covered | `shop-marketing-analytics.md`, `mail-notifications.md`, `messageservice.md` | нет срочного shop deep dive |
 | `seo` | `25.100.400` | 2 | 15 | SEO, meta, sitemap, catalog SEO side effects | covered | `seo-cache-access.md`, `catalog.md` | нет срочного shop deep dive |
 | `socialservices` | `26.0.0` | 3 | 0 | OAuth/social login | covered | `socialservices.md`, `users.md` | нет срочного shop deep dive |
-| `statistic` | `26.0.0` | 1 | 66 | traffic/statistics, reports/conversion | needs deep audit | `shop-core-module-inventory.md` | `shop-marketing-analytics.md` |
+| `statistic` | `26.0.0` | 1 | 66 | traffic/statistics, reports/conversion | covered | `shop-marketing-analytics.md` | следить за runtime/perf side effects |
 | `storeassist` | `24.0.0` | 0 | 15 | shop setup assistant, 1С onboarding pages | covered | `storeassist.md`, `commerce-1c-integration.md` | держать связанным с 1С diagnostics |
-| `subscribe` | `25.0.0` | 5 | 12 | legacy subscriptions/mailings | covered | `subscribe.md`, `mail-notifications.md` | связать с sender при задаче |
+| `subscribe` | `25.0.0` | 5 | 12 | legacy subscriptions/mailings | covered | `subscribe.md`, `mail-notifications.md`, `shop-marketing-analytics.md` | нет срочного shop deep dive |
 | `support` | `26.0.0` | 5 | 27 | support/tickets/coupons, не core shop | needs deep audit | `shop-core-module-inventory.md` | deferred |
 | `translate` | `25.100.0` | 2 | 6 | localization/lang files | covered | `translate.md` | нет срочного shop deep dive |
 | `ui` | `26.150.0` | 16 | 0 | grid/filter/entity selector/uploader UI | covered | `grid-admin-modern.md`, `file-upload-modern.md` | нет срочного shop deep dive |
@@ -265,7 +271,7 @@ Confirmed signals:
 - admin: `1c_import.php`, `1c_admin.php`, `cat_catalog_*`, `cat_store_*`, `cat_discount_*`, coupon pages;
 - reference coverage: `catalog.md`, `currency.md`, `commerce-1c-integration.md`, `commerce-workflows.md`.
 
-Baseline is good for product/SKU/price/store/1С import-export tasks. Component-by-component storefront/admin map for `catalog.section`, `catalog.smart.filter`, compare, viewed/recommended and reports is covered by `shop-standard-components.md`; marketing/report side effects still need separate audit.
+Baseline is good for product/SKU/price/store/1С import-export tasks. Component-by-component storefront/admin map for `catalog.section`, `catalog.smart.filter`, compare, viewed/recommended and reports is covered by `shop-standard-components.md`; marketing/report side effects are routed through `shop-marketing-analytics.md`.
 
 ### `sale` 26.0.0
 
@@ -274,7 +280,7 @@ Confirmed signals:
 - admin: `1c_exchange.php`, `order_*`, `delivery_*`, `pay_system_*`, `cashbox_*`, `discount_*`, `exchange_log.php`, reports;
 - reference coverage: `sale.md`, `commerce-workflows.md`, `commerce-1c-integration.md`.
 
-Baseline is good for basket/order/payment/shipment/delivery/discount/1С order exchange tasks. Basket/order/personal/payment/delivery component routing is covered by `shop-standard-components.md`; automation/marketing side effects still need separate audit.
+Baseline is good for basket/order/payment/shipment/delivery/discount/1С order exchange tasks. Basket/order/personal/payment/delivery component routing is covered by `shop-standard-components.md`; marketing side effects are routed through `shop-marketing-analytics.md`, automation side effects still need separate audit.
 
 ### `currency` 26.0.0
 
@@ -295,9 +301,9 @@ Covered by `shop-standard-components.md`:
 - catalog module components: `catalog.product.grid`, `catalog.productcard.*`, `catalog.store.*`, `catalog.report.store_*`;
 - `bitrix.eshop` wizard/template component calls and own `eshop.*` components.
 
-### 1. Marketing/analytics
+### Completed. Marketing/analytics
 
-Target modules:
+Covered by `shop-marketing-analytics.md`:
 - `sender` 26.0.0;
 - `mail` 26.100.200;
 - `messageservice` 25.200.100;
@@ -306,11 +312,10 @@ Target modules:
 - `abtest` 26.0.0;
 - `conversion` 25.0.0;
 - `report` 25.100.0;
-- `statistic` 26.0.0.
+- `statistic` 26.0.0;
+- eShop/public hooks and sale-side sender/statistic connectors.
 
-Next reference: `shop-marketing-analytics.md`.
-
-### 2. Automation
+### 1. Automation
 
 Target modules:
 - `bizproc` 26.200.0;
@@ -321,7 +326,7 @@ Target modules:
 
 Next reference: `shop-automation-bizproc.md`.
 
-### 3. Webservice/integration extras
+### 2. Webservice/integration extras
 
 Target modules/components:
 - `webservice.sale`;
@@ -333,16 +338,16 @@ Next reference: `shop-integrations-webservice.md` or merge into `commerce-1c-int
 
 ## Do not overclaim
 
-- Do not say “все shop-core модули глубоко покрыты” until marketing/analytics, automation and webservice references exist. Standard shop components are covered by `shop-standard-components.md`.
+- Do not say “все shop-core модули глубоко покрыты” until automation and webservice references exist. Standard shop components are covered by `shop-standard-components.md`, marketing/analytics by `shop-marketing-analytics.md`.
 - Do not activate `bizproc`, `pull`, `sender`, `report`, `statistic`, `abtest`, `conversion`, `advertising`, `webservice` in another project unless the module exists locally.
 - Do not infer `sale/catalog` from `iblock` components alone: `iblock` ships `catalog.*` public components even when the `catalog` module may be missing in another checkout.
 - Do not use this inventory as API documentation for `needs deep audit` modules. It is a routing map.
 
 ## Ordered roadmap from this inventory
 
-1. `shop-marketing-analytics.md` — because `sender/report/statistic/conversion/abtest/advertising` are present and uncovered.
-2. `shop-automation-bizproc.md` — because order workflows/robots need careful module-dependent routing.
-3. `shop-integrations-webservice.md` — because `webservice.sale` exists and should not be confused with 1С CommerceML.
+1. `shop-automation-bizproc.md` — because order workflows/robots need careful module-dependent routing.
+2. `shop-integrations-webservice.md` — because `webservice.sale` exists and should not be confused with 1С CommerceML.
+3. Docker/runtime smoke — because current coverage is code-first and still needs DB/runtime fixtures.
 
 ---
 
@@ -471,7 +476,10 @@ Next reference: `shop-integrations-webservice.md` or merge into `commerce-1c-int
 | 1С выгрузка товаров | `commerce-1c-integration.md`, `catalog.md` | `currency.md`, `cache-infra.md` |
 | Заказы в 1С | `commerce-1c-integration.md`, `sale.md` | `http.md`, `operations-runbook.md` |
 | StoreAssist / мастер настройки 1С | `storeassist.md`, `shop-standard-components.md`, `shop-core-module-inventory.md` | `commerce-1c-integration.md` для реального exchange |
-| Рассылки, follow-up, маркетинг | `shop-core-module-inventory.md`, `mail-notifications.md`, `messageservice.md` | будущий `shop-marketing-analytics.md` |
+| Рассылки, follow-up, маркетинг | `shop-marketing-analytics.md` | `mail-notifications.md`, `messageservice.md`, `sale.md` |
+| Форма подписки / отписка | `shop-marketing-analytics.md`, `subscribe.md` | `userconsent.md`, `mail-notifications.md` |
+| SMS / message provider / лимиты | `shop-marketing-analytics.md`, `messageservice.md` | REST/provider config, `mail-notifications.md` |
+| Баннеры, A/B, conversion, reports, statistic | `shop-marketing-analytics.md` | `templates.md`, `seo-cache-access.md`, `perfmon.md` |
 | Автоматизация заказа / роботы | `shop-core-module-inventory.md`, `workflow.md`, `sale.md` | будущий `shop-automation-bizproc.md` |
 | “В админке есть, на сайте нет” для товара | `shop-standard-components.md`, `catalog.md`, `diagnostic-visibility.md` | `index-cache-diagnostics.md`, `component-dataflow-debugging.md` |
 | Вторая страница каталога пустая, lazy load сломан | `pagination.md`, `shop-standard-components.md`, `catalog.md`, `component-dataflow-debugging.md` | `sef-urls.md`, `cache-infra.md` |

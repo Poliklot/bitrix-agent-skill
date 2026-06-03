@@ -7,7 +7,7 @@
 Bitrix skill остаётся **core-first**, а не “версией по памяти”. Есть два подтверждённых truth layer:
 
 1. **Non-commerce checkout** — активны контентные/системные модули, commerce был deferred.
-2. **Shop-core checkout** `/Users/igormajorov/Downloads/Telegram Desktop/bitrix-shop-core` — подтверждены 49 модулей; deep baseline готов для `catalog`, `sale`, `currency`, standard shop components, `bitrix.eshop`, pagination и 1С/CommerceML components, а полный coverage status вынесен в `shop-core-module-inventory.md`.
+2. **Shop-core checkout** `/Users/igormajorov/Downloads/Telegram Desktop/bitrix-shop-core` — подтверждены 49 модулей; deep baseline готов для `catalog`, `sale`, `currency`, standard shop components, shop marketing/analytics, `bitrix.eshop`, pagination и 1С/CommerceML components, а полный coverage status вынесен в `shop-core-module-inventory.md`.
 
 В каждом новом пользовательском проекте сначала проверяй локальный `www/bitrix/modules`. Нельзя переносить активность `sale/catalog` из shop-core на другой проект без проверки.
 
@@ -46,7 +46,11 @@ Shop-core facts:
 | `storeassist` | `24.0.0` | active shop assistant | `commerce-1c-integration.md`, `commerce-workflows.md` |
 | `pull` | `25.300.0` | active in shop-core | `push-pull.md` after local confirmation |
 | `bizproc` | `26.200.0` | active in shop-core | `workflow.md` after local confirmation |
-| `sender` | `26.0.0` | active in shop-core | `mail-notifications.md`, `sale.md` side effects |
+| `sender` | `26.0.0` | active shop marketing | `shop-marketing-analytics.md`, `mail-notifications.md`, `messageservice.md` |
+| `mail` | `26.100.200` | active shop marketing channel | `shop-marketing-analytics.md`, `mail-notifications.md` |
+| `messageservice` | `25.200.100` | active shop SMS/provider channel | `shop-marketing-analytics.md`, `messageservice.md` |
+| `subscribe` | `25.0.0` | active legacy subscriptions | `shop-marketing-analytics.md`, `subscribe.md` |
+| `advertising`/`abtest`/`conversion`/`report`/`statistic` | confirmed | active analytics/ads layer | `shop-marketing-analytics.md` |
 
 Shop-core содержит exchange components:
 
@@ -103,6 +107,7 @@ Admin entrypoints:
 | Bizproc/order automation | `bizproc` есть | `workflow.md`, `sale.md` |
 | Pull/realtime shop UI | `pull` есть | `push-pull.md`, конкретный component |
 | Eshop wizard/template | `bitrix.eshop` есть | `shop-standard-components.md`, `commerce-workflows.md`, `templates.md` |
+| Маркетинг/аналитика магазина | `sender`, `messageservice`, `subscribe`, `advertising`, `abtest`, `conversion`, `report` или `statistic` есть | `shop-marketing-analytics.md`, `mail-notifications.md`, `messageservice.md`, `subscribe.md` |
 
 ## 5. Условные и отложенные домены
 
@@ -126,6 +131,7 @@ Admin entrypoints:
 - 1С exchange success на `file` не означает успешный import: проверяй `mode=import`, session state, tables, logs.
 - Vendor-файлы внутри `www/bitrix/modules/*/vendor` не являются project tooling.
 - Пагинация не сводится к `PAGEN_1`: legacy `NavNum` может породить `PAGEN_2+`, D7 использует строковый id `PageNavigation`, а `nTopCount` — это limit без полноценного NavString.
+- `sender.subscribe`, `subscribe.form/edit` и `catalog.product.subscribe*` — разные подсистемы подписок, не заменяй одну другой.
 
 ## 7. Покрытие reference-файлами
 
@@ -137,7 +143,7 @@ Admin entrypoints:
 | Content modules | active | `iblocks.md`, `highloadblock.md`, `webforms.md`, `blog-socialnet.md`, `forum.md`, `vote.md`, `subscribe.md` |
 | Search/SEO/cache | active | `search.md`, `seo-cache-access.md`, `cache-infra.md`, `index-cache-diagnostics.md` |
 | Admin/ops | active | `admin-ui.md`, `grid-admin-modern.md`, `pagination.md`, `operations-runbook.md`, `perfmon.md`, `update-stepper.md` |
-| Commerce/shop | active after local module confirmation | `shop-task-matrix.md`, `shop-standard-components.md`, `catalog.md`, `sale.md`, `currency.md`, `commerce-workflows.md` |
+| Commerce/shop | active after local module confirmation | `shop-task-matrix.md`, `shop-standard-components.md`, `shop-marketing-analytics.md`, `catalog.md`, `sale.md`, `currency.md`, `commerce-workflows.md` |
 | 1С/CommerceML | active after component confirmation | `commerce-1c-integration.md` |
 | Full shop-core inventory | routing map | `shop-core-module-inventory.md` |
 

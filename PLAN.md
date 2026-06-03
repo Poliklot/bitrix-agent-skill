@@ -7,7 +7,7 @@
 ## Текущий статус
 
 На дату этого плана:
-- актуальная версия навыка: `1.21.0`;
+- актуальная версия навыка: `1.22.0`;
 - точка входа: `bitrix/SKILL.md`;
 - reference-слой: `bitrix/references/*.md`;
 - non-commerce reference-слой прошёл ревизию против установленного core;
@@ -66,7 +66,7 @@
 - обмен с `1С` / `CommerceML`
 - магазинные workflow в целом: торговые предложения, цены, остатки, склады, корзина, checkout, оплата, доставка, скидки, заказы, отгрузки, возвраты
 
-Для shop-core-аудита эти домены уже подтверждены и описаны в `catalog.md`, `sale.md`, `currency.md`, `commerce-workflows.md`, `commerce-1c-integration.md`, `shop-standard-components.md`, `shop-task-matrix.md`.
+Для shop-core-аудита эти домены уже подтверждены и описаны в `catalog.md`, `sale.md`, `currency.md`, `commerce-workflows.md`, `commerce-1c-integration.md`, `shop-standard-components.md`, `shop-marketing-analytics.md`, `shop-task-matrix.md`.
 
 Важно: наличие `catalog.*` standard components внутри `iblock` или шаблонов не доказывает наличие полноценного магазинного core. Активировать commerce-маршрут можно только после проверки реальных модулей и их runtime-контрактов.
 
@@ -132,9 +132,19 @@ bitrix-agent-skill/
 
 1. Держать non-commerce reference-слой консистентным при следующих правках.
 2. Держать `pagination.md` связанным с `iblocks.md`, `components.md`, `admin-ui.md`, `grid-admin-modern.md`, `sef-urls.md` и `diagnostic-visibility.md` при новых находках.
-3. Держать `shop-core-module-inventory.md` как source-of-truth по coverage gaps и не обещать глубокое покрытие uncovered-модулей без отдельного reference.
+3. Держать `shop-core-module-inventory.md` как source-of-truth по coverage gaps и не обещать глубокое покрытие automation/webservice-модулей без отдельного reference.
 4. При появлении новых локальных модулей или project overrides добавлять их в маршрут только после проверки по коду.
 5. Собрать небольшой набор smoke-задач для ручной проверки качества навыка на текущем non-commerce core.
+
+### Завершённый целевой этап: Shop marketing/analytics
+
+На версии `1.22.0` добавлен отдельный reference `shop-marketing-analytics.md`. Закрыты:
+
+1. `sender` 26.0.0: contacts, lists/segments, campaigns/letters, posting queue, triggers, opens/clicks/unsub, UTM, consent, counters, access roles, agents and conversion hooks.
+2. `mail` 26.100.200, `messageservice` 25.200.100 и `subscribe` 25.0.0: mailbox/client/log layer, SMS/provider queues/limits, legacy rubrics/subscriptions/postings и различие `sender.subscribe` vs `subscribe.*`.
+3. `advertising` 24.200.0, `abtest` 26.0.0, `conversion` 25.0.0, `report` 25.100.0, `statistic` 26.0.0: banners, A/B hooks, conversion day context, report/visualconstructor layer и legacy runtime statistic hooks.
+4. eShop/sale side effects: `bitrix:sender.subscribe` в template/public includes, `advertising.banner`, sale buyer/target sale sender connectors, sale statistic events и catalog product subscription separation.
+5. Диагностика: рассылка не ушла, форма подписки не работает, SMS limits, баннер/клик не считается, A/B не переключает шаблон, conversion/report/statistic пустые или тормозят сайт.
 
 ### Завершённый целевой этап: Shop standard components
 
@@ -164,7 +174,7 @@ bitrix-agent-skill/
 2. Counts по standard components, admin entrypoints, `lib`, `classes`, install/db files.
 3. Shop/1С relevance по модулям: runtime, solution/bootstrap, 1С/exchange, marketing/analytics, automation, content/front adjacent, platform/integration/safety.
 4. Coverage status: `covered`, `covered-partial`, `needs deep audit`, `deferred per project`.
-5. Ordered roadmap: `storeassist.md` → `shop-standard-components.md` → `shop-marketing-analytics.md` → `shop-automation-bizproc.md` → `shop-integrations-webservice.md`. После версии `1.21.0` первые два пункта закрыты.
+5. Ordered roadmap: `storeassist.md` → `shop-standard-components.md` → `shop-marketing-analytics.md` → `shop-automation-bizproc.md` → `shop-integrations-webservice.md`. После версии `1.22.0` первые три пункта закрыты.
 
 ### Завершённый целевой этап: Pagination core-layer
 
@@ -213,15 +223,14 @@ bitrix-agent-skill/
    - конфликтует кастомный обработчик/override.
 4. Зафиксирован безопасный verification-flow: логи, временные файлы, таблицы, agents/events, component cache, managed/tagged cache, search/index/SEO side effects.
 
-### Следующие шаги после baseline 1.21.0
+### Следующие шаги после baseline 1.22.0
 
-1. Следующим ordered deep-dive сделать `shop-marketing-analytics.md` по `sender`, `mail`, `messageservice`, `subscribe`, `report`, `statistic`, `conversion`, `abtest`, `advertising`.
-2. Затем сделать `shop-automation-bizproc.md` по `bizproc`, `bizprocdesigner`, `workflow`, `lists`, `pull`.
-3. Затем сделать `shop-integrations-webservice.md` по `webservice.sale`, `webservice.statistic`, sale/catalog REST и внешним app hooks.
-4. Поднять Docker/runtime shop-core и проверить, есть ли живой DB dump или нужна свежая установка.
-5. Собрать smoke fixtures для каталога, offer, цены, остатка, корзины, checkout, заказа и CommerceML.
-6. Прогнать ручные smoke-задачи навыка на shop-core.
-7. После runtime-smoke при необходимости расширить reference-файлы конкретными DB/runtime findings.
+1. Следующим ordered deep-dive сделать `shop-automation-bizproc.md` по `bizproc`, `bizprocdesigner`, `workflow`, `lists`, `pull`.
+2. Затем сделать `shop-integrations-webservice.md` по `webservice.sale`, `webservice.statistic`, sale/catalog REST и внешним app hooks.
+3. Поднять Docker/runtime shop-core и проверить, есть ли живой DB dump или нужна свежая установка.
+4. Собрать smoke fixtures для каталога, offer, цены, остатка, корзины, checkout, заказа, CommerceML, sender subscription, SMS stub, banner/click, conversion/report/statistic checks.
+5. Прогнать ручные smoke-задачи навыка на shop-core.
+6. После runtime-smoke при необходимости расширить reference-файлы конкретными DB/runtime findings.
 
 ## Definition of done для текущей фазы
 

@@ -2,7 +2,7 @@
 
 > Reference для Bitrix-скилла. Загружай когда задача связана с рубриками рассылок, подписками, posting-рассылками и auto-template workflow модуля `subscribe`.
 >
-> Audit note: проверено по текущему core `subscribe/classes/general/*`, `subscribe/install/components/*`.
+> Audit note: проверено по текущему core `subscribe/classes/general/*`, `subscribe/install/components/*`. Для shop-core различий между legacy `subscribe.*`, modern `sender.subscribe` и `catalog.product.subscribe*` дополнительно открывай `shop-marketing-analytics.md`.
 
 ## Содержание
 - Архитектура модуля `subscribe`

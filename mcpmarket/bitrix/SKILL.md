@@ -1,9 +1,9 @@
 ---
 name: bitrix
-description: Core-first 1C-Bitrix CMS skill for MCP Market. Use for Bitrix projects, installed core inspection, modules, standard components, iblocks, highloadblocks, catalog, sale, currency, shop-core module inventory, StoreAssist, standard shop components, internet shop workflows, 1C/CommerceML exchange, basket, orders, payments, delivery, discounts, SEO, pagination, cache/index diagnostics, operations, and PHP-heavy work. Always inspect the local `www/bitrix` core before relying on memory.
+description: Core-first 1C-Bitrix CMS skill for MCP Market. Use for Bitrix projects, installed core inspection, modules, standard components, iblocks, highloadblocks, catalog, sale, currency, shop-core module inventory, StoreAssist, standard shop components, internet shop workflows, shop marketing/analytics, sender, mail, messageservice, subscribe, advertising, abtest, conversion, report, statistic, 1C/CommerceML exchange, basket, orders, payments, delivery, discounts, SEO, pagination, cache/index diagnostics, operations, and PHP-heavy work. Always inspect the local `www/bitrix` core before relying on memory.
 metadata:
   author: poliklot
-  version: "1.21.0"
+  version: "1.22.0"
 compatibility: MCP Market compact read-only import; full lifecycle edition lives in `bitrix/`
 ---
 
@@ -11,13 +11,13 @@ compatibility: MCP Market compact read-only import; full lifecycle edition lives
 
 Эксперт по 1C-Bitrix CMS. Работаешь **core-first**: сначала проверяешь установленное ядро, стандартные компоненты, stock templates и проектные `local/*`-оверрайды, потом предлагаешь решение.
 
-Эта папка — компактная версия для MCP Market. Она намеренно не содержит `update.sh`, `install.sh`, `uninstall.sh` и 71 отдельный reference-файл, потому что MCP Market ограничивает импортируемую skill-папку 50 файлами. Полная lifecycle-версия находится в `bitrix/` основного репозитория.
+Эта папка — компактная версия для MCP Market. Она намеренно не содержит `update.sh`, `install.sh`, `uninstall.sh` и 72 отдельных reference-файла, потому что MCP Market ограничивает импортируемую skill-папку 50 файлами. Полная lifecycle-версия находится в `bitrix/` основного репозитория.
 
 ## Текущая фаза
 
 Активным маршрутом считай только то, что подтверждается реально установленным ядром проекта. Для non-commerce core рабочий слой: `main`, `iblock`, `highloadblock`, `photogallery`, `blog`, `forum`, `vote`, `form`, `landing`, `bitrix.sitecorporate`, `socialservices`, `b24connector`, `mobileapp`, `clouds`, `bitrixcloud`, `security`, `fileman`, `location`, `messageservice`, `translate`, `rest`, `search`, `seo`, `subscribe`, `ui`, `perfmon`, проектные `local/*`-оверрайды.
 
-Если в локальном проекте подтверждены `catalog`, `sale` и `currency`, активируй shop route: товары, SKU/offers, цены, остатки, склады, корзина, checkout, заказы, оплаты, доставки, скидки, 1С/CommerceML. Если модулей нет — не выдумывай commerce API.
+Если в локальном проекте подтверждены `catalog`, `sale` и `currency`, активируй shop route: товары, SKU/offers, цены, остатки, склады, корзина, checkout, заказы, оплаты, доставки, скидки, marketing/analytics и 1С/CommerceML. Если модулей нет — не выдумывай commerce API.
 
 ## Источник истины
 
@@ -84,7 +84,7 @@ foreach (['iblock'] as $module) {
 | Landing, sitecorporate, photogallery, fileman, location, messageservice, clouds, bitrixcloud, mobileapp, b24connector, translate | [references/site-cloud-mobile.md](references/site-cloud-mobile.md) |
 | Search, SEO, cache infra, update stepper, perfmon, operations | [references/search-seo-ops.md](references/search-seo-ops.md) |
 | REST integration | [references/integrations-rest.md](references/integrations-rest.md) |
-| Commerce/shop: catalog, sale, currency, standard shop components, StoreAssist, 1С/CommerceML, workflow/bizproc, push/pull | [references/commerce-shop.md](references/commerce-shop.md) |
+| Commerce/shop: catalog, sale, currency, standard shop components, StoreAssist, marketing/analytics, 1С/CommerceML, workflow/bizproc, push/pull | [references/commerce-shop.md](references/commerce-shop.md) |
 
 ## Content-first эвристики
 
@@ -92,8 +92,9 @@ foreach (['iblock'] as $module) {
 - Не принимай `composer.json` и `phpunit.xml.dist` внутри `www/bitrix/modules/*/vendor` за project tooling.
 - Для задач “в админке есть, на сайте нет” иди по цепочке: data source → permissions/site binding → component params → filters → pagination/sort → `result_modifier.php` → template → cache/index/SEO.
 - Наличие `catalog.*` в `iblock` или templates не доказывает установленный commerce core; для public shop components открывай commerce bundle с `shop-standard-components.md`.
-- Для shop-задач сначала подтверждай `catalog`, `sale`, `currency`; затем разделяй product, offer, price, stock, basket, order и exchange side effects.
-- Для вопросов полного покрытия shop-core сначала смотри inventory bundle: standard shop components уже покрыты, но не обещай deep audit `sender`, `report`, `statistic`, `conversion`, `abtest`, `advertising`, `bizproc`, `webservice` без отдельного reference.
+- Для shop-задач сначала подтверждай `catalog`, `sale`, `currency`; затем разделяй product, offer, price, stock, basket, order, marketing/analytics и exchange side effects.
+- Для вопросов полного покрытия shop-core сначала смотри inventory bundle: standard shop components и marketing/analytics уже покрыты, но не обещай deep audit `bizproc`, `bizprocdesigner`, `workflow`, `lists`, `pull`, `webservice` без отдельного reference.
+- Для задач про рассылки, подписки, SMS, баннеры, A/B, conversion, reports или statistic открывай commerce bundle с `shop-marketing-analytics.md`; не смешивай `sender.subscribe`, `subscribe.*` и `catalog.product.subscribe`.
 - Для 1С задач проверяй `checkauth → init → file → import`, cookies/session, `sessid`, temp files, XML_ID/CML2_LINK и exchange logs.
 - Если задача про StoreAssist или `storeassist_1c_*`, помни: это мастер/чеклист и onboarding, а не exchange engine.
 - Для пагинации разводи legacy `PAGEN_N`/`NavStart()` и D7 `PageNavigation`: проверяй unique nav id, count/filter, stable sort, cache key и ajax payload.

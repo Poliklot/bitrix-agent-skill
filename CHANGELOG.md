@@ -4,6 +4,15 @@
 
 ## [Unreleased]
 
+## [1.22.0] — 2026-06-03
+
+### Added
+- `bitrix/references/shop-marketing-analytics.md` — отдельный core-first reference по маркетингово-аналитическому слою интернет-магазина: `sender`, `mail`, `messageservice`, `subscribe`, `advertising`, `abtest`, `conversion`, `report`, `statistic`, eShop hooks и sale-side sender/statistic connectors.
+
+### Changed
+- `shop-core-module-inventory.md` теперь считает marketing/analytics покрытыми и сдвигает ordered roadmap к automation/bizproc и webservice/integration extras.
+- `bitrix/SKILL.md`, `shop-task-matrix.md`, `README.md`, `PLAN.md`, `bitrix/VERSION` и MCP Market compact bundles синхронизированы с marketing/analytics baseline `1.22.0`.
+
 ## [1.21.0] — 2026-06-02
 
 ### Added
@@ -293,7 +302,8 @@
 ### Added
 - Первый публичный релиз: `SKILL.md`, progressive disclosure архитектура
 
-[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.21.0...HEAD
+[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.22.0...HEAD
+[1.22.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.21.0...v1.22.0
 [1.21.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.20.0...v1.21.0
 [1.20.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.19.0...v1.20.0
 [1.19.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.18.0...v1.19.0
