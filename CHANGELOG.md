@@ -4,6 +4,15 @@
 
 ## [Unreleased]
 
+## [1.23.0] — 2026-06-03
+
+### Added
+- `bitrix/references/shop-automation-bizproc.md` — отдельный core-first reference по automation/bizproc слою интернет-магазина: `bizproc`, `bizprocdesigner`, legacy `workflow`, `lists`, `pull`, workflow templates/states/tasks, robots/triggers, list processes, REST surface и realtime diagnostics.
+
+### Changed
+- `shop-core-module-inventory.md` теперь считает automation/bizproc покрытыми и сдвигает ordered roadmap к `shop-integrations-webservice.md` и Docker/runtime smoke.
+- `bitrix/SKILL.md`, `shop-task-matrix.md`, `README.md`, `PLAN.md`, `bitrix/VERSION` и MCP Market compact bundles синхронизированы с automation/bizproc baseline `1.23.0`.
+
 ## [1.22.0] — 2026-06-03
 
 ### Added
@@ -302,7 +311,8 @@
 ### Added
 - Первый публичный релиз: `SKILL.md`, progressive disclosure архитектура
 
-[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.22.0...HEAD
+[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.23.0...HEAD
+[1.23.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.22.0...v1.23.0
 [1.22.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.21.0...v1.22.0
 [1.21.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.20.0...v1.21.0
 [1.20.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.19.0...v1.20.0

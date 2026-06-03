@@ -2,7 +2,7 @@
 
 > Reference для Bitrix-скилла. Загружай когда задача связана с бизнес-процессами, CBPRuntime, кастомными активностями, запуском BP из кода или управлением статусами.
 >
-> Audit note: в shop-core `/Users/igormajorov/Downloads/Telegram Desktop/bitrix-shop-core` модуль `bizproc` подтверждён, версия `26.200.0`. В каждом проекте всё равно сначала проверяй `www/bitrix/modules/bizproc`; без модуля этот файл остаётся условным reference.
+> Audit note: в shop-core `/Users/igormajorov/Downloads/Telegram Desktop/bitrix-shop-core` модуль `bizproc` подтверждён, версия `26.200.0`. В каждом проекте всё равно сначала проверяй `www/bitrix/modules/bizproc`; без модуля этот файл остаётся условным reference. Для shop automation слоя (`bizproc`, `bizprocdesigner`, legacy `workflow`, `lists`, `pull`) сначала открывай `shop-automation-bizproc.md`, а этот файл используй как общий API-oriented bizproc reference.
 
 ## Содержание
 - Архитектура: CBPRuntime, IBPActivity, Document

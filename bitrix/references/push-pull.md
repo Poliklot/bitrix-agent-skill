@@ -2,7 +2,7 @@
 
 > Reference для Bitrix-скилла. Загружай когда задача связана с real-time уведомлениями, Push&Pull, WebSocket, отправкой событий из PHP в браузер или настройкой каналов.
 >
-> Audit note: в shop-core `/Users/igormajorov/Downloads/Telegram Desktop/bitrix-shop-core` модуль `pull` подтверждён, версия `25.300.0`. В каждом проекте всё равно сначала проверяй `www/bitrix/modules/pull`; без модуля этот файл остаётся условным reference.
+> Audit note: в shop-core `/Users/igormajorov/Downloads/Telegram Desktop/bitrix-shop-core` модуль `pull` подтверждён, версия `25.300.0`. В каждом проекте всё равно сначала проверяй `www/bitrix/modules/pull`; без модуля этот файл остаётся условным reference. Для shop automation/realtime связки сначала открывай `shop-automation-bizproc.md`, а этот файл используй для общего push/pull API и transport diagnostics.
 
 ## Содержание
 - Архитектура Push&Pull

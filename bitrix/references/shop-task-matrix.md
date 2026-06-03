@@ -22,7 +22,10 @@
 | Форма подписки / отписка | `shop-marketing-analytics.md`, `subscribe.md` | `userconsent.md`, `mail-notifications.md` |
 | SMS / message provider / лимиты | `shop-marketing-analytics.md`, `messageservice.md` | REST/provider config, `mail-notifications.md` |
 | Баннеры, A/B, conversion, reports, statistic | `shop-marketing-analytics.md` | `templates.md`, `seo-cache-access.md`, `perfmon.md` |
-| Автоматизация заказа / роботы | `shop-core-module-inventory.md`, `workflow.md`, `sale.md` | будущий `shop-automation-bizproc.md` |
+| Автоматизация заказа / роботы | `shop-automation-bizproc.md`, `sale.md` | проверить локальный order provider/CRM/custom module перед обещанием sale robots |
+| Бизнес-процесс / задание / шаблон не стартует | `shop-automation-bizproc.md`, `workflow.md` | `iblocks.md`, `lists` section, permissions |
+| Процессы в списках | `shop-automation-bizproc.md`, `workflow.md`, `iblocks.md` | list rights, `BIZPROC=Y`, `CLists::isBpFeatureEnabled` |
+| Realtime / pull / push в автоматизации | `shop-automation-bizproc.md`, `push-pull.md` | pull server config, channels/watches |
 | “В админке есть, на сайте нет” для товара | `shop-standard-components.md`, `catalog.md`, `diagnostic-visibility.md` | `index-cache-diagnostics.md`, `component-dataflow-debugging.md` |
 | Вторая страница каталога пустая, lazy load сломан | `pagination.md`, `shop-standard-components.md`, `catalog.md`, `component-dataflow-debugging.md` | `sef-urls.md`, `cache-infra.md` |
 | Производительность каталога | `catalog.md`, `perfmon.md`, `cache-infra.md` | `search.md`, `seo-cache-access.md` |
