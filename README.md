@@ -1,87 +1,68 @@
 # Bitrix Agent Skill
 
-[Latest release](https://github.com/Poliklot/bitrix-agent-skill/releases/latest) · [MIT License](LICENSE)
+<p align="center">
+  <strong>Core-first Bitrix expert for Claude Code and Codex.</strong><br />
+  It inspects the real `www/bitrix` core, stock components, templates, and `local/*` overrides before giving implementation advice.
+</p>
 
-Core-first skill for `1C-Bitrix CMS` and `Bitrix24` in `Claude Code` and `Codex`.
-
-`Bitrix Agent Skill` учит `Claude Code` и `Codex` работать с 1C-Bitrix core-first: агент сначала смотрит в реально установленное ядро, stock templates и wizard assets, а не сочиняет ответы по форумным обрывкам.
+<p align="center">
+  <a href="https://github.com/Poliklot/bitrix-agent-skill/releases/latest">Latest release</a>
+  · <a href="LICENSE">MIT License</a>
+  · <a href="https://github.com/Poliklot/bitrix-agent-skill/tree/master/mcpmarket/bitrix">MCP Market folder</a>
+</p>
 
 <p align="center">
   <img src="assets/bitrix-demo-v4.gif" alt="Bitrix Agent Skill terminal demo showing how to make Bitrix customizations survive updates" width="100%" />
 </p>
 
-- Поддерживает `D7` и legacy API в одном маршруте.
-- Учитывает ситуации, когда в checkout вообще нет `www/local`.
-- Подхватывает существующий PHP toolchain проекта: `composer`, `phpunit`, `phpstan`/`psalm`, fixer/sniffer, `rector` — только если он реально есть, и не путает его с vendor-шумом внутри core.
-- Закрывает безмагазинные диагностики: “в админке есть, на сайте нет”, пагинацию, кеши, индексы, standard components, legacy modernization, production best practices, pitfalls matrix и эксплуатационные операции.
-- Закрывает shop-core baseline: 49 модулей inventory, StoreAssist onboarding, стандартные компоненты магазина, marketing/analytics modules (`sender`, `mail`, `messageservice`, `subscribe`, `advertising`, `abtest`, `conversion`, `report`, `statistic`), automation modules (`bizproc`, `bizprocdesigner`, `workflow`, `lists`, `pull`), integration extras (`webservice.sale`, `webservice.statistic`, sale/catalog REST apps/events/placements), `catalog`, `sale`, `currency`, SKU/торговые предложения, цены, остатки, склады, корзину, checkout, заказы, оплаты, доставки, скидки, 1С/CommerceML exchange и runtime smoke verification plan — только после проверки модулей в конкретном проекте.
-- Ставит навык в `Claude Code` и `Codex` на macOS, Linux и Windows.
-- При первом содержательном `/bitrix` должен предложить обновление, если release уже вырос.
+## Why it exists
 
-Если навык сэкономил вам часы на Bitrix, поставьте репозиторию star.
+Bitrix projects are not solved by memory. Module sets, copied component templates, wizard assets, legacy write paths, and `local/*` overrides change the correct answer.
 
-## Быстрый старт / Quick Start
+This skill makes the agent work like a senior Bitrix developer:
 
-Обычная команда установки сама ставит навык во все найденные домашние контуры `Claude Code` и `Codex`.
+- checks installed modules and versions first;
+- reads stock components/templates before suggesting changes;
+- separates D7, legacy API, and side-effect-heavy write paths;
+- treats `catalog`, `sale`, `currency`, `bizproc`, `pull`, 1С and shop integrations as project-dependent until confirmed locally;
+- keeps code-first audit separate from runtime smoke proof.
 
-### MCP Market
-
-Для импорта через MCP Market используй компактную read-only папку, а не полный lifecycle-контур `bitrix/`:
-
-```text
-https://github.com/Poliklot/bitrix-agent-skill/tree/master/mcpmarket/bitrix
-```
-
-Полная папка `bitrix/` содержит update/install/uninstall-скрипты и 77 отдельных reference-файлов, поэтому превышает лимит MCP Market в 50 файлов. `mcpmarket/bitrix/` содержит тот же reference-слой, сгруппированный в compact bundles.
+## Install
 
 ### macOS / Linux
-
-1. Установи последнюю release-версию навыка.
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.sh | bash
 ```
 
-2. Разреши `Claude Code` запускать апдейтер без лишних запросов на разрешение.
-
-```bash
-bash ~/.claude/skills/bitrix/allow-update.sh
-```
-
-3. В любом проекте на Bitrix вызывай:
-
-```bash
-/bitrix <ваша задача>
-```
-
-### Windows (PowerShell)
-
-1. Установи последнюю release-версию навыка.
+### Windows PowerShell
 
 ```powershell
 irm https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.ps1 | iex
 ```
 
-2. Разреши `Claude Code` запускать апдейтер без лишних запросов на разрешение.
+Then restart Claude Code or Codex once if the skill does not appear immediately.
 
-```powershell
-powershell -ExecutionPolicy Bypass -File "$HOME\.claude\skills\bitrix\allow-update.ps1"
-```
-
-3. В любом проекте на Bitrix вызывай:
+Use it in a Bitrix project:
 
 ```text
-/bitrix <ваша задача>
+/bitrix почему товар есть в админке, но не виден на сайте?
 ```
 
-Если навык не появился сразу, перезапусти агент один раз.
+### MCP Market
+
+MCP Market has a 50-file import limit. Use the compact read-only folder:
+
+```text
+https://github.com/Poliklot/bitrix-agent-skill/tree/master/mcpmarket/bitrix
+```
+
+The full `bitrix/` skill keeps lifecycle scripts and 77 individual reference files. The `mcpmarket/bitrix/` edition contains the same reference layer grouped into compact bundles.
 
 <details>
-<summary>Продвинутая установка: выбрать только Claude / только Codex / конкретную версию</summary>
+<summary>Advanced install options</summary>
 
-### macOS / Linux
-
-Установить навык только в нужный контур:
+Install only one agent contour:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.sh | bash -s -- --claude
@@ -89,240 +70,134 @@ curl -fsSL https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/
 curl -fsSL https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.sh | bash -s -- --both
 ```
 
-Установить конкретную release-версию:
+Install a specific release:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.sh | bash -s -- --version 1.5.0 --claude
+curl -fsSL https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.sh | bash -s -- --version 1.25.0 --claude
 ```
 
-### Windows (PowerShell)
-
-Установить навык только в нужный контур:
+PowerShell equivalents:
 
 ```powershell
 & ([scriptblock]::Create((irm https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.ps1))) -Claude
 & ([scriptblock]::Create((irm https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.ps1))) -Codex
 & ([scriptblock]::Create((irm https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.ps1))) -Both
-```
-
-Установить конкретную release-версию:
-
-```powershell
-& ([scriptblock]::Create((irm https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.ps1))) -Version 1.5.0 -Claude
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.ps1))) -Version 1.25.0 -Claude
 ```
 
 </details>
 
-## Чем он отличается
+## What it covers
 
-- **Core-first, а не forum-first.** Навык должен опираться на реально установленный Bitrix core и только потом на общие знания.
-- **Не ломается без `www/local`.** Если project overrides отсутствуют, truth layer смещается в stock component templates и wizard public/template assets самого ядра.
-- **Не притворяется магазинным экспертом без магазина.** `sale`, `catalog`, `bizproc`, `pull` и похожие контуры остаются `deferred`, пока модули реально не установлены.
-- **Не тащит весь контекст сразу.** Агент идёт через progressive disclosure и читает только нужный reference-файл.
-- **Не называет code-first аудит runtime-доказательством.** Для заявлений “покрыто/готово к production” есть отдельные best practices, pitfalls и smoke verification references.
+| Area | What the skill helps with |
+|---|---|
+| Core and modules | `main`, `iblock`, ORM, Loader, events, DB layer, sessions, RBAC, cache, steppers |
+| Components and templates | stock component contracts, copied templates, `result_modifier.php`, `component_epilog.php`, AJAX, pagination |
+| Content | iblocks, HL blocks, UF, forms, blog, forum, vote, landing, fileman, search, SEO |
+| Shop | `catalog`, `sale`, `currency`, SKU/offers, prices, stock, basket, checkout, orders, payments, delivery, discounts |
+| 1С / CommerceML | `catalog.import.1c`, `catalog.export.1c`, `sale.export.1c`, XML_ID/CML2_LINK, exchange logs and fixtures |
+| Integrations | REST, webhooks, app scopes, `webservice.sale`, `webservice.statistic`, SOAP/WSDL, Bitrix24 connector |
+| Production work | update-safe customization, D7 vs legacy decisions, pitfalls matrix, smoke verification plan |
+| Operations | migrations, agents/cron, steppers, imports, backup, monitoring, perf diagnostics |
 
-## Примеры задач / Examples
+Shop coverage is activated per project only after the relevant modules are present in `www/bitrix/modules`. The separate shop-core baseline documents 49 modules, but the skill must still verify each client project locally.
+
+## Example prompts
 
 ```text
-/bitrix Найди в текущем core, как правильно работать с custom UF-типом и где там onBeforeSave
-/bitrix Покажи stock template layer для form и объясни, что реально есть в intranet-варианте
-/bitrix Разбери bitrix.sitecorporate в этом ядре и скажи, где wizard кладёт public и templates
-/bitrix Проверь, есть ли в этом core sale/catalog и можно ли уже идти в магазинные задачи
-/bitrix Разбери, почему 1С выгрузила товар, но на сайте нет цены и остатка
 /bitrix Проверь по core, почему вторая страница каталога пустая после фильтра
-/bitrix Сформируй production-safe план доработки checkout и перечисли подводные камни
+/bitrix Разбери, почему 1С выгрузила товар, но на сайте нет цены и остатка
+/bitrix Найди stock template layer для form и объясни intranet-вариант
+/bitrix Сформируй production-safe план доработки checkout и перечисли грабли
+/bitrix Проверь, можно ли в этом проекте идти в sale/catalog, или commerce deferred
+/bitrix Почему REST событие заказа не прилетело во внешний webhook?
 ```
 
-## Проверено на живом core
+## How it works
 
-Сейчас навык уже проверен и уверенно закрывает:
+The skill uses progressive disclosure:
 
-- ядро и инфраструктуру: ORM, модули, события, кеш, DB layer, session/auth, RBAC, update stepper
-- PHP-слой проекта: service-layer, DTO/value-object границы, exceptions vs `Result/Error`, project tooling, testing/verification, quality gates, production best practices и legacy modernization без конфликта с Bitrix-нормами
-- контентные и системные модули: инфоблоки, HL-блоки, формы, блог, форум, голосования, photogallery, landing, fileman, translate, search, SEO, import/export
-- интеграционный, диагностический и эксплуатационный слой: REST, socialservices, b24connector, mobileapp, clouds, bitrixcloud, messageservice, perfmon, admin UI, pagination, migrations, agents/cron/stepper, cache/index troubleshooting, pitfalls matrix и runtime smoke verification
-- интернет-магазин на отдельном shop-core: inventory 49 модулей, `catalog` 25.550.0, `sale` 26.0.0, `currency` 26.0.0, `bitrix.eshop` 25.0.0, SKU/offers, цены, остатки, склады, standard shop components, basket/order/checkout, payment/delivery/discounts, marketing/analytics layer (`sender`, `mail`, `messageservice`, `subscribe`, `advertising`, `abtest`, `conversion`, `report`, `statistic`), automation layer (`bizproc`, `bizprocdesigner`, `workflow`, `lists`, `pull`), integration/webservice layer (`webservice.sale`, `webservice.statistic`, sale/catalog REST hooks), `catalog.import.1c`, `catalog.export.1c`, `sale.export.1c`
+```text
+bitrix-agent-skill/
+├── bitrix/SKILL.md              # entrypoint, routing, safety rules
+├── bitrix/references/*.md       # 77 focused references loaded only when needed
+├── mcpmarket/bitrix/            # compact read-only MCP Market edition
+├── install.sh / install.ps1     # installers for Claude Code and Codex
+└── CHANGELOG.md / PLAN.md       # release notes and audit roadmap
+```
 
-Commerce-маршрут активируется только после проверки `catalog`, `sale`, `currency` и нужных компонентов в конкретном проекте. Если модулей нет, навык остаётся в non-commerce маршруте и не выдумывает магазинный API.
+The agent starts from `bitrix/SKILL.md`, detects the task domain, then loads only the relevant reference files. It should not drag the full Bitrix knowledge base into context for every request.
 
-<details>
-<summary>Полная матрица reference-файлов и тем</summary>
+## Safety model
 
-| Файл справки | Темы |
-|--------------|------|
-| `core-audit-matrix.md` | Фазовая матрица текущего core: active non-commerce, active shop-core, deferred-домены и ловушки вроде `catalog.*` без модуля `catalog` |
-| `noncommerce-task-matrix.md` | Быстрое сопоставление типовых и нетиповых задач без магазина с правильными reference-файлами |
-| `shop-task-matrix.md` | Быстрый routing интернет-магазина: товары, SKU, цены, остатки, корзина, checkout, оплата, доставка, скидки, заказы, 1С/CommerceML, webservice/SOAP и REST app hooks |
-| `shop-core-module-inventory.md` | Полный inventory 49 модулей shop-core: версии, components/admin counts, shop/1С relevance, coverage status и очередь глубокого аудита (standard shop components, marketing/analytics, automation и webservice/REST уже закрыты; runtime smoke вынесен в отдельный verification plan) |
-| `storeassist.md` | StoreAssist 24.0.0: мастер магазина, `storeassist_1c_*` onboarding, admin toolbar/tasks, `storeassist_settings`, AJAX `/bitrix/tools/storeassist.php`, agent прогресса заказов |
-| `shop-standard-components.md` | Публичные и admin standard components интернет-магазина: iblock-hosted `catalog.*`, `catalog.productcard/store/report`, `sale.basket/order/personal/payment/delivery`, eShop wizard layer и quick map параметров 1С components |
-| `shop-marketing-analytics.md` | Маркетинг и аналитика интернет-магазина: `sender`, `mail`, `messageservice`, `subscribe`, `advertising`, `abtest`, `conversion`, `report`, `statistic`, eShop hooks, sale sender connectors и runtime diagnostics |
-| `shop-automation-bizproc.md` | Автоматизация интернет-магазина/контента: `bizproc`, `bizprocdesigner`, legacy `workflow`, `lists`, `pull`, workflow templates/states/tasks, robots/triggers, list processes, REST и realtime diagnostics |
-| `shop-integrations-webservice.md` | Интеграции интернет-магазина: `webservice.sale`, `webservice.statistic`, SOAP/WSDL, `stssync`, REST apps/webhooks/events/placements, sale/catalog REST controllers/events и external app handlers |
-| `production-best-practices.md` | Production best practices: update-safe кастомизация, где держать код, D7 vs legacy, boundary/service слой, side effects, cache/index/RBAC, performance, security и verification matrix |
-| `pitfalls-matrix.md` | Bitrix pitfalls matrix: типовые грабли по visibility, components, iblock/HL, catalog/SKU, basket/checkout/order, 1С, REST/webservice, SEO/cache, auth, mail/SMS, agents и updates |
-| `runtime-smoke-verification.md` | Runtime smoke verification: sandbox safety, fixtures, smoke-сценарии для catalog/sale/1С/REST/webservice/marketing/bizproc, evidence format и pass/fail criteria |
-| `diagnostic-visibility.md` | Диагностика “в админке есть, на сайте нет”: права, site binding, параметры компонента, фильтры, шаблон, кеши, индексы |
-| `index-cache-diagnostics.md` | Component cache, tagged/managed cache, composite/static HTML, search index, SEO artifacts, landing cache |
-| `component-dataflow-debugging.md` | Трассировка standard component flow: `.parameters.php`, `component.php`, `result_modifier.php`, `template.php`, `component_epilog.php`, AJAX |
-| `pagination.md` | Пагинация: `CDBResult::NavStart`, `PAGEN_N`, `system.pagenavigation`, D7 `PageNavigation`, `main.pagenavigation`, admin/grid navigation, lazy load и диагностика пустых/дублирующих страниц |
-| `orm.md` | DataManager, CRUD, связи, фильтры, агрегация, runtime fields, ORM events, Result/Error |
-| `events-routing.md` | EventManager, Engine\Controller, AJAX, роутинг, CSRF |
-| `modules-loader.md` | Структура модуля, Loader, PSR-4, Application, ServiceLocator, Config\Option, Loc |
-| `php-workflow.md` | PHP workflow в Bitrix-проекте: service-layer, DTO, exceptions, composer/phpunit/phpstan/fixer/rector, quality gates без конфликта с core-first |
-| `php-testing.md` | PHP testing и verification в Bitrix-проекте: unit/integration, smoke без готового PHPUnit-контура, test seams, fixtures, vendor noise внутри core |
-| `php-quality.md` | PHP quality gates в Bitrix-проекте: phpstan/psalm/fixer/sniffer/rector без навязывания нового toolchain |
-| `php-legacy-modernization.md` | Безопасная модернизация legacy: boundary extraction, D7 vs `C*` write paths, DTO/strict_types только в подходящих слоях |
-| `standard-components-noncommerce.md` | Standard components без магазина: active component families, stock templates, `catalog.*` как iblock-компоненты без commerce-обещаний |
-| `operations-runbook.md` | Эксплуатация без магазина: переносы, agents/cron/stepper, импорты, backup/monitoring, perf diagnostics, core updates |
-| `currency.md` | Валюты, курсы, форматирование денег, `CurrencyManager`, `CurrencyTable`, `CurrencyRateTable`, связь с catalog prices и sale sums |
-| `components.md` | CBitrixComponent, шаблоны, кеш компонента, CComponentEngine |
-| `sitecorporate.md` | `bitrix.sitecorporate`: wizard shell, `corp_services`/`corp_furniture`, `wizard_solution`, panel rerun, stock `furniture.*`, wizard `site/public` и `site/templates`, conditional `catalog` dependency в `corp_furniture` skeleton |
-| `cache-infra.md` | Data\Cache, TaggedCache, CAgent, IO\File/Directory/Path |
-| `clouds.md` | Clouds: bucket-ы, external file storage, file hooks, resize/src/makeFileArray, upload queues, failover |
-| `bitrixcloud.md` | Bitrix Cloud: backup quota/files/jobs, monitoring, policy webservice, local option storage, mobile inspector, backup buckets |
-| `fileman.md` | Fileman: HTML editor, address/geo userfields, map/video property types, PDF/player/map компоненты |
-| `http.md` | Type\DateTime, HttpClient, HttpRequest, HttpResponse |
-| `iblocks.md` | Инфоблоки legacy + D7 ORM, свойства, HL-блоки, события инфоблоков |
-| `highloadblock.md` | Highloadblock: CRUD, compileEntity, dynamic DataManager, права, `highloadblock.*` компоненты, UI EntitySelector |
-| `photogallery.md` | Галереи, альбомы, `USER_ALIAS`, section-UF, upload/watermark, `REAL_PICTURE`, slideshow, photo comments |
-| `mobileapp.md` | MobileApp: admin mobile, JN/native components/extensions, designer apps, push settings, token registration, `/mobileapp/jn/*` |
-| `b24connector.md` | Bitrix24 connector: connect/disconnect, widgets, openlines/chat/recall/forms, per-site restrictions, public script injection |
-| `iblock-hl-relations.md` | Связи инфоблоков и HL: directory (UF_XML_ID), HL-поля в UF, `_REF` в ORM, AbstractOrmRepository |
-| `custom-uf-types.md` | Кастомные UF-типы (BaseType, onBeforeSave, загрузка файлов), ACF-подходы через HL (Repeater, Group, Flexible Content, глубокая вложенность) |
-| `forum.md` | Форумы: CForumNew, CForumTopic, CForumMessage, права, подписки, стандартные `forum.*` компоненты |
-| `vote.md` | Опросы и голосования: CVote, CVoteChannel, CVoteQuestion, CVoteAnswer, `voting.*` компоненты |
-| `landing.md` | Лендинги: Site, Landing, Block, Hook, Rights, public URL, `landing.*` компоненты |
-| `location.md` | Геолокации и адреса: LocationService, AddressService, FormatService, location controllers, location ORM |
-| `socialservices.md` | Соц-авторизация: CSocServAuthManager, провайдеры OAuth, UserLinkTable, AuthFlow, `socserv.*` компоненты |
-| `messageservice.md` | MessageService: SMS-провайдеры, Message, SmsManager, ограничения, REST, callback-и, config components |
-| `translate.md` | Translate: lang-файлы, индекс фраз, translate UI, CSV import/export, translate:index, права и panel hooks |
-| `perfmon.md` | Perfmon: SQL/hit/cache diagnostics, схема, индексы, admin-страницы производительности |
-| `sale.md` | Sale: basket, order, shipment, payment, delivery, discounts, coupons, statuses, locations, cashbox, 1С order exchange side effects |
-| `catalog.md` | Торговый каталог: product, SKU/offers, price types, prices, stores, stock, measure, VAT, store documents, catalog import/export |
-| `commerce-workflows.md` | Кросс-доменные магазинные workflow: product → offer → price → stock → basket → checkout → order → payment/delivery → cache/index/exchange |
-| `commerce-1c-integration.md` | 1С / CommerceML: `catalog.import.1c`, `catalog.export.1c`, `sale.export.1c`, `checkauth/init/file/import`, `BX_CML2_IMPORT`, `BX_CML2_EXPORT`, exchange logs |
-| `blog-socialnet.md` | Блог текущего core: `CBlog*`, D7 read-only таблицы `PostTable`/`CommentTable`, mail reply handlers, search reindex, stock template variants (`micro`, `old_version`, `socialnetwork`), conditional `socialnet` contour |
-| `push-pull.md` | Push&Pull: realtime/push слой; в shop-core `pull` подтверждён, в клиентском проекте только при установленном модуле |
-| `workflow.md` | Бизнес-процессы: общий `bizproc` API; shop automation routing см. `shop-automation-bizproc.md`, в клиентском проекте только при установленном модуле |
-| `subscribe.md` | Рассылки: CRubric, CSubscription, CPosting, CPostingTemplate, подписки и выпуски |
-| `security.md` | AppSec + модуль `security`: WAF, redirect/IP rules, session hardening, OTP/MFA, recovery codes, antivirus, site checker, xscan |
-| `rest.md` | REST-методы, OnRestServiceBuildDescription, REST-события, Webhook, OAuth |
-| `admin-ui.md` | Админ-страницы, CAdminList, CAdminForm, CAdminTabControl, кастомные UF-типы в админке |
-| `entities-migrations.md` | Создание инфоблоков/типов/свойств, групп, пользователей, прав доступа, SQL-миграции |
-| `sef-urls.md` | ЧПУ (SEF), urlrewrite.php, UrlRewriter D7, SEF_MODE/SEF_RULE, CComponentEngine |
-| `seo-cache-access.md` | Очистка кеша, noindex, sitemap, robots.txt, canonical, OpenGraph, JSON-LD schema.org |
-| `mail-notifications.md` | CEventType, CEventMessage, Mail\Event::send, SMS-провайдеры |
-| `users.md` | UserTable D7, CUser::Add/Login/Update, группы пользователей, UF-поля, восстановление пароля |
-| `templates.md` | Структура шаблона сайта, Asset D7, $APPLICATION в header/footer, композитный кеш |
-| `webforms.md` | `form` в реальном core: формы, результаты, статусы, handlers, validators, CRM link, secure file access, stock component/template layer и `intranet` variants |
-| `search.md` | CSearch::Index/DeleteIndex/ReIndexAll, CSearchTitle, BeforeIndex, OnSearch, OnSearchGetURL, быстрый AJAX-поиск |
-| `import-export.md` | Импорт CSV/URL, многошаговый импорт, CFile::SaveFile/MakeFileArray/ResizeImageGet, потоковый экспорт |
-| `grid-admin-modern.md` | Современный Grid UI: Grid, Settings, Options, ComponentParams, processRequest, getOrmFilter, bitrix:main.ui.grid |
-| `update-stepper.md` | Stepper (итеративные обновления), bindClass, CLI команды (`update:*`, `make:*`, `orm:annotate`, `messenger:consume-messages`) |
-| `validation.md` | ValidationService, PHP 8 Attributes (#[NotEmpty], #[Email], #[Length], #[Min], #[Max] и др.) |
-| `session-auth.md` | Session (ArrayAccess, enableLazyStart, isActive), KernelSession, CompositeSessionManager, SessionConfigurationResolver |
-| `database-layer.md` | DB\Connection, SqlHelper (quote, forSql, getCurrentDateTimeFunction), различия MySQL/PgSQL/Oracle/MSSQL |
-| `access-rbac.md` | Access\Permission\PermissionDictionary, RoleDictionary, BaseAccessController, Rule, RBAC |
-| `file-upload-modern.md` | FileUploader\FieldFileUploaderController, UploaderController, Configuration, UploadedFilesRegistry |
-| `numerator.md` | Numerator, NumberGeneratorFactory, NumeratorTable, шаблоны нумерации документов |
-| `userconsent.md` | UserConsent\Consent::addByContext, Agreement, DataProvider, GDPR-согласие |
+The skill is intentionally conservative:
 
-</details>
+- no invented APIs, events, classes, or component params;
+- no commerce route without local `catalog` / `sale` / `currency` confirmation;
+- no direct SQL mutations for order, basket, payment, shipment, catalog price, or stock when API side effects matter;
+- no production 1С, real payments, real delivery/cashbox, SMS, or customer data in smoke tests without explicit confirmation;
+- no “runtime pass” claim without sandbox fixtures and captured evidence.
 
-## Как это работает
+## Update and maintenance
 
-Навык следует формату progressive disclosure от [agentskills.io](https://agentskills.io):
-
-- **`bitrix/SKILL.md`** — точка входа: core-first правила, рабочий алгоритм, подтверждение перед изменением данных, маршрутизация по темам
-- **`bitrix/references/*.md`** — тематические файлы, загружаются по необходимости, когда задача требует конкретной темы
-
-Агент читает только релевантный reference-файл, а не весь контекст сразу.
-
-<details>
-<summary>Обновление, версии и удаление</summary>
-
-### Обновление
-
-#### macOS / Linux
+The installed skill can check GitHub releases and update itself.
 
 ```bash
-bash ~/.claude/skills/bitrix/update.sh
-bash ~/.claude/skills/bitrix/update.sh --force
 bash ~/.claude/skills/bitrix/update.sh --check
-bash ~/.claude/skills/bitrix/update.sh --version 1.5.0
+bash ~/.claude/skills/bitrix/update.sh
 
-bash "${CODEX_HOME:-$HOME/.codex}/skills/bitrix/update.sh"
-bash "${CODEX_HOME:-$HOME/.codex}/skills/bitrix/update.sh" --force
 bash "${CODEX_HOME:-$HOME/.codex}/skills/bitrix/update.sh" --check
-bash "${CODEX_HOME:-$HOME/.codex}/skills/bitrix/update.sh" --version 1.5.0
+bash "${CODEX_HOME:-$HOME/.codex}/skills/bitrix/update.sh"
 ```
-
-#### Windows (PowerShell)
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File "$HOME\.claude\skills\bitrix\update.ps1"
-powershell -ExecutionPolicy Bypass -File "$HOME\.claude\skills\bitrix\update.ps1" -Force
 powershell -ExecutionPolicy Bypass -File "$HOME\.claude\skills\bitrix\update.ps1" -Check
-powershell -ExecutionPolicy Bypass -File "$HOME\.claude\skills\bitrix\update.ps1" -Version 1.5.0
+powershell -ExecutionPolicy Bypass -File "$HOME\.claude\skills\bitrix\update.ps1"
 
 $CodexHome = if ($env:CODEX_HOME) { $env:CODEX_HOME } else { Join-Path $HOME '.codex' }
-powershell -ExecutionPolicy Bypass -File (Join-Path (Join-Path $CodexHome 'skills') 'bitrix\update.ps1')
-powershell -ExecutionPolicy Bypass -File (Join-Path (Join-Path $CodexHome 'skills') 'bitrix\update.ps1') -Force
 powershell -ExecutionPolicy Bypass -File (Join-Path (Join-Path $CodexHome 'skills') 'bitrix\update.ps1') -Check
-powershell -ExecutionPolicy Bypass -File (Join-Path (Join-Path $CodexHome 'skills') 'bitrix\update.ps1') -Version 1.5.0
+powershell -ExecutionPolicy Bypass -File (Join-Path (Join-Path $CodexHome 'skills') 'bitrix\update.ps1')
 ```
 
-Начиная с версии `1.3.7`, при первом содержательном обращении к `/bitrix` навык должен сначала проверить release и, если версия выросла, предложить обновление в явной форме: `Обновилась версия скилла с X до Y. Давай обновим?`
+On the first meaningful `/bitrix` request, the skill should silently run `--check`. If a newer release exists, it should say exactly:
 
-### Версии
+```text
+Обновилась версия скилла с X до Y. Давай обновим?
+```
 
-#### macOS / Linux
+<details>
+<summary>Version list and uninstall commands</summary>
 
 ```bash
 bash ~/.claude/skills/bitrix/versions.sh
 bash "${CODEX_HOME:-$HOME/.codex}/skills/bitrix/versions.sh"
-```
 
-#### Windows (PowerShell)
-
-```powershell
-powershell -ExecutionPolicy Bypass -File "$HOME\.claude\skills\bitrix\versions.ps1"
-
-$CodexHome = if ($env:CODEX_HOME) { $env:CODEX_HOME } else { Join-Path $HOME '.codex' }
-powershell -ExecutionPolicy Bypass -File (Join-Path (Join-Path $CodexHome 'skills') 'bitrix\versions.ps1')
-```
-
-### Удаление
-
-#### macOS / Linux
-
-```bash
 bash ~/.claude/skills/bitrix/uninstall.sh
 bash "${CODEX_HOME:-$HOME/.codex}/skills/bitrix/uninstall.sh"
 ```
 
-#### Windows (PowerShell)
-
 ```powershell
+powershell -ExecutionPolicy Bypass -File "$HOME\.claude\skills\bitrix\versions.ps1"
 powershell -ExecutionPolicy Bypass -File "$HOME\.claude\skills\bitrix\uninstall.ps1"
 
 $CodexHome = if ($env:CODEX_HOME) { $env:CODEX_HOME } else { Join-Path $HOME '.codex' }
+powershell -ExecutionPolicy Bypass -File (Join-Path (Join-Path $CodexHome 'skills') 'bitrix\versions.ps1')
 powershell -ExecutionPolicy Bypass -File (Join-Path (Join-Path $CodexHome 'skills') 'bitrix\uninstall.ps1')
 ```
 
 </details>
 
-## Требования
+## Requirements
 
-- Claude Code или Codex
-- 1C-Bitrix CMS 23+
+- Claude Code or Codex
+- A project based on 1C-Bitrix CMS / Bitrix24 self-hosted core
 
-## Обратная связь / Feedback
+## Feedback
 
-- Issue-ы и PR приветствуются, особенно если вы принесли новый core-first кейс из реального проекта.
-- Если навык помог, поставьте star: это лучший сигнал, что такой Bitrix-first подход действительно нужен.
+Issues and PRs are welcome, especially when they bring a new core-first case from a real Bitrix project.
 
-## Лицензия
+If the skill saved you time, star the repository — it is the clearest signal that Bitrix deserves better agent tooling.
 
-MIT. Подробности в [LICENSE](LICENSE).
+## License
+
+MIT. See [LICENSE](LICENSE).

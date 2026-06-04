@@ -4,6 +4,9 @@
 
 ## [Unreleased]
 
+### Changed
+- Переработан `README.md`: корневой README стал компактной витриной навыка с коротким install, coverage table, safety model и maintenance-командами вместо большой справочной матрицы.
+
 ## [1.25.0] — 2026-06-04
 
 ### Added
