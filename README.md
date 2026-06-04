@@ -1,33 +1,33 @@
 # Bitrix Agent Skill
 
 <p align="center">
-  <strong>Core-first Bitrix expert for Claude Code and Codex.</strong><br />
-  It inspects the real `www/bitrix` core, stock components, templates, and `local/*` overrides before giving implementation advice.
+  <strong>Эксперт по 1C-Bitrix для Claude Code и Codex с принципом «сначала ядро».</strong><br />
+  Навык сначала смотрит в реальное ядро `www/bitrix`, стандартные компоненты, шаблоны и `local/*`-оверрайды — и только потом предлагает решение.
 </p>
 
 <p align="center">
-  <a href="https://github.com/Poliklot/bitrix-agent-skill/releases/latest">Latest release</a>
-  · <a href="LICENSE">MIT License</a>
-  · <a href="https://github.com/Poliklot/bitrix-agent-skill/tree/master/mcpmarket/bitrix">MCP Market folder</a>
+  <a href="https://github.com/Poliklot/bitrix-agent-skill/releases/latest">Последний релиз</a>
+  · <a href="LICENSE">Лицензия MIT</a>
+  · <a href="https://github.com/Poliklot/bitrix-agent-skill/tree/master/mcpmarket/bitrix">Папка для MCP Market</a>
 </p>
 
 <p align="center">
-  <img src="assets/bitrix-demo-v4.gif" alt="Bitrix Agent Skill terminal demo showing how to make Bitrix customizations survive updates" width="100%" />
+  <img src="assets/bitrix-demo-v4.gif" alt="Демонстрация Bitrix Agent Skill в терминале: как делать Bitrix-доработки, которые переживают обновления ядра" width="100%" />
 </p>
 
-## Why it exists
+## Зачем это нужно
 
-Bitrix projects are not solved by memory. Module sets, copied component templates, wizard assets, legacy write paths, and `local/*` overrides change the correct answer.
+Bitrix-проекты нельзя нормально вести “по памяти”. В каждом проекте отличаются состав модулей, скопированные шаблоны компонентов, wizard-ассеты, старые пути записи, настройки и `local/*`-оверрайды.
 
-This skill makes the agent work like a senior Bitrix developer:
+Этот навык помогает агенту работать как опытный Bitrix-разработчик:
 
-- checks installed modules and versions first;
-- reads stock components/templates before suggesting changes;
-- separates D7, legacy API, and side-effect-heavy write paths;
-- treats `catalog`, `sale`, `currency`, `bizproc`, `pull`, 1С and shop integrations as project-dependent until confirmed locally;
-- keeps code-first audit separate from runtime smoke proof.
+- сначала проверять установленные модули и версии;
+- читать стандартные компоненты и шаблоны перед тем, как советовать правку;
+- разделять D7, старый `C*` API и пути записи с важными побочными эффектами;
+- считать `catalog`, `sale`, `currency`, `bizproc`, `pull`, 1С и магазинные интеграции условными, пока они не подтверждены в конкретном проекте;
+- не путать аудит по коду ядра с проверкой в живом окружении.
 
-## Install
+## Установка
 
 ### macOS / Linux
 
@@ -41,9 +41,9 @@ curl -fsSL https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/
 irm https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.ps1 | iex
 ```
 
-Then restart Claude Code or Codex once if the skill does not appear immediately.
+Если навык не появился сразу, один раз перезапустите Claude Code или Codex.
 
-Use it in a Bitrix project:
+В Bitrix-проекте вызывайте:
 
 ```text
 /bitrix почему товар есть в админке, но не виден на сайте?
@@ -51,18 +51,18 @@ Use it in a Bitrix project:
 
 ### MCP Market
 
-MCP Market has a 50-file import limit. Use the compact read-only folder:
+В MCP Market есть лимит 50 файлов на импортируемую папку. Используйте компактную версию только для чтения:
 
 ```text
 https://github.com/Poliklot/bitrix-agent-skill/tree/master/mcpmarket/bitrix
 ```
 
-The full `bitrix/` skill keeps lifecycle scripts and 77 individual reference files. The `mcpmarket/bitrix/` edition contains the same reference layer grouped into compact bundles.
+Полная папка `bitrix/` содержит скрипты установки/обновления/удаления и 77 отдельных справочных файлов. Версия `mcpmarket/bitrix/` содержит тот же справочный слой, но сгруппированный в компактные пакеты.
 
 <details>
-<summary>Advanced install options</summary>
+<summary>Расширенные варианты установки</summary>
 
-Install only one agent contour:
+Установить навык только в нужный контур:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.sh | bash -s -- --claude
@@ -70,13 +70,13 @@ curl -fsSL https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/
 curl -fsSL https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.sh | bash -s -- --both
 ```
 
-Install a specific release:
+Установить конкретную версию:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.sh | bash -s -- --version 1.25.0 --claude
 ```
 
-PowerShell equivalents:
+То же самое для PowerShell:
 
 ```powershell
 & ([scriptblock]::Create((irm https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.ps1))) -Claude
@@ -87,60 +87,60 @@ PowerShell equivalents:
 
 </details>
 
-## What it covers
+## Что покрывает
 
-| Area | What the skill helps with |
+| Область | С чем помогает навык |
 |---|---|
-| Core and modules | `main`, `iblock`, ORM, Loader, events, DB layer, sessions, RBAC, cache, steppers |
-| Components and templates | stock component contracts, copied templates, `result_modifier.php`, `component_epilog.php`, AJAX, pagination |
-| Content | iblocks, HL blocks, UF, forms, blog, forum, vote, landing, fileman, search, SEO |
-| Shop | `catalog`, `sale`, `currency`, SKU/offers, prices, stock, basket, checkout, orders, payments, delivery, discounts |
-| 1С / CommerceML | `catalog.import.1c`, `catalog.export.1c`, `sale.export.1c`, XML_ID/CML2_LINK, exchange logs and fixtures |
-| Integrations | REST, webhooks, app scopes, `webservice.sale`, `webservice.statistic`, SOAP/WSDL, Bitrix24 connector |
-| Production work | update-safe customization, D7 vs legacy decisions, pitfalls matrix, smoke verification plan |
-| Operations | migrations, agents/cron, steppers, imports, backup, monitoring, perf diagnostics |
+| Ядро и модули | `main`, `iblock`, ORM, Loader, события, слой БД, сессии, RBAC, кеш, пошаговые процессы |
+| Компоненты и шаблоны | контракты стандартных компонентов, скопированные шаблоны, `result_modifier.php`, `component_epilog.php`, AJAX, пагинация |
+| Контент | инфоблоки, HL-блоки, UF, формы, блог, форум, опросы, landing, fileman, поиск, SEO |
+| Интернет-магазин | `catalog`, `sale`, `currency`, SKU/торговые предложения, цены, остатки, корзина, оформление заказа, заказы, оплаты, доставка, скидки |
+| 1С / CommerceML | `catalog.import.1c`, `catalog.export.1c`, `sale.export.1c`, XML_ID/CML2_LINK, логи обмена и тестовые данные |
+| Интеграции | REST, вебхуки, права приложений, `webservice.sale`, `webservice.statistic`, SOAP/WSDL, Bitrix24 connector |
+| Продакшен-разработка | кастомизация, безопасная для обновлений, выбор D7 или старого API, матрица подводных камней, план проверки в живом окружении |
+| Эксплуатация | миграции, agents/cron, пошаговые процессы, импорты, резервное копирование, мониторинг, диагностика производительности |
 
-Shop coverage is activated per project only after the relevant modules are present in `www/bitrix/modules`. The separate shop-core baseline documents 49 modules, but the skill must still verify each client project locally.
+Магазинный маршрут включается в каждом проекте отдельно — только после проверки нужных модулей в `www/bitrix/modules`. Отдельная база shop-core описывает 49 модулей, но навык всё равно обязан проверять каждый клиентский проект локально.
 
-## Example prompts
+## Примеры запросов
 
 ```text
 /bitrix Проверь по core, почему вторая страница каталога пустая после фильтра
 /bitrix Разбери, почему 1С выгрузила товар, но на сайте нет цены и остатка
-/bitrix Найди stock template layer для form и объясни intranet-вариант
-/bitrix Сформируй production-safe план доработки checkout и перечисли грабли
-/bitrix Проверь, можно ли в этом проекте идти в sale/catalog, или commerce deferred
-/bitrix Почему REST событие заказа не прилетело во внешний webhook?
+/bitrix Найди слой стандартного шаблона для form и объясни intranet-вариант
+/bitrix Сформируй безопасный для продакшена план доработки оформление заказа и перечисли грабли
+/bitrix Проверь, можно ли в этом проекте идти в sale/catalog, или магазинный маршрут пока отложен
+/bitrix Почему REST событие заказа не прилетело во внешний вебхук?
 ```
 
-## How it works
+## Как устроено
 
-The skill uses progressive disclosure:
+Навык использует постепенную загрузку контекста:
 
 ```text
 bitrix-agent-skill/
-├── bitrix/SKILL.md              # entrypoint, routing, safety rules
-├── bitrix/references/*.md       # 77 focused references loaded only when needed
-├── mcpmarket/bitrix/            # compact read-only MCP Market edition
-├── install.sh / install.ps1     # installers for Claude Code and Codex
-└── CHANGELOG.md / PLAN.md       # release notes and audit roadmap
+├── bitrix/SKILL.md              # точка входа, маршрутизация, правила безопасности
+├── bitrix/references/*.md       # 77 узких справочников, загружаются только по необходимости
+├── mcpmarket/bitrix/            # компактная версия для MCP Market, только для чтения
+├── install.sh / install.ps1     # установщики для Claude Code и Codex
+└── CHANGELOG.md / PLAN.md       # история релизов и план аудита
 ```
 
-The agent starts from `bitrix/SKILL.md`, detects the task domain, then loads only the relevant reference files. It should not drag the full Bitrix knowledge base into context for every request.
+Агент начинает с `bitrix/SKILL.md`, определяет домен задачи и загружает только нужные справочные файлы. Он не должен тащить всю Bitrix-базу знаний в контекст на каждый запрос.
 
-## Safety model
+## Правила безопасности
 
-The skill is intentionally conservative:
+Навык намеренно консервативный:
 
-- no invented APIs, events, classes, or component params;
-- no commerce route without local `catalog` / `sale` / `currency` confirmation;
-- no direct SQL mutations for order, basket, payment, shipment, catalog price, or stock when API side effects matter;
-- no production 1С, real payments, real delivery/cashbox, SMS, or customer data in smoke tests without explicit confirmation;
-- no “runtime pass” claim without sandbox fixtures and captured evidence.
+- не выдумывает API, события, классы и параметры компонентов;
+- не включает магазинный маршрут без локального подтверждения `catalog` / `sale` / `currency`;
+- не правит прямым SQL заказы, корзины, оплаты, отгрузки, цены и остатки, если важны побочные эффекты API;
+- не использует продакшен-1С, реальные платежи, доставку, кассы, SMS или клиентские данные для проверки без явного подтверждения;
+- не заявляет, что проверка в живом окружении пройдена, без песочницы, тестовых данных и зафиксированных доказательств.
 
-## Update and maintenance
+## Обновление и сопровождение
 
-The installed skill can check GitHub releases and update itself.
+Установленный навык умеет проверять GitHub-релизы и обновляться.
 
 ```bash
 bash ~/.claude/skills/bitrix/update.sh --check
@@ -159,14 +159,14 @@ powershell -ExecutionPolicy Bypass -File (Join-Path (Join-Path $CodexHome 'skill
 powershell -ExecutionPolicy Bypass -File (Join-Path (Join-Path $CodexHome 'skills') 'bitrix\update.ps1')
 ```
 
-On the first meaningful `/bitrix` request, the skill should silently run `--check`. If a newer release exists, it should say exactly:
+При первом содержательном запросе `/bitrix` навык должен молча выполнить `--check`. Если есть новая версия, он должен сказать строго так:
 
 ```text
 Обновилась версия скилла с X до Y. Давай обновим?
 ```
 
 <details>
-<summary>Version list and uninstall commands</summary>
+<summary>Команды для списка версий и удаления</summary>
 
 ```bash
 bash ~/.claude/skills/bitrix/versions.sh
@@ -187,17 +187,17 @@ powershell -ExecutionPolicy Bypass -File (Join-Path (Join-Path $CodexHome 'skill
 
 </details>
 
-## Requirements
+## Требования
 
-- Claude Code or Codex
-- A project based on 1C-Bitrix CMS / Bitrix24 self-hosted core
+- Claude Code или Codex
+- проект на 1C-Bitrix CMS или коробочном ядре Bitrix24
 
-## Feedback
+## Обратная связь
 
-Issues and PRs are welcome, especially when they bring a new core-first case from a real Bitrix project.
+Issues и PR приветствуются, особенно если вы приносите новый кейс из реального Bitrix-проекта, проверенный по ядру.
 
-If the skill saved you time, star the repository — it is the clearest signal that Bitrix deserves better agent tooling.
+Если навык сэкономил вам время, поставьте звезду репозиторию — это самый понятный сигнал, что Bitrix заслуживает нормального инструменты для агентов.
 
-## License
+## Лицензия
 
-MIT. See [LICENSE](LICENSE).
+MIT. Подробности в [LICENSE](LICENSE).
