@@ -166,12 +166,12 @@ Covered by `shop-integrations-webservice.md`:
 
 ## Do not overclaim
 
-- Do not say “все shop-core модули глубоко покрыты” until runtime-smoke is done. Standard shop components are covered by `shop-standard-components.md`, marketing/analytics by `shop-marketing-analytics.md`, automation by `shop-automation-bizproc.md`, webservice/REST by `shop-integrations-webservice.md`.
+- Do not say “все shop-core модули глубоко покрыты” until runtime-smoke is done. Standard shop components are covered by `shop-standard-components.md`, marketing/analytics by `shop-marketing-analytics.md`, automation by `shop-automation-bizproc.md`, webservice/REST by `shop-integrations-webservice.md`; production guidance and smoke format live in `production-best-practices.md`, `pitfalls-matrix.md`, `runtime-smoke-verification.md`.
 - Do not activate `bizproc`, `bizprocdesigner`, `workflow`, `lists`, `pull`, `sender`, `report`, `statistic`, `abtest`, `conversion`, `advertising`, `webservice` in another project unless the module exists locally.
 - Do not infer `sale/catalog` from `iblock` components alone: `iblock` ships `catalog.*` public components even when the `catalog` module may be missing in another checkout.
 - Do not use this inventory as API documentation for `needs deep audit` modules. It is a routing map.
 
 ## Ordered roadmap from this inventory
 
-1. Docker/runtime smoke — because current coverage is code-first and still needs DB/runtime fixtures.
+1. Docker/runtime smoke — because current coverage is code-first and still needs DB/runtime fixtures; use `runtime-smoke-verification.md` as the evidence format.
 2. Deferred per-project modules only when a task needs them.

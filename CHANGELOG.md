@@ -4,6 +4,17 @@
 
 ## [Unreleased]
 
+## [1.25.0] — 2026-06-04
+
+### Added
+- `bitrix/references/production-best-practices.md` — cross-cutting production reference по update-safe Bitrix-разработке: truth stack, где держать код, D7 vs legacy, boundary/service слой, side effects, cache/index/RBAC, performance, security и verification matrix.
+- `bitrix/references/pitfalls-matrix.md` — матрица типовых Bitrix-граблей: visibility, components/templates, iblock/HL, catalog/SKU, basket/checkout/order, 1С/CommerceML, REST/webservice, search/SEO/cache, auth, mail/SMS, agents/realtime и release/update pitfalls.
+- `bitrix/references/runtime-smoke-verification.md` — план runtime smoke verification для Docker/sandbox: safe fixtures, catalog/sale/1С/REST/webservice/marketing/bizproc сценарии, evidence format и pass/fail/block criteria.
+
+### Changed
+- `bitrix/SKILL.md`, `README.md`, `PLAN.md`, `shop-task-matrix.md`, `noncommerce-task-matrix.md`, `core-audit-matrix.md`, `shop-core-module-inventory.md`, `bitrix/VERSION` и MCP Market compact bundles синхронизированы с production best-practices baseline `1.25.0`.
+- Навык теперь явно разделяет code-first coverage и runtime-smoke evidence: нельзя говорить “весь core production-проверен”, пока нет sandbox/fixtures smoke.
+
 ## [1.24.0] — 2026-06-03
 
 ### Added
@@ -320,7 +331,8 @@
 ### Added
 - Первый публичный релиз: `SKILL.md`, progressive disclosure архитектура
 
-[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.24.0...HEAD
+[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.25.0...HEAD
+[1.25.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.24.0...v1.25.0
 [1.24.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.23.0...v1.24.0
 [1.23.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.22.0...v1.23.0
 [1.22.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.21.0...v1.22.0

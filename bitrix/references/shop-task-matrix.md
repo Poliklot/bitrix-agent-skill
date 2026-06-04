@@ -6,7 +6,7 @@
 
 | Запрос пользователя | Сначала читать | Затем |
 |---|---|---|
-| “Все ли модули магазина/1С покрыты?” | `shop-core-module-inventory.md` | `core-audit-matrix.md`, затем нужный deep-reference |
+| “Все ли модули магазина/1С покрыты?” | `shop-core-module-inventory.md`, `runtime-smoke-verification.md` | `core-audit-matrix.md`, затем нужный deep-reference; code-first coverage ≠ runtime pass |
 | Товары, свойства, разделы, SKU | `catalog.md`, `shop-standard-components.md`, `iblocks.md` | `commerce-1c-integration.md`, если есть 1С/XML_ID |
 | Цена не та / не показывается | `catalog.md`, `currency.md` | `sale.md`, `search-seo-ops` bundles для кеша |
 | Остатки, склады, доступность | `catalog.md`, `shop-standard-components.md` | `sale.md` для reservation/order effects |
@@ -32,6 +32,9 @@
 | “В админке есть, на сайте нет” для товара | `shop-standard-components.md`, `catalog.md`, `diagnostic-visibility.md` | `index-cache-diagnostics.md`, `component-dataflow-debugging.md` |
 | Вторая страница каталога пустая, lazy load сломан | `pagination.md`, `shop-standard-components.md`, `catalog.md`, `component-dataflow-debugging.md` | `sef-urls.md`, `cache-infra.md` |
 | Производительность каталога | `catalog.md`, `perfmon.md`, `cache-infra.md` | `search.md`, `seo-cache-access.md` |
+| Production-safe план доработки магазина | `production-best-practices.md`, `shop-task-matrix.md` | конкретные `catalog.md`/`sale.md`/`commerce-1c-integration.md`/`shop-integrations-webservice.md` |
+| Подводные камни checkout/order/1С/REST | `pitfalls-matrix.md` | затем профильный shop reference |
+| Runtime smoke магазина | `runtime-smoke-verification.md` | `catalog.md`, `sale.md`, `commerce-1c-integration.md`, `shop-integrations-webservice.md` |
 
 ## 2. Минимальная проверка shop-core
 
@@ -91,6 +94,8 @@ done
 8. Side effects: cache, indexes, order status/reservation.
 
 ## 4. Smoke fixtures для будущего теста
+
+Полный формат runtime verification смотри в `runtime-smoke-verification.md`; ниже только короткий shop-набор.
 
 Минимальный sandbox-набор:
 

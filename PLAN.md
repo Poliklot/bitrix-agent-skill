@@ -7,7 +7,7 @@
 ## Текущий статус
 
 На дату этого плана:
-- актуальная версия навыка: `1.24.0`;
+- актуальная версия навыка: `1.25.0`;
 - точка входа: `bitrix/SKILL.md`;
 - reference-слой: `bitrix/references/*.md`;
 - non-commerce reference-слой прошёл ревизию против установленного core;
@@ -20,6 +20,7 @@
 - marketing/analytics слой магазина разобран по shop-core: `sender`, `mail`, `messageservice`, `subscribe`, `advertising`, `abtest`, `conversion`, `report`, `statistic`, eShop hooks и sale-side side effects;
 - automation/bizproc слой магазина разобран по shop-core: `bizproc`, `bizprocdesigner`, legacy `workflow`, `lists`, `pull`, templates/states/tasks, robots/triggers, list processes и realtime diagnostics;
 - integration/webservice слой магазина разобран по shop-core: `webservice`, `webservice.sale`, `webservice.statistic`, SOAP/WSDL, `stssync`, REST apps/webhooks/events/placements, sale/catalog REST controllers/events и external app handlers;
+- production best-practices слой добавлен как cross-cutting маршрут: update-safe кастомизация, D7 vs legacy, boundary/service layer, side effects, cache/index/RBAC, security, performance, pitfalls matrix и runtime smoke verification plan;
 - пагинационный слой переаудирован по `main` 26.150.0 и shop-core: legacy `CDBResult`, D7 `PageNavigation`, `system.pagenavigation`, `main.pagenavigation`, admin/grid и ajax/lazy load.
 
 ## Активный и условный контур
@@ -71,7 +72,7 @@
 - обмен с `1С` / `CommerceML`
 - магазинные workflow в целом: торговые предложения, цены, остатки, склады, корзина, checkout, оплата, доставка, скидки, заказы, отгрузки, возвраты, REST/webservice integrations
 
-Для shop-core-аудита эти домены уже подтверждены и описаны в `catalog.md`, `sale.md`, `currency.md`, `commerce-workflows.md`, `commerce-1c-integration.md`, `shop-standard-components.md`, `shop-marketing-analytics.md`, `shop-automation-bizproc.md`, `shop-integrations-webservice.md`, `shop-task-matrix.md`.
+Для shop-core-аудита эти домены уже подтверждены и описаны в `catalog.md`, `sale.md`, `currency.md`, `commerce-workflows.md`, `commerce-1c-integration.md`, `shop-standard-components.md`, `shop-marketing-analytics.md`, `shop-automation-bizproc.md`, `shop-integrations-webservice.md`, `production-best-practices.md`, `pitfalls-matrix.md`, `runtime-smoke-verification.md`, `shop-task-matrix.md`.
 
 Важно: наличие `catalog.*` standard components внутри `iblock` или шаблонов не доказывает наличие полноценного магазинного core. Активировать commerce-маршрут можно только после проверки реальных модулей и их runtime-контрактов.
 
@@ -130,6 +131,7 @@ bitrix-agent-skill/
 4. Магазинные задачи и обмен с 1С не должны становиться частью активного маршрута до установки отдельного shop-core и ревизии по реальному коду.
 5. После каждой волны ревизии должны синхронно обновляться `SKILL.md`, `VERSION`, а при необходимости `README.md` и `CHANGELOG.md`.
 6. Для commerce/1C-аудита нельзя использовать production-данные, живые ключи и реальные персональные данные клиентов; нужны sandbox и тестовые CommerceML fixtures.
+7. Code-first coverage не равен runtime pass: для production-утверждений нужны smoke fixtures/evidence по `runtime-smoke-verification.md`.
 
 ## Следующие шаги
 
@@ -138,8 +140,18 @@ bitrix-agent-skill/
 1. Держать non-commerce reference-слой консистентным при следующих правках.
 2. Держать `pagination.md` связанным с `iblocks.md`, `components.md`, `admin-ui.md`, `grid-admin-modern.md`, `sef-urls.md` и `diagnostic-visibility.md` при новых находках.
 3. Держать `shop-core-module-inventory.md` как source-of-truth по coverage gaps и не обещать runtime-smoke без отдельной Docker/runtime проверки.
-4. При появлении новых локальных модулей или project overrides добавлять их в маршрут только после проверки по коду.
-5. Собрать небольшой набор smoke-задач для ручной проверки качества навыка на текущем non-commerce core и shop-core.
+4. Для “как правильно” и “подводные камни” использовать `production-best-practices.md` и `pitfalls-matrix.md` как cross-cutting слой поверх модульных references.
+5. При появлении новых локальных модулей или project overrides добавлять их в маршрут только после проверки по коду.
+6. Поднять Docker/runtime shop-core и прогнать smoke-задачи из `runtime-smoke-verification.md`.
+
+### Завершённый целевой этап: Production best practices / pitfalls / runtime verification
+
+На версии `1.25.0` добавлены cross-cutting references:
+
+1. `production-best-practices.md`: update-safe кастомизация, truth stack, где держать код, D7 vs legacy, boundary/service layer, side effects, cache/index/RBAC, performance, security и verification matrix.
+2. `pitfalls-matrix.md`: симптомные маршруты по visibility, components/templates, iblock/HL, catalog/SKU, basket/checkout/order, 1С/CommerceML, REST/webservice, search/SEO/cache, users/auth, mail/SMS, automation и release/update pitfalls.
+3. `runtime-smoke-verification.md`: sandbox safety, fixture set, smoke-сценарии для catalog/sale/1С/REST/webservice/marketing/bizproc, evidence format и pass/fail/block criteria.
+4. Зафиксирована граница: code-first reference coverage не является runtime-smoke evidence. Нельзя утверждать “весь core production-проверен”, пока нет sandbox/fixtures smoke.
 
 ### Завершённый целевой этап: Shop integrations/webservice
 
@@ -200,7 +212,7 @@ bitrix-agent-skill/
 2. Counts по standard components, admin entrypoints, `lib`, `classes`, install/db files.
 3. Shop/1С relevance по модулям: runtime, solution/bootstrap, 1С/exchange, marketing/analytics, automation, content/front adjacent, platform/integration/safety.
 4. Coverage status: `covered`, `covered-partial`, `needs deep audit`, `deferred per project`.
-5. Ordered roadmap: `storeassist.md` → `shop-standard-components.md` → `shop-marketing-analytics.md` → `shop-automation-bizproc.md` → `shop-integrations-webservice.md`. После версии `1.24.0` все пять code-first пунктов закрыты; дальше нужен Docker/runtime smoke.
+5. Ordered roadmap: `storeassist.md` → `shop-standard-components.md` → `shop-marketing-analytics.md` → `shop-automation-bizproc.md` → `shop-integrations-webservice.md` → `production-best-practices.md`/`pitfalls-matrix.md`/`runtime-smoke-verification.md`. После версии `1.25.0` code-first и production-guidance пункты закрыты; дальше нужен фактический Docker/runtime smoke.
 
 ### Завершённый целевой этап: Pagination core-layer
 
@@ -249,17 +261,18 @@ bitrix-agent-skill/
    - конфликтует кастомный обработчик/override.
 4. Зафиксирован безопасный verification-flow: логи, временные файлы, таблицы, agents/events, component cache, managed/tagged cache, search/index/SEO side effects.
 
-### Следующие шаги после baseline 1.24.0
+### Следующие шаги после baseline 1.25.0
 
 1. Поднять Docker/runtime shop-core и проверить, есть ли живой DB dump или нужна свежая установка.
-2. Собрать smoke fixtures для каталога, offer, цены, остатка, корзины, checkout, заказа, CommerceML, `webservice.sale`/`webservice.statistic`, sale/catalog REST events/placements, sender subscription, SMS stub, banner/click, conversion/report/statistic, bizproc task, lists process and pull realtime checks.
-3. Прогнать ручные smoke-задачи навыка на shop-core.
-4. После runtime-smoke при необходимости расширить reference-файлы конкретными DB/runtime findings.
+2. Подготовить fixtures по `runtime-smoke-verification.md`: catalog/offer/price/stock, basket/checkout/order, CommerceML, `webservice.sale`/`webservice.statistic`, sale/catalog REST events/placements, sender/SMS/banner/conversion/report/statistic, bizproc/list/pull.
+3. Прогнать smoke-сценарии и сохранить evidence: input fixture, steps, expected/actual, logs/screenshots, cache/index actions, rollback/reset, verdict.
+4. После runtime-smoke расширить reference-файлы конкретными DB/runtime findings и отметить pass/fail/blocked зоны.
 
 ## Definition of done для текущей фазы
 
 Non-commerce фаза считается завершённой, когда:
 - reference-файлы не содержат неподтверждённых API без явной пометки;
+- production best-practices/pitfalls/runtime-smoke слой явно отделяет code-first coverage от runtime evidence;
 - `SKILL.md` маршрутизирует задачи только в подтверждённые домены;
 - служебные документы репозитория не спорят с фактическим состоянием навыка;
 - deferred-домены явно отделены от активного маршрута.
@@ -270,4 +283,5 @@ Commerce/1C фаза считается завершённой, когда:
 - `catalog.md`, `sale.md`, `commerce-workflows.md`, `shop-standard-components.md`, `shop-marketing-analytics.md`, `shop-automation-bizproc.md`, `shop-integrations-webservice.md` переаудированы;
 - создан или обновлён reference по `1С`/`CommerceML` и явно разведены CommerceML, SOAP/WSDL и REST app hooks;
 - skill умеет маршрутизировать магазинные задачи без догадок и без смешивания non-commerce core с shop-core;
-- есть smoke-задачи для каталога, корзины, checkout, заказа, обмена с 1С, `webservice.sale`/`webservice.statistic`, REST app hooks, пагинации, lazy load и диагностики цен/остатков/SKU.
+- есть smoke-задачи и verification format для каталога, корзины, checkout, заказа, обмена с 1С, `webservice.sale`/`webservice.statistic`, REST app hooks, пагинации, lazy load и диагностики цен/остатков/SKU;
+- фактический runtime pass будет считаться отдельной следующей фазой после запуска sandbox/fixtures.

@@ -1,9 +1,9 @@
 ---
 name: bitrix
-description: Provides expertise in 1C-Bitrix CMS development using the actual project core as the primary source of truth. Use when working with installed core modules, standard components, iblocks, highloadblocks, catalog, sale, currency, internet shop workflows, shop-core module inventory, StoreAssist, standard shop components, shop marketing/analytics, sender, mail, messageservice, subscribe, advertising, abtest, conversion, report, statistic, shop automation/bizproc, bizprocdesigner, workflow, lists, pull, shop integrations/webservice, webservice, webservice.sale, webservice.statistic, sale/catalog REST, external app hooks, 1C/CommerceML exchange, catalog.import.1c, sale.export.1c, basket, orders, payments, delivery, discounts, SKU/offers, prices, stocks, stores, blog, forum, vote, forms, landing, sitecorporate, REST, SEO, pagination, cache/index diagnostics, operations, and PHP-heavy Bitrix tasks. First inspect installed modules and components under `www/bitrix` before relying on memory. Missing modules such as `catalog`, `sale`, `currency`, `bizproc`, `pull`, or `socialnet` must be treated as deferred until they appear in the local core.
+description: Provides expertise in 1C-Bitrix CMS development using the actual project core as the primary source of truth. Use when working with installed core modules, standard components, iblocks, highloadblocks, catalog, sale, currency, internet shop workflows, shop-core module inventory, StoreAssist, standard shop components, shop marketing/analytics, sender, mail, messageservice, subscribe, advertising, abtest, conversion, report, statistic, shop automation/bizproc, bizprocdesigner, workflow, lists, pull, shop integrations/webservice, webservice, webservice.sale, webservice.statistic, sale/catalog REST, external app hooks, 1C/CommerceML exchange, catalog.import.1c, sale.export.1c, basket, orders, payments, delivery, discounts, SKU/offers, prices, stocks, stores, blog, forum, vote, forms, landing, sitecorporate, REST, SEO, pagination, cache/index diagnostics, operations, production best practices, pitfalls diagnostics, runtime smoke verification, and PHP-heavy Bitrix tasks. First inspect installed modules and components under `www/bitrix` before relying on memory. Missing modules such as `catalog`, `sale`, `currency`, `bizproc`, `pull`, or `socialnet` must be treated as deferred until they appear in the local core.
 metadata:
   author: poliklot
-  version: "1.24.0"
+  version: "1.25.0"
 compatibility: Designed for Claude Code and Codex on 1C-Bitrix CMS projects
 ---
 
@@ -19,6 +19,8 @@ compatibility: Designed for Claude Code and Codex on 1C-Bitrix CMS projects
 2. **Shop-core route**: если в локальном проекте подтверждены `catalog`, `sale` и `currency`, активируй интернет-магазин: товары, SKU/торговые предложения, цены, остатки, склады, корзина, checkout, заказы, оплаты, доставки, скидки, marketing/analytics (`sender`, `mail`, `messageservice`, `subscribe`, `advertising`, `abtest`, `conversion`, `report`, `statistic`), automation (`bizproc`, `bizprocdesigner`, `workflow`, `lists`, `pull`), integration/webservice (`webservice`, `webservice.sale`, `webservice.statistic`, sale/catalog REST app hooks) и 1С/CommerceML. Новый shop truth layer проверен на core с `catalog` 25.550.0, `sale` 26.0.0, `currency` 26.0.0, `bitrix.eshop` 25.0.0.
 
 Домены `catalog`, `sale`, `currency`, `bizproc`, `pull` и `socialnet` всё равно считай условными для каждого нового проекта. Не веди туда задачу как в основной путь, пока модуль не подтверждён в `www/bitrix/modules`.
+
+Поверх обоих маршрутов действует production слой `1.25.0`: best practices, pitfalls matrix и runtime smoke verification. Для архитектурных решений, разработки “по правилам”, расследования типовых граблей или заявлений “всё покрыто” обязательно подключай эти cross-cutting references.
 
 ## Источник истины
 
@@ -83,6 +85,7 @@ if (!Loader::includeModule('iblock')) {
 - **Код важнее клик-пути**. Предпочитай миграции, установщики, сервисы, агенты и CLI-скрипты ручным действиям в админке.
 - **Диагностика по цепочке**. Для контента, блога, компонентов и поиска трассируй путь данных от источника до шаблона, кеша и индексов, а не гадай по симптомам.
 - **Project-tooling-first для PHP-задач**. Если в проекте уже есть `composer.json`, `phpunit.xml*`, `phpstan*`, `psalm*`, fixer/sniffer или `rector.php`, используй именно их. Не тащи новый PHP-стек ради одной правки.
+- **Production-practices-first для проектирования**. Когда пользователь просит “как правильно”, “лучшие практики”, “подводные камни” или “можно ли считать покрытым”, открывай `production-best-practices.md`, `pitfalls-matrix.md` и/или `runtime-smoke-verification.md`.
 
 ## Рабочий алгоритм
 
@@ -123,6 +126,7 @@ if (!Loader::includeModule('iblock')) {
 | Домен | Файлы |
 |------|------|
 | Audit текущего core, фазовая матрица и task routing | [references/core-audit-matrix.md](references/core-audit-matrix.md), [references/noncommerce-task-matrix.md](references/noncommerce-task-matrix.md), [references/shop-task-matrix.md](references/shop-task-matrix.md), [references/shop-core-module-inventory.md](references/shop-core-module-inventory.md) |
+| Production best practices, update-safe разработка, pitfalls matrix и runtime smoke verification | [references/production-best-practices.md](references/production-best-practices.md), [references/pitfalls-matrix.md](references/pitfalls-matrix.md), [references/runtime-smoke-verification.md](references/runtime-smoke-verification.md) |
 | Модель данных сайта и инфоблоков | [references/iblocks.md](references/iblocks.md), [references/entities-migrations.md](references/entities-migrations.md), [references/import-export.md](references/import-export.md), [references/sef-urls.md](references/sef-urls.md), [references/pagination.md](references/pagination.md) |
 | Интернет-магазин: inventory модулей, стандартные компоненты, товары, SKU, цены, остатки, склады | [references/shop-core-module-inventory.md](references/shop-core-module-inventory.md), [references/shop-task-matrix.md](references/shop-task-matrix.md), [references/shop-standard-components.md](references/shop-standard-components.md), [references/catalog.md](references/catalog.md), [references/currency.md](references/currency.md), [references/iblocks.md](references/iblocks.md) |
 | Маркетинг/аналитика магазина: sender, mail/SMS, подписки, баннеры, A/B, conversion, reports, statistic | [references/shop-marketing-analytics.md](references/shop-marketing-analytics.md), [references/shop-task-matrix.md](references/shop-task-matrix.md), [references/mail-notifications.md](references/mail-notifications.md), [references/messageservice.md](references/messageservice.md), [references/subscribe.md](references/subscribe.md), [references/sale.md](references/sale.md) |
@@ -158,6 +162,7 @@ if (!Loader::includeModule('iblock')) {
 Дополнительно подгружай технические reference-файлы по необходимости:
 
 - Audit текущего core, активные/deferred зоны, полный shop-core inventory и task routing — [references/core-audit-matrix.md](references/core-audit-matrix.md), [references/noncommerce-task-matrix.md](references/noncommerce-task-matrix.md), [references/shop-task-matrix.md](references/shop-task-matrix.md), [references/shop-core-module-inventory.md](references/shop-core-module-inventory.md)
+- Production best practices, update-safe кастомизация, D7 vs legacy, side effects, pitfalls matrix и runtime smoke — [references/production-best-practices.md](references/production-best-practices.md), [references/pitfalls-matrix.md](references/pitfalls-matrix.md), [references/runtime-smoke-verification.md](references/runtime-smoke-verification.md)
 - Диагностика видимости, кешей, индексов, пагинации и data flow — [references/diagnostic-visibility.md](references/diagnostic-visibility.md), [references/index-cache-diagnostics.md](references/index-cache-diagnostics.md), [references/component-dataflow-debugging.md](references/component-dataflow-debugging.md), [references/pagination.md](references/pagination.md)
 - ORM, runtime-поля, связи и `Result/Error` — [references/orm.md](references/orm.md)
 - Архитектура модуля, `Loader`, PSR-4, `ServiceLocator`, `Option` — [references/modules-loader.md](references/modules-loader.md)
@@ -210,6 +215,9 @@ if (!Loader::includeModule('iblock')) {
 
 ## Content-first эвристики
 
+- Для вопросов “как правильно сделать”, “лучшие практики”, “куда класть код”, “как не сломать обновления” сначала открывай `production-best-practices.md`, затем конкретный модульный reference.
+- Для вопросов “подводные камни”, “почему сломалось”, “после обмена/обновления всё странно” сначала открывай `pitfalls-matrix.md`, затем иди в указанные domain references.
+- Для заявлений о полном покрытии, Docker/sandbox, smoke, fixtures или runtime-доказательствах открывай `runtime-smoke-verification.md`; code-first audit не равен runtime pass.
 - Для PHP-heavy задач сначала различай Bitrix boundary и чистую domain-логику: `component.php`, `result_modifier.php`, controller action, event handler и admin/public entrypoint должны координировать, а тяжёлая логика должна жить в сервисе.
 - Для PHP-heavy задач сначала проверь, есть ли в проекте `composer.json`, `phpunit.xml*`, `phpstan*`, `psalm*`, `.php-cs-fixer.php`, `ecs.php`, `phpcs.xml*`, `rector.php`; не навязывай стек, которого в проекте нет.
 - Для PHP-heavy задач не принимай `composer.json` и `phpunit.xml.dist` внутри `www/bitrix/modules/*/vendor` за project tooling: это может быть только vendor noise текущего core.
@@ -221,7 +229,7 @@ if (!Loader::includeModule('iblock')) {
 - Для cache/index задач сначала определи конкретный слой: component cache, tagged cache, managed cache, composite/static HTML, search index, SEO artifacts, landing cache.
 - Для стандартных компонентов без `local/*` сначала смотри stock component templates и `bitrix/templates/*`; наличие `catalog.*` в `iblock` не означает установленный модуль `catalog`. Для public shop-компонентов (`bitrix:catalog`, `catalog.section`, `catalog.element`, `catalog.smart.filter`, basket/checkout/personal) дополнительно открывай `shop-standard-components.md`.
 - Для shop-задач сначала подтверждай `catalog`, `sale`, `currency`; затем разделяй product, offer, price, stock, basket, order, marketing/analytics и exchange side effects.
-- Для вопросов “все ли модули shop-core покрыты” сначала открывай `shop-core-module-inventory.md`: standard shop components, marketing/analytics, automation и webservice/REST уже покрыты code-first, но не обещай runtime-smoke без отдельной Docker/runtime проверки.
+- Для вопросов “все ли модули shop-core покрыты” сначала открывай `shop-core-module-inventory.md` и `runtime-smoke-verification.md`: standard shop components, marketing/analytics, automation и webservice/REST уже покрыты code-first, но не обещай runtime pass без отдельной Docker/runtime проверки.
 - Для пагинации сначала разводи legacy `PAGEN_N`/`NavStart()` и D7 `PageNavigation`: проверяй уникальный nav id, count/filter, stable sort, cache key и ajax payload.
 - Для задач по 1С сначала определяй поток: `catalog.import.1c`, `catalog.export.1c` или `sale.export.1c`; проверяй `checkauth → init → file → import`, session cookies, `sessid`, temp files, XML_ID/CML2_LINK и логи. Если задача про `webservice.sale`, `webservice.statistic`, SOAP/WSDL, REST events/placements или external app handlers — открывай `shop-integrations-webservice.md`, а не подменяй это CommerceML.
 - Если задача про StoreAssist или `storeassist_1c_*`, помни: это мастер/чеклист и onboarding, а не exchange engine; реальные CommerceML поломки диагностируй через `commerce-1c-integration.md`.
@@ -261,6 +269,7 @@ if (!Loader::includeModule('iblock')) {
 - Не считать ссылки из wizard/public skeleton на `bitrix:catalog`, `bitrix:news` или другие компоненты доказательством, что соответствующий модуль установлен в проекте.
 - Не считать физическое наличие `catalog.*` компонентов в `iblock/install/components/bitrix` доказательством установленного модуля `catalog`.
 - Не менять `b_sale_order`, basket, payment, shipment, catalog price или stock прямым SQL, если есть API и side effects.
+- Не говорить “весь core полностью проверен” или “production-ready доказано”, если нет runtime-smoke evidence из sandbox/fixtures.
 - Не подключать production 1С, реальные платежи, доставки или кассы для smoke без явного подтверждения.
 - Не считать успех `mode=file` в 1С обмене успешным импортом: проверяй `mode=import`, session state, таблицы и логи.
 - Не удалять и не переименовывать `XML_ID`/`CML2_LINK` без плана миграции обмена.

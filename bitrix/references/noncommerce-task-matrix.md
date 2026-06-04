@@ -10,6 +10,7 @@
 - Формы, уведомления, подписки
 - Интеграции и эксплуатация
 - PHP/project quality
+- Production practices / pitfalls / runtime
 
 ## Контент и структура
 
@@ -92,6 +93,18 @@
 | модернизировать legacy | `php-legacy-modernization.md` |
 | не сломать Bitrix-boundary | `php-workflow.md`, `component-dataflow-debugging.md` |
 | проверить vendor noise | `php-testing.md`, `php-quality.md` |
+| спроектировать production-safe доработку | `production-best-practices.md`, затем domain reference |
+| понять, куда класть код | `production-best-practices.md`, `php-workflow.md`, `modules-loader.md` |
+
+## Production practices / pitfalls / runtime
+
+| Задача | Читать |
+|---|---|
+| “как правильно сделать” | `production-best-practices.md`, затем профильный reference |
+| “какие подводные камни” | `pitfalls-matrix.md`, затем профильный reference |
+| “можно считать production-ready?” | `runtime-smoke-verification.md`, `php-testing.md`, профильный reference |
+| release/update checklist | `production-best-practices.md`, `operations-runbook.md`, `pitfalls-matrix.md` |
+| smoke без готового PHPUnit | `runtime-smoke-verification.md`, `php-testing.md`, `operations-runbook.md` |
 
 ## Commerce boundary
 
