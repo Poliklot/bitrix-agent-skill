@@ -1,6 +1,6 @@
 # Sale — корзина, заказ, оплата, доставка (`sale` 26.0.0)
 
-> Truth layer: shop-core `/Users/igormajorov/Downloads/Telegram Desktop/bitrix-shop-core`, модуль `sale` версии `26.0.0` (`install/version.php`, дата `2026-01-12`). В этом core `sale`, `catalog`, `currency`, `pull`, `bizproc`, `sender` присутствуют. В каждом проекте сначала проверяй наличие `www/bitrix/modules/sale` и конкретных компонентов.
+> Truth layer: shop-core `/Users/igormajorov/Downloads/Telegram Desktop/bitrix-shop-core`, модуль `sale` версии `26.0.0` (`install/version.php`, дата `2026-01-12`). Для sale REST controllers/events, external pay system/delivery/cashbox handlers and `webservice.sale` SOAP stats открывай `shop-integrations-webservice.md`. В этом core `sale`, `catalog`, `currency`, `pull`, `bizproc`, `sender` присутствуют. В каждом проекте сначала проверяй наличие `www/bitrix/modules/sale` и конкретных компонентов.
 
 ## 0. Обязательная проверка перед sale-задачей
 

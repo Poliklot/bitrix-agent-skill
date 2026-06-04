@@ -2,7 +2,7 @@
 
 > Truth layer: shop-core `/Users/igormajorov/Downloads/Telegram Desktop/bitrix-shop-core`. Подтверждены модули `catalog` 25.550.0, `sale` 26.0.0, `currency` 26.0.0, компоненты `catalog.import.1c`, `catalog.export.1c`, `sale.export.1c`, admin entrypoints `/bitrix/admin/1c_import.php`, `/bitrix/admin/1c_exchange.php`, `/bitrix/admin/1c_admin.php`, `/bitrix/admin/sale_exchange_log.php`.
 
-Используй этот файл для задач обмена с 1С, CommerceML, выгрузки каталога, импорта товаров/цен/остатков, экспорта/импорта заказов, диагностики `mode=checkauth/init/file/import`.
+Используй этот файл для задач обмена с 1С, CommerceML, выгрузки каталога, импорта товаров/цен/остатков, экспорта/импорта заказов, диагностики `mode=checkauth/init/file/import`. Не путай с `webservice.sale`/`webservice.statistic` SOAP stats и sale/catalog REST app hooks — для них открывай `shop-integrations-webservice.md`.
 
 ## 1. Проверка наличия exchange слоя
 

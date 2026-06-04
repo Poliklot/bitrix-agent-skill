@@ -1,6 +1,6 @@
 # Bitrix REST API — core-first справочник
 
-> Reference для Bitrix-скилла. Загружай, когда задача связана с `rest`, `OnRestServiceBuildDescription`, `CRestServer`, исходящими REST-событиями, `event.bind`, placement'ами или серверной регистрацией REST-методов.
+> Reference для Bitrix-скилла. Загружай, когда задача связана с `rest`, `OnRestServiceBuildDescription`, `CRestServer`, исходящими REST-событиями, `event.bind`, placement'ами или серверной регистрацией REST-методов. Для shop-core sale/catalog REST controllers, webhooks/events/placements and `webservice`/SOAP integration extras сначала открывай `shop-integrations-webservice.md`.
 
 ## Что подтверждено в текущем core
 

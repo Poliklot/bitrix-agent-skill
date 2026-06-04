@@ -52,6 +52,8 @@ Shop-core facts:
 | `messageservice` | `25.200.100` | active shop SMS/provider channel | `shop-marketing-analytics.md`, `messageservice.md` |
 | `subscribe` | `25.0.0` | active legacy subscriptions | `shop-marketing-analytics.md`, `subscribe.md` |
 | `advertising`/`abtest`/`conversion`/`report`/`statistic` | confirmed | active analytics/ads layer | `shop-marketing-analytics.md` |
+| `webservice` | `26.0.0` | active SOAP/WSDL integration extras | `shop-integrations-webservice.md`, `http.md` |
+| `rest` sale/catalog hooks | `26.0.0` + module handlers | active apps/webhooks/events/placements | `shop-integrations-webservice.md`, `rest.md` |
 
 Shop-core содержит exchange components:
 
@@ -110,6 +112,7 @@ Admin entrypoints:
 | Pull/realtime shop UI | `pull` есть | `shop-automation-bizproc.md`, `push-pull.md`, конкретный component |
 | Eshop wizard/template | `bitrix.eshop` есть | `shop-standard-components.md`, `commerce-workflows.md`, `templates.md` |
 | Маркетинг/аналитика магазина | `sender`, `messageservice`, `subscribe`, `advertising`, `abtest`, `conversion`, `report` или `statistic` есть | `shop-marketing-analytics.md`, `mail-notifications.md`, `messageservice.md`, `subscribe.md` |
+| Webservice/REST integrations | `webservice`, `rest`, `webservice.sale`, `webservice.statistic`, sale/catalog REST есть | `shop-integrations-webservice.md`, `rest.md`, `http.md` |
 
 ## 5. Условные и отложенные домены
 
@@ -121,7 +124,7 @@ Admin entrypoints:
 | `bizproc` | нет модуля | держать `workflow.md` как deferred |
 | `pull` | нет модуля | не строить realtime/push route |
 | `socialnet` | нет модуля | использовать только `blog`-часть `blog-socialnet.md` |
-| 1С exchange | нет `catalog.import.1c`/`sale.export.1c` | описывать только generic import/export, не CommerceML route |
+| 1С exchange | нет `catalog.import.1c`/`sale.export.1c` | описывать только generic import/export, не CommerceML route; `webservice.sale` не считать 1С exchange |
 
 ## 6. Ловушки
 

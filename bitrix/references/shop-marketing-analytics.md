@@ -18,7 +18,7 @@
 - eShop wizard/public/template calls in `bitrix.eshop`
 - sale-side marketing connectors: `sale/lib/senderconnector.php`, `sale/lib/bigdata/targetsalemailconnector.php`, sale statistic events
 
-Ниже только подтверждённый routing/contract layer. Для корзины/заказов читай `sale.md`; для catalog product subscription — `catalog.md`; для стандартных shop components — `shop-standard-components.md`; для email/SMS общих уведомлений — `mail-notifications.md` и `messageservice.md`; для REST — `rest.md`.
+Ниже только подтверждённый routing/contract layer. Для корзины/заказов читай `sale.md`; для catalog product subscription — `catalog.md`; для стандартных shop components — `shop-standard-components.md`; для email/SMS общих уведомлений — `mail-notifications.md` и `messageservice.md`; для REST/webservice sale/statistic integration extras — `shop-integrations-webservice.md`, затем `rest.md`.
 
 ## Главный вывод
 

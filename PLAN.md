@@ -7,7 +7,7 @@
 ## Текущий статус
 
 На дату этого плана:
-- актуальная версия навыка: `1.23.0`;
+- актуальная версия навыка: `1.24.0`;
 - точка входа: `bitrix/SKILL.md`;
 - reference-слой: `bitrix/references/*.md`;
 - non-commerce reference-слой прошёл ревизию против установленного core;
@@ -19,6 +19,7 @@
 - standard shop components разобраны по shop-core: iblock-hosted `catalog.*`, catalog productcard/store/report/admin components, sale basket/order/personal/payment/delivery components и `bitrix.eshop` wizard layer;
 - marketing/analytics слой магазина разобран по shop-core: `sender`, `mail`, `messageservice`, `subscribe`, `advertising`, `abtest`, `conversion`, `report`, `statistic`, eShop hooks и sale-side side effects;
 - automation/bizproc слой магазина разобран по shop-core: `bizproc`, `bizprocdesigner`, legacy `workflow`, `lists`, `pull`, templates/states/tasks, robots/triggers, list processes и realtime diagnostics;
+- integration/webservice слой магазина разобран по shop-core: `webservice`, `webservice.sale`, `webservice.statistic`, SOAP/WSDL, `stssync`, REST apps/webhooks/events/placements, sale/catalog REST controllers/events и external app handlers;
 - пагинационный слой переаудирован по `main` 26.150.0 и shop-core: legacy `CDBResult`, D7 `PageNavigation`, `system.pagenavigation`, `main.pagenavigation`, admin/grid и ajax/lazy load.
 
 ## Активный и условный контур
@@ -65,10 +66,12 @@
 - `bizproc`
 - `pull`
 - `socialnet`
+- `webservice` / SOAP
+- `rest` / внешние app hooks
 - обмен с `1С` / `CommerceML`
-- магазинные workflow в целом: торговые предложения, цены, остатки, склады, корзина, checkout, оплата, доставка, скидки, заказы, отгрузки, возвраты
+- магазинные workflow в целом: торговые предложения, цены, остатки, склады, корзина, checkout, оплата, доставка, скидки, заказы, отгрузки, возвраты, REST/webservice integrations
 
-Для shop-core-аудита эти домены уже подтверждены и описаны в `catalog.md`, `sale.md`, `currency.md`, `commerce-workflows.md`, `commerce-1c-integration.md`, `shop-standard-components.md`, `shop-marketing-analytics.md`, `shop-automation-bizproc.md`, `shop-task-matrix.md`.
+Для shop-core-аудита эти домены уже подтверждены и описаны в `catalog.md`, `sale.md`, `currency.md`, `commerce-workflows.md`, `commerce-1c-integration.md`, `shop-standard-components.md`, `shop-marketing-analytics.md`, `shop-automation-bizproc.md`, `shop-integrations-webservice.md`, `shop-task-matrix.md`.
 
 Важно: наличие `catalog.*` standard components внутри `iblock` или шаблонов не доказывает наличие полноценного магазинного core. Активировать commerce-маршрут можно только после проверки реальных модулей и их runtime-контрактов.
 
@@ -134,9 +137,19 @@ bitrix-agent-skill/
 
 1. Держать non-commerce reference-слой консистентным при следующих правках.
 2. Держать `pagination.md` связанным с `iblocks.md`, `components.md`, `admin-ui.md`, `grid-admin-modern.md`, `sef-urls.md` и `diagnostic-visibility.md` при новых находках.
-3. Держать `shop-core-module-inventory.md` как source-of-truth по coverage gaps и не обещать глубокое покрытие webservice/runtime-модулей без отдельного reference.
+3. Держать `shop-core-module-inventory.md` как source-of-truth по coverage gaps и не обещать runtime-smoke без отдельной Docker/runtime проверки.
 4. При появлении новых локальных модулей или project overrides добавлять их в маршрут только после проверки по коду.
-5. Собрать небольшой набор smoke-задач для ручной проверки качества навыка на текущем non-commerce core.
+5. Собрать небольшой набор smoke-задач для ручной проверки качества навыка на текущем non-commerce core и shop-core.
+
+### Завершённый целевой этап: Shop integrations/webservice
+
+На версии `1.24.0` добавлен отдельный reference `shop-integrations-webservice.md`. Закрыты:
+
+1. `webservice` 26.0.0: SOAP/WSDL infrastructure, `webservice.server`, `webservice.checkauth`, `webservice.sale`, `webservice.statistic`, `stssync.server`, tools and safety boundaries.
+2. `rest` 26.0.0: REST apps/webhooks/events/placements/auth/batch/method discovery and `b_rest_*` DB layer.
+3. Sale REST: Engine controllers for order/payment/shipment/basket/status/properties, explicit pay_system/delivery/cashbox scopes and sale REST events.
+4. Catalog REST: Engine controllers for products/prices/stores/documents/sections, event-bind classes and `CATALOG_EXTERNAL_PRODUCT` placement.
+5. Зафиксирована граница: `webservice.sale`/`webservice.statistic` — не CommerceML/1С exchange и не полноценный order/product CRUD.
 
 ### Завершённый целевой этап: Shop automation/bizproc
 
@@ -187,7 +200,7 @@ bitrix-agent-skill/
 2. Counts по standard components, admin entrypoints, `lib`, `classes`, install/db files.
 3. Shop/1С relevance по модулям: runtime, solution/bootstrap, 1С/exchange, marketing/analytics, automation, content/front adjacent, platform/integration/safety.
 4. Coverage status: `covered`, `covered-partial`, `needs deep audit`, `deferred per project`.
-5. Ordered roadmap: `storeassist.md` → `shop-standard-components.md` → `shop-marketing-analytics.md` → `shop-automation-bizproc.md` → `shop-integrations-webservice.md`. После версии `1.23.0` первые четыре пункта закрыты.
+5. Ordered roadmap: `storeassist.md` → `shop-standard-components.md` → `shop-marketing-analytics.md` → `shop-automation-bizproc.md` → `shop-integrations-webservice.md`. После версии `1.24.0` все пять code-first пунктов закрыты; дальше нужен Docker/runtime smoke.
 
 ### Завершённый целевой этап: Pagination core-layer
 
@@ -236,13 +249,12 @@ bitrix-agent-skill/
    - конфликтует кастомный обработчик/override.
 4. Зафиксирован безопасный verification-flow: логи, временные файлы, таблицы, agents/events, component cache, managed/tagged cache, search/index/SEO side effects.
 
-### Следующие шаги после baseline 1.23.0
+### Следующие шаги после baseline 1.24.0
 
-1. Следующим ordered deep-dive сделать `shop-integrations-webservice.md` по `webservice.sale`, `webservice.statistic`, sale/catalog REST и внешним app hooks.
-2. Поднять Docker/runtime shop-core и проверить, есть ли живой DB dump или нужна свежая установка.
-3. Собрать smoke fixtures для каталога, offer, цены, остатка, корзины, checkout, заказа, CommerceML, sender subscription, SMS stub, banner/click, conversion/report/statistic, bizproc task, lists process and pull realtime checks.
-4. Прогнать ручные smoke-задачи навыка на shop-core.
-5. После runtime-smoke при необходимости расширить reference-файлы конкретными DB/runtime findings.
+1. Поднять Docker/runtime shop-core и проверить, есть ли живой DB dump или нужна свежая установка.
+2. Собрать smoke fixtures для каталога, offer, цены, остатка, корзины, checkout, заказа, CommerceML, `webservice.sale`/`webservice.statistic`, sale/catalog REST events/placements, sender subscription, SMS stub, banner/click, conversion/report/statistic, bizproc task, lists process and pull realtime checks.
+3. Прогнать ручные smoke-задачи навыка на shop-core.
+4. После runtime-smoke при необходимости расширить reference-файлы конкретными DB/runtime findings.
 
 ## Definition of done для текущей фазы
 
@@ -254,8 +266,8 @@ Non-commerce фаза считается завершённой, когда:
 
 Commerce/1C фаза считается завершённой, когда:
 - установлен и задокументирован отдельный shop-core sandbox;
-- `catalog`, `sale`, `currency` и обмен с 1С подтверждены по реальному коду;
-- `catalog.md`, `sale.md`, `commerce-workflows.md` переаудированы;
-- создан или обновлён reference по `1С`/`CommerceML`;
+- `catalog`, `sale`, `currency`, shop standard components, marketing/analytics, automation/bizproc, integration/webservice и обмен с 1С подтверждены по реальному коду;
+- `catalog.md`, `sale.md`, `commerce-workflows.md`, `shop-standard-components.md`, `shop-marketing-analytics.md`, `shop-automation-bizproc.md`, `shop-integrations-webservice.md` переаудированы;
+- создан или обновлён reference по `1С`/`CommerceML` и явно разведены CommerceML, SOAP/WSDL и REST app hooks;
 - skill умеет маршрутизировать магазинные задачи без догадок и без смешивания non-commerce core с shop-core;
-- есть smoke-задачи для каталога, корзины, checkout, заказа, обмена с 1С, пагинации, lazy load и диагностики цен/остатков/SKU.
+- есть smoke-задачи для каталога, корзины, checkout, заказа, обмена с 1С, `webservice.sale`/`webservice.statistic`, REST app hooks, пагинации, lazy load и диагностики цен/остатков/SKU.

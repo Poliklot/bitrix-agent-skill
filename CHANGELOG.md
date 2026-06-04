@@ -4,6 +4,15 @@
 
 ## [Unreleased]
 
+## [1.24.0] — 2026-06-03
+
+### Added
+- `bitrix/references/shop-integrations-webservice.md` — отдельный core-first reference по integration extras интернет-магазина: `webservice` 26.0.0, `webservice.sale`, `webservice.statistic`, SOAP/WSDL, `stssync`, REST apps/webhooks/events/placements, sale REST controllers/events и catalog REST controllers/events/placement.
+
+### Changed
+- `shop-core-module-inventory.md` теперь считает webservice/integration extras покрытыми и сдвигает ordered roadmap к Docker/runtime smoke.
+- `bitrix/SKILL.md`, `shop-task-matrix.md`, `README.md`, `PLAN.md`, `bitrix/VERSION` и MCP Market compact bundles синхронизированы с webservice/REST baseline `1.24.0`.
+
 ## [1.23.0] — 2026-06-03
 
 ### Added
@@ -311,7 +320,8 @@
 ### Added
 - Первый публичный релиз: `SKILL.md`, progressive disclosure архитектура
 
-[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.23.0...HEAD
+[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.24.0...HEAD
+[1.24.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.23.0...v1.24.0
 [1.23.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.22.0...v1.23.0
 [1.22.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.21.0...v1.22.0
 [1.21.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.20.0...v1.21.0

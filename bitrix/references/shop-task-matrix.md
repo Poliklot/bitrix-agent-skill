@@ -26,6 +26,9 @@
 | Бизнес-процесс / задание / шаблон не стартует | `shop-automation-bizproc.md`, `workflow.md` | `iblocks.md`, `lists` section, permissions |
 | Процессы в списках | `shop-automation-bizproc.md`, `workflow.md`, `iblocks.md` | list rights, `BIZPROC=Y`, `CLists::isBpFeatureEnabled` |
 | Realtime / pull / push в автоматизации | `shop-automation-bizproc.md`, `push-pull.md` | pull server config, channels/watches |
+| `webservice.sale` / SOAP order stats | `shop-integrations-webservice.md`, `sale.md` | это не 1С и не order CRUD; проверить WSDL, sale rights, date/status filters |
+| `webservice.statistic` / SOAP traffic stats | `shop-integrations-webservice.md`, `shop-marketing-analytics.md` | `statistic` rights, traffic tables, `STAT_LIST_TOP_SIZE` |
+| REST sale/catalog app hooks, webhooks, placements | `shop-integrations-webservice.md`, `rest.md` | `methods`/`method.get`, scopes, `b_rest_event`, `b_rest_placement` |
 | “В админке есть, на сайте нет” для товара | `shop-standard-components.md`, `catalog.md`, `diagnostic-visibility.md` | `index-cache-diagnostics.md`, `component-dataflow-debugging.md` |
 | Вторая страница каталога пустая, lazy load сломан | `pagination.md`, `shop-standard-components.md`, `catalog.md`, `component-dataflow-debugging.md` | `sef-urls.md`, `cache-infra.md` |
 | Производительность каталога | `catalog.md`, `perfmon.md`, `cache-infra.md` | `search.md`, `seo-cache-access.md` |

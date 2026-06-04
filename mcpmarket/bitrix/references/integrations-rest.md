@@ -7,7 +7,7 @@
 
 # Bitrix REST API — core-first справочник
 
-> Reference для Bitrix-скилла. Загружай, когда задача связана с `rest`, `OnRestServiceBuildDescription`, `CRestServer`, исходящими REST-событиями, `event.bind`, placement'ами или серверной регистрацией REST-методов.
+> Reference для Bitrix-скилла. Загружай, когда задача связана с `rest`, `OnRestServiceBuildDescription`, `CRestServer`, исходящими REST-событиями, `event.bind`, placement'ами или серверной регистрацией REST-методов. Для shop-core sale/catalog REST controllers, webhooks/events/placements and `webservice`/SOAP integration extras сначала открывай `shop-integrations-webservice.md`.
 
 ## Что подтверждено в текущем core
 
@@ -221,5 +221,3 @@ public static function onItemAdd(\Bitrix\Main\Event $event): array
 - `_events` и `_placements` после сборки нормализуются по регистру, поэтому не завязывайся на исходный case.
 - `RestException::__construct()` принимает строковый error code, но PHP exception code внутри всё равно приводится к `int`; для логики REST смотри `getErrorCode()`, а не `getCode()`.
 - `event.bind` валидирует callback через `HandlerHelper::checkCallback(...)`, поэтому внешний URL надо проверять по реальному app context.
-
----
