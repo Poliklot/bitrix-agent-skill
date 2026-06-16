@@ -4,7 +4,13 @@
 
 ## [Unreleased]
 
+## [1.26.0] — 2026-06-16
+
 ### Changed
+- Добавлен и расширен базовый reference `developer-primitives.md` в полную и MCP Market версии: быстрые ответы на бытовые Bitrix-вопросы разработчика (`meta title/description`, `ShowHead`/`ShowTitle`, Asset, `IncludeFile`, breadcrumbs, `GetCurPageParam`, `Context`, current user, `Loader::includeModule`, `CFile::ResizeImageGet`, `Loc::getMessage`, `ShowPanel`) с ссылками на официальную документацию, чтобы агент не уходил в чистый PHP там, где есть штатный механизм Bitrix.
+- Уточнены `templates.md` и compact `components-admin-ui.md`: meta/title/head теперь описаны через свойства страницы/раздела, SEO-параметры компонентов, `SetTitle`/`SetPageProperty`, `ShowHead`/`ShowTitle` и отложенный вывод, с явным запретом первым делом вставлять `<meta>` руками.
+- Усилен frontmatter `description` в `bitrix/SKILL.md` и `mcpmarket/bitrix/SKILL.md`: добавлены явные русские/английские триггеры (`Битрикс`, `1С-Битрикс`, `БУС`, `www/bitrix`, `/local`, `CIBlock*`, `Bitrix\Main`, D7/legacy, shop/1C/REST и production diagnostics), чтобы агент чаще выбирал навык без ручного `/bitrix`.
+- Нестандартное поле frontmatter `compatibility` перенесено в тело обоих `SKILL.md`, чтобы skill проходил базовую Codex-валидацию.
 - Уточнён `README.md`: принцип «сначала ядро» теперь описан как рабочий процесс агента при доступе к рабочей копии проекта, а версии модулей — как маркеры проверенного контракта, а не полная база совместимости по всем релизам Bitrix.
 - Переработан и полностью русифицирован `README.md`: корневой README стал компактной витриной навыка с короткой установкой, таблицей покрытия, моделью безопасности и командами сопровождения вместо большой справочной матрицы.
 
@@ -335,7 +341,8 @@
 ### Added
 - Первый публичный релиз: `SKILL.md`, progressive disclosure архитектура
 
-[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.25.0...HEAD
+[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.26.0...HEAD
+[1.26.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.25.0...v1.26.0
 [1.25.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.24.0...v1.25.0
 [1.24.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.23.0...v1.24.0
 [1.23.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.22.0...v1.23.0

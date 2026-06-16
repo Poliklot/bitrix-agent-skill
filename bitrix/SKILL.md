@@ -1,13 +1,25 @@
 ---
 name: bitrix
-description: Provides expertise in 1C-Bitrix CMS development using the actual project core as the primary source of truth. Use when working with installed core modules, standard components, iblocks, highloadblocks, catalog, sale, currency, internet shop workflows, shop-core module inventory, StoreAssist, standard shop components, shop marketing/analytics, sender, mail, messageservice, subscribe, advertising, abtest, conversion, report, statistic, shop automation/bizproc, bizprocdesigner, workflow, lists, pull, shop integrations/webservice, webservice, webservice.sale, webservice.statistic, sale/catalog REST, external app hooks, 1C/CommerceML exchange, catalog.import.1c, sale.export.1c, basket, orders, payments, delivery, discounts, SKU/offers, prices, stocks, stores, blog, forum, vote, forms, landing, sitecorporate, REST, SEO, pagination, cache/index diagnostics, operations, production best practices, pitfalls diagnostics, runtime smoke verification, and PHP-heavy Bitrix tasks. First inspect installed modules and components under `www/bitrix` before relying on memory. Missing modules such as `catalog`, `sale`, `currency`, `bizproc`, `pull`, or `socialnet` must be treated as deferred until they appear in the local core.
+description: >-
+  Core-first Bitrix CMS / 1C-Bitrix / Битрикс / 1С-Битрикс / БУС / boxed Bitrix24 expertise. Use when
+  a task mentions or a repo contains Bitrix markers: `www/bitrix`, `/bitrix`, `/local`,
+  `bitrix/modules`, components/templates, `CIBlock*`, `CUser`, `CModule`, `Loader::includeModule`,
+  `Bitrix\Main`, D7, legacy `C*`, инфоблоки/iblock, HL/highloadblock, UF. Use for inspecting,
+  debugging, modifying, migrating, integrating, optimizing, testing, securing, operating, or planning
+  Bitrix PHP work; for everyday basics like meta title/description, `ShowHead`, `ShowTitle`, assets,
+  breadcrumbs, includes, current user; for production best practices, pitfalls,
+  cache/index/SEO/search/pagination/admin UI/agents/runtime diagnostics; and for shop/1C/REST:
+  `catalog`, `sale`, `currency`, SKU/offers, prices, stocks, basket/cart, orders, payments, delivery,
+  discounts, marketing/mail/SMS, bizproc/workflow, webhooks, sale/catalog REST, 1C/CommerceML. Inspect
+  local core and `local/*`; missing optional modules are deferred.
 metadata:
   author: poliklot
-  version: "1.25.0"
-compatibility: Designed for Claude Code and Codex on 1C-Bitrix CMS projects
+  version: "1.26.0"
 ---
 
 # Bitrix Expert Skill
+
+Designed for Claude Code and Codex on 1C-Bitrix CMS projects.
 
 Эксперт по 1C-Bitrix CMS. Работаешь от живого проекта: сначала проверяешь установленное ядро, стандартные компоненты и проектные оверрайды, потом предлагаешь решение.
 
@@ -20,7 +32,7 @@ compatibility: Designed for Claude Code and Codex on 1C-Bitrix CMS projects
 
 Домены `catalog`, `sale`, `currency`, `bizproc`, `pull` и `socialnet` всё равно считай условными для каждого нового проекта. Не веди туда задачу как в основной путь, пока модуль не подтверждён в `www/bitrix/modules`.
 
-Поверх обоих маршрутов действует production слой `1.25.0`: best practices, pitfalls matrix и runtime smoke verification. Для архитектурных решений, разработки “по правилам”, расследования типовых граблей или заявлений “всё покрыто” обязательно подключай эти cross-cutting references.
+Поверх обоих маршрутов действует production/developer-primitives слой `1.26.0`: best practices, pitfalls matrix и runtime smoke verification. Для архитектурных решений, разработки “по правилам”, расследования типовых граблей или заявлений “всё покрыто” обязательно подключай эти cross-cutting references.
 
 ## Источник истины
 
@@ -87,6 +99,12 @@ if (!Loader::includeModule('iblock')) {
 - **Project-tooling-first для PHP-задач**. Если в проекте уже есть `composer.json`, `phpunit.xml*`, `phpstan*`, `psalm*`, fixer/sniffer или `rector.php`, используй именно их. Не тащи новый PHP-стек ради одной правки.
 - **Production-practices-first для проектирования**. Когда пользователь просит “как правильно”, “лучшие практики”, “подводные камни” или “можно ли считать покрытым”, открывай `production-best-practices.md`, `pitfalls-matrix.md` и/или `runtime-smoke-verification.md`.
 
+## Бытовой Bitrix-ответник
+
+Для коротких вопросов разработчика “как в PHP сделать X” сначала открывай [references/developer-primitives.md](references/developer-primitives.md). Не начинай с чистого PHP/HTML, если в Bitrix есть штатный примитив: `ShowHead`/`ShowTitle`, `Asset`, `IncludeFile`, `AddChainItem`, `GetCurPageParam`, `Context::getCurrent`, `Loader::includeModule`, `CFile::ResizeImageGet`, `Loc::getMessage`, `ShowPanel`.
+
+Базовый пример: если спрашивают “как вставить meta title/description”, не предлагай вручную печатать meta в PHP. Проверь `header.php`: обычно там должны быть `$APPLICATION->ShowHead()` и `<title><?php $APPLICATION->ShowTitle(); ?></title>`. Значения идут из свойств страницы/раздела в админке, SEO-настроек компонента или задаются через `$APPLICATION->SetTitle(...)` / `$APPLICATION->SetPageProperty(...)`.
+
 ## Рабочий алгоритм
 
 1. Определи домен задачи: модель данных, блог/контент, компоненты, поиск, SEO, синхронизация, пользователи, админка, производительность, PHP-heavy, интернет-магазин или 1С/CommerceML.
@@ -125,6 +143,7 @@ if (!Loader::includeModule('iblock')) {
 
 | Домен | Файлы |
 |------|------|
+| Бытовые вопросы разработчика: meta/title/head, ShowHead/ShowTitle, assets, breadcrumbs, includes, current user, Loader | [references/developer-primitives.md](references/developer-primitives.md), затем доменный reference |
 | Audit текущего core, фазовая матрица и task routing | [references/core-audit-matrix.md](references/core-audit-matrix.md), [references/noncommerce-task-matrix.md](references/noncommerce-task-matrix.md), [references/shop-task-matrix.md](references/shop-task-matrix.md), [references/shop-core-module-inventory.md](references/shop-core-module-inventory.md) |
 | Production best practices, update-safe разработка, pitfalls matrix и runtime smoke verification | [references/production-best-practices.md](references/production-best-practices.md), [references/pitfalls-matrix.md](references/pitfalls-matrix.md), [references/runtime-smoke-verification.md](references/runtime-smoke-verification.md) |
 | Модель данных сайта и инфоблоков | [references/iblocks.md](references/iblocks.md), [references/entities-migrations.md](references/entities-migrations.md), [references/import-export.md](references/import-export.md), [references/sef-urls.md](references/sef-urls.md), [references/pagination.md](references/pagination.md) |
@@ -161,6 +180,7 @@ if (!Loader::includeModule('iblock')) {
 
 Дополнительно подгружай технические reference-файлы по необходимости:
 
+- Бытовые Bitrix-примитивы: meta title/description, `ShowHead`, `ShowTitle`, Asset, breadcrumbs, current user, includeModule — [references/developer-primitives.md](references/developer-primitives.md)
 - Audit текущего core, активные/deferred зоны, полный shop-core inventory и task routing — [references/core-audit-matrix.md](references/core-audit-matrix.md), [references/noncommerce-task-matrix.md](references/noncommerce-task-matrix.md), [references/shop-task-matrix.md](references/shop-task-matrix.md), [references/shop-core-module-inventory.md](references/shop-core-module-inventory.md)
 - Production best practices, update-safe кастомизация, D7 vs legacy, side effects, pitfalls matrix и runtime smoke — [references/production-best-practices.md](references/production-best-practices.md), [references/pitfalls-matrix.md](references/pitfalls-matrix.md), [references/runtime-smoke-verification.md](references/runtime-smoke-verification.md)
 - Диагностика видимости, кешей, индексов, пагинации и data flow — [references/diagnostic-visibility.md](references/diagnostic-visibility.md), [references/index-cache-diagnostics.md](references/index-cache-diagnostics.md), [references/component-dataflow-debugging.md](references/component-dataflow-debugging.md), [references/pagination.md](references/pagination.md)

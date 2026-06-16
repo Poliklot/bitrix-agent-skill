@@ -1,13 +1,25 @@
 ---
 name: bitrix
-description: Core-first 1C-Bitrix CMS skill for MCP Market. Use for Bitrix projects, installed core inspection, modules, standard components, iblocks, highloadblocks, catalog, sale, currency, shop-core module inventory, StoreAssist, standard shop components, internet shop workflows, shop marketing/analytics, sender, mail, messageservice, subscribe, advertising, abtest, conversion, report, statistic, shop automation/bizproc, bizprocdesigner, workflow, lists, pull, shop integrations/webservice, webservice.sale, webservice.statistic, sale/catalog REST, external app hooks, 1C/CommerceML exchange, basket, orders, payments, delivery, discounts, SEO, pagination, cache/index diagnostics, operations, production best practices, pitfalls diagnostics, runtime smoke verification, and PHP-heavy work. Always inspect the local `www/bitrix` core before relying on memory.
+description: >-
+  Core-first Bitrix CMS / 1C-Bitrix / Битрикс / 1С-Битрикс / БУС / boxed Bitrix24 expertise. Use when
+  a task mentions or a repo contains Bitrix markers: `www/bitrix`, `/bitrix`, `/local`,
+  `bitrix/modules`, components/templates, `CIBlock*`, `CUser`, `CModule`, `Loader::includeModule`,
+  `Bitrix\Main`, D7, legacy `C*`, инфоблоки/iblock, HL/highloadblock, UF. Use for inspecting,
+  debugging, modifying, migrating, integrating, optimizing, testing, securing, operating, or planning
+  Bitrix PHP work; for everyday basics like meta title/description, `ShowHead`, `ShowTitle`, assets,
+  breadcrumbs, includes, current user; for production best practices, pitfalls,
+  cache/index/SEO/search/pagination/admin UI/agents/runtime diagnostics; and for shop/1C/REST:
+  `catalog`, `sale`, `currency`, SKU/offers, prices, stocks, basket/cart, orders, payments, delivery,
+  discounts, marketing/mail/SMS, bizproc/workflow, webhooks, sale/catalog REST, 1C/CommerceML. Inspect
+  local core and `local/*`; missing optional modules are deferred.
 metadata:
   author: poliklot
-  version: "1.25.0"
-compatibility: MCP Market compact read-only import; full lifecycle edition lives in `bitrix/`
+  version: "1.26.0"
 ---
 
 # Bitrix Expert Skill — MCP Market Edition
+
+MCP Market compact read-only import; full lifecycle edition lives in `bitrix/`.
 
 Эксперт по 1C-Bitrix CMS. Работаешь **core-first**: сначала проверяешь установленное ядро, стандартные компоненты, stock templates и проектные `local/*`-оверрайды, потом предлагаешь решение.
 
@@ -53,7 +65,7 @@ foreach (['iblock'] as $module) {
 1. Определи домен задачи: content, component, PHP-heavy, search/SEO/cache, ops, shop или 1С.
 2. Проверь наличие нужных модулей и стандартных компонентов в конкретном ядре.
 3. Посмотри project overrides и glue-code в `local/`.
-4. Загрузи минимальный релевантный compact bundle из `references/`.
+4. Для коротких вопросов “как в PHP сделать X” сначала загрузи [references/developer-primitives.md](references/developer-primitives.md), затем минимальный релевантный compact bundle из `references/`.
 5. Выбери слой изменения: migration, service, event handler, component, template, agent, CLI. Для “best practices”, “подводные камни” или “покрыто/production-ready” сначала читай production/pitfalls/runtime sections в bundles.
 6. Проговори side effects: cache, indexes, rights, SEF, background processes, sale/order/exchange effects.
 7. Если меняются реальные данные, сначала сделай изменение воспроизводимым и обратимым.
@@ -75,6 +87,7 @@ foreach (['iblock'] as $module) {
 
 | Домен | Bundle |
 |---|---|
+| Бытовые вопросы разработчика: meta/title/head, ShowHead/ShowTitle, assets, breadcrumbs, includes, current user, Loader | [references/developer-primitives.md](references/developer-primitives.md) |
 | Audit текущего core, full shop-core inventory, non-commerce/shop task routing, visibility/cache/dataflow diagnostics, pitfalls matrix, runtime smoke verification | [references/core-routing.md](references/core-routing.md) |
 | PHP workflow, testing, quality, production best practices, legacy modernization, modules, ORM, DB, events, validation, HTTP | [references/php-architecture.md](references/php-architecture.md) |
 | ИБ, HL, UF, migrations, import/export, SEF | [references/content-data.md](references/content-data.md) |
@@ -89,6 +102,7 @@ foreach (['iblock'] as $module) {
 ## Content-first эвристики
 
 - Не опирайся на память, если код можно подтвердить в установленном ядре.
+- Для “как вставить meta title/description” не предлагай ручной `<meta>` как первый шаг: проверь `$APPLICATION->ShowHead()` и `<title><?php $APPLICATION->ShowTitle(); ?></title>`, затем свойства страницы/раздела, SEO-параметры компонента, `SetTitle`/`SetPageProperty`.
 - Не принимай `composer.json` и `phpunit.xml.dist` внутри `www/bitrix/modules/*/vendor` за project tooling.
 - Для задач “как правильно”, “best practices”, “куда класть код”, “подводные камни” или “можно ли считать покрытым” сначала открывай соответствующий compact bundle: `php-architecture.md` для production practices и `core-routing.md` для pitfalls/runtime smoke.
 - Для задач “в админке есть, на сайте нет” иди по цепочке: data source → permissions/site binding → component params → filters → pagination/sort → `result_modifier.php` → template → cache/index/SEO.
