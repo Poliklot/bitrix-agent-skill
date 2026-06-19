@@ -4,6 +4,26 @@
 
 ## [Unreleased]
 
+## [1.27.0] — 2026-06-19
+
+### Added
+- `scripts/validate_skill.py` — repo-local release/eval gate без внешних Python-зависимостей: проверяет frontmatter, `agents/openai.yaml`, MCP Market file-count, внутренние markdown-ссылки, синхронизацию critical references, eval prompt coverage, forbidden markers и `git diff --check`.
+- `bitrix/agents/openai.yaml` и `mcpmarket/bitrix/agents/openai.yaml` — UI metadata для Codex/OpenAI skill-карточки: понятное имя, короткое описание и default prompt с `$bitrix`.
+- `bitrix/references/task-playbooks.md` и compact `mcpmarket/bitrix/references/task-playbooks.md` — практические маршруты “найти → понять слой → изменить → проверить” для meta/head, assets, component/template, iblock property, visibility chain, 404/redirect, form mail, ajax, cache/personalization, shop/catalog/sale, 1С/CommerceML и custom logic задач.
+- `bitrix/references/reference-map.md` и compact `mcpmarket/bitrix/references/reference-map.md` — вынесенная из главного `SKILL.md` карта доменных references и guardrails, чтобы основной skill быстрее маршрутизировал задачу и не загружал длинную навигационную простыню.
+- `bitrix/references/behavior-routing.md`, `bitrix/references/project-intake.md` и compact-версии в `mcpmarket/bitrix/references/` — project-first UX слой: режимы работы агента, 30-секундное определение маршрута, быстрый intake структуры Bitrix-проекта, module/template/head/component facts перед ответом и запрет отвечать общей теорией при доступном проекте.
+- `bitrix/references/release-gate.md` и compact `mcpmarket/bitrix/references/release-gate.md` — pre-release checklist для бытового слоя: validate full/compact skills, `git diff --check`, MCP Market file-count, changelog/version sync, full/compact reference sync и минимум 15 eval prompts с `fail = 0`.
+- `bitrix/references/answer-contracts.md` и compact `mcpmarket/bitrix/references/answer-contracts.md` — контракты первого ответа для бытовых задач: short how-to, project-confirmed answer, debug chain, layer answer, module-dependent answer и dangerous data confirmation, чтобы агент отвечал коротко, Bitrix-native и с project checks/side effects.
+- `bitrix/references/core-grep-cookbook.md` и compact `mcpmarket/bitrix/references/core-grep-cookbook.md` — read-only grep cookbook для быстрых project-evidence проверок: public root/modules, meta/head/assets, components/templates, component params, iblock/HL, cache/composite, routing/404/redirect, request/user/CSRF, events/agents, ajax/controllers, mail/webforms, SEO/search, sale/catalog/currency, 1С/CommerceML, admin/grid и logs.
+- `bitrix/references/eval-prompts.md` и compact `mcpmarket/bitrix/references/eval-prompts.md` — regression-набор бытовых Bitrix-запросов с expected references, обязательными тезисами и запрещёнными первыми шагами; gate перед релизом бытового слоя: минимум 15 prompt из разных доменов, `fail = 0`.
+- `bitrix/references/first-answer-pitfalls.md` и compact `mcpmarket/bitrix/references/first-answer-pitfalls.md` — стоп-лист анти-паттернов первого ответа: meta вручную, echo CSS/JS, правка `www/bitrix`, `$_SESSION`/`$_REQUEST`, прямой SQL, глобальное отключение кеша, `mail()`, самодельный ajax, прямой SQL для sale/catalog и другие неправильные стартовые маршруты.
+- `bitrix/references/developer-cards.md` и compact `mcpmarket/bitrix/references/developer-cards.md` — слой бытовых карточек в формате “Запрос → Не делай → Делай → Где проверить → Побочные эффекты” для meta/head, Asset, IncludeFile, компоненты, breadcrumbs, request/current user, URL, Loader, 404/redirect, images, iblock properties, cache, mail/form, AJAX, event handlers, catalog/sale/currency changes и 1С/CommerceML кейсов.
+
+### Changed
+- В compact bundles MCP Market некликабельные ссылки на full-only source references превращены в inline names, чтобы агент не пытался открыть отсутствующие файлы внутри `mcpmarket/bitrix/references/`.
+- `README.md` и `mcpmarket/bitrix/SKILL.md` больше не фиксируют устаревающий точный счётчик reference-файлов; используется “80+”, чтобы витрина не врала после добавления бытовых маршрутов.
+- `developer-primitives.md` в full и compact версиях теперь явно маршрутизирует короткие вопросы к карточкам, stop-list, grep cookbook и answer contracts.
+
 ## [1.26.0] — 2026-06-16
 
 ### Changed
@@ -341,7 +361,8 @@
 ### Added
 - Первый публичный релиз: `SKILL.md`, progressive disclosure архитектура
 
-[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.26.0...HEAD
+[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.27.0...HEAD
+[1.27.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.26.0...v1.27.0
 [1.26.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.25.0...v1.26.0
 [1.25.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.24.0...v1.25.0
 [1.24.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.23.0...v1.24.0

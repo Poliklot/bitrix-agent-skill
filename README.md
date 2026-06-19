@@ -70,7 +70,7 @@ irm https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install
 https://github.com/Poliklot/bitrix-agent-skill/tree/master/mcpmarket/bitrix
 ```
 
-Полная папка `bitrix/` содержит скрипты установки/обновления/удаления и 77 отдельных справочных файлов. Версия `mcpmarket/bitrix/` содержит тот же справочный слой, но сгруппированный в компактные пакеты.
+Полная папка `bitrix/` содержит скрипты установки/обновления/удаления и 80+ отдельных справочных файлов. Версия `mcpmarket/bitrix/` содержит тот же справочный слой, но сгруппированный в компактные пакеты.
 
 <details>
 <summary>Расширенные варианты установки</summary>
@@ -86,7 +86,7 @@ curl -fsSL https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/
 Установить конкретную версию:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.sh | bash -s -- --version 1.26.0 --claude
+curl -fsSL https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.sh | bash -s -- --version 1.27.0 --claude
 ```
 
 То же самое для PowerShell:
@@ -95,7 +95,7 @@ curl -fsSL https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/
 & ([scriptblock]::Create((irm https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.ps1))) -Claude
 & ([scriptblock]::Create((irm https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.ps1))) -Codex
 & ([scriptblock]::Create((irm https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.ps1))) -Both
-& ([scriptblock]::Create((irm https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.ps1))) -Version 1.26.0 -Claude
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.ps1))) -Version 1.27.0 -Claude
 ```
 
 </details>
@@ -133,7 +133,7 @@ curl -fsSL https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/
 ```text
 bitrix-agent-skill/
 ├── bitrix/SKILL.md              # точка входа, маршрутизация, правила безопасности
-├── bitrix/references/*.md       # 77 узких справочников, загружаются только по необходимости
+├── bitrix/references/*.md       # 80+ узких справочников, загружаются только по необходимости
 ├── mcpmarket/bitrix/            # компактная версия для MCP Market, только для чтения
 ├── install.sh / install.ps1     # установщики для Claude Code и Codex
 └── CHANGELOG.md / PLAN.md       # история релизов и план аудита

@@ -675,11 +675,11 @@ rg -n 'ACTIVE|ACTIVE_FROM|ACTIVE_TO|SITE_ID|LID|GROUP_ID|PERMISSION|RIGHT|CHECK_
 
 ## С чем читать вместе
 
-- Component/data flow — [component-dataflow-debugging.md](component-dataflow-debugging.md)
-- Cache/index — [index-cache-diagnostics.md](index-cache-diagnostics.md)
-- Components/templates — [components.md](components.md), [templates.md](templates.md)
-- Search/SEO — [search.md](search.md), [seo-cache-access.md](seo-cache-access.md)
-- Security/access — [security.md](security.md), [access-rbac.md](access-rbac.md)
+- Component/data flow — `component-dataflow-debugging.md`
+- Cache/index — `index-cache-diagnostics.md`
+- Components/templates — `components.md`, `templates.md`
+- Search/SEO — `search.md`, `seo-cache-access.md`
+- Security/access — `security.md`, `access-rbac.md`
 
 ---
 
@@ -751,11 +751,11 @@ rg -n 'ACTIVE|ACTIVE_FROM|ACTIVE_TO|SITE_ID|LID|GROUP_ID|PERMISSION|RIGHT|CHECK_
 
 ## С чем читать вместе
 
-- Cache primitives — [cache-infra.md](cache-infra.md)
-- Components/templates — [components.md](components.md), [templates.md](templates.md)
-- Search — [search.md](search.md)
-- SEO — [seo-cache-access.md](seo-cache-access.md)
-- Operations — [operations-runbook.md](operations-runbook.md)
+- Cache primitives — `cache-infra.md`
+- Components/templates — `components.md`, `templates.md`
+- Search — `search.md`
+- SEO — `seo-cache-access.md`
+- Operations — `operations-runbook.md`
 
 ---
 
@@ -832,11 +832,11 @@ rg -n 'result_modifier|component_epilog|setResultCacheKeys|AbortResultCache|Star
 
 ## С чем читать вместе
 
-- Components — [components.md](components.md)
-- Templates — [templates.md](templates.md)
-- Standard non-commerce components — [standard-components-noncommerce.md](standard-components-noncommerce.md)
-- Events/routing — [events-routing.md](events-routing.md)
-- PHP workflow — [php-workflow.md](php-workflow.md)
+- Components — `components.md`
+- Templates — `templates.md`
+- Standard non-commerce components — `standard-components-noncommerce.md`
+- Events/routing — `events-routing.md`
+- PHP workflow — `php-workflow.md`
 
 ---
 
@@ -922,11 +922,11 @@ find bitrix/templates www/bitrix/templates local/templates -path '*components/bi
 
 ## С чем читать вместе
 
-- Components/data flow — [component-dataflow-debugging.md](component-dataflow-debugging.md)
-- Templates — [templates.md](templates.md)
-- Web forms — [webforms.md](webforms.md)
-- Blog/forum/vote — [blog-socialnet.md](blog-socialnet.md), [forum.md](forum.md), [vote.md](vote.md)
-- Search/SEO — [search.md](search.md), [seo-cache-access.md](seo-cache-access.md)
+- Components/data flow — `component-dataflow-debugging.md`
+- Templates — `templates.md`
+- Web forms — `webforms.md`
+- Blog/forum/vote — `blog-socialnet.md`, `forum.md`, `vote.md`
+- Search/SEO — `search.md`, `seo-cache-access.md`
 
 ---
 
@@ -1085,12 +1085,12 @@ catalog product → offer/SKU → price/currency → stock/store → basket avai
 
 ## С чем читать вместе
 
-- Best practices — [production-best-practices.md](production-best-practices.md)
-- Runtime smoke — [runtime-smoke-verification.md](runtime-smoke-verification.md)
-- Visibility — [diagnostic-visibility.md](diagnostic-visibility.md)
-- Component dataflow — [component-dataflow-debugging.md](component-dataflow-debugging.md)
-- Cache/index — [index-cache-diagnostics.md](index-cache-diagnostics.md)
-- Shop routing — [shop-task-matrix.md](shop-task-matrix.md)
+- Best practices — `production-best-practices.md`
+- Runtime smoke — `runtime-smoke-verification.md`
+- Visibility — `diagnostic-visibility.md`
+- Component dataflow — `component-dataflow-debugging.md`
+- Cache/index — `index-cache-diagnostics.md`
+- Shop routing — `shop-task-matrix.md`
 
 ---
 
@@ -1390,12 +1390,12 @@ Then update skill answer as “code contract known, runtime verification blocked
 
 ## С чем читать вместе
 
-- Production best practices — [production-best-practices.md](production-best-practices.md)
-- Pitfalls — [pitfalls-matrix.md](pitfalls-matrix.md)
-- Shop inventory — [shop-core-module-inventory.md](shop-core-module-inventory.md)
-- Shop tasks — [shop-task-matrix.md](shop-task-matrix.md)
-- Catalog — [catalog.md](catalog.md)
-- Sale — [sale.md](sale.md)
-- 1С — [commerce-1c-integration.md](commerce-1c-integration.md)
-- REST/webservice — [shop-integrations-webservice.md](shop-integrations-webservice.md)
-- Testing — [php-testing.md](php-testing.md)
+- Production best practices — `production-best-practices.md`
+- Pitfalls — `pitfalls-matrix.md`
+- Shop inventory — `shop-core-module-inventory.md`
+- Shop tasks — `shop-task-matrix.md`
+- Catalog — `catalog.md`
+- Sale — `sale.md`
+- 1С — `commerce-1c-integration.md`
+- REST/webservice — `shop-integrations-webservice.md`
+- Testing — `php-testing.md`

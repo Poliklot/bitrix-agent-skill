@@ -1752,11 +1752,11 @@ $hits = CPerfomanceHit::GetList(
 
 ## С чем читать вместе
 
-- Update stepper — [update-stepper.md](update-stepper.md)
-- Cache/perf — [cache-infra.md](cache-infra.md), [perfmon.md](perfmon.md)
-- Import/export — [import-export.md](import-export.md)
-- Cloud files — [clouds.md](clouds.md)
-- Bitrix Cloud — [bitrixcloud.md](bitrixcloud.md)
-- Security — [security.md](security.md)
+- Update stepper — `update-stepper.md`
+- Cache/perf — `cache-infra.md`, `perfmon.md`
+- Import/export — `import-export.md`
+- Cloud files — `clouds.md`
+- Bitrix Cloud — `bitrixcloud.md`
+- Security — `security.md`
 
 ---

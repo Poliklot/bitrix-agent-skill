@@ -1,0 +1,4 @@
+interface:
+  display_name: "Bitrix Expert"
+  short_description: "Core-first 1C-Bitrix guidance"
+  default_prompt: "Use $bitrix to inspect a 1C-Bitrix project core-first before suggesting a fix."

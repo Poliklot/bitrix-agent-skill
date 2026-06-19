@@ -255,13 +255,13 @@ Production fix обычно:
 
 ## С чем читать вместе
 
-- Pitfalls — [pitfalls-matrix.md](pitfalls-matrix.md)
-- Runtime smoke — [runtime-smoke-verification.md](runtime-smoke-verification.md)
-- PHP workflow — [php-workflow.md](php-workflow.md)
-- Legacy modernization — [php-legacy-modernization.md](php-legacy-modernization.md)
-- Components/dataflow — [component-dataflow-debugging.md](component-dataflow-debugging.md)
-- Cache/index — [index-cache-diagnostics.md](index-cache-diagnostics.md)
-- Operations — [operations-runbook.md](operations-runbook.md)
+- Pitfalls — `pitfalls-matrix.md`
+- Runtime smoke — `runtime-smoke-verification.md`
+- PHP workflow — `php-workflow.md`
+- Legacy modernization — `php-legacy-modernization.md`
+- Components/dataflow — `component-dataflow-debugging.md`
+- Cache/index — `index-cache-diagnostics.md`
+- Operations — `operations-runbook.md`
 
 ---
 
@@ -489,15 +489,15 @@ final class ProfileService
 
 ## С чем читать вместе
 
-- Архитектура модуля, Loader, ServiceLocator — [modules-loader.md](modules-loader.md)
-- Контроллеры, события, routing — [events-routing.md](events-routing.md)
-- ValidationService и attributes — [validation.md](validation.md)
-- ORM и `Result/Error` — [orm.md](orm.md)
-- DB layer и совместимость разных СУБД — [database-layer.md](database-layer.md)
-- Тестирование и verification — [php-testing.md](php-testing.md)
-- Quality gates — [php-quality.md](php-quality.md)
-- Legacy modernization — [php-legacy-modernization.md](php-legacy-modernization.md)
-- Шаблоны и component layer — [components.md](components.md), [templates.md](templates.md)
+- Архитектура модуля, Loader, ServiceLocator — `modules-loader.md`
+- Контроллеры, события, routing — `events-routing.md`
+- ValidationService и attributes — `validation.md`
+- ORM и `Result/Error` — `orm.md`
+- DB layer и совместимость разных СУБД — `database-layer.md`
+- Тестирование и verification — `php-testing.md`
+- Quality gates — `php-quality.md`
+- Legacy modernization — `php-legacy-modernization.md`
+- Шаблоны и component layer — `components.md`, `templates.md`
 
 ---
 
@@ -696,15 +696,15 @@ rg --files . \
 
 ## С чем читать вместе
 
-- PHP architecture и toolchain — [php-workflow.md](php-workflow.md)
-- PHP quality — [php-quality.md](php-quality.md)
-- Legacy modernization — [php-legacy-modernization.md](php-legacy-modernization.md)
-- Архитектура модуля, Loader, ServiceLocator — [modules-loader.md](modules-loader.md)
-- Контроллеры, handlers, routing — [events-routing.md](events-routing.md)
-- ORM и `Result/Error` — [orm.md](orm.md)
-- ValidationService и attributes — [validation.md](validation.md)
-- DB layer и различия СУБД — [database-layer.md](database-layer.md)
-- Компоненты и template layer — [components.md](components.md), [templates.md](templates.md)
+- PHP architecture и toolchain — `php-workflow.md`
+- PHP quality — `php-quality.md`
+- Legacy modernization — `php-legacy-modernization.md`
+- Архитектура модуля, Loader, ServiceLocator — `modules-loader.md`
+- Контроллеры, handlers, routing — `events-routing.md`
+- ORM и `Result/Error` — `orm.md`
+- ValidationService и attributes — `validation.md`
+- DB layer и различия СУБД — `database-layer.md`
+- Компоненты и template layer — `components.md`, `templates.md`
 
 ---
 
@@ -780,10 +780,10 @@ rg --files . \
 
 ## С чем читать вместе
 
-- PHP workflow — [php-workflow.md](php-workflow.md)
-- PHP testing — [php-testing.md](php-testing.md)
-- Legacy modernization — [php-legacy-modernization.md](php-legacy-modernization.md)
-- Modules — [modules-loader.md](modules-loader.md)
+- PHP workflow — `php-workflow.md`
+- PHP testing — `php-testing.md`
+- Legacy modernization — `php-legacy-modernization.md`
+- Modules — `modules-loader.md`
 
 ---
 
@@ -883,11 +883,11 @@ Modernization target:
 
 ## С чем читать вместе
 
-- PHP workflow — [php-workflow.md](php-workflow.md)
-- PHP quality — [php-quality.md](php-quality.md)
-- PHP testing — [php-testing.md](php-testing.md)
-- Components — [component-dataflow-debugging.md](component-dataflow-debugging.md)
-- ORM — [orm.md](orm.md)
+- PHP workflow — `php-workflow.md`
+- PHP quality — `php-quality.md`
+- PHP testing — `php-testing.md`
+- Components — `component-dataflow-debugging.md`
+- ORM — `orm.md`
 
 ---
 

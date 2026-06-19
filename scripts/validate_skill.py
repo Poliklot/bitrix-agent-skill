@@ -1,0 +1,339 @@
+#!/usr/bin/env python3
+"""Repository-local validation gate for the Bitrix skill.
+
+No third-party packages are required. This intentionally overlaps with
+`quick_validate.py`, because local Codex/Claude environments do not always have
+PyYAML installed.
+"""
+
+from __future__ import annotations
+
+import re
+import subprocess
+import sys
+from dataclasses import dataclass
+from pathlib import Path
+from urllib.parse import unquote
+
+
+ROOT = Path(__file__).resolve().parents[1]
+FULL_SKILL = ROOT / "bitrix"
+MCP_SKILL = ROOT / "mcpmarket" / "bitrix"
+MCP_FILE_LIMIT = 50
+
+CRITICAL_REFERENCES = [
+    "behavior-routing.md",
+    "project-intake.md",
+    "task-playbooks.md",
+    "reference-map.md",
+    "developer-primitives.md",
+    "developer-cards.md",
+    "first-answer-pitfalls.md",
+    "answer-contracts.md",
+    "core-grep-cookbook.md",
+    "eval-prompts.md",
+    "release-gate.md",
+]
+
+REQUIRED_DESCRIPTION_TOKENS = [
+    "Bitrix",
+    "Битрикс",
+    "www/bitrix",
+    "/local",
+    "ShowHead",
+    "ShowTitle",
+    "catalog",
+    "sale",
+    "CommerceML",
+]
+
+RECOMMENDED_EVAL_IDS = [
+    "B001",
+    "B004",
+    "B007",
+    "B009",
+    "B011",
+    "B013",
+    "B016",
+    "B018",
+    "B021",
+    "B023",
+    "B025",
+    "B028",
+    "B030",
+    "B031",
+    "B043",
+    "B046",
+]
+
+REQUIRED_DEVELOPER_CARD_TERMS: list[tuple[str, list[str]]] = [
+    ("meta/title", ["meta title", "Meta title"]),
+    ("css/js", ["CSS / JS", "CSS/JS"]),
+    ("editable content", ["Редактируемый текст", "редактируемый текст"]),
+    ("breadcrumbs", ["Хлебные крошки", "breadcrumbs"]),
+    ("current user", ["Текущий пользователь", "current user"]),
+    ("request", ["Request / GET / POST", "request GET/POST"]),
+    ("module include", ["Подключение модуля", "module include"]),
+    ("404", ["404"]),
+    ("images", ["Картинка / resize", "image resize"]),
+    ("iblock property", ["Инфоблок", "iblock property"]),
+    ("cache", ["Кеш компонента", "component cache"]),
+    ("mail/form", ["Почтовое событие", "mail/form"]),
+    ("ajax", ["AJAX"]),
+    ("events", ["Обработчик события", "event handler"]),
+    ("catalog/sale", ["Catalog/sale/currency", "catalog/sale/currency"]),
+    ("1c", ["1С / CommerceML", "1С/CommerceML"]),
+]
+
+FORBIDDEN_MARKERS = [
+    "developer" + "_" + "wow",
+]
+
+
+@dataclass
+class Check:
+    name: str
+    ok: bool
+    detail: str = ""
+
+
+checks: list[Check] = []
+
+
+def add(name: str, ok: bool, detail: str = "") -> None:
+    checks.append(Check(name, ok, detail))
+
+
+def read_text(path: Path) -> str:
+    return path.read_text(encoding="utf-8")
+
+
+def extract_frontmatter(path: Path) -> tuple[dict[str, str], str]:
+    text = read_text(path)
+    match = re.match(r"^---\n(.*?)\n---\n", text, re.DOTALL)
+    if not match:
+        raise ValueError("missing YAML frontmatter")
+
+    frontmatter_text = match.group(1)
+    data: dict[str, str] = {}
+    current_key: str | None = None
+    current_value: list[str] = []
+
+    def flush() -> None:
+        nonlocal current_key, current_value
+        if current_key is not None:
+            data[current_key] = "\n".join(current_value).strip()
+        current_key = None
+        current_value = []
+
+    for raw_line in frontmatter_text.splitlines():
+        if not raw_line.strip():
+            continue
+        if not raw_line.startswith(" ") and ":" in raw_line:
+            flush()
+            key, value = raw_line.split(":", 1)
+            current_key = key.strip()
+            current_value = [value.strip().strip('"').strip("'")]
+        elif current_key is not None:
+            current_value.append(raw_line.strip())
+    flush()
+
+    return data, text
+
+
+def skill_label(skill_dir: Path) -> str:
+    return "mcpmarket/bitrix" if skill_dir == MCP_SKILL else "bitrix"
+
+
+def validate_skill_frontmatter(skill_dir: Path) -> None:
+    label = skill_label(skill_dir)
+    path = skill_dir / "SKILL.md"
+    try:
+        data, text = extract_frontmatter(path)
+    except Exception as exc:  # noqa: BLE001 - validation report needs exact error
+        add(f"{label} frontmatter", False, str(exc))
+        return
+
+    name = data.get("name", "")
+    description = data.get("description", "")
+
+    ok = bool(name) and len(name) <= 64 and re.fullmatch(r"[a-z0-9-]+", name) is not None
+    add(f"{label} name", ok, name or "missing name")
+
+    missing_tokens = [token for token in REQUIRED_DESCRIPTION_TOKENS if token not in text]
+    add(
+        f"{label} trigger coverage",
+        bool(description) and not missing_tokens,
+        "missing: " + ", ".join(missing_tokens) if missing_tokens else "ok",
+    )
+
+
+def parse_simple_yaml_string_value(text: str, key: str) -> str:
+    match = re.search(rf"^\s+{re.escape(key)}:\s+\"(.*)\"\s*$", text, re.MULTILINE)
+    if not match:
+        return ""
+    return match.group(1).replace('\\"', '"').replace("\\\\", "\\")
+
+
+def validate_openai_yaml(skill_dir: Path) -> None:
+    label = skill_label(skill_dir)
+    path = skill_dir / "agents" / "openai.yaml"
+    if not path.exists():
+        add(f"{label} openai.yaml", False, "missing agents/openai.yaml")
+        return
+    text = read_text(path)
+    display_name = parse_simple_yaml_string_value(text, "display_name")
+    short_description = parse_simple_yaml_string_value(text, "short_description")
+    default_prompt = parse_simple_yaml_string_value(text, "default_prompt")
+
+    add(f"{label} openai display_name", bool(display_name), display_name or "missing")
+    add(
+        f"{label} openai short_description",
+        25 <= len(short_description) <= 64,
+        f"{len(short_description)} chars",
+    )
+    add(
+        f"{label} openai default_prompt",
+        "$bitrix" in default_prompt,
+        default_prompt or "missing",
+    )
+
+
+def validate_mcp_file_count() -> None:
+    files = [p for p in MCP_SKILL.rglob("*") if p.is_file()]
+    add("MCP Market file count", len(files) <= MCP_FILE_LIMIT, f"{len(files)}/{MCP_FILE_LIMIT}")
+
+
+def iter_markdown_files() -> list[Path]:
+    roots = [ROOT / "README.md", ROOT / "CHANGELOG.md"]
+    roots.extend(FULL_SKILL.rglob("*.md"))
+    roots.extend(MCP_SKILL.rglob("*.md"))
+    return [p for p in roots if p.exists()]
+
+
+def is_external_link(target: str) -> bool:
+    return target.startswith(("http://", "https://", "mailto:", "app://", "#"))
+
+
+def validate_internal_links() -> None:
+    missing: list[str] = []
+    pattern = re.compile(r"(?<!!)\[[^\]]+\]\(([^)\s]+(?:\s+\"[^\"]+\")?)\)")
+
+    for source in iter_markdown_files():
+        text = read_text(source)
+        for match in pattern.finditer(text):
+            target = match.group(1).split()[0]
+            if is_external_link(target):
+                continue
+            target = unquote(target.split("#", 1)[0])
+            if not target:
+                continue
+            resolved = (source.parent / target).resolve()
+            if not resolved.exists():
+                missing.append(f"{source.relative_to(ROOT)} -> {target}")
+
+    add("internal markdown links", not missing, "; ".join(missing[:10]) if missing else "ok")
+
+
+def validate_critical_references() -> None:
+    full_skill_md = read_text(FULL_SKILL / "SKILL.md")
+    mcp_skill_md = read_text(MCP_SKILL / "SKILL.md")
+    changelog = read_text(ROOT / "CHANGELOG.md")
+
+    missing: list[str] = []
+    for name in CRITICAL_REFERENCES:
+        if not (FULL_SKILL / "references" / name).exists():
+            missing.append(f"full missing {name}")
+        if not (MCP_SKILL / "references" / name).exists():
+            missing.append(f"mcp missing {name}")
+        if f"references/{name}" not in full_skill_md:
+            missing.append(f"full SKILL.md not linked {name}")
+        if f"references/{name}" not in mcp_skill_md:
+            missing.append(f"mcp SKILL.md not linked {name}")
+        if name not in changelog:
+            missing.append(f"CHANGELOG.md not mentioning {name}")
+
+    add("critical references synced", not missing, "; ".join(missing[:10]) if missing else "ok")
+
+
+def validate_eval_prompts() -> None:
+    text = read_text(FULL_SKILL / "references" / "eval-prompts.md")
+    ids = sorted(set(re.findall(r"\bB\d{3}\b", text)))
+    missing = [prompt_id for prompt_id in RECOMMENDED_EVAL_IDS if prompt_id not in ids]
+    add("eval prompt count", len(ids) >= 50, f"{len(ids)} prompt ids")
+    add("recommended eval set", not missing, "missing: " + ", ".join(missing) if missing else "ok")
+    add("eval bad-first-step column", "Must not say first" in text, "ok" if "Must not say first" in text else "missing")
+
+
+def validate_developer_card_coverage() -> None:
+    full = read_text(FULL_SKILL / "references" / "developer-cards.md")
+    compact = read_text(MCP_SKILL / "references" / "developer-cards.md")
+    missing_full = [
+        label for label, alternatives in REQUIRED_DEVELOPER_CARD_TERMS
+        if not any(term in full for term in alternatives)
+    ]
+    missing_compact = [
+        label for label, alternatives in REQUIRED_DEVELOPER_CARD_TERMS
+        if not any(term in compact for term in alternatives)
+    ]
+    missing = []
+    if missing_full:
+        missing.append("full missing: " + ", ".join(missing_full))
+    if missing_compact:
+        missing.append("compact missing: " + ", ".join(missing_compact))
+    add("developer cards eval coverage", not missing, "; ".join(missing) if missing else "ok")
+
+
+def validate_forbidden_markers() -> None:
+    matches: list[str] = []
+    files = list(FULL_SKILL.rglob("*")) + list(MCP_SKILL.rglob("*")) + [ROOT / "README.md", ROOT / "CHANGELOG.md"]
+    for path in files:
+        if not path.is_file():
+            continue
+        text = path.read_text(encoding="utf-8", errors="ignore")
+        for marker in FORBIDDEN_MARKERS:
+            if marker in text:
+                matches.append(str(path.relative_to(ROOT)))
+    add("forbidden markers", not matches, ", ".join(sorted(set(matches))) if matches else "ok")
+
+
+def validate_git_diff_check() -> None:
+    result = subprocess.run(
+        ["git", "diff", "--check"],
+        cwd=ROOT,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        check=False,
+    )
+    add("git diff --check", result.returncode == 0, result.stdout.strip() or "ok")
+
+
+def main() -> int:
+    validate_skill_frontmatter(FULL_SKILL)
+    validate_skill_frontmatter(MCP_SKILL)
+    validate_openai_yaml(FULL_SKILL)
+    validate_openai_yaml(MCP_SKILL)
+    validate_mcp_file_count()
+    validate_internal_links()
+    validate_critical_references()
+    validate_eval_prompts()
+    validate_developer_card_coverage()
+    validate_forbidden_markers()
+    validate_git_diff_check()
+
+    width = max(len(check.name) for check in checks)
+    failed = [check for check in checks if not check.ok]
+    for check in checks:
+        status = "PASS" if check.ok else "FAIL"
+        print(f"{status}  {check.name:<{width}}  {check.detail}")
+
+    if failed:
+        print(f"\nFAILED: {len(failed)} check(s)")
+        return 1
+    print("\nAll validation checks passed.")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

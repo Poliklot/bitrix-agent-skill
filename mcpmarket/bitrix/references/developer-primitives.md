@@ -1,6 +1,6 @@
 # Бытовые Bitrix-примитивы
 
-Загружай первым для коротких вопросов “как в PHP сделать X в Битриксе”. Сначала найди Bitrix-примитив, а не предлагай чистый PHP/HTML.
+Загружай первым для коротких вопросов “как в PHP сделать X в Битриксе”. Сначала найди Bitrix-примитив, а не предлагай чистый PHP/HTML. Для готовых маршрутов ответа открывай [developer-cards.md](developer-cards.md); для отсечения плохого первого варианта — [first-answer-pitfalls.md](first-answer-pitfalls.md); для быстрых project grep-проверок — [core-grep-cookbook.md](core-grep-cookbook.md); для формата ответа — [answer-contracts.md](answer-contracts.md).
 
 ## Sources
 

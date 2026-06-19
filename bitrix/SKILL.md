@@ -14,7 +14,7 @@ description: >-
   local core and `local/*`; missing optional modules are deferred.
 metadata:
   author: poliklot
-  version: "1.26.0"
+  version: "1.27.0"
 ---
 
 # Bitrix Expert Skill
@@ -32,7 +32,7 @@ Designed for Claude Code and Codex on 1C-Bitrix CMS projects.
 
 Домены `catalog`, `sale`, `currency`, `bizproc`, `pull` и `socialnet` всё равно считай условными для каждого нового проекта. Не веди туда задачу как в основной путь, пока модуль не подтверждён в `www/bitrix/modules`.
 
-Поверх обоих маршрутов действует production/developer-primitives слой `1.26.0`: best practices, pitfalls matrix и runtime smoke verification. Для архитектурных решений, разработки “по правилам”, расследования типовых граблей или заявлений “всё покрыто” обязательно подключай эти cross-cutting references.
+Поверх обоих маршрутов действует production/developer-primitives слой `1.27.0`: best practices, pitfalls matrix и runtime smoke verification. Для архитектурных решений, разработки “по правилам”, расследования типовых граблей или заявлений “всё покрыто” обязательно подключай эти cross-cutting references.
 
 ## Источник истины
 
@@ -99,22 +99,30 @@ if (!Loader::includeModule('iblock')) {
 - **Project-tooling-first для PHP-задач**. Если в проекте уже есть `composer.json`, `phpunit.xml*`, `phpstan*`, `psalm*`, fixer/sniffer или `rector.php`, используй именно их. Не тащи новый PHP-стек ради одной правки.
 - **Production-practices-first для проектирования**. Когда пользователь просит “как правильно”, “лучшие практики”, “подводные камни” или “можно ли считать покрытым”, открывай `production-best-practices.md`, `pitfalls-matrix.md` и/или `runtime-smoke-verification.md`.
 
+## Режимы работы и project-first UX
+
+Перед загрузкой доменных reference-файлов выбери режим по [references/behavior-routing.md](references/behavior-routing.md): бытовой ответ, project-first fix, debug chain, component/template, production practice, module-dependent, shop/1C, dangerous data или release. Если задача относится к конкретному репозиторию (“у нас”, “найди где”, “почини”, “почему не работает”), сначала пройди быстрый [references/project-intake.md](references/project-intake.md) или узкий grep из [references/core-grep-cookbook.md](references/core-grep-cookbook.md), затем для типового решения используй [references/task-playbooks.md](references/task-playbooks.md) и отвечай по найденным фактам.
+
 ## Бытовой Bitrix-ответник
 
-Для коротких вопросов разработчика “как в PHP сделать X” сначала открывай [references/developer-primitives.md](references/developer-primitives.md). Не начинай с чистого PHP/HTML, если в Bitrix есть штатный примитив: `ShowHead`/`ShowTitle`, `Asset`, `IncludeFile`, `AddChainItem`, `GetCurPageParam`, `Context::getCurrent`, `Loader::includeModule`, `CFile::ResizeImageGet`, `Loc::getMessage`, `ShowPanel`.
+Для коротких вопросов разработчика “как в PHP сделать X” сначала открывай [references/developer-primitives.md](references/developer-primitives.md), [references/first-answer-pitfalls.md](references/first-answer-pitfalls.md), а если нужен готовый маршрут ответа — [references/developer-cards.md](references/developer-cards.md) и [references/answer-contracts.md](references/answer-contracts.md). Если нужно быстро подтвердить ответ по живому проекту, бери готовые read-only grep-проверки из [references/core-grep-cookbook.md](references/core-grep-cookbook.md). Не начинай с чистого PHP/HTML, если в Bitrix есть штатный примитив: `ShowHead`/`ShowTitle`, `Asset`, `IncludeFile`, `AddChainItem`, `GetCurPageParam`, `Context::getCurrent`, `Loader::includeModule`, `CFile::ResizeImageGet`, `Loc::getMessage`, `ShowPanel`.
 
 Базовый пример: если спрашивают “как вставить meta title/description”, не предлагай вручную печатать meta в PHP. Проверь `header.php`: обычно там должны быть `$APPLICATION->ShowHead()` и `<title><?php $APPLICATION->ShowTitle(); ?></title>`. Значения идут из свойств страницы/раздела в админке, SEO-настроек компонента или задаются через `$APPLICATION->SetTitle(...)` / `$APPLICATION->SetPageProperty(...)`.
 
+Для регрессионной проверки бытового слоя при доработках используй [references/eval-prompts.md](references/eval-prompts.md): минимум 15 prompt из разных доменов, `fail = 0`. Перед пушем/релизом бытового слоя проходи [references/release-gate.md](references/release-gate.md).
+
 ## Рабочий алгоритм
 
-1. Определи домен задачи: модель данных, блог/контент, компоненты, поиск, SEO, синхронизация, пользователи, админка, производительность, PHP-heavy, интернет-магазин или 1С/CommerceML.
-2. Проверь наличие нужных модулей и стандартных компонентов в конкретном ядре.
-3. Посмотри проектные оверрайды и glue-code в `local/`.
-4. Для PHP-heavy задачи отдельно проверь project toolchain: `composer.json`, `phpunit.xml*`, `phpstan*`, `psalm*`, fixer/sniffer, `rector.php`.
-5. Загрузи только релевантные reference-файлы.
-6. Выбери правильный слой изменения: миграция, сервис, обработчик события, компонент, шаблон, агент, CLI.
-7. Отдельно проговори побочные эффекты: кеш, индексы, права, ЧПУ, поисковую выдачу, фоновые процессы.
-8. Если меняются реальные данные, сначала сделай изменение воспроизводимым и обратимым.
+1. Выбери режим по [references/behavior-routing.md](references/behavior-routing.md): бытовой ответ, project-first fix, debug chain, component/template, production practice, module-dependent, shop/1C, dangerous data или release.
+2. Если задача относится к конкретному repo, сначала зафиксируй project facts через [references/project-intake.md](references/project-intake.md) или узкий grep из [references/core-grep-cookbook.md](references/core-grep-cookbook.md).
+3. Определи домен задачи: модель данных, блог/контент, компоненты, поиск, SEO, синхронизация, пользователи, админка, производительность, PHP-heavy, интернет-магазин или 1С/CommerceML.
+4. Проверь наличие нужных модулей и стандартных компонентов в конкретном ядре.
+5. Посмотри проектные оверрайды и glue-code в `local/`.
+6. Для PHP-heavy задачи отдельно проверь project toolchain: `composer.json`, `phpunit.xml*`, `phpstan*`, `psalm*`, fixer/sniffer, `rector.php`.
+7. Загрузи только релевантные reference-файлы.
+8. Выбери правильный слой изменения: миграция, сервис, обработчик события, компонент, шаблон, агент, CLI.
+9. Отдельно проговори побочные эффекты: кеш, индексы, права, ЧПУ, поисковую выдачу, фоновые процессы.
+10. Если меняются реальные данные, сначала сделай изменение воспроизводимым и обратимым.
 
 ## Подтверждение перед изменением данных
 
@@ -139,181 +147,30 @@ if (!Loader::includeModule('iblock')) {
 
 ## Навигация по reference-файлам
 
-Загружай минимальный набор файлов под конкретный домен:
+Сначала выбери режим по [references/behavior-routing.md](references/behavior-routing.md). Если задача про конкретный repo — начни с [references/project-intake.md](references/project-intake.md). Полная карта доменных reference-файлов, условных модулей и guardrails вынесена в [references/reference-map.md](references/reference-map.md).
 
-| Домен | Файлы |
+| Задача | Минимальный набор |
 |------|------|
-| Бытовые вопросы разработчика: meta/title/head, ShowHead/ShowTitle, assets, breadcrumbs, includes, current user, Loader | [references/developer-primitives.md](references/developer-primitives.md), затем доменный reference |
-| Audit текущего core, фазовая матрица и task routing | [references/core-audit-matrix.md](references/core-audit-matrix.md), [references/noncommerce-task-matrix.md](references/noncommerce-task-matrix.md), [references/shop-task-matrix.md](references/shop-task-matrix.md), [references/shop-core-module-inventory.md](references/shop-core-module-inventory.md) |
-| Production best practices, update-safe разработка, pitfalls matrix и runtime smoke verification | [references/production-best-practices.md](references/production-best-practices.md), [references/pitfalls-matrix.md](references/pitfalls-matrix.md), [references/runtime-smoke-verification.md](references/runtime-smoke-verification.md) |
-| Модель данных сайта и инфоблоков | [references/iblocks.md](references/iblocks.md), [references/entities-migrations.md](references/entities-migrations.md), [references/import-export.md](references/import-export.md), [references/sef-urls.md](references/sef-urls.md), [references/pagination.md](references/pagination.md) |
-| Интернет-магазин: inventory модулей, стандартные компоненты, товары, SKU, цены, остатки, склады | [references/shop-core-module-inventory.md](references/shop-core-module-inventory.md), [references/shop-task-matrix.md](references/shop-task-matrix.md), [references/shop-standard-components.md](references/shop-standard-components.md), [references/catalog.md](references/catalog.md), [references/currency.md](references/currency.md), [references/iblocks.md](references/iblocks.md) |
-| Маркетинг/аналитика магазина: sender, mail/SMS, подписки, баннеры, A/B, conversion, reports, statistic | [references/shop-marketing-analytics.md](references/shop-marketing-analytics.md), [references/shop-task-matrix.md](references/shop-task-matrix.md), [references/mail-notifications.md](references/mail-notifications.md), [references/messageservice.md](references/messageservice.md), [references/subscribe.md](references/subscribe.md), [references/sale.md](references/sale.md) |
-| Автоматизация магазина/контента: bizproc, designer, legacy workflow, lists, pull/realtime | [references/shop-automation-bizproc.md](references/shop-automation-bizproc.md), [references/workflow.md](references/workflow.md), [references/push-pull.md](references/push-pull.md), [references/shop-task-matrix.md](references/shop-task-matrix.md), [references/sale.md](references/sale.md), [references/catalog.md](references/catalog.md) |
-| Sale: корзина, checkout, заказ, оплата, доставка, скидки и стандартные компоненты | [references/shop-task-matrix.md](references/shop-task-matrix.md), [references/shop-standard-components.md](references/shop-standard-components.md), [references/sale.md](references/sale.md), [references/catalog.md](references/catalog.md), [references/currency.md](references/currency.md), [references/commerce-workflows.md](references/commerce-workflows.md) |
-| 1С / CommerceML: catalog import/export, order exchange, StoreAssist onboarding | [references/commerce-1c-integration.md](references/commerce-1c-integration.md), [references/storeassist.md](references/storeassist.md), [references/catalog.md](references/catalog.md), [references/sale.md](references/sale.md), [references/currency.md](references/currency.md), [references/operations-runbook.md](references/operations-runbook.md) |
-| Интеграции магазина: `webservice.sale`, `webservice.statistic`, SOAP/WSDL, REST apps/events/placements, sale/catalog REST | [references/shop-integrations-webservice.md](references/shop-integrations-webservice.md), [references/rest.md](references/rest.md), [references/sale.md](references/sale.md), [references/catalog.md](references/catalog.md), [references/http.md](references/http.md), [references/commerce-1c-integration.md](references/commerce-1c-integration.md) |
-| HL-блоки, directory, права, selector, UF | [references/highloadblock.md](references/highloadblock.md), [references/iblock-hl-relations.md](references/iblock-hl-relations.md), [references/custom-uf-types.md](references/custom-uf-types.md), [references/pagination.md](references/pagination.md) |
-| Фото-галереи, альбомы, upload, slideshow, photo comments | [references/photogallery.md](references/photogallery.md), [references/components.md](references/components.md), [references/templates.md](references/templates.md), [references/blog-socialnet.md](references/blog-socialnet.md), [references/forum.md](references/forum.md) |
-| Корпоративное решение, wizard, demo-data, `furniture.*` stock components | [references/sitecorporate.md](references/sitecorporate.md), [references/components.md](references/components.md), [references/templates.md](references/templates.md), [references/entities-migrations.md](references/entities-migrations.md) |
-| Security, WAF, OTP, redirect/IP rules, session hardening, xscan | [references/security.md](references/security.md), [references/access-rbac.md](references/access-rbac.md), [references/session-auth.md](references/session-auth.md) |
-| Mobile app, admin mobile, JN/native components, designer, push settings | [references/mobileapp.md](references/mobileapp.md), [references/components.md](references/components.md), [references/events-routing.md](references/events-routing.md), [references/templates.md](references/templates.md) |
-| Bitrix24 connector, widgets, openlines/chat/recall/forms, site restrictions | [references/b24connector.md](references/b24connector.md), [references/socialservices.md](references/socialservices.md), [references/rest.md](references/rest.md), [references/admin-ui.md](references/admin-ui.md) |
-| Блог и комментарии | [references/blog-socialnet.md](references/blog-socialnet.md) — используй `CBlog*`-часть, а `socialnet`-часть только при подтверждённом модуле |
-| Форумы и обсуждения | [references/forum.md](references/forum.md), [references/blog-socialnet.md](references/blog-socialnet.md), [references/search.md](references/search.md) |
-| Голосования и опросы | [references/vote.md](references/vote.md), [references/templates.md](references/templates.md), [references/events-routing.md](references/events-routing.md) |
-| Витрина и стандартные компоненты: без магазина и интернет-магазин | [references/standard-components-noncommerce.md](references/standard-components-noncommerce.md), [references/shop-standard-components.md](references/shop-standard-components.md), [references/component-dataflow-debugging.md](references/component-dataflow-debugging.md), [references/components.md](references/components.md), [references/templates.md](references/templates.md), [references/pagination.md](references/pagination.md) |
-| Пагинация списков, `PAGEN_N`, lazy load, admin/grid navigation | [references/pagination.md](references/pagination.md), [references/components.md](references/components.md), [references/iblocks.md](references/iblocks.md), [references/grid-admin-modern.md](references/grid-admin-modern.md), [references/admin-ui.md](references/admin-ui.md) |
-| Лендинги и public pages | [references/landing.md](references/landing.md), [references/templates.md](references/templates.md), [references/seo-cache-access.md](references/seo-cache-access.md) |
-| Поиск, индексация, ЧПУ, SEO | [references/search.md](references/search.md), [references/sef-urls.md](references/sef-urls.md), [references/pagination.md](references/pagination.md), [references/seo-cache-access.md](references/seo-cache-access.md), [references/cache-infra.md](references/cache-infra.md), [references/index-cache-diagnostics.md](references/index-cache-diagnostics.md) |
-| Пользователи, доступ, кабинет | [references/users.md](references/users.md), [references/access-rbac.md](references/access-rbac.md), [references/templates.md](references/templates.md), [references/socialservices.md](references/socialservices.md) |
-| Формы, уведомления, подписки | [references/webforms.md](references/webforms.md), [references/mail-notifications.md](references/mail-notifications.md), [references/subscribe.md](references/subscribe.md) |
-| Интеграции и обмены | [references/import-export.md](references/import-export.md), [references/http.md](references/http.md), [references/rest.md](references/rest.md), [references/update-stepper.md](references/update-stepper.md), [references/cache-infra.md](references/cache-infra.md), [references/operations-runbook.md](references/operations-runbook.md) |
-| Админка, сопровождение, фоновые процессы | [references/admin-ui.md](references/admin-ui.md), [references/grid-admin-modern.md](references/grid-admin-modern.md), [references/pagination.md](references/pagination.md), [references/cache-infra.md](references/cache-infra.md), [references/update-stepper.md](references/update-stepper.md), [references/entities-migrations.md](references/entities-migrations.md), [references/perfmon.md](references/perfmon.md), [references/operations-runbook.md](references/operations-runbook.md) |
-| События и кастомная логика | [references/events-routing.md](references/events-routing.md), [references/modules-loader.md](references/modules-loader.md), [references/iblocks.md](references/iblocks.md), [references/users.md](references/users.md) |
-| PHP-архитектура проекта, service-layer, DTO, exceptions, tests, static analysis | [references/php-workflow.md](references/php-workflow.md), [references/php-testing.md](references/php-testing.md), [references/php-quality.md](references/php-quality.md), [references/php-legacy-modernization.md](references/php-legacy-modernization.md), [references/modules-loader.md](references/modules-loader.md), [references/validation.md](references/validation.md), [references/database-layer.md](references/database-layer.md), [references/events-routing.md](references/events-routing.md) |
-| Диагностика “есть в админке, нет на сайте”, кеши, индексы, data flow | [references/diagnostic-visibility.md](references/diagnostic-visibility.md), [references/index-cache-diagnostics.md](references/index-cache-diagnostics.md), [references/component-dataflow-debugging.md](references/component-dataflow-debugging.md), [references/pagination.md](references/pagination.md), [references/cache-infra.md](references/cache-infra.md), [references/search.md](references/search.md), [references/seo-cache-access.md](references/seo-cache-access.md) |
-| Адреса, карты, редактор, SMS, геоданные | [references/fileman.md](references/fileman.md), [references/location.md](references/location.md), [references/messageservice.md](references/messageservice.md), [references/mail-notifications.md](references/mail-notifications.md) |
-| Файлы, облачное хранилище, resize, внешний `SRC` | [references/clouds.md](references/clouds.md), [references/import-export.md](references/import-export.md), [references/file-upload-modern.md](references/file-upload-modern.md), [references/cache-infra.md](references/cache-infra.md) |
-| Bitrix Cloud backup, monitoring и mobile inspector | [references/bitrixcloud.md](references/bitrixcloud.md), [references/clouds.md](references/clouds.md), [references/admin-ui.md](references/admin-ui.md), [references/cache-infra.md](references/cache-infra.md) |
-| Локализация, языковые файлы, экспорт/импорт фраз | [references/translate.md](references/translate.md), [references/import-export.md](references/import-export.md), [references/search.md](references/search.md) |
+| Бытовой ответ или project-first fix | [references/behavior-routing.md](references/behavior-routing.md), [references/project-intake.md](references/project-intake.md), [references/task-playbooks.md](references/task-playbooks.md), [references/developer-primitives.md](references/developer-primitives.md), [references/first-answer-pitfalls.md](references/first-answer-pitfalls.md), [references/developer-cards.md](references/developer-cards.md), [references/answer-contracts.md](references/answer-contracts.md), [references/core-grep-cookbook.md](references/core-grep-cookbook.md) |
+| Core audit и task routing | [references/core-audit-matrix.md](references/core-audit-matrix.md), [references/noncommerce-task-matrix.md](references/noncommerce-task-matrix.md), [references/shop-task-matrix.md](references/shop-task-matrix.md), [references/reference-map.md](references/reference-map.md) |
+| Production practice / “как правильно” | [references/production-best-practices.md](references/production-best-practices.md), [references/pitfalls-matrix.md](references/pitfalls-matrix.md), [references/runtime-smoke-verification.md](references/runtime-smoke-verification.md), затем доменный reference из [references/reference-map.md](references/reference-map.md) |
+| Components/templates/dataflow/cache/SEO | [references/components.md](references/components.md), [references/templates.md](references/templates.md), [references/component-dataflow-debugging.md](references/component-dataflow-debugging.md), [references/cache-infra.md](references/cache-infra.md), [references/index-cache-diagnostics.md](references/index-cache-diagnostics.md), [references/seo-cache-access.md](references/seo-cache-access.md) |
+| PHP-heavy задача | [references/php-workflow.md](references/php-workflow.md), [references/php-testing.md](references/php-testing.md), [references/php-quality.md](references/php-quality.md), [references/modules-loader.md](references/modules-loader.md), [references/orm.md](references/orm.md) |
+| Shop / sale / catalog / 1C | Сначала module check; затем [references/shop-task-matrix.md](references/shop-task-matrix.md), [references/shop-standard-components.md](references/shop-standard-components.md), [references/catalog.md](references/catalog.md), [references/sale.md](references/sale.md), [references/currency.md](references/currency.md), [references/commerce-1c-integration.md](references/commerce-1c-integration.md) |
+| Release / публикация skill | [references/release-gate.md](references/release-gate.md), [references/eval-prompts.md](references/eval-prompts.md) |
 
-Дополнительно подгружай технические reference-файлы по необходимости:
+## Короткие guardrails
 
-- Бытовые Bitrix-примитивы: meta title/description, `ShowHead`, `ShowTitle`, Asset, breadcrumbs, current user, includeModule — [references/developer-primitives.md](references/developer-primitives.md)
-- Audit текущего core, активные/deferred зоны, полный shop-core inventory и task routing — [references/core-audit-matrix.md](references/core-audit-matrix.md), [references/noncommerce-task-matrix.md](references/noncommerce-task-matrix.md), [references/shop-task-matrix.md](references/shop-task-matrix.md), [references/shop-core-module-inventory.md](references/shop-core-module-inventory.md)
-- Production best practices, update-safe кастомизация, D7 vs legacy, side effects, pitfalls matrix и runtime smoke — [references/production-best-practices.md](references/production-best-practices.md), [references/pitfalls-matrix.md](references/pitfalls-matrix.md), [references/runtime-smoke-verification.md](references/runtime-smoke-verification.md)
-- Диагностика видимости, кешей, индексов, пагинации и data flow — [references/diagnostic-visibility.md](references/diagnostic-visibility.md), [references/index-cache-diagnostics.md](references/index-cache-diagnostics.md), [references/component-dataflow-debugging.md](references/component-dataflow-debugging.md), [references/pagination.md](references/pagination.md)
-- ORM, runtime-поля, связи и `Result/Error` — [references/orm.md](references/orm.md)
-- Архитектура модуля, `Loader`, PSR-4, `ServiceLocator`, `Option` — [references/modules-loader.md](references/modules-loader.md)
-- PHP workflow в Bitrix-проекте: service-layer, DTO, exceptions, composer/phpunit/phpstan/fixer/rector — [references/php-workflow.md](references/php-workflow.md), [references/modules-loader.md](references/modules-loader.md), [references/validation.md](references/validation.md), [references/database-layer.md](references/database-layer.md)
-- PHP testing и verification: unit/integration, smoke без PHPUnit, test seams, fixtures, vendor noise — [references/php-testing.md](references/php-testing.md), [references/php-workflow.md](references/php-workflow.md), [references/events-routing.md](references/events-routing.md), [references/orm.md](references/orm.md)
-- PHP quality и legacy modernization: phpstan/psalm/fixer/rector, safe modernization, boundary extraction — [references/php-quality.md](references/php-quality.md), [references/php-legacy-modernization.md](references/php-legacy-modernization.md), [references/php-workflow.md](references/php-workflow.md)
-- Standard components без магазина и stock template truth layer — [references/standard-components-noncommerce.md](references/standard-components-noncommerce.md), [references/component-dataflow-debugging.md](references/component-dataflow-debugging.md), [references/components.md](references/components.md), [references/templates.md](references/templates.md)
-- Стандартные компоненты интернет-магазина: `bitrix:catalog`, `catalog.section`, `catalog.element`, `catalog.smart.filter`, compare, basket, checkout/order, personal cabinet, productcard/store/report components — [references/shop-standard-components.md](references/shop-standard-components.md), [references/shop-task-matrix.md](references/shop-task-matrix.md), [references/catalog.md](references/catalog.md), [references/sale.md](references/sale.md), [references/pagination.md](references/pagination.md)
-- Маркетинг и аналитика интернет-магазина: `sender`, `mail`, `messageservice`, `subscribe`, `advertising`, `abtest`, `conversion`, `report`, `statistic`, eShop hooks и sale-side connectors — [references/shop-marketing-analytics.md](references/shop-marketing-analytics.md), [references/mail-notifications.md](references/mail-notifications.md), [references/messageservice.md](references/messageservice.md), [references/subscribe.md](references/subscribe.md), [references/sale.md](references/sale.md)
-- Автоматизация интернет-магазина/контента: `bizproc`, `bizprocdesigner`, legacy `workflow`, `lists`, `pull`, workflow templates/states/tasks, robots/triggers, list processes and realtime diagnostics — [references/shop-automation-bizproc.md](references/shop-automation-bizproc.md), [references/workflow.md](references/workflow.md), [references/push-pull.md](references/push-pull.md), [references/sale.md](references/sale.md), [references/catalog.md](references/catalog.md)
-- Безопасность, CSRF, права, текущий пользователь — [references/security.md](references/security.md), [references/access-rbac.md](references/access-rbac.md)
-- Security module: WAF, redirect, IP rules, OTP/MFA, recovery codes, site checker, xscan — [references/security.md](references/security.md)
-- SiteCorporate: `wizard_solution`, `corp_services` / `corp_furniture`, rerun master, stock `furniture.*` components — [references/sitecorporate.md](references/sitecorporate.md), [references/components.md](references/components.md), [references/templates.md](references/templates.md)
-- MobileApp: admin mobile, JN/router, designer apps, push settings, token registration — [references/mobileapp.md](references/mobileapp.md), [references/components.md](references/components.md), [references/events-routing.md](references/events-routing.md)
-- Bitrix24 connector: remote portal binding, widgets, openline info, per-site restrictions, local activation state — [references/b24connector.md](references/b24connector.md), [references/socialservices.md](references/socialservices.md), [references/admin-ui.md](references/admin-ui.md)
-- HTTP, `DateTime`, запросы, ответы, интеграционный транспорт — [references/http.md](references/http.md), [references/session-auth.md](references/session-auth.md)
-- HL-блоки и сложные связи/UF — [references/iblock-hl-relations.md](references/iblock-hl-relations.md), [references/custom-uf-types.md](references/custom-uf-types.md)
-- Чистые задачи по highloadblock: CRUD блока, dynamic ORM, права, selector, стандартные `highloadblock.*` компоненты, PageNavigation — [references/highloadblock.md](references/highloadblock.md), [references/pagination.md](references/pagination.md)
-- Фотогалереи, альбомы, `USER_ALIAS`, password sections, upload/watermark/converters, photo comments — [references/photogallery.md](references/photogallery.md)
-- Почта, SMS и уведомления — [references/mail-notifications.md](references/mail-notifications.md), [references/shop-marketing-analytics.md](references/shop-marketing-analytics.md) для shop sender/subscribe/report контекста
-- Веб-формы, подписки и блоговый контур — [references/webforms.md](references/webforms.md), [references/subscribe.md](references/subscribe.md), [references/blog-socialnet.md](references/blog-socialnet.md)
-- Адресные userfield, карты, HTML editor, SMS-провайдеры и callback-и — [references/fileman.md](references/fileman.md), [references/location.md](references/location.md), [references/messageservice.md](references/messageservice.md), [references/mail-notifications.md](references/mail-notifications.md)
-- Облачные bucket-ы, внешний `SRC`, `HANDLER_ID`, delayed resize и file hooks — [references/clouds.md](references/clouds.md), [references/import-export.md](references/import-export.md), [references/file-upload-modern.md](references/file-upload-modern.md)
-- Bitrix Cloud backup policy, monitoring, stored alerts, remote buckets и mobile inspector — [references/bitrixcloud.md](references/bitrixcloud.md), [references/clouds.md](references/clouds.md)
-- Локализация, языковые файлы, переводческий UI, индекс фраз, CSV import/export — [references/translate.md](references/translate.md), [references/import-export.md](references/import-export.md)
-- Форумы, опросы, соц-авторизация, лендинги, perf — [references/forum.md](references/forum.md), [references/vote.md](references/vote.md), [references/socialservices.md](references/socialservices.md), [references/landing.md](references/landing.md), [references/perfmon.md](references/perfmon.md)
-- Полный inventory shop-core модулей и покрытие uncovered zones — [references/shop-core-module-inventory.md](references/shop-core-module-inventory.md), [references/core-audit-matrix.md](references/core-audit-matrix.md)
-- Интернет-магазин, SKU, цены, остатки, стандартные компоненты, корзина, checkout, заказы, маркетинг, аналитика и автоматизация — [references/shop-task-matrix.md](references/shop-task-matrix.md), [references/shop-standard-components.md](references/shop-standard-components.md), [references/shop-marketing-analytics.md](references/shop-marketing-analytics.md), [references/shop-automation-bizproc.md](references/shop-automation-bizproc.md), [references/catalog.md](references/catalog.md), [references/sale.md](references/sale.md), [references/currency.md](references/currency.md), [references/commerce-workflows.md](references/commerce-workflows.md)
-- 1С / CommerceML, StoreAssist onboarding, `catalog.import.1c`, `catalog.export.1c`, `sale.export.1c`, `BX_CML2_IMPORT`, `BX_CML2_EXPORT` — [references/commerce-1c-integration.md](references/commerce-1c-integration.md), [references/storeassist.md](references/storeassist.md), [references/catalog.md](references/catalog.md), [references/sale.md](references/sale.md), [references/currency.md](references/currency.md)
-- Webservice/REST integrations магазина: `webservice.sale`, `webservice.statistic`, SOAP/WSDL, `stssync`, sale/catalog REST controllers/events, external app handlers — [references/shop-integrations-webservice.md](references/shop-integrations-webservice.md), [references/rest.md](references/rest.md), [references/sale.md](references/sale.md), [references/catalog.md](references/catalog.md), [references/http.md](references/http.md)
-- `workflow` и `push/pull` — открывай вместе с `shop-automation-bizproc.md` после подтверждения модулей `bizproc` и `pull`; не используй их как доказательство sale-order robots
-- Пагинация списков, `PAGEN_N`, `NavStart`, `PageNavigation`, lazy load и сбои второй страницы — [references/pagination.md](references/pagination.md), [references/iblocks.md](references/iblocks.md), [references/components.md](references/components.md), [references/grid-admin-modern.md](references/grid-admin-modern.md)
-- Современный grid, file uploader, нумераторы, user consent, низкоуровневый DB — [references/grid-admin-modern.md](references/grid-admin-modern.md), [references/file-upload-modern.md](references/file-upload-modern.md), [references/numerator.md](references/numerator.md), [references/userconsent.md](references/userconsent.md), [references/database-layer.md](references/database-layer.md)
-- Эксплуатация, переносы, agents/cron/stepper, backup/monitoring и perf — [references/operations-runbook.md](references/operations-runbook.md), [references/update-stepper.md](references/update-stepper.md), [references/perfmon.md](references/perfmon.md), [references/bitrixcloud.md](references/bitrixcloud.md)
-
-## Условные домены
-
-Эти reference-файлы активируются только после проверки соответствующих модулей в локальном проекте:
-
-- [references/catalog.md](references/catalog.md), [references/currency.md](references/currency.md), [references/shop-task-matrix.md](references/shop-task-matrix.md) — после появления `catalog` и `currency`.
-- [references/sale.md](references/sale.md), [references/commerce-workflows.md](references/commerce-workflows.md), [references/shop-standard-components.md](references/shop-standard-components.md) — после появления `sale` вместе с `catalog`/`currency`.
-- [references/shop-marketing-analytics.md](references/shop-marketing-analytics.md) — после появления релевантных модулей `sender`, `mail`, `messageservice`, `subscribe`, `advertising`, `abtest`, `conversion`, `report` или `statistic`; не заменяй отсутствующий модуль соседним marketing API.
-- [references/commerce-1c-integration.md](references/commerce-1c-integration.md) — после появления `catalog.import.1c`, `catalog.export.1c` или `sale.export.1c`.
-- [references/shop-integrations-webservice.md](references/shop-integrations-webservice.md) — после появления `webservice`, `rest`, `webservice.sale`, `webservice.statistic`, sale/catalog REST, external app hooks или SOAP/WSDL задачи.
-- [references/shop-automation-bizproc.md](references/shop-automation-bizproc.md), [references/workflow.md](references/workflow.md) — после появления `bizproc`, `bizprocdesigner`, `workflow`, `lists` или automation-задачи.
-- [references/push-pull.md](references/push-pull.md) — после появления модуля `pull`, особенно вместе с `shop-automation-bizproc.md` для realtime/counter side effects.
-- `socialnet`-часть [references/blog-socialnet.md](references/blog-socialnet.md) — после появления модуля `socialnet`.
-
-Если модуль отсутствует, зафиксируй ограничение и не заменяй его похожим компонентом или wizard-ссылкой.
-
-## Content-first эвристики
-
-- Для вопросов “как правильно сделать”, “лучшие практики”, “куда класть код”, “как не сломать обновления” сначала открывай `production-best-practices.md`, затем конкретный модульный reference.
-- Для вопросов “подводные камни”, “почему сломалось”, “после обмена/обновления всё странно” сначала открывай `pitfalls-matrix.md`, затем иди в указанные domain references.
-- Для заявлений о полном покрытии, Docker/sandbox, smoke, fixtures или runtime-доказательствах открывай `runtime-smoke-verification.md`; code-first audit не равен runtime pass.
-- Для PHP-heavy задач сначала различай Bitrix boundary и чистую domain-логику: `component.php`, `result_modifier.php`, controller action, event handler и admin/public entrypoint должны координировать, а тяжёлая логика должна жить в сервисе.
-- Для PHP-heavy задач сначала проверь, есть ли в проекте `composer.json`, `phpunit.xml*`, `phpstan*`, `psalm*`, `.php-cs-fixer.php`, `ecs.php`, `phpcs.xml*`, `rector.php`; не навязывай стек, которого в проекте нет.
-- Для PHP-heavy задач не принимай `composer.json` и `phpunit.xml.dist` внутри `www/bitrix/modules/*/vendor` за project tooling: это может быть только vendor noise текущего core.
-- `declare(strict_types=1)`, `final`, `readonly`, DTO и value objects по умолчанию применяй только в изолированных local/service-layer файлах, а не в legacy entrypoint, component template или старом admin/public PHP без проверки surrounding code.
-- Exceptions внутри сервиса допустимы, но на Bitrix-boundary переводись в `Result/Error`, `addError(...)` controller-а или другой предсказуемый контракт, а не прокидывай raw exception в шаблон.
-- Для mixed-массивов `arParams`, `arResult` и legacy `C*` API сначала попробуй прояснить контракт локальным PHPDoc/array-shape, а не переусложнять слой ради одной доработки.
-- Для задач проверки сначала тестируй service/helper/adapter, а boundary (`component.php`, handler, controller, `result_modifier.php`) оставляй тонким и проверяй smoke- или integration-путём.
-- Для задач “в админке есть, на сайте нет” сначала иди по цепочке data source → permissions/site binding → component params → filters → `result_modifier.php` → template → cache/index/SEO.
-- Для cache/index задач сначала определи конкретный слой: component cache, tagged cache, managed cache, composite/static HTML, search index, SEO artifacts, landing cache.
-- Для стандартных компонентов без `local/*` сначала смотри stock component templates и `bitrix/templates/*`; наличие `catalog.*` в `iblock` не означает установленный модуль `catalog`. Для public shop-компонентов (`bitrix:catalog`, `catalog.section`, `catalog.element`, `catalog.smart.filter`, basket/checkout/personal) дополнительно открывай `shop-standard-components.md`.
-- Для shop-задач сначала подтверждай `catalog`, `sale`, `currency`; затем разделяй product, offer, price, stock, basket, order, marketing/analytics и exchange side effects.
-- Для вопросов “все ли модули shop-core покрыты” сначала открывай `shop-core-module-inventory.md` и `runtime-smoke-verification.md`: standard shop components, marketing/analytics, automation и webservice/REST уже покрыты code-first, но не обещай runtime pass без отдельной Docker/runtime проверки.
-- Для пагинации сначала разводи legacy `PAGEN_N`/`NavStart()` и D7 `PageNavigation`: проверяй уникальный nav id, count/filter, stable sort, cache key и ajax payload.
-- Для задач по 1С сначала определяй поток: `catalog.import.1c`, `catalog.export.1c` или `sale.export.1c`; проверяй `checkauth → init → file → import`, session cookies, `sessid`, temp files, XML_ID/CML2_LINK и логи. Если задача про `webservice.sale`, `webservice.statistic`, SOAP/WSDL, REST events/placements или external app handlers — открывай `shop-integrations-webservice.md`, а не подменяй это CommerceML.
-- Если задача про StoreAssist или `storeassist_1c_*`, помни: это мастер/чеклист и onboarding, а не exchange engine; реальные CommerceML поломки диагностируй через `commerce-1c-integration.md`.
-- Для задач “товар есть, но не покупается” проверяй parent product vs offer, доступную цену, валюту, остаток, reservation, `CAN_BUY_ZERO`, provider и sale basket events.
-- Для задач checkout сначала проверяй basket refresh, person type, обязательные свойства заказа, delivery/payment restrictions, discounts/coupons, `Order::save()` errors и side effects. Если задача про follow-up, сегменты покупателей, письма/SMS, баннеры, A/B, conversion/report/statistic — открывай `shop-marketing-analytics.md` и не смешивай `sender.subscribe`, `subscribe.*` и `catalog.product.subscribe`. Если задача про роботов/БП заказа — открывай `shop-automation-bizproc.md`, но не обещай sale-order robots без локального provider-а/CRM/custom module.
-- Для эксплуатационных задач требуй воспроизводимый route: migration/install step, CLI, agent/stepper, documented rollback и повторный запуск без дублей.
-- Для задач контента сначала проверь модель данных: тип инфоблока, `API_CODE`, символьные коды, XML ID, свойства, пользовательские поля разделов, файловые поля, привязки.
-- Для задач `bitrix.sitecorporate` сначала проверь `main:wizard_solution`, нужный wizard (`corp_services` / `corp_furniture`), include-файлы решения и stock `furniture.*`-компоненты. Не своди модуль к выдуманному runtime API.
-- Для задач `bitrix.sitecorporate` отдельно проверяй public skeleton решения: он может ссылаться на стандартные компоненты соседних модулей, включая `catalog`, и это не доказывает, что модуль реально установлен в текущем core.
-- Для блоговых задач сначала проверь наличие модуля `blog` и используй `CBlog*`; не переходи к `CSocNet*`, пока `socialnet` не подтверждён в core.
-- Для задач по блогу помни, что `Bitrix\\Blog\\PostTable` и `CommentTable` в текущем core годятся для чтения, но запись там заблокирована `NotImplementedException`; для мутаций используй `CBlogPost` / `CBlogComment`.
-- Если `local/components` нет, для `blog` и `form` считай следующим слоем истины stock template variants компонента, включая `micro`, `intranet`, `old_version` и условные `socialnetwork`-ветки.
-- Для форумов и голосований сначала считай контракт стандартных компонентов и legacy API из модуля, потому что типовой UI здесь всё ещё жёстко завязан на `CForum*` и `CVote*`.
-- Для задач по `form` сначала разделяй форму, результат, статус, validator и CRM link. Не своди модуль к одной отправке письма через `CFormResult::Add()`.
-- Для `landing` сначала проверь права, hooks и режим мутаций; прямые `Block::add/update/delete` в текущем core защищены `LANDING_MUTATOR_MODE`.
-- Для витрины и стандартных компонентов сначала считай контракт компонента из ядра, затем ищи проектный шаблон, `result_modifier.php`, `component_epilog.php` и только потом меняй логику.
-- Для чистых задач по HL-блокам сначала разделяй три слоя: сам блок и его ORM, связь HL ↔ ИБ/UF и UI/selector. Не смешивай их в один “справочник”.
-- Для `photogallery` сначала разделяй четыре слоя: галерея как root-section, альбом как вложенный section, фото как element и comments/upload как соседние контуры. Не своди это к “ещё одному iblock с картинками”.
-- Для задач WAF, OTP, redirect hardening, session storage, antivirus и сканеров сначала смотри именно модуль `security`, а не ограничивайся общими советами по `main`.
-- Для задач `mobileapp` сначала различай четыре слоя: admin mobile/prolog, legacy mobile UI-компоненты, JN/native component-extension delivery и push/pull bridge. Не своди всё к одному “мобильному шаблону”.
-- Для задач `b24connector` сначала различай remote Bitrix24 connection через `socialservices`, локальную активацию кнопок в `b_b24connector_buttons` и ограничения по `SITE_ID` в `b_b24connector_button_site`.
-- Для адресных форм, карт, HTML editor и медиа-полей почти всегда сначала проверяй связку `fileman` + `location`, а не только проектный шаблон.
-- Для файлов с `HANDLER_ID`, внешним `SRC`, bucket rules, delayed resize и `MakeFileArray` сначала смотри `clouds`, а не исходи из предположения, что всё живёт локально в `/upload`.
-- Для backup/monitoring Bitrix Cloud сначала смотри `bitrixcloud`, а `clouds` подключай только как соседний bucket-layer.
-- Для SMS, провайдеров, ограничений и callback-ов сначала смотри `messageservice`, а почтовый контур `main/mail` подключай только как соседний слой, а не замену.
-- Для локализации и переводов сначала различай два контура: обычный `Loc::getMessage()`/lang-файлы и модуль `translate` с индексом фраз, CSV import/export, controller/stepper-процессами и edit UI.
-- Для поиска и фильтрации всегда учитывай не только код, но и индексаторы, права, сайт, ЧПУ и кеш.
-- Для обменов и импорта делай процесс идемпотентным, пакетным, логируемым и безопасным к повторному запуску.
-- После изменений в контенте, поиске и SEO всегда думай о зависимых индексах, тегированном кеше и публикационных последствиях.
-- Если модуль отсутствует, зафиксируй это как ограничение текущего core и не строй решение на неподтверждённом API.
-
-## Что никогда не делать
-
-- Не выдумывать API, события, классы и параметры, которые не подтверждены локальным ядром.
-- Не предполагать наличие `catalog`, `sale`, `currency`, `bizproc`, `pull` или другого модуля без проверки.
-- Не трактовать `bitrix.sitecorporate` как общий business/runtime-модуль: в текущем core это wizard-shell плюс solution-specific `furniture.*` helpers.
-- Не считать ссылки из wizard/public skeleton на `bitrix:catalog`, `bitrix:news` или другие компоненты доказательством, что соответствующий модуль установлен в проекте.
-- Не считать физическое наличие `catalog.*` компонентов в `iblock/install/components/bitrix` доказательством установленного модуля `catalog`.
-- Не менять `b_sale_order`, basket, payment, shipment, catalog price или stock прямым SQL, если есть API и side effects.
-- Не говорить “весь core полностью проверен” или “production-ready доказано”, если нет runtime-smoke evidence из sandbox/fixtures.
-- Не подключать production 1С, реальные платежи, доставки или кассы для smoke без явного подтверждения.
-- Не считать успех `mode=file` в 1С обмене успешным импортом: проверяй `mode=import`, session state, таблицы и логи.
-- Не удалять и не переименовывать `XML_ID`/`CML2_LINK` без плана миграции обмена.
-- Не предполагать, что файл физически лежит локально, если активен `clouds` или у записи есть `HANDLER_ID`.
-- Не использовать `Bitrix\\Blog\\PostTable::add/update/delete()` и `CommentTable::add/update/delete()` для записи, если сам core велит идти через `CBlog*`.
-- Не объявлять поведение кастомным только потому, что в проекте нет `local/*`: сначала проверь stock template variant стандартного компонента и wizard public/template слой.
-- Не сводить `photogallery` к “обычным элементам инфоблока”, если задача реально упирается в `USER_ALIAS`, section-UF, upload или photo comments.
-- Не сводить задачи по `security` к одному только `HtmlFilter` и `check_bitrix_sessid()`, если в core реально активен модульный WAF/MFA/redirect слой.
-- Не сводить задачи по `form` к одной отправке результата, если проблема лежит в статусах, `HANDLER_IN/HANDLER_OUT`, validator-ах, CRM link или secure file access.
-- Не отправлять все задачи по `mobileapp` в deferred-маршрут `pull`, если проблема лежит в `JN`, admin mobile или стандартных mobile-компонентах самого модуля.
-- Не путать существование remote widget в Bitrix24 с локальной активацией и site-restriction слоем `b24connector`.
-- Не путать `bitrixcloud` backup/monitoring с обычными bucket-ами `clouds`.
-- Не тащить в нативный Bitrix-модуль чужой framework-слой вроде repositories/service providers/Http-kernel из Laravel или Symfony, если проект уже живёт на `Loader` + `ServiceLocator` + standard component/controller contracts.
-- Не добавлять `declare(strict_types=1)` и modern-PHP атрибуты вслепую в legacy entrypoint, `template.php`, `result_modifier.php` или старый admin/public PHP без проверки совместимости.
-- Не форсить `composer`, PHPUnit, phpstan, psalm, fixer или rector в проект, где этого контура нет, если задача не требует отдельного согласованного внедрения tooling.
-- Не считать `composer.json` и `phpunit.xml.dist` внутри `www/bitrix/modules/*/vendor` доказательством, что проект уже живёт на Composer/PHPUnit.
-- Не переписывать стандартный компонент вслепую, если можно расширить его контракт или изменить шаблон/модификатор.
-- Не складывать бизнес-логику в `template.php`, если она должна жить в сервисе, `result_modifier.php` или обработчике.
-- Не пытаться unit-test-ить `template.php` и legacy boundary, если сначала можно вынести проверяемую логику в service/helper.
-- Не сводить диагностику “не видно на сайте” к общей очистке кеша без проверки прав, site binding, component params, фильтров, шаблона и индексов.
-- Не делать эксплуатационный скрипт без идемпотентности, логирования и понятного rollback-плана.
-- Не игнорировать `$result->isSuccess()`, `LAST_ERROR`, ошибки валидации и несовместимость сущностей.
-- Не забывать про инвалидацию кеша, переиндексацию и пересчёты после изменений данных.
-- Не выводить данные без экранирования и не подмешивать пользовательский ввод в SQL.
+- Не отвечай общей теорией, если можно проверить проект. Сначала project fact, потом вывод.
+- Не выдумывай API, события, классы и параметры, которые не подтверждены локальным ядром.
+- Не предполагай наличие `catalog`, `sale`, `currency`, `bizproc`, `pull`, `socialnet` без module check.
+- Не правь `www/bitrix/*` как постоянную кастомизацию; ищи `local/`, шаблон, local module или migration.
+- Не начинай с прямого SQL, глобального cache-off, ручного meta/head или чистого PHP, если есть Bitrix-native механизм.
+- Для “в админке есть, на сайте нет” иди по цепочке: source → rights/site binding → component params → filters → result/template → cache/index/SEO.
+- Для shop/1C задач учитывай side effects: events, recalculation, discounts, stock reservation, payments/shipments, exchange logs.
+- Для PHP-heavy задач сначала проверь project tooling и держи boundary тонким.
+- Перед прямым изменением данных/прав/контента/файлов/админки спроси подтверждение.
+- Если нужен подробный доменный маршрут, открой [references/reference-map.md](references/reference-map.md), а не грузи все references подряд.
 
 ## Базовые правила кода
 
