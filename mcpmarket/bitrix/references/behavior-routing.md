@@ -2,12 +2,12 @@
 
 Открывай в начале задачи, если неясно, какой слой нужен. Цель — не грузить все bundles и не превращать простой вопрос в лекцию.
 
-Главное правило: если доступен проект и вопрос практический, сначала получить project fact через `project-intake.md` или `core-grep-cookbook.md`, потом отвечать.
+Главное правило: если доступен проект и вопрос практический, сначала прочитать `BITRIX_PROJECT_CONTEXT.md` при наличии, затем получить project fact через `project-intake.md` или `core-grep-cookbook.md`, потом отвечать.
 
 ## Decision
 
 1. Bitrix marker есть (`/bitrix`, `/local`, `CIBlock*`, `ShowHead`, `IncludeComponent`, `sale`, `catalog`, `1C`, `Битрикс`) → skill applies.
-2. User says “у нас”, “в проекте”, “найди”, “почини”, “почему не работает” → `project-intake.md` first, then `task-playbooks.md` for common fix routes.
+2. User says “у нас”, “в проекте”, “найди”, “почини”, “почему не работает” → `BITRIX_PROJECT_CONTEXT.md` if present, then `project-intake.md`, then `task-playbooks.md` for common fix routes.
 3. Short “как сделать X” → `developer-primitives` + `first-answer-pitfalls` + `developer-cards` + `answer-contracts`.
 4. Debug symptom → `core-grep-cookbook` + relevant compact bundle.
 5. `sale`/`catalog`/`1C` → module check first, then commerce bundle.

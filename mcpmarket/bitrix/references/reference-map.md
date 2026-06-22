@@ -4,7 +4,7 @@
 
 | Задача | Bundle |
 |---|---|
-| Режим работы, project-first intake и common fix routes | `behavior-routing.md`, `project-intake.md`, `task-playbooks.md`, `core-grep-cookbook.md` |
+| Режим работы, project-first intake, `BITRIX_PROJECT_CONTEXT.md` и common fix routes | `behavior-routing.md`, `project-intake.md`, `../assets/BITRIX_PROJECT_CONTEXT.template.md`, `task-playbooks.md`, `core-grep-cookbook.md` |
 | Бытовой ответ: meta/head/assets/includes/request/user/images/cache/mail | `developer-primitives.md`, `first-answer-pitfalls.md`, `developer-cards.md`, `answer-contracts.md` |
 | Release/eval бытового слоя | `eval-prompts.md`, `release-gate.md` |
 | Core audit, version mismatch, tail modules, task routing, diagnostics, pitfalls, runtime smoke | `core-routing.md`, `version-impact.md`, `shop-core-tail-modules.md` |
@@ -20,7 +20,7 @@
 
 ## Compact guardrails
 
-- Если задача про конкретный repo — сначала project facts, потом ответ.
+- Если задача про конкретный repo — сначала `BITRIX_PROJECT_CONTEXT.md` при наличии, затем project facts, потом ответ.
 - Если модуль optional — сначала module check; если версия отличается от baseline — `version-impact.md`.
 - Не отвечать прямым SQL/core edit/global cache-off/manual meta первым вариантом.
 - Для shop/1C не использовать commerce route без `catalog`/`sale`/`currency` checks.

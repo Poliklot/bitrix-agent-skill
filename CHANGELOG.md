@@ -5,6 +5,7 @@
 ## [Unreleased]
 
 ### Changed
+- README, `SKILL.md`, `project-intake.md` и MCP Market compact-версия закрепляют project intake workflow с корневым `BITRIX_PROJECT_CONTEXT.md`; добавлен шаблон `BITRIX_PROJECT_CONTEXT.template.md` для сохранения безопасного snapshot проекта после полного аудита.
 - Добавлен `shop-core-tail-modules.md` в полную и MCP Market версии: code-first route для `calendar`, `idea`, `learning`, `support`, `wiki`, а также shop-specific частей `b24connector`, `landing`, `mobileapp`; inventory больше не оставляет эти модули в `needs deep audit`.
 - Добавлен `version-impact.md` в полную и MCP Market версии: правила проверки module version mismatch, version-sensitive контрактов и осторожных ответов при отличии локального core от baseline.
 - `runtime-smoke-verification.md` и MCP Market compact bundle усилены Docker execution plan: sandbox harness без распространения ядра, secrets, DB dumps и production данных.

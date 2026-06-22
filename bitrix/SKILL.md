@@ -21,7 +21,7 @@ metadata:
 
 Designed for Claude Code and Codex on 1C-Bitrix CMS projects.
 
-Эксперт по 1C-Bitrix CMS. Работаешь от живого проекта: сначала проверяешь установленное ядро, стандартные компоненты и проектные оверрайды, потом предлагаешь решение.
+Эксперт по 1C-Bitrix CMS. Работаешь от живого проекта: сначала проверяешь установленное ядро, стандартные компоненты и проектные оверрайды, потом предлагаешь решение. Если в проекте есть `BITRIX_PROJECT_CONTEXT.md`, читай его после `AGENTS.md` как persistent snapshot проекта.
 
 ## Текущая фаза
 
@@ -102,7 +102,7 @@ if (!Loader::includeModule('iblock')) {
 
 ## Режимы работы и project-first UX
 
-Перед загрузкой доменных reference-файлов выбери режим по [references/behavior-routing.md](references/behavior-routing.md): бытовой ответ, project-first fix, debug chain, component/template, production practice, module-dependent, shop/1C, dangerous data или release. Если задача относится к конкретному репозиторию (“у нас”, “найди где”, “почини”, “почему не работает”), сначала пройди быстрый [references/project-intake.md](references/project-intake.md) или узкий grep из [references/core-grep-cookbook.md](references/core-grep-cookbook.md), затем для типового решения используй [references/task-playbooks.md](references/task-playbooks.md) и отвечай по найденным фактам.
+Перед загрузкой доменных reference-файлов выбери режим по [references/behavior-routing.md](references/behavior-routing.md): бытовой ответ, project-first fix, debug chain, component/template, production practice, module-dependent, shop/1C, dangerous data или release. Если задача относится к конкретному репозиторию (“у нас”, “найди где”, “почини”, “почему не работает”), сначала прочитай `BITRIX_PROJECT_CONTEXT.md`, если он есть в корне проекта, затем пройди быстрый [references/project-intake.md](references/project-intake.md) или узкий grep из [references/core-grep-cookbook.md](references/core-grep-cookbook.md), затем для типового решения используй [references/task-playbooks.md](references/task-playbooks.md) и отвечай по найденным фактам. После полного project audit создай или обнови `BITRIX_PROJECT_CONTEXT.md` по [assets/BITRIX_PROJECT_CONTEXT.template.md](assets/BITRIX_PROJECT_CONTEXT.template.md).
 
 ## Бытовой Bitrix-ответник
 
@@ -115,7 +115,7 @@ if (!Loader::includeModule('iblock')) {
 ## Рабочий алгоритм
 
 1. Выбери режим по [references/behavior-routing.md](references/behavior-routing.md): бытовой ответ, project-first fix, debug chain, component/template, production practice, module-dependent, shop/1C, dangerous data или release.
-2. Если задача относится к конкретному repo, сначала зафиксируй project facts через [references/project-intake.md](references/project-intake.md) или узкий grep из [references/core-grep-cookbook.md](references/core-grep-cookbook.md).
+2. Если задача относится к конкретному repo, сначала прочитай `BITRIX_PROJECT_CONTEXT.md` при наличии, затем зафиксируй project facts через [references/project-intake.md](references/project-intake.md) или узкий grep из [references/core-grep-cookbook.md](references/core-grep-cookbook.md).
 3. Определи домен задачи: модель данных, блог/контент, компоненты, поиск, SEO, синхронизация, пользователи, админка, производительность, PHP-heavy, интернет-магазин или 1С/CommerceML.
 4. Проверь наличие нужных модулей и стандартных компонентов в конкретном ядре; при version mismatch используй [references/version-impact.md](references/version-impact.md).
 5. Посмотри проектные оверрайды и glue-code в `local/`.
@@ -152,7 +152,7 @@ if (!Loader::includeModule('iblock')) {
 
 | Задача | Минимальный набор |
 |------|------|
-| Бытовой ответ или project-first fix | [references/behavior-routing.md](references/behavior-routing.md), [references/project-intake.md](references/project-intake.md), [references/task-playbooks.md](references/task-playbooks.md), [references/developer-primitives.md](references/developer-primitives.md), [references/first-answer-pitfalls.md](references/first-answer-pitfalls.md), [references/developer-cards.md](references/developer-cards.md), [references/answer-contracts.md](references/answer-contracts.md), [references/core-grep-cookbook.md](references/core-grep-cookbook.md) |
+| Бытовой ответ или project-first fix | `BITRIX_PROJECT_CONTEXT.md` при наличии, [references/behavior-routing.md](references/behavior-routing.md), [references/project-intake.md](references/project-intake.md), [assets/BITRIX_PROJECT_CONTEXT.template.md](assets/BITRIX_PROJECT_CONTEXT.template.md), [references/task-playbooks.md](references/task-playbooks.md), [references/developer-primitives.md](references/developer-primitives.md), [references/first-answer-pitfalls.md](references/first-answer-pitfalls.md), [references/developer-cards.md](references/developer-cards.md), [references/answer-contracts.md](references/answer-contracts.md), [references/core-grep-cookbook.md](references/core-grep-cookbook.md) |
 | Core audit, version mismatch, tail modules и task routing | [references/core-audit-matrix.md](references/core-audit-matrix.md), [references/version-impact.md](references/version-impact.md), [references/shop-core-tail-modules.md](references/shop-core-tail-modules.md), [references/noncommerce-task-matrix.md](references/noncommerce-task-matrix.md), [references/shop-task-matrix.md](references/shop-task-matrix.md), [references/reference-map.md](references/reference-map.md) |
 | Production practice / “как правильно” | [references/production-best-practices.md](references/production-best-practices.md), [references/pitfalls-matrix.md](references/pitfalls-matrix.md), [references/runtime-smoke-verification.md](references/runtime-smoke-verification.md), затем доменный reference из [references/reference-map.md](references/reference-map.md) |
 | Components/templates/dataflow/cache/SEO | [references/components.md](references/components.md), [references/templates.md](references/templates.md), [references/component-dataflow-debugging.md](references/component-dataflow-debugging.md), [references/cache-infra.md](references/cache-infra.md), [references/index-cache-diagnostics.md](references/index-cache-diagnostics.md), [references/seo-cache-access.md](references/seo-cache-access.md) |

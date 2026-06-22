@@ -4,6 +4,14 @@
 
 Не запускай этот intake для чисто теоретического вопроса без доступа к проекту.
 
+## Долгоживущий контекст проекта
+
+Если в корне проекта есть `BITRIX_PROJECT_CONTEXT.md`, прочитай его после `AGENTS.md` и пользовательских инструкций, но до нового широкого intake. Это snapshot уже изученного проекта, а не абсолютная истина: для рискованных задач, изменений данных, shop/1С, прав, кеша, REST/webservice и обновлений перепроверяй факты в текущем коде.
+
+Если файла нет и ты провёл полный intake/audit проекта, создай `BITRIX_PROJECT_CONTEXT.md` в корне клиентского проекта по шаблону [../assets/BITRIX_PROJECT_CONTEXT.template.md](../assets/BITRIX_PROJECT_CONTEXT.template.md). Для короткого одноразового вопроса файл можно не создавать; для длинной разработки, серии задач или handoff — создавать обязательно.
+
+В `BITRIX_PROJECT_CONTEXT.md` нельзя записывать secrets, cookies, tokens, пароли, license keys, production XML/дампы, персональные данные и приватные payloads. Файл должен содержать только безопасные project facts: public root, modules/versions, шаблоны, компоненты, `local/*`, events/agents, tooling, shop/1С endpoints, runtime/smoke status, риски и открытые вопросы.
+
 ## Быстрый intake
 
 Запускать из корня репозитория. Если команда падает из-за отсутствующей папки — это факт проекта, не ошибка.
@@ -73,6 +81,7 @@ find . -maxdepth 3 \( -name composer.json -o -name 'phpunit.xml*' -o -name 'phps
 
 ```text
 Нашёл по проекту:
+- context file: [BITRIX_PROJECT_CONTEXT.md found/missing/updated]
 - public root: [path]
 - project layer: [local yes/no, local/modules yes/no, local/components yes/no]
 - template/head: [header.php path, ShowHead yes/no, ShowTitle yes/no]
@@ -130,6 +139,23 @@ for m in catalog sale currency; do test -f "www/bitrix/modules/$m/install/versio
 ```
 
 Без `catalog`/`sale`/`currency` не вести задачу как полноценный shop-route.
+
+## Когда создавать `BITRIX_PROJECT_CONTEXT.md`
+
+Создавать/обновлять файл после полного изучения проекта, если:
+
+- пользователь просит “изучи проект”, “разбери архитектуру”, “подготовь план доработок”;
+- задача будет продолжаться в нескольких шагах или передаваться другому агенту;
+- найдены важные module/version facts, shop/1С endpoints, template/component overrides или integration risks;
+- после исправления стало понятно, что это постоянный project convention.
+
+Минимальная команда для старта файла:
+
+```bash
+test -f BITRIX_PROJECT_CONTEXT.md || cp path/to/bitrix/assets/BITRIX_PROJECT_CONTEXT.template.md BITRIX_PROJECT_CONTEXT.md
+```
+
+Если шаблон навыка недоступен, создай файл вручную с теми же разделами: паспорт проекта, public root, modules/versions, templates/head, components, shop, 1С, REST/webservice, events/agents, tooling, cache/SEO/routing, risks, open questions, sources.
 
 ## Когда остановиться
 

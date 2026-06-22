@@ -2,6 +2,12 @@
 
 Открывай, когда задача относится к конкретному repo: “у нас”, “в этом проекте”, “найди где”, “почему не работает”, “почини”, “сделай патч”.
 
+## Persistent project context
+
+Если в корне проекта есть `BITRIX_PROJECT_CONTEXT.md`, прочитай его после `AGENTS.md`, но до широкого intake. Это snapshot, не абсолютная истина: для рискованных задач и shop/1С/integration изменений перепроверяй код.
+
+Если файла нет и проведён полный project audit, создай/обнови `BITRIX_PROJECT_CONTEXT.md` в корне клиентского проекта по шаблону [../assets/BITRIX_PROJECT_CONTEXT.template.md](../assets/BITRIX_PROJECT_CONTEXT.template.md). Не записывать secrets, tokens, cookies, license keys, production XML/дампы и персональные данные.
+
 ## Quick scan
 
 ```bash
@@ -41,6 +47,7 @@ done
 
 ```text
 Нашёл по проекту:
+- context file: BITRIX_PROJECT_CONTEXT.md found/missing/updated
 - public root: [path]
 - project layer: [local/local modules/components/templates]
 - template/head: [header path, ShowHead yes/no, ShowTitle yes/no]
@@ -51,6 +58,10 @@ done
 ```
 
 For a simple question, show only relevant facts.
+
+## Project context file
+
+Create/update `BITRIX_PROJECT_CONTEXT.md` after full project study, multi-step work, handoff, or discovery of important module/template/shop/1C/integration facts. If template asset is unavailable, create the same sections manually: project passport, public root, modules/versions, templates/head, components, shop, 1С, REST/webservice, events/agents, tooling, cache/SEO/routing, risks, open questions, sources.
 
 ## Stop
 

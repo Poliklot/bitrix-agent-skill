@@ -7,7 +7,7 @@
 ## Решение за 30 секунд
 
 1. Есть ли в задаче Bitrix-маркер (`/bitrix`, `/local`, `CIBlock*`, `ShowHead`, `IncludeComponent`, `sale`, `catalog`, `1C`, `Битрикс`)? Если да — skill применим.
-2. Есть ли доступ к репозиторию проекта? Если да — для практической задачи сначала открыть [project-intake.md](project-intake.md) или взять узкий grep из [core-grep-cookbook.md](core-grep-cookbook.md), затем для типового маршрута открыть [task-playbooks.md](task-playbooks.md).
+2. Есть ли доступ к репозиторию проекта? Если да — для практической задачи сначала прочитать `BITRIX_PROJECT_CONTEXT.md` при наличии, затем открыть [project-intake.md](project-intake.md) или взять узкий grep из [core-grep-cookbook.md](core-grep-cookbook.md), затем для типового маршрута открыть [task-playbooks.md](task-playbooks.md).
 3. Вопрос короткий “как сделать X”? Открыть бытовой слой: [developer-primitives.md](developer-primitives.md), [first-answer-pitfalls.md](first-answer-pitfalls.md), [developer-cards.md](developer-cards.md), [answer-contracts.md](answer-contracts.md).
 4. Вопрос “почему не работает”? Открыть debug/domain reference и идти по цепочке source → params → template/result → cache/rights/index.
 5. Вопрос про `sale`/`catalog`/`1C`? Сначала module check, потом shop/1C reference.
