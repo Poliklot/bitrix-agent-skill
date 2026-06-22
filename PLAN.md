@@ -7,7 +7,7 @@
 ## Текущий статус
 
 На дату этого плана:
-- актуальная версия навыка: `1.26.0`;
+- актуальная версия навыка: `1.27.0`;
 - точка входа: `bitrix/SKILL.md`;
 - reference-слой: `bitrix/references/*.md`;
 - non-commerce reference-слой прошёл ревизию против установленного core;
@@ -22,6 +22,7 @@
 - integration/webservice слой магазина разобран по shop-core: `webservice`, `webservice.sale`, `webservice.statistic`, SOAP/WSDL, `stssync`, REST apps/webhooks/events/placements, sale/catalog REST controllers/events и external app handlers;
 - production best-practices слой добавлен как cross-cutting маршрут: update-safe кастомизация, D7 vs legacy, boundary/service layer, side effects, cache/index/RBAC, security, performance, pitfalls matrix и runtime smoke verification plan;
 - developer-primitives слой добавлен как быстрый бытовой маршрут: meta/title/head, Asset, IncludeFile, breadcrumbs, request/current user, Loader, CFile, Loc и другие типовые Bitrix-примитивы;
+- project-first слой добавлен как рабочий UX: `behavior-routing.md`, `project-intake.md`, `task-playbooks.md`, `core-grep-cookbook.md`, `answer-contracts.md`, `first-answer-pitfalls.md`, `developer-cards.md`, `eval-prompts.md` и `release-gate.md`;
 - пагинационный слой переаудирован по `main` 26.150.0 и shop-core: legacy `CDBResult`, D7 `PageNavigation`, `system.pagenavigation`, `main.pagenavigation`, admin/grid и ajax/lazy load.
 
 ## Активный и условный контур
@@ -134,16 +135,90 @@ bitrix-agent-skill/
 6. Для commerce/1C-аудита нельзя использовать production-данные, живые ключи и реальные персональные данные клиентов; нужны sandbox и тестовые CommerceML fixtures.
 7. Code-first coverage не равен runtime pass: для production-утверждений нужны smoke fixtures/evidence по `runtime-smoke-verification.md`.
 
+## Roadmap v1.28+
+
+### 0. Синхронизировать living-plan
+
+Цель: `PLAN.md` должен отражать реальный текущий слой навыка, а не исторический baseline. При каждом крупном изменении фиксировать:
+
+- текущую версию из `bitrix/VERSION`;
+- какие references считаются активными;
+- где есть только code-first coverage;
+- какие зоны требуют runtime evidence или локальной проверки проекта.
+
+Definition of done: версия и roadmap не расходятся с `README.md`, `CHANGELOG.md`, `bitrix/SKILL.md` и MCP Market compact-навигацией.
+
+### 1. Docker/runtime smoke evidence
+
+Цель: закрыть главный пробел доверия — доказать на sandbox/fixtures, что магазинные маршруты реально проходят в runtime, а не только подтверждены по core-файлам.
+
+Проверить минимум:
+
+1. public catalog visibility;
+2. SKU/offer + price + stock purchaseability;
+3. basket/checkout/order в test mode;
+4. order lifecycle через API, без прямого SQL;
+5. CommerceML catalog import;
+6. CommerceML order export;
+7. REST event/method/scope smoke;
+8. `webservice.sale` / `webservice.statistic` smoke;
+9. sender/SMS/marketing/analytics в stub/test mode;
+10. bizproc/lists/pull/realtime smoke.
+
+Definition of done: по каждому сценарию есть sandbox facts, fixtures, steps, expected/actual, logs/screenshots/CLI-output и статус `pass`, `fail` или `blocked` в формате `runtime-smoke-verification.md`.
+
+### 2. Version impact layer
+
+Цель: перестать говорить о версиях как о декоративных числах и сделать практичный слой “что делать, если версия клиента отличается от проверенной”.
+
+Нужно описать:
+
+- где читать версию модуля (`install/version.php`, для `main` — fallback `classes/general/version.php`);
+- какие версии были проверены в shop-core;
+- какие контракты наиболее version-sensitive;
+- какие файлы читать при version mismatch;
+- как формулировать ответ, если локальная версия не совпадает с reference.
+
+Definition of done: агент не обещает совместимость по памяти, а явно говорит: “контракт проверен на X; в вашем проекте версия Y, поэтому проверяю такие-то файлы”.
+
+### 3. Закрыть хвост shop-core modules
+
+Цель: убрать из inventory слепые зоны, которые сейчас мешают честно говорить о покрытии shop-core.
+
+В первую очередь доаудировать:
+
+- `calendar`;
+- `idea`;
+- `learning`;
+- `support`;
+- `wiki`;
+- shop-specific части `b24connector`, `landing`, `mobileapp`.
+
+Definition of done: для каждого модуля есть code-first route: версия, компоненты, admin entrypoints, legacy/D7 классы, таблицы/side effects, события/агенты, связи с shop/1С и честные ограничения runtime.
+
+### 4. Project intake + корневой файл контекста проекта
+
+Цель: после полного изучения конкретного Bitrix-проекта агент должен не терять найденные факты и не начинать следующий заход “с нуля”.
+
+Нужно закрепить workflow:
+
+1. первый заход: выполнить `project-intake.md`;
+2. полный аудит проекта: собрать facts по public root, модулям, версиям, шаблонам, компонентам, `local/*`, events/agents, tooling, shop/1С endpoints;
+3. создать или обновить в корне клиентского проекта файл `BITRIX_PROJECT_CONTEXT.md`;
+4. в следующих задачах после `AGENTS.md` сначала читать `BITRIX_PROJECT_CONTEXT.md`, затем сверять факты с текущим кодом, если задача рискованная или данные могли измениться.
+
+Definition of done: `README.md`, `SKILL.md`, `project-intake.md`, MCP Market compact-версия и template файла явно описывают этот workflow.
+
 ## Следующие шаги
 
 ### Ближайшие
 
-1. Держать non-commerce reference-слой консистентным при следующих правках.
-2. Держать `pagination.md` связанным с `iblocks.md`, `components.md`, `admin-ui.md`, `grid-admin-modern.md`, `sef-urls.md` и `diagnostic-visibility.md` при новых находках.
-3. Держать `shop-core-module-inventory.md` как source-of-truth по coverage gaps и не обещать runtime-smoke без отдельной Docker/runtime проверки.
-4. Для “как правильно” и “подводные камни” использовать `production-best-practices.md` и `pitfalls-matrix.md` как cross-cutting слой поверх модульных references.
-5. При появлении новых локальных модулей или project overrides добавлять их в маршрут только после проверки по коду.
-6. Поднять Docker/runtime shop-core и прогнать smoke-задачи из `runtime-smoke-verification.md`.
+1. Зафиксировать этот roadmap как актуальный план развития.
+2. Усилить `runtime-smoke-verification.md` под Docker/sandbox execution plan.
+3. Добавить отдельный version-impact reference и связать его с module check.
+4. Доаудировать хвост shop-core modules и обновить inventory coverage.
+5. Прописать `BITRIX_PROJECT_CONTEXT.md` workflow в README/SKILL/project-intake и дать template для проекта.
+6. После этого запускать реальный Docker/runtime smoke и переносить findings обратно в references.
 
 ### Завершённый целевой этап: Production best practices / pitfalls / runtime verification
 
@@ -262,7 +337,7 @@ bitrix-agent-skill/
    - конфликтует кастомный обработчик/override.
 4. Зафиксирован безопасный verification-flow: логи, временные файлы, таблицы, agents/events, component cache, managed/tagged cache, search/index/SEO side effects.
 
-### Следующие шаги после baseline 1.25.0
+### Следующие шаги после code-first baseline
 
 1. Поднять Docker/runtime shop-core и проверить, есть ли живой DB dump или нужна свежая установка.
 2. Подготовить fixtures по `runtime-smoke-verification.md`: catalog/offer/price/stock, basket/checkout/order, CommerceML, `webservice.sale`/`webservice.statistic`, sale/catalog REST events/placements, sender/SMS/banner/conversion/report/statistic, bizproc/list/pull.

@@ -4,6 +4,9 @@
 
 ## [Unreleased]
 
+### Changed
+- `PLAN.md` актуализирован под версию `1.27.0` и roadmap `v1.28+`: Docker/runtime smoke, version impact layer, доаудит хвоста shop-core modules и `BITRIX_PROJECT_CONTEXT.md` workflow.
+
 ## [1.27.0] — 2026-06-19
 
 ### Added
