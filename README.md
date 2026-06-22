@@ -6,7 +6,15 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/Poliklot/bitrix-agent-skill/releases/latest"><img src="https://img.shields.io/github/v/release/Poliklot/bitrix-agent-skill?sort=semver&label=release" alt="Последний релиз" /></a>
+  <a href="https://github.com/Poliklot/bitrix-agent-skill/actions/workflows/release.yml"><img src="https://github.com/Poliklot/bitrix-agent-skill/actions/workflows/release.yml/badge.svg" alt="Publish Release" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/Poliklot/bitrix-agent-skill" alt="Лицензия MIT" /></a>
+</p>
+
+<p align="center">
   <a href="https://github.com/Poliklot/bitrix-agent-skill/releases/latest">Последний релиз</a>
+  · <a href="#установка">Установка</a>
+  · <a href="#что-покрывает">Что покрывает</a>
   · <a href="LICENSE">Лицензия MIT</a>
   · <a href="https://github.com/Poliklot/bitrix-agent-skill/tree/master/mcpmarket/bitrix">Папка для MCP Market</a>
 </p>
@@ -14,6 +22,24 @@
 <p align="center">
   <img src="assets/bitrix-demo-v4.gif" alt="Демонстрация Bitrix Agent Skill в терминале: как делать Bitrix-доработки, которые переживают обновления ядра" width="100%" />
 </p>
+
+## Оглавление
+
+- [Зачем это нужно](#зачем-это-нужно)
+- [Что значит «сначала ядро»](#что-значит-сначала-ядро)
+- [Project intake и файл контекста](#project-intake-и-файл-контекста)
+- [Установка](#установка)
+  - [macOS / Linux](#macos--linux)
+  - [Windows PowerShell](#windows-powershell)
+  - [MCP Market](#mcp-market)
+- [Что покрывает](#что-покрывает)
+- [Примеры запросов](#примеры-запросов)
+- [Как устроено](#как-устроено)
+- [Правила безопасности](#правила-безопасности)
+- [Обновление и сопровождение](#обновление-и-сопровождение)
+- [Требования](#требования)
+- [Обратная связь](#обратная-связь)
+- [Лицензия](#лицензия)
 
 ## Зачем это нужно
 
@@ -223,7 +249,7 @@ powershell -ExecutionPolicy Bypass -File (Join-Path (Join-Path $CodexHome 'skill
 
 Issues и PR приветствуются, особенно если вы приносите новый кейс из реального Bitrix-проекта, проверенный по ядру.
 
-Если навык сэкономил вам время, поставьте звезду репозиторию — это самый понятный сигнал, что Bitrix заслуживает нормального инструменты для агентов.
+Если навык сэкономил вам время, поставьте звезду репозиторию — это самый понятный сигнал, что Bitrix заслуживает нормального инструмента для агентов.
 
 ## Лицензия
 
