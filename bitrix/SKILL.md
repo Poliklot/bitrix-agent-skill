@@ -49,6 +49,7 @@ Designed for Claude Code and Codex on 1C-Bitrix CMS projects.
 - Не опирайся на память, если код можно подтвердить в установленном ядре.
 - Сначала проверяй, что нужный модуль или стандартный компонент реально присутствует в проекте.
 - Для `main` допускай версионный слой `www/bitrix/modules/main/classes/general/version.php`: в текущем core у него нет обычного `install/version.php`.
+- Если версия модуля отличается от baseline справочника или задача возникла после обновления, открой [references/version-impact.md](references/version-impact.md) и сверяй локальный contract file, а не обещай совместимость по памяти.
 - Если модуль отсутствует, не выдумывай решение на его API. Зафиксируй отсутствие как факт и скорректируй подход.
 - Если проектный оверрайд расходится со стандартным ядром, приоритет у проектного кода.
 - Если `local/*` в checkout отсутствует как факт, следующим truth layer считай stock component templates, wizard `site/public/*` и `site/templates/*`, а не предполагаемые project overrides.
@@ -116,7 +117,7 @@ if (!Loader::includeModule('iblock')) {
 1. Выбери режим по [references/behavior-routing.md](references/behavior-routing.md): бытовой ответ, project-first fix, debug chain, component/template, production practice, module-dependent, shop/1C, dangerous data или release.
 2. Если задача относится к конкретному repo, сначала зафиксируй project facts через [references/project-intake.md](references/project-intake.md) или узкий grep из [references/core-grep-cookbook.md](references/core-grep-cookbook.md).
 3. Определи домен задачи: модель данных, блог/контент, компоненты, поиск, SEO, синхронизация, пользователи, админка, производительность, PHP-heavy, интернет-магазин или 1С/CommerceML.
-4. Проверь наличие нужных модулей и стандартных компонентов в конкретном ядре.
+4. Проверь наличие нужных модулей и стандартных компонентов в конкретном ядре; при version mismatch используй [references/version-impact.md](references/version-impact.md).
 5. Посмотри проектные оверрайды и glue-code в `local/`.
 6. Для PHP-heavy задачи отдельно проверь project toolchain: `composer.json`, `phpunit.xml*`, `phpstan*`, `psalm*`, fixer/sniffer, `rector.php`.
 7. Загрузи только релевантные reference-файлы.
@@ -152,7 +153,7 @@ if (!Loader::includeModule('iblock')) {
 | Задача | Минимальный набор |
 |------|------|
 | Бытовой ответ или project-first fix | [references/behavior-routing.md](references/behavior-routing.md), [references/project-intake.md](references/project-intake.md), [references/task-playbooks.md](references/task-playbooks.md), [references/developer-primitives.md](references/developer-primitives.md), [references/first-answer-pitfalls.md](references/first-answer-pitfalls.md), [references/developer-cards.md](references/developer-cards.md), [references/answer-contracts.md](references/answer-contracts.md), [references/core-grep-cookbook.md](references/core-grep-cookbook.md) |
-| Core audit и task routing | [references/core-audit-matrix.md](references/core-audit-matrix.md), [references/noncommerce-task-matrix.md](references/noncommerce-task-matrix.md), [references/shop-task-matrix.md](references/shop-task-matrix.md), [references/reference-map.md](references/reference-map.md) |
+| Core audit, version mismatch и task routing | [references/core-audit-matrix.md](references/core-audit-matrix.md), [references/version-impact.md](references/version-impact.md), [references/noncommerce-task-matrix.md](references/noncommerce-task-matrix.md), [references/shop-task-matrix.md](references/shop-task-matrix.md), [references/reference-map.md](references/reference-map.md) |
 | Production practice / “как правильно” | [references/production-best-practices.md](references/production-best-practices.md), [references/pitfalls-matrix.md](references/pitfalls-matrix.md), [references/runtime-smoke-verification.md](references/runtime-smoke-verification.md), затем доменный reference из [references/reference-map.md](references/reference-map.md) |
 | Components/templates/dataflow/cache/SEO | [references/components.md](references/components.md), [references/templates.md](references/templates.md), [references/component-dataflow-debugging.md](references/component-dataflow-debugging.md), [references/cache-infra.md](references/cache-infra.md), [references/index-cache-diagnostics.md](references/index-cache-diagnostics.md), [references/seo-cache-access.md](references/seo-cache-access.md) |
 | PHP-heavy задача | [references/php-workflow.md](references/php-workflow.md), [references/php-testing.md](references/php-testing.md), [references/php-quality.md](references/php-quality.md), [references/modules-loader.md](references/modules-loader.md), [references/orm.md](references/orm.md) |
@@ -163,7 +164,7 @@ if (!Loader::includeModule('iblock')) {
 
 - Не отвечай общей теорией, если можно проверить проект. Сначала project fact, потом вывод.
 - Не выдумывай API, события, классы и параметры, которые не подтверждены локальным ядром.
-- Не предполагай наличие `catalog`, `sale`, `currency`, `bizproc`, `pull`, `socialnet` без module check.
+- Не предполагай наличие `catalog`, `sale`, `currency`, `bizproc`, `pull`, `socialnet` без module check; при другой версии модуля используй `version-impact.md`.
 - Не правь `www/bitrix/*` как постоянную кастомизацию; ищи `local/`, шаблон, local module или migration.
 - Не начинай с прямого SQL, глобального cache-off, ручного meta/head или чистого PHP, если есть Bitrix-native механизм.
 - Для “в админке есть, на сайте нет” иди по цепочке: source → rights/site binding → component params → filters → result/template → cache/index/SEO.

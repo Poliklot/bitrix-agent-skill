@@ -5,6 +5,7 @@
 ## [Unreleased]
 
 ### Changed
+- Добавлен `version-impact.md` в полную и MCP Market версии: правила проверки module version mismatch, version-sensitive контрактов и осторожных ответов при отличии локального core от baseline.
 - `runtime-smoke-verification.md` и MCP Market compact bundle усилены Docker execution plan: sandbox harness без распространения ядра, secrets, DB dumps и production данных.
 - `PLAN.md` актуализирован под версию `1.27.0` и roadmap `v1.28+`: Docker/runtime smoke, version impact layer, доаудит хвоста shop-core modules и `BITRIX_PROJECT_CONTEXT.md` workflow.
 

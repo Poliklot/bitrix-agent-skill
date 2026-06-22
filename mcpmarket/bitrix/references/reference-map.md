@@ -7,7 +7,7 @@
 | Режим работы, project-first intake и common fix routes | `behavior-routing.md`, `project-intake.md`, `task-playbooks.md`, `core-grep-cookbook.md` |
 | Бытовой ответ: meta/head/assets/includes/request/user/images/cache/mail | `developer-primitives.md`, `first-answer-pitfalls.md`, `developer-cards.md`, `answer-contracts.md` |
 | Release/eval бытового слоя | `eval-prompts.md`, `release-gate.md` |
-| Core audit, task routing, diagnostics, pitfalls, runtime smoke | `core-routing.md` |
+| Core audit, version mismatch, task routing, diagnostics, pitfalls, runtime smoke | `core-routing.md`, `version-impact.md` |
 | PHP architecture, production practice, modules, ORM, DB, events, validation, HTTP | `php-architecture.md` |
 | Iblock/HL/UF/migrations/import-export/SEF | `content-data.md` |
 | Components/templates/pagination/admin UI/file uploader | `components-admin-ui.md` |
@@ -21,7 +21,7 @@
 ## Compact guardrails
 
 - Если задача про конкретный repo — сначала project facts, потом ответ.
-- Если модуль optional — сначала module check.
+- Если модуль optional — сначала module check; если версия отличается от baseline — `version-impact.md`.
 - Не отвечать прямым SQL/core edit/global cache-off/manual meta первым вариантом.
 - Для shop/1C не использовать commerce route без `catalog`/`sale`/`currency` checks.
 - Для подробной полной карты использовать full edition `bitrix/references/reference-map.md`.
