@@ -33,6 +33,44 @@
 - CommerceML fixtures;
 - logs and rollback/reset plan.
 
+## Docker execution plan
+
+Этот reference не должен распространять proprietary Bitrix core, license keys, DB dumps, `upload/` или клиентские secrets. Docker-слой — это **harness**, а не поставка ядра. Core кладётся оператором локально и не коммитится в skill/repo.
+
+Минимальная структура sandbox-проекта:
+
+```text
+bitrix-runtime-smoke/
+├── docker-compose.yml          # php-fpm/apache or nginx, db, optional mailhog
+├── .env.example                # безопасные placeholders, без secrets
+├── www/                        # локально положенное ядро Bitrix, не коммитить
+├── fixtures/                   # синтетические catalog/sale/CommerceML данные
+├── smoke/                      # read-only или idempotent smoke scripts
+└── evidence/                   # logs/screenshots/output, не содержит PII/secrets
+```
+
+Минимальные сервисы:
+
+| Service | Требование | Зачем |
+|---|---|---|
+| `php`/`web` | PHP + расширения под версию Bitrix | public/admin/component smoke |
+| `db` | MySQL/MariaDB с зафиксированной версией и charset | импорт, ORM, индексы, заказы |
+| `mailhog`/stub | локальный перехват email | checkout/sender без реальных писем |
+| `sms/payment/delivery` stubs | fake endpoints or disabled adapters | не трогать реальные внешние сервисы |
+| optional `browser` | Playwright/CLI browser | list/detail/checkout screenshots |
+
+Перед smoke зафиксировать:
+
+```bash
+docker compose ps
+docker compose exec php php -v
+docker compose exec php php -m | sort
+docker compose exec db mysql --version 2>/dev/null || true
+find www/bitrix/modules -maxdepth 1 -mindepth 1 -type d | sort
+```
+
+Правило evidence: все команды, fixture names, module versions и результаты сохранять в `evidence/`, но не коммитить туда персональные данные, ключи, cookies, session ids и реальные XML выгрузки клиента.
+
 ## Минимальный preflight
 
 ```bash

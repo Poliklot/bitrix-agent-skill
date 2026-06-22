@@ -1131,6 +1131,14 @@ catalog product → offer/SKU → price/currency → stock/store → basket avai
 - CommerceML fixtures;
 - logs and rollback/reset plan.
 
+## Docker execution plan
+
+Docker-слой — это harness, а не поставка proprietary Bitrix core. Не коммитить ядро, license keys, DB dumps, `upload/`, реальные CommerceML XML, cookies/session ids и secrets.
+
+Минимальная структура sandbox: `docker-compose.yml`, `.env.example`, локальный `www/`, синтетические `fixtures/`, `smoke/` scripts и `evidence/` без PII/secrets. Минимальные сервисы: `php`/`web`, `db`, `mailhog`/stub, fake SMS/payment/delivery endpoints, optional browser для screenshots.
+
+Перед smoke зафиксировать `docker compose ps`, `php -v`, `php -m`, DB version и список `www/bitrix/modules`. Evidence сохранять как commands + fixture names + module versions + expected/actual + logs/screenshots.
+
 ## Минимальный preflight
 
 ```bash
