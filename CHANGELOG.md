@@ -5,6 +5,7 @@
 ## [Unreleased]
 
 ### Changed
+- Добавлен `shop-core-tail-modules.md` в полную и MCP Market версии: code-first route для `calendar`, `idea`, `learning`, `support`, `wiki`, а также shop-specific частей `b24connector`, `landing`, `mobileapp`; inventory больше не оставляет эти модули в `needs deep audit`.
 - Добавлен `version-impact.md` в полную и MCP Market версии: правила проверки module version mismatch, version-sensitive контрактов и осторожных ответов при отличии локального core от baseline.
 - `runtime-smoke-verification.md` и MCP Market compact bundle усилены Docker execution plan: sandbox harness без распространения ядра, secrets, DB dumps и production данных.
 - `PLAN.md` актуализирован под версию `1.27.0` и roadmap `v1.28+`: Docker/runtime smoke, version impact layer, доаудит хвоста shop-core modules и `BITRIX_PROJECT_CONTEXT.md` workflow.

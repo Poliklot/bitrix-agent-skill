@@ -32,7 +32,7 @@ Designed for Claude Code and Codex on 1C-Bitrix CMS projects.
 
 Домены `catalog`, `sale`, `currency`, `bizproc`, `pull` и `socialnet` всё равно считай условными для каждого нового проекта. Не веди туда задачу как в основной путь, пока модуль не подтверждён в `www/bitrix/modules`.
 
-Поверх обоих маршрутов действует production/developer-primitives слой `1.27.0`: best practices, pitfalls matrix и runtime smoke verification. Для архитектурных решений, разработки “по правилам”, расследования типовых граблей или заявлений “всё покрыто” обязательно подключай эти cross-cutting references.
+Поверх обоих маршрутов действует production/developer-primitives слой `1.27.0`: best practices, pitfalls matrix, tail module routing и runtime smoke verification. Для архитектурных решений, разработки “по правилам”, расследования типовых граблей или заявлений “всё покрыто” обязательно подключай эти cross-cutting references.
 
 ## Источник истины
 
@@ -153,7 +153,7 @@ if (!Loader::includeModule('iblock')) {
 | Задача | Минимальный набор |
 |------|------|
 | Бытовой ответ или project-first fix | [references/behavior-routing.md](references/behavior-routing.md), [references/project-intake.md](references/project-intake.md), [references/task-playbooks.md](references/task-playbooks.md), [references/developer-primitives.md](references/developer-primitives.md), [references/first-answer-pitfalls.md](references/first-answer-pitfalls.md), [references/developer-cards.md](references/developer-cards.md), [references/answer-contracts.md](references/answer-contracts.md), [references/core-grep-cookbook.md](references/core-grep-cookbook.md) |
-| Core audit, version mismatch и task routing | [references/core-audit-matrix.md](references/core-audit-matrix.md), [references/version-impact.md](references/version-impact.md), [references/noncommerce-task-matrix.md](references/noncommerce-task-matrix.md), [references/shop-task-matrix.md](references/shop-task-matrix.md), [references/reference-map.md](references/reference-map.md) |
+| Core audit, version mismatch, tail modules и task routing | [references/core-audit-matrix.md](references/core-audit-matrix.md), [references/version-impact.md](references/version-impact.md), [references/shop-core-tail-modules.md](references/shop-core-tail-modules.md), [references/noncommerce-task-matrix.md](references/noncommerce-task-matrix.md), [references/shop-task-matrix.md](references/shop-task-matrix.md), [references/reference-map.md](references/reference-map.md) |
 | Production practice / “как правильно” | [references/production-best-practices.md](references/production-best-practices.md), [references/pitfalls-matrix.md](references/pitfalls-matrix.md), [references/runtime-smoke-verification.md](references/runtime-smoke-verification.md), затем доменный reference из [references/reference-map.md](references/reference-map.md) |
 | Components/templates/dataflow/cache/SEO | [references/components.md](references/components.md), [references/templates.md](references/templates.md), [references/component-dataflow-debugging.md](references/component-dataflow-debugging.md), [references/cache-infra.md](references/cache-infra.md), [references/index-cache-diagnostics.md](references/index-cache-diagnostics.md), [references/seo-cache-access.md](references/seo-cache-access.md) |
 | PHP-heavy задача | [references/php-workflow.md](references/php-workflow.md), [references/php-testing.md](references/php-testing.md), [references/php-quality.md](references/php-quality.md), [references/modules-loader.md](references/modules-loader.md), [references/orm.md](references/orm.md) |
@@ -168,7 +168,7 @@ if (!Loader::includeModule('iblock')) {
 - Не правь `www/bitrix/*` как постоянную кастомизацию; ищи `local/`, шаблон, local module или migration.
 - Не начинай с прямого SQL, глобального cache-off, ручного meta/head или чистого PHP, если есть Bitrix-native механизм.
 - Для “в админке есть, на сайте нет” иди по цепочке: source → rights/site binding → component params → filters → result/template → cache/index/SEO.
-- Для shop/1C задач учитывай side effects: events, recalculation, discounts, stock reservation, payments/shipments, exchange logs.
+- Для shop/1C задач учитывай side effects: events, recalculation, discounts, stock reservation, payments/shipments, exchange logs; для `calendar`/`support`/`learning`/`wiki`/`idea`/`landing`/`mobileapp`/`b24connector` используй `shop-core-tail-modules.md`.
 - Для PHP-heavy задач сначала проверь project tooling и держи boundary тонким.
 - Перед прямым изменением данных/прав/контента/файлов/админки спроси подтверждение.
 - Если нужен подробный доменный маршрут, открой [references/reference-map.md](references/reference-map.md), а не грузи все references подряд.

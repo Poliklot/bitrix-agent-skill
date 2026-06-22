@@ -195,7 +195,7 @@ Truth layer: `/Users/igormajorov/Downloads/Telegram Desktop/bitrix-shop-core/www
 - наличие `lib/*.php`, `classes/*.php`, install/db files;
 - shop/1С-сигналы в названиях components/admin entrypoints: `catalog`, `sale`, `1c`, `exchange`, `order`, `basket`, `payment`, `delivery`, `store`, `sender`, `report`, `statistic`, `conversion`, `abtest`, `advertising`, `bizproc`, `workflow`.
 
-Этот файл — **inventory**, а не замена глубоким references. Если модуль ниже помечен как `needs deep audit`, нельзя давать детальные API-рецепты без чтения его core-файлов.
+Этот файл — **inventory**, а не замена глубоким references. После добавления `shop-core-tail-modules.md` хвостовые модули закрыты как code-first routes, но без runtime smoke.
 
 ## Главное
 
@@ -216,7 +216,7 @@ Truth layer: `/Users/igormajorov/Downloads/Telegram Desktop/bitrix-shop-core/www
 
 - `covered` — уже есть отдельный reference или устойчивый слой в текущем skill.
 - `covered-partial` — есть общий reference, но shop-specific часть не выделена полностью.
-- `needs deep audit` — модуль есть в shop-core, но отдельный core-first reference ещё не сделан.
+- `needs deep audit` — модуль есть в shop-core, но отдельный core-first reference ещё не сделан; после `shop-core-tail-modules.md` таких модулей в inventory не должно оставаться.
 - `deferred per project` — даже если модуль есть в shop-core, в другом проекте активировать только после проверки `www/bitrix/modules/<module>`.
 
 ## Полная таблица модулей shop-core
@@ -225,14 +225,14 @@ Truth layer: `/Users/igormajorov/Downloads/Telegram Desktop/bitrix-shop-core/www
 |---|---:|---:|---:|---|---|---|---|
 | `abtest` | `26.0.0` | 0 | 5 | A/B тесты, отчёты, связка с conversion | covered | `shop-marketing-analytics.md` | держать вместе с conversion diagnostics |
 | `advertising` | `24.200.0` | 2 | 14 | баннеры/реклама, public components `advertising.banner*` | covered | `shop-marketing-analytics.md` | держать связанным с eShop banner calls |
-| `b24connector` | `25.0.0` | 2 | 9 | CRM/forms/widgets bridge, косвенно shop leads | covered-partial | `b24connector.md`, `rest.md` | проверить shop lead/forms сценарии |
+| `b24connector` | `25.0.0` | 2 | 9 | CRM/forms/widgets bridge, косвенно shop leads | covered | `b24connector.md`, `shop-core-tail-modules.md`, `rest.md` | shop lead/forms сценарии проверять по локальному connector route |
 | `bitrix.eshop` | `25.0.0` | 3 | 1 | готовое eShop-решение, public/templates/demo data | covered | `shop-standard-components.md`, `commerce-workflows.md`, `templates.md` | держать wizard/templates связанными с shop components |
 | `bitrix.sitecorporate` | `26.0.0` | 3 | 0 | corporate wizard, местами `furniture.catalog.*` | covered | `sitecorporate.md` | держать как non-shop с conditional catalog |
 | `bitrixcloud` | `25.100.0` | 4 | 5 | backup/monitoring для shop runtime | covered | `bitrixcloud.md`, `operations-runbook.md` | нет срочного shop deep dive |
 | `bizproc` | `26.200.0` | 49 | 8 | automation/robots/tasks, workflow engine | covered | `shop-automation-bizproc.md`, `workflow.md` | не обещать sale-order robots без provider-а |
 | `bizprocdesigner` | `26.0.0` | 2 | 4 | редактор workflow templates | covered | `shop-automation-bizproc.md`, `workflow.md` | нет срочного shop deep dive |
 | `blog` | `26.400.0` | 35 | 6 | комментарии/контент вокруг витрины | covered | `blog-socialnet.md` | нет срочного shop deep dive |
-| `calendar` | `25.170.0` | 16 | 3 | mail/calendar side-channel, не core shop | needs deep audit | `shop-core-module-inventory.md` | deferred, если будет задача |
+| `calendar` | `25.170.0` | 16 | 3 | mail/calendar side-channel, не core shop | covered | `shop-core-tail-modules.md` | соседний sync/resource/livefeed route; не checkout engine |
 | `catalog` | `25.550.0` | 62 | 44 | товары, SKU, цены, склады, 1С catalog exchange | covered | `catalog.md`, `shop-standard-components.md`, `commerce-1c-integration.md`, `shop-integrations-webservice.md` | product subscription/report side effects см. `shop-marketing-analytics.md`; REST hooks см. `shop-integrations-webservice.md` |
 | `clouds` | `25.100.0` | 0 | 8 | external file storage для catalog images/imports | covered | `clouds.md`, `file-upload-modern.md` | нет срочного shop deep dive |
 | `conversion` | `25.0.0` | 0 | 4 | конверсия магазина, связка с A/B/statistic | covered | `shop-marketing-analytics.md` | держать вместе с A/B/statistic diagnostics |
@@ -242,15 +242,15 @@ Truth layer: `/Users/igormajorov/Downloads/Telegram Desktop/bitrix-shop-core/www
 | `forum` | `26.0.0` | 34 | 20 | comments/discussions, не core checkout | covered | `forum.md` | нет срочного shop deep dive |
 | `highloadblock` | `25.100.0` | 3 | 10 | directory props, refs, auxiliary product data | covered | `highloadblock.md`, `iblock-hl-relations.md` | нет срочного shop deep dive |
 | `iblock` | `25.300.0` | 55 | 29 | основа public `catalog.*` components, properties/sections | covered | `iblocks.md`, `pagination.md`, `shop-standard-components.md` | нет срочного shop deep dive |
-| `idea` | `25.0.0` | 13 | 0 | идеи/feedback/statistic, не core shop | needs deep audit | `shop-core-module-inventory.md` | deferred |
-| `landing` | `26.200.0` | 59 | 5 | landing pages, catalog carousel blocks | covered-partial | `landing.md`, `catalog.md` | проверить `landing.blocks.catalog_*` при задаче |
-| `learning` | `25.0.0` | 15 | 23 | обучение, не core shop | needs deep audit | `shop-core-module-inventory.md` | deferred |
+| `idea` | `25.0.0` | 13 | 0 | идеи/feedback/statistic, не core shop | covered | `shop-core-tail-modules.md` | feedback route; не CRM/sale engine |
+| `landing` | `26.200.0` | 59 | 5 | landing pages, catalog carousel blocks | covered | `landing.md`, `shop-core-tail-modules.md`, `catalog.md` | catalog blocks are presentation/connectors, not product truth |
+| `learning` | `25.0.0` | 15 | 23 | обучение, не core shop | covered | `shop-core-tail-modules.md` | education route; не CommerceML/shop sale без локальной связки |
 | `lists` | `25.600.100` | 19 | 0 | processes/lists, связка с bizproc/iblock | covered | `shop-automation-bizproc.md`, `workflow.md` | нет срочного shop deep dive |
 | `location` | `25.400.0` | 0 | 0 | адреса и locations для доставки/checkout | covered | `location.md`, `sale.md` | нет срочного shop deep dive |
 | `mail` | `26.100.200` | 18 | 14 | mailbox/client/signatures, sender/mail pipeline | covered | `mail-notifications.md`, `shop-marketing-analytics.md` | нет срочного shop deep dive |
 | `main` | `26.150.0` | 82 | 112 | runtime, users, sessions, cache, pagination, mail helpers | covered | `modules-loader.md`, `pagination.md`, `session-auth.md` | нет срочного shop deep dive |
 | `messageservice` | `25.200.100` | 2 | 2 | SMS providers, sender limits/config | covered | `messageservice.md`, `mail-notifications.md`, `shop-marketing-analytics.md` | нет срочного shop deep dive |
-| `mobileapp` | `25.0.100` | 15 | 2 | mobile/admin mobile, sale mobile components используют `sale` | covered-partial | `mobileapp.md`, `sale.md` | проверить mobile orders при задаче |
+| `mobileapp` | `25.0.100` | 15 | 2 | mobile/admin mobile, sale mobile components используют `sale` | covered | `mobileapp.md`, `shop-core-tail-modules.md`, `sale.md` | sale mobile order components remain in `sale` |
 | `perfmon` | `25.300.0` | 0 | 22 | performance diagnostics для магазина | covered | `perfmon.md`, `operations-runbook.md` | нет срочного shop deep dive |
 | `photogallery` | `25.100.0` | 17 | 0 | galleries, не core shop | covered | `photogallery.md` | нет срочного shop deep dive |
 | `pull` | `25.300.0` | 1 | 0 | realtime/push, counters/watches/transport | covered | `shop-automation-bizproc.md`, `push-pull.md` | runtime server config по задаче |
@@ -265,12 +265,12 @@ Truth layer: `/Users/igormajorov/Downloads/Telegram Desktop/bitrix-shop-core/www
 | `statistic` | `26.0.0` | 1 | 66 | traffic/statistics, reports/conversion | covered | `shop-marketing-analytics.md` | следить за runtime/perf side effects |
 | `storeassist` | `24.0.0` | 0 | 15 | shop setup assistant, 1С onboarding pages | covered | `storeassist.md`, `commerce-1c-integration.md` | держать связанным с 1С diagnostics |
 | `subscribe` | `25.0.0` | 5 | 12 | legacy subscriptions/mailings | covered | `subscribe.md`, `mail-notifications.md`, `shop-marketing-analytics.md` | нет срочного shop deep dive |
-| `support` | `26.0.0` | 5 | 27 | support/tickets/coupons, не core shop | needs deep audit | `shop-core-module-inventory.md` | deferred |
+| `support` | `26.0.0` | 5 | 27 | support/tickets/coupons, не core shop | covered | `shop-core-tail-modules.md` | ticket/SLA route; order link только если есть project glue |
 | `translate` | `25.100.0` | 2 | 6 | localization/lang files | covered | `translate.md` | нет срочного shop deep dive |
 | `ui` | `26.150.0` | 16 | 0 | grid/filter/entity selector/uploader UI | covered | `grid-admin-modern.md`, `file-upload-modern.md` | нет срочного shop deep dive |
 | `vote` | `26.0.0` | 11 | 15 | polls/votes | covered | `vote.md` | нет срочного shop deep dive |
 | `webservice` | `26.0.0` | 5 | 0 | `webservice.sale`, `webservice.statistic`, SOAP/WSDL, stssync | covered | `shop-integrations-webservice.md`, `http.md`, `sale.md`, `shop-marketing-analytics.md` | не путать с CommerceML/1С exchange |
-| `wiki` | `25.0.0` | 9 | 0 | wiki/content, not core shop | needs deep audit | `shop-core-module-inventory.md` | deferred |
+| `wiki` | `25.0.0` | 9 | 0 | wiki/content, not core shop | covered | `shop-core-tail-modules.md` | content/social route; not shop KB без локального route |
 | `workflow` | `26.0.0` | 0 | 10 | legacy workflow, statuses/history/files | covered | `shop-automation-bizproc.md`, `workflow.md` | нет срочного shop deep dive |
 
 ## Shop-critical modules already deep enough for baseline
@@ -348,14 +348,15 @@ Covered by `shop-integrations-webservice.md`:
 
 ## Do not overclaim
 
-- Do not say “все shop-core модули глубоко покрыты” until runtime-smoke is done. Standard shop components are covered by `shop-standard-components.md`, marketing/analytics by `shop-marketing-analytics.md`, automation by `shop-automation-bizproc.md`, webservice/REST by `shop-integrations-webservice.md`; production guidance and smoke format live in `production-best-practices.md`, `pitfalls-matrix.md`, `runtime-smoke-verification.md`.
+- Do not say “все shop-core модули runtime-проверены” until runtime-smoke is done. Standard shop components are covered by `shop-standard-components.md`, marketing/analytics by `shop-marketing-analytics.md`, automation by `shop-automation-bizproc.md`, webservice/REST by `shop-integrations-webservice.md`, tail modules by `shop-core-tail-modules.md`; production guidance and smoke format live in `production-best-practices.md`, `pitfalls-matrix.md`, `runtime-smoke-verification.md`.
 - Do not activate `bizproc`, `bizprocdesigner`, `workflow`, `lists`, `pull`, `sender`, `report`, `statistic`, `abtest`, `conversion`, `advertising`, `webservice` in another project unless the module exists locally.
 - Do not infer `sale/catalog` from `iblock` components alone: `iblock` ships `catalog.*` public components even when the `catalog` module may be missing in another checkout.
-- Do not use this inventory as API documentation for `needs deep audit` modules. It is a routing map.
+- Do not use this inventory as API documentation by itself. For tail modules use `shop-core-tail-modules.md`; for runtime claims use `runtime-smoke-verification.md`.
 
 ## Ordered roadmap from this inventory
 
-1. Docker/runtime smoke — because current coverage is code-first and still needs DB/runtime fixtures; use `runtime-smoke-verification.md` as the evidence format.
+1. Tail modules — `shop-core-tail-modules.md` covers `calendar`, `idea`, `learning`, `support`, `wiki` plus shop-specific `b24connector`, `landing`, `mobileapp` routes.
+2. Docker/runtime smoke — because current coverage is code-first and still needs DB/runtime fixtures; use `runtime-smoke-verification.md` as the evidence format.
 2. Deferred per-project modules only when a task needs them.
 
 ---
