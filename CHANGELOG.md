@@ -4,12 +4,18 @@
 
 ## [Unreleased]
 
+## [1.28.0] — 2026-06-22
+
+### Added
+- `version-impact.md` в полной и MCP Market версиях: правила проверки module version mismatch, version-sensitive контрактов и осторожных ответов при отличии локального core от baseline.
+- `shop-core-tail-modules.md` в полной и MCP Market версиях: code-first route для `calendar`, `idea`, `learning`, `support`, `wiki`, а также shop-specific частей `b24connector`, `landing`, `mobileapp`.
+- `BITRIX_PROJECT_CONTEXT.template.md` в полной и MCP Market версиях: шаблон корневого файла `BITRIX_PROJECT_CONTEXT.md` для безопасного snapshot проекта после полного project audit.
+
 ### Changed
-- README, `SKILL.md`, `project-intake.md` и MCP Market compact-версия закрепляют project intake workflow с корневым `BITRIX_PROJECT_CONTEXT.md`; добавлен шаблон `BITRIX_PROJECT_CONTEXT.template.md` для сохранения безопасного snapshot проекта после полного аудита.
-- Добавлен `shop-core-tail-modules.md` в полную и MCP Market версии: code-first route для `calendar`, `idea`, `learning`, `support`, `wiki`, а также shop-specific частей `b24connector`, `landing`, `mobileapp`; inventory больше не оставляет эти модули в `needs deep audit`.
-- Добавлен `version-impact.md` в полную и MCP Market версии: правила проверки module version mismatch, version-sensitive контрактов и осторожных ответов при отличии локального core от baseline.
+- README, `SKILL.md`, `project-intake.md`, `behavior-routing.md`, `reference-map.md` и MCP Market compact-версия закрепляют project intake workflow: агент читает `BITRIX_PROJECT_CONTEXT.md` после `AGENTS.md`, а после полного аудита создаёт или обновляет этот файл.
 - `runtime-smoke-verification.md` и MCP Market compact bundle усилены Docker execution plan: sandbox harness без распространения ядра, secrets, DB dumps и production данных.
-- `PLAN.md` актуализирован под версию `1.27.0` и roadmap `v1.28+`: Docker/runtime smoke, version impact layer, доаудит хвоста shop-core modules и `BITRIX_PROJECT_CONTEXT.md` workflow.
+- `shop-core-module-inventory.md` обновлён: хвостовые модули больше не остаются в `needs deep audit`, но runtime pass по-прежнему требует sandbox/fixtures smoke.
+- `PLAN.md` актуализирован под версию `1.28.0` и roadmap `v1.28+`: Docker/runtime smoke, version impact layer, доаудит хвоста shop-core modules и `BITRIX_PROJECT_CONTEXT.md` workflow.
 
 ## [1.27.0] — 2026-06-19
 
@@ -368,7 +374,8 @@
 ### Added
 - Первый публичный релиз: `SKILL.md`, progressive disclosure архитектура
 
-[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.27.0...HEAD
+[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.28.0...HEAD
+[1.28.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.27.0...v1.28.0
 [1.27.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.26.0...v1.27.0
 [1.26.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.25.0...v1.26.0
 [1.25.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.24.0...v1.25.0
