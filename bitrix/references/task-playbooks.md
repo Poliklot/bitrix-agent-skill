@@ -247,7 +247,7 @@ rg -n 'namespace |ServiceLocator|EventManager::getInstance|Loader::registerAutoL
 Формат:
 
 ```text
-Проверил: [project fact/path].
+Проверил: [факт проекта/path].
 Причина/слой: [why].
 Делаю/предлагаю: [patch or next action].
 Проверить после: [cache/status/page/test].

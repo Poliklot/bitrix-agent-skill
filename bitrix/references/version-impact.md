@@ -144,7 +144,7 @@ rg -n 'checkauth|mode=init|mode=file|mode=import|CommerceML|CML2|BX_CML2|zip|TEM
 
 ## Связанные references
 
-- Project intake — [project-intake.md](project-intake.md)
+- Аудит проекта — [project-intake.md](project-intake.md)
 - Core grep cookbook — [core-grep-cookbook.md](core-grep-cookbook.md)
 - Reference map — [reference-map.md](reference-map.md)
 - Core audit matrix — [core-audit-matrix.md](core-audit-matrix.md)

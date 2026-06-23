@@ -2,7 +2,7 @@
 
 Открывай этот файл в начале задачи, если неясно, какой слой skill нужен: бытовой ответ, диагностика, патч, production-архитектура, shop/1C или release-gate. Цель — не грузить всё подряд и не превращать простой вопрос в лекцию.
 
-Главное правило: **если доступен проект, сначала получить project fact, потом отвечать**. Исключение — пользователь явно просит общую справку без привязки к проекту.
+Главное правило: **если доступен проект, сначала получить факт проекта, потом отвечать**. Исключение — пользователь явно просит общую справку без привязки к проекту.
 
 ## Решение за 30 секунд
 
@@ -18,14 +18,14 @@
 
 | Режим | Триггеры | Что открыть | Что выдать |
 |---|---|---|---|
-| Everyday answer | “как в PHP”, meta/title, CSS/JS, IncludeFile, breadcrumbs, request, user, image, iblock property, cache, mail | `developer-primitives`, `first-answer-pitfalls`, `developer-cards`, `answer-contracts`; при проекте — `core-grep-cookbook` | Короткий Bitrix-native ответ: механизм, где проверить, минимальный пример, side effects. |
-| Project-first fix | “найди где”, “почини”, “почему у нас”, “в этом проекте” | `project-intake`, `task-playbooks`, затем узкий domain reference | Конкретный файл/параметр, причина, патч или next action. |
-| Debug chain | “не выводится”, “в админке есть, на сайте нет”, “404 отдаёт 200”, “письмо не уходит” | `core-grep-cookbook`, domain diagnostics | Проверки по цепочке и вероятная точка отказа; не начинать с cache-off. |
+| Бытовой ответ | “как в PHP”, meta/title, CSS/JS, IncludeFile, breadcrumbs, request, user, image, iblock property, cache, mail | `developer-primitives`, `first-answer-pitfalls`, `developer-cards`, `answer-contracts`; при проекте — `core-grep-cookbook` | Короткий Bitrix-native ответ: механизм, где проверить, минимальный пример, side effects. |
+| Проектная правка | “найди где”, “почини”, “почему у нас”, “в этом проекте” | `project-intake`, `task-playbooks`, затем узкий domain reference | Конкретный файл/параметр, причина, патч или next action. |
+| Диагностическая цепочка | “не выводится”, “в админке есть, на сайте нет”, “404 отдаёт 200”, “письмо не уходит” | `core-grep-cookbook`, domain diagnostics | Проверки по цепочке и вероятная точка отказа; не начинать с cache-off. |
 | Component/template | `IncludeComponent`, шаблон, `$arResult`, `result_modifier`, `component_epilog` | `components`, `templates`, `component-dataflow-debugging`, `core-grep-cookbook` | Где править: params/template/result_modifier/component_epilog/local component. |
 | Production practice | “как правильно”, “архитектура”, “куда класть”, “best practices”, “не сломать обновления” | `production-best-practices`, `pitfalls-matrix`, `php-workflow`, domain reference | Решение через local module/service/migration/event, side effects, verification. |
-| Module-dependent | `iblock`, `highloadblock`, `form`, `sale`, `catalog`, `currency`, `rest`, `bizproc`, `pull` | Module version check, then relevant reference | Если module есть — API route; если нет — ограничение/fallback. |
+| Зависит от модуля | `iblock`, `highloadblock`, `form`, `sale`, `catalog`, `currency`, `rest`, `bizproc`, `pull` | Module version check, then relevant reference | Если module есть — API route; если нет — ограничение/fallback. |
 | Shop/1C | товары, SKU, цены, остатки, заказ, корзина, доставка, оплата, 1С, CommerceML | `shop-task-matrix`, `catalog`, `sale`, `currency`, `commerce-1c-integration` after checks | API-only route, side effects: events, recalculation, stock, discounts, exchange. |
-| Dangerous data | Прямое изменение БД/контента/прав/файлов/админки | `SKILL.md` confirmation block | Сначала подтверждение операции, объекта, изменений и обратимости. |
+| Опасные данные | Прямое изменение БД/контента/прав/файлов/админки | `SKILL.md` confirmation block | Сначала подтверждение операции, объекта, изменений и обратимости. |
 | Skill/release | Обновить skill, release, MCP Market, publish | `release-gate`, `eval-prompts` | Validate, eval, file count, changelog/version sync. |
 
 ## Project-first правило

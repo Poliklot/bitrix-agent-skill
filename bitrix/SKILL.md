@@ -21,7 +21,7 @@ metadata:
 
 Designed for Claude Code and Codex on 1C-Bitrix CMS projects.
 
-Эксперт по 1C-Bitrix CMS. Работаешь от живого проекта: сначала проверяешь установленное ядро, стандартные компоненты и проектные оверрайды, потом предлагаешь решение. Если в проекте есть `BITRIX_PROJECT_CONTEXT.md`, читай его после `AGENTS.md` как persistent snapshot проекта.
+Эксперт по 1C-Bitrix CMS. Работаешь от живого проекта: сначала проверяешь установленное ядро, стандартные компоненты и проектные оверрайды, потом предлагаешь решение. Если в проекте есть `BITRIX_PROJECT_CONTEXT.md`, читай его после `AGENTS.md` как сохранённый снимок проекта.
 
 ## Текущая фаза
 
@@ -52,7 +52,7 @@ Designed for Claude Code and Codex on 1C-Bitrix CMS projects.
 - Если версия модуля отличается от baseline справочника или задача возникла после обновления, открой [references/version-impact.md](references/version-impact.md) и сверяй локальный contract file, а не обещай совместимость по памяти.
 - Если модуль отсутствует, не выдумывай решение на его API. Зафиксируй отсутствие как факт и скорректируй подход.
 - Если проектный оверрайд расходится со стандартным ядром, приоритет у проектного кода.
-- Если `local/*` в checkout отсутствует как факт, следующим truth layer считай stock component templates, wizard `site/public/*` и `site/templates/*`, а не предполагаемые project overrides.
+- Если `local/*` в checkout отсутствует как факт, следующим truth layer считай stock component templates, wizard `site/public/*` и `site/templates/*`, а не предполагаемые проектные оверрайды.
 - Не ссылайся на внешний источник, если локальное ядро говорит обратное.
 
 ## Проверка обновления навыка
@@ -97,12 +97,12 @@ if (!Loader::includeModule('iblock')) {
 - **Production-ready**. Никакого псевдокода: реальные namespace, `use`-импорты, проверки ошибок, обратимость изменений.
 - **Код важнее клик-пути**. Предпочитай миграции, установщики, сервисы, агенты и CLI-скрипты ручным действиям в админке.
 - **Диагностика по цепочке**. Для контента, блога, компонентов и поиска трассируй путь данных от источника до шаблона, кеша и индексов, а не гадай по симптомам.
-- **Project-tooling-first для PHP-задач**. Если в проекте уже есть `composer.json`, `phpunit.xml*`, `phpstan*`, `psalm*`, fixer/sniffer или `rector.php`, используй именно их. Не тащи новый PHP-стек ради одной правки.
+- **Tooling проекта в первую очередь для PHP-задач**. Если в проекте уже есть `composer.json`, `phpunit.xml*`, `phpstan*`, `psalm*`, fixer/sniffer или `rector.php`, используй именно их. Не тащи новый PHP-стек ради одной правки.
 - **Production-practices-first для проектирования**. Когда пользователь просит “как правильно”, “лучшие практики”, “подводные камни” или “можно ли считать покрытым”, открывай `production-best-practices.md`, `pitfalls-matrix.md` и/или `runtime-smoke-verification.md`.
 
-## Режимы работы и project-first UX
+## Режимы работы и проектный UX
 
-Перед загрузкой доменных reference-файлов выбери режим по [references/behavior-routing.md](references/behavior-routing.md): бытовой ответ, project-first fix, debug chain, component/template, production practice, module-dependent, shop/1C, dangerous data или release. Если задача относится к конкретному репозиторию (“у нас”, “найди где”, “почини”, “почему не работает”), сначала прочитай `BITRIX_PROJECT_CONTEXT.md`, если он есть в корне проекта, затем пройди быстрый [references/project-intake.md](references/project-intake.md) или узкий grep из [references/core-grep-cookbook.md](references/core-grep-cookbook.md), затем для типового решения используй [references/task-playbooks.md](references/task-playbooks.md) и отвечай по найденным фактам. После полного project audit создай или обнови `BITRIX_PROJECT_CONTEXT.md` по [assets/BITRIX_PROJECT_CONTEXT.template.md](assets/BITRIX_PROJECT_CONTEXT.template.md).
+Перед загрузкой доменных reference-файлов выбери режим по [references/behavior-routing.md](references/behavior-routing.md): бытовой ответ, проектная правка, диагностическая цепочка, component/template, production practice, зависит от модуля, shop/1C, опасные данные или release. Если задача относится к конкретному репозиторию (“у нас”, “найди где”, “почини”, “почему не работает”), сначала прочитай `BITRIX_PROJECT_CONTEXT.md`, если он есть в корне проекта, затем пройди быстрый [references/project-intake.md](references/project-intake.md) или узкий grep из [references/core-grep-cookbook.md](references/core-grep-cookbook.md), затем для типового решения используй [references/task-playbooks.md](references/task-playbooks.md) и отвечай по найденным фактам. После полного аудита проекта создай или обнови `BITRIX_PROJECT_CONTEXT.md` по [assets/BITRIX_PROJECT_CONTEXT.template.md](assets/BITRIX_PROJECT_CONTEXT.template.md).
 
 ## Бытовой Bitrix-ответник
 
@@ -114,12 +114,12 @@ if (!Loader::includeModule('iblock')) {
 
 ## Рабочий алгоритм
 
-1. Выбери режим по [references/behavior-routing.md](references/behavior-routing.md): бытовой ответ, project-first fix, debug chain, component/template, production practice, module-dependent, shop/1C, dangerous data или release.
-2. Если задача относится к конкретному repo, сначала прочитай `BITRIX_PROJECT_CONTEXT.md` при наличии, затем зафиксируй project facts через [references/project-intake.md](references/project-intake.md) или узкий grep из [references/core-grep-cookbook.md](references/core-grep-cookbook.md).
+1. Выбери режим по [references/behavior-routing.md](references/behavior-routing.md): бытовой ответ, проектная правка, диагностическая цепочка, component/template, production practice, зависит от модуля, shop/1C, опасные данные или release.
+2. Если задача относится к конкретному repo, сначала прочитай `BITRIX_PROJECT_CONTEXT.md` при наличии, затем зафиксируй факты проекта через [references/project-intake.md](references/project-intake.md) или узкий grep из [references/core-grep-cookbook.md](references/core-grep-cookbook.md).
 3. Определи домен задачи: модель данных, блог/контент, компоненты, поиск, SEO, синхронизация, пользователи, админка, производительность, PHP-heavy, интернет-магазин или 1С/CommerceML.
 4. Проверь наличие нужных модулей и стандартных компонентов в конкретном ядре; при version mismatch используй [references/version-impact.md](references/version-impact.md).
 5. Посмотри проектные оверрайды и glue-code в `local/`.
-6. Для PHP-heavy задачи отдельно проверь project toolchain: `composer.json`, `phpunit.xml*`, `phpstan*`, `psalm*`, fixer/sniffer, `rector.php`.
+6. Для PHP-heavy задачи отдельно проверь tooling проекта: `composer.json`, `phpunit.xml*`, `phpstan*`, `psalm*`, fixer/sniffer, `rector.php`.
 7. Загрузи только релевантные reference-файлы.
 8. Выбери правильный слой изменения: миграция, сервис, обработчик события, компонент, шаблон, агент, CLI.
 9. Отдельно проговори побочные эффекты: кеш, индексы, права, ЧПУ, поисковую выдачу, фоновые процессы.
@@ -152,7 +152,7 @@ if (!Loader::includeModule('iblock')) {
 
 | Задача | Минимальный набор |
 |------|------|
-| Бытовой ответ или project-first fix | `BITRIX_PROJECT_CONTEXT.md` при наличии, [references/behavior-routing.md](references/behavior-routing.md), [references/project-intake.md](references/project-intake.md), [assets/BITRIX_PROJECT_CONTEXT.template.md](assets/BITRIX_PROJECT_CONTEXT.template.md), [references/task-playbooks.md](references/task-playbooks.md), [references/developer-primitives.md](references/developer-primitives.md), [references/first-answer-pitfalls.md](references/first-answer-pitfalls.md), [references/developer-cards.md](references/developer-cards.md), [references/answer-contracts.md](references/answer-contracts.md), [references/core-grep-cookbook.md](references/core-grep-cookbook.md) |
+| Бытовой ответ или проектная правка | `BITRIX_PROJECT_CONTEXT.md` при наличии, [references/behavior-routing.md](references/behavior-routing.md), [references/project-intake.md](references/project-intake.md), [assets/BITRIX_PROJECT_CONTEXT.template.md](assets/BITRIX_PROJECT_CONTEXT.template.md), [references/task-playbooks.md](references/task-playbooks.md), [references/developer-primitives.md](references/developer-primitives.md), [references/first-answer-pitfalls.md](references/first-answer-pitfalls.md), [references/developer-cards.md](references/developer-cards.md), [references/answer-contracts.md](references/answer-contracts.md), [references/core-grep-cookbook.md](references/core-grep-cookbook.md) |
 | Core audit, version mismatch, tail modules и task routing | [references/core-audit-matrix.md](references/core-audit-matrix.md), [references/version-impact.md](references/version-impact.md), [references/shop-core-tail-modules.md](references/shop-core-tail-modules.md), [references/noncommerce-task-matrix.md](references/noncommerce-task-matrix.md), [references/shop-task-matrix.md](references/shop-task-matrix.md), [references/reference-map.md](references/reference-map.md) |
 | Production practice / “как правильно” | [references/production-best-practices.md](references/production-best-practices.md), [references/pitfalls-matrix.md](references/pitfalls-matrix.md), [references/runtime-smoke-verification.md](references/runtime-smoke-verification.md), затем доменный reference из [references/reference-map.md](references/reference-map.md) |
 | Components/templates/dataflow/cache/SEO | [references/components.md](references/components.md), [references/templates.md](references/templates.md), [references/component-dataflow-debugging.md](references/component-dataflow-debugging.md), [references/cache-infra.md](references/cache-infra.md), [references/index-cache-diagnostics.md](references/index-cache-diagnostics.md), [references/seo-cache-access.md](references/seo-cache-access.md) |
@@ -162,14 +162,14 @@ if (!Loader::includeModule('iblock')) {
 
 ## Короткие guardrails
 
-- Не отвечай общей теорией, если можно проверить проект. Сначала project fact, потом вывод.
+- Не отвечай общей теорией, если можно проверить проект. Сначала факт проекта, потом вывод.
 - Не выдумывай API, события, классы и параметры, которые не подтверждены локальным ядром.
 - Не предполагай наличие `catalog`, `sale`, `currency`, `bizproc`, `pull`, `socialnet` без module check; при другой версии модуля используй `version-impact.md`.
 - Не правь `www/bitrix/*` как постоянную кастомизацию; ищи `local/`, шаблон, local module или migration.
 - Не начинай с прямого SQL, глобального cache-off, ручного meta/head или чистого PHP, если есть Bitrix-native механизм.
 - Для “в админке есть, на сайте нет” иди по цепочке: source → rights/site binding → component params → filters → result/template → cache/index/SEO.
 - Для shop/1C задач учитывай side effects: events, recalculation, discounts, stock reservation, payments/shipments, exchange logs; для `calendar`/`support`/`learning`/`wiki`/`idea`/`landing`/`mobileapp`/`b24connector` используй `shop-core-tail-modules.md`.
-- Для PHP-heavy задач сначала проверь project tooling и держи boundary тонким.
+- Для PHP-heavy задач сначала проверь tooling проекта и держи boundary тонким.
 - Перед прямым изменением данных/прав/контента/файлов/админки спроси подтверждение.
 - Если нужен подробный доменный маршрут, открой [references/reference-map.md](references/reference-map.md), а не грузи все references подряд.
 

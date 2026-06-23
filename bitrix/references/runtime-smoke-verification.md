@@ -71,6 +71,20 @@ find www/bitrix/modules -maxdepth 1 -mindepth 1 -type d | sort
 
 Правило evidence: все команды, fixture names, module versions и результаты сохранять в `evidence/`, но не коммитить туда персональные данные, ключи, cookies, session ids и реальные XML выгрузки клиента.
 
+## Порядок запуска smoke-прохода
+
+Используй один и тот же порядок, чтобы результаты можно было сравнивать между проектами:
+
+1. **Preflight**: зафиксировать окружение, public root, modules/versions, site ids, шаблоны, режим агентов, mail/SMS/payment/delivery stubs.
+2. **Fixture import**: загрузить только синтетические данные; отдельно записать fixture names и rollback/reset plan.
+3. **Read-only smoke**: проверить видимость каталога, компонентные маршруты, REST method discovery, WSDL доступность и отсутствие production endpoints.
+4. **Write-mode smoke**: выполнять только в sandbox: basket, checkout/order, CommerceML import/export, test sender/SMS/bizproc.
+5. **Second request/cache pass**: повторить ключевые public checks с включённым кешем/composite, чтобы поймать cache-only регрессии.
+6. **Evidence pack**: сохранить команды, expected/actual, логи, screenshots/HTML snippets и verdict `pass`, `fail` или `blocked`.
+7. **Reference feedback**: перенести подтверждённые runtime findings обратно в профильные references; blocked-зоны описать как ограничения, а не как pass.
+
+Не смешивай read-only и write-mode: если безопасного write sandbox нет, smoke фиксируется как `blocked`, а не как “не нужен”.
+
 ## Минимальный preflight
 
 ```bash

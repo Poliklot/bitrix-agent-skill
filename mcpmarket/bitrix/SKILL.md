@@ -21,7 +21,7 @@ metadata:
 
 MCP Market compact read-only import; full lifecycle edition lives in `bitrix/`.
 
-Эксперт по 1C-Bitrix CMS. Работаешь **core-first**: сначала проверяешь установленное ядро, стандартные компоненты, stock templates и проектные `local/*`-оверрайды, потом предлагаешь решение. Если в проекте есть `BITRIX_PROJECT_CONTEXT.md`, читай его после `AGENTS.md` как persistent snapshot проекта.
+Эксперт по 1C-Bitrix CMS. Работаешь **core-first**: сначала проверяешь установленное ядро, стандартные компоненты, stock templates и проектные `local/*`-оверрайды, потом предлагаешь решение. Если в проекте есть `BITRIX_PROJECT_CONTEXT.md`, читай его после `AGENTS.md` как сохранённый снимок проекта.
 
 Эта папка — компактная версия для MCP Market. Она намеренно не содержит `update.sh`, `install.sh`, `uninstall.sh` и 80+ отдельных reference-файлов, потому что MCP Market ограничивает импортируемую skill-папку 50 файлами. Полная lifecycle-версия находится в `bitrix/` основного репозитория.
 
@@ -62,12 +62,12 @@ foreach (['iblock'] as $module) {
 
 ## Рабочий алгоритм
 
-1. Сначала выбери режим по [references/behavior-routing.md](references/behavior-routing.md): everyday answer, project-first fix, debug chain, component/template, production practice, module-dependent, shop/1C, data mutation или release.
-2. Если задача про конкретный repo (“у нас”, “найди”, “почини”, “почему не работает”), сначала прочитай `BITRIX_PROJECT_CONTEXT.md`, если он есть в корне проекта, затем пройди [references/project-intake.md](references/project-intake.md) или узкий grep из [references/core-grep-cookbook.md](references/core-grep-cookbook.md). После полного project audit создай/обнови `BITRIX_PROJECT_CONTEXT.md` по [assets/BITRIX_PROJECT_CONTEXT.template.md](assets/BITRIX_PROJECT_CONTEXT.template.md).
+1. Сначала выбери режим по [references/behavior-routing.md](references/behavior-routing.md): бытовой ответ, проектная правка, диагностическая цепочка, component/template, production practice, module-dependent, shop/1C, data mutation или release.
+2. Если задача про конкретный repo (“у нас”, “найди”, “почини”, “почему не работает”), сначала прочитай `BITRIX_PROJECT_CONTEXT.md`, если он есть в корне проекта, затем пройди [references/project-intake.md](references/project-intake.md) или узкий grep из [references/core-grep-cookbook.md](references/core-grep-cookbook.md). После полного аудита проекта создай/обнови `BITRIX_PROJECT_CONTEXT.md` по [assets/BITRIX_PROJECT_CONTEXT.template.md](assets/BITRIX_PROJECT_CONTEXT.template.md).
 3. Определи домен задачи: content, component, PHP-heavy, search/SEO/cache, ops, shop или 1С.
 4. Проверь наличие нужных модулей и стандартных компонентов в конкретном ядре; при version mismatch открой [references/version-impact.md](references/version-impact.md).
-5. Посмотри project overrides и glue-code в `local/`.
-6. Для коротких вопросов “как в PHP сделать X” сначала загрузи [references/developer-primitives.md](references/developer-primitives.md), [references/first-answer-pitfalls.md](references/first-answer-pitfalls.md), затем [references/developer-cards.md](references/developer-cards.md) и [references/answer-contracts.md](references/answer-contracts.md); если нужен быстрый project grep — [references/core-grep-cookbook.md](references/core-grep-cookbook.md), затем минимальный релевантный compact bundle из `references/`.
+5. Посмотри проектные оверрайды и glue-code в `local/`.
+6. Для коротких вопросов “как в PHP сделать X” сначала загрузи [references/developer-primitives.md](references/developer-primitives.md), [references/first-answer-pitfalls.md](references/first-answer-pitfalls.md), затем [references/developer-cards.md](references/developer-cards.md) и [references/answer-contracts.md](references/answer-contracts.md); если нужен быстрый grep по проекту — [references/core-grep-cookbook.md](references/core-grep-cookbook.md), затем минимальный релевантный compact bundle из `references/`.
 7. Выбери слой изменения: migration, service, event handler, component, template, agent, CLI. Для “best practices”, “подводные камни” или “покрыто/production-ready” сначала читай production/pitfalls/runtime sections в bundles.
 8. Проговори side effects: cache, indexes, rights, SEF, background processes, sale/order/exchange effects.
 9. Если меняются реальные данные, сначала сделай изменение воспроизводимым и обратимым.
@@ -91,7 +91,7 @@ foreach (['iblock'] as $module) {
 
 | Домен | Bundle |
 |---|---|
-| Режимы работы, project-first intake, persistent `BITRIX_PROJECT_CONTEXT.md` и бытовые вопросы разработчика: meta/title/head, CSS/JS, includes, components, breadcrumbs, request/current user, URL, Loader, 404/redirect, images, iblock properties, cache, mail | [references/behavior-routing.md](references/behavior-routing.md), [references/project-intake.md](references/project-intake.md), [assets/BITRIX_PROJECT_CONTEXT.template.md](assets/BITRIX_PROJECT_CONTEXT.template.md), [references/task-playbooks.md](references/task-playbooks.md), [references/developer-primitives.md](references/developer-primitives.md), [references/first-answer-pitfalls.md](references/first-answer-pitfalls.md), [references/developer-cards.md](references/developer-cards.md), answer format — [references/answer-contracts.md](references/answer-contracts.md), project grep — [references/core-grep-cookbook.md](references/core-grep-cookbook.md); quality gate — [references/eval-prompts.md](references/eval-prompts.md), release gate — [references/release-gate.md](references/release-gate.md) |
+| Режимы работы, аудит проекта, сохранённый `BITRIX_PROJECT_CONTEXT.md` и бытовые вопросы разработчика: meta/title/head, CSS/JS, includes, components, breadcrumbs, request/current user, URL, Loader, 404/redirect, images, iblock properties, cache, mail | [references/behavior-routing.md](references/behavior-routing.md), [references/project-intake.md](references/project-intake.md), [assets/BITRIX_PROJECT_CONTEXT.template.md](assets/BITRIX_PROJECT_CONTEXT.template.md), [references/task-playbooks.md](references/task-playbooks.md), [references/developer-primitives.md](references/developer-primitives.md), [references/first-answer-pitfalls.md](references/first-answer-pitfalls.md), [references/developer-cards.md](references/developer-cards.md), answer format — [references/answer-contracts.md](references/answer-contracts.md), grep по проекту — [references/core-grep-cookbook.md](references/core-grep-cookbook.md); quality gate — [references/eval-prompts.md](references/eval-prompts.md), release gate — [references/release-gate.md](references/release-gate.md) |
 | Audit текущего core, version mismatch, tail modules, full shop-core inventory, non-commerce/shop task routing, visibility/cache/dataflow diagnostics, pitfalls matrix, runtime smoke verification | [references/core-routing.md](references/core-routing.md), [references/version-impact.md](references/version-impact.md), [references/shop-core-tail-modules.md](references/shop-core-tail-modules.md) |
 | PHP workflow, testing, quality, production best practices, legacy modernization, modules, ORM, DB, events, validation, HTTP | [references/php-architecture.md](references/php-architecture.md) |
 | ИБ, HL, UF, migrations, import/export, SEF | [references/content-data.md](references/content-data.md) |
@@ -107,7 +107,7 @@ foreach (['iblock'] as $module) {
 
 - Не опирайся на память, если код можно подтвердить в установленном ядре; при отличии версии от baseline используй `version-impact.md`.
 - Для “как вставить meta title/description” не предлагай ручной `<meta>` как первый шаг: проверь `$APPLICATION->ShowHead()` и `<title><?php $APPLICATION->ShowTitle(); ?></title>`, затем свойства страницы/раздела, SEO-параметры компонента, `SetTitle`/`SetPageProperty`.
-- Не принимай `composer.json` и `phpunit.xml.dist` внутри `www/bitrix/modules/*/vendor` за project tooling.
+- Не принимай `composer.json` и `phpunit.xml.dist` внутри `www/bitrix/modules/*/vendor` за tooling проекта.
 - Для задач “как правильно”, “best practices”, “куда класть код”, “подводные камни” или “можно ли считать покрытым” сначала открывай соответствующий compact bundle: `php-architecture.md` для production practices и `core-routing.md` для pitfalls/runtime smoke.
 - Для задач “в админке есть, на сайте нет” иди по цепочке: data source → permissions/site binding → component params → filters → pagination/sort → `result_modifier.php` → template → cache/index/SEO.
 - Наличие `catalog.*` в `iblock` или templates не доказывает установленный commerce core; для public shop components открывай commerce bundle с `shop-standard-components.md`.

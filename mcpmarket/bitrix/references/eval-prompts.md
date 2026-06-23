@@ -49,5 +49,7 @@
 | B043 | Обмен 1С | checkauth/init/file/import/logs | “just upload XML” |
 | B044 | Товар есть в админке, нет на сайте | visibility chain + catalog/1C refs | clear cache only |
 | B045 | REST webhook | scopes/auth/permissions | token in public template |
+| B046 | Сделай аудит проекта и обнови BITRIX_PROJECT_CONTEXT.md | behavior-routing + project-intake + core-grep + template | общие советы без чтения проекта |
+| B047 | В проекте уже есть BITRIX_PROJECT_CONTEXT.md | project-intake + answer-contracts + core-grep | верить снимку проекта вслепую |
 
 Gate: перед релизом бытового слоя выбрать минимум 15 prompt из разных доменов; `fail = 0`. Полный checklist — `release-gate.md`.

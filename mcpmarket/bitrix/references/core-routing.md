@@ -1140,6 +1140,10 @@ Docker-слой — это harness, а не поставка proprietary Bitrix 
 
 Перед smoke зафиксировать `docker compose ps`, `php -v`, `php -m`, DB version и список `www/bitrix/modules`. Evidence сохранять как commands + fixture names + module versions + expected/actual + logs/screenshots.
 
+## Порядок запуска smoke-прохода
+
+Порядок: preflight → fixture import → read-only smoke → write-mode smoke только в sandbox → second request/cache pass → evidence pack → reference feedback. Не смешивать read-only и write-mode: если безопасного write sandbox нет, сценарий фиксируется как `blocked`, а не как pass.
+
 ## Минимальный preflight
 
 ```bash

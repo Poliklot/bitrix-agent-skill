@@ -1,14 +1,14 @@
-# Project intake
+# Аудит Bitrix-проекта
 
 Открывай, когда задача относится к конкретному repo: “у нас”, “в этом проекте”, “найди где”, “почему не работает”, “почини”, “сделай патч”.
 
-## Persistent project context
+## Долгоживущий контекст проекта
 
-Если в корне проекта есть `BITRIX_PROJECT_CONTEXT.md`, прочитай его после `AGENTS.md`, но до широкого intake. Это snapshot, не абсолютная истина: для рискованных задач и shop/1С/integration изменений перепроверяй код.
+Если в корне проекта есть `BITRIX_PROJECT_CONTEXT.md`, прочитай его после `AGENTS.md`, но до широкого аудита. Это сохранённый снимок проекта, не абсолютная истина: для рискованных задач и shop/1С/integration изменений перепроверяй код.
 
-Если файла нет и проведён полный project audit, создай/обнови `BITRIX_PROJECT_CONTEXT.md` в корне клиентского проекта по шаблону [../assets/BITRIX_PROJECT_CONTEXT.template.md](../assets/BITRIX_PROJECT_CONTEXT.template.md). Не записывать secrets, tokens, cookies, license keys, production XML/дампы и персональные данные.
+Если файла нет и проведён полный аудит проекта, создай/обнови `BITRIX_PROJECT_CONTEXT.md` в корне клиентского проекта по шаблону [../assets/BITRIX_PROJECT_CONTEXT.template.md](../assets/BITRIX_PROJECT_CONTEXT.template.md). Не записывать secrets, tokens, cookies, license keys, production XML/дампы и персональные данные.
 
-## Quick scan
+## Быстрый аудит
 
 ```bash
 find . -maxdepth 5 -type d -path '*/bitrix/modules/main' -print
@@ -18,22 +18,22 @@ find local/templates bitrix/templates www/bitrix/templates -maxdepth 3 \( -name 
 rg -n 'ShowHead|ShowTitle|ShowBodyScripts|ShowPanel|IncludeComponent\(' local bitrix/templates www/bitrix/templates --glob '*.php' 2>/dev/null
 ```
 
-If public root is not `www/`, replace prefix with detected root.
+Если public root не `www/`, замени prefix на найденный root.
 
-## Capture facts
+## Что зафиксировать
 
-| Fact | Why |
+| Факт | Почему важно |
 |---|---|
-| public root | Bitrix paths depend on it. |
-| `local/`, `local/modules`, `local/components`, `local/templates` | Customization layer. |
+| public root | От него зависят Bitrix paths. |
+| `local/`, `local/modules`, `local/components`, `local/templates` | Слой кастомизации проекта. |
 | active template/header/footer | Meta/assets/layout/panel. |
-| `ShowHead`, `ShowTitle`, `ShowBodyScripts` | Everyday head/assets answers. |
-| `IncludeComponent` calls and local component templates | Where output/params live. |
-| module inventory | Do not promise missing APIs. |
-| `404.php`, `urlrewrite.php`, `SEF_*` | Routing/status diagnostics. |
-| cache/composite markers | “Changes not visible” diagnostics. |
-| composer/phpunit/phpstan/psalm/rector | Project tooling first. |
-| events/agents | Custom logic/background jobs. |
+| `ShowHead`, `ShowTitle`, `ShowBodyScripts` | Бытовые ответы про head/assets. |
+| `IncludeComponent` calls and local component templates | Где живут вывод и параметры. |
+| module inventory | Нельзя обещать API отсутствующего модуля. |
+| `404.php`, `urlrewrite.php`, `SEF_*` | Диагностика routing/status. |
+| cache/composite markers | Диагностика “изменения не видны”. |
+| composer/phpunit/phpstan/psalm/rector | Сначала использовать tooling проекта. |
+| events/agents | Кастомная логика и фоновые задачи. |
 
 ## Module check
 
@@ -43,7 +43,7 @@ for m in iblock highloadblock form search seo catalog sale currency rest bizproc
 done
 ```
 
-## Report format
+## Формат отчёта
 
 ```text
 Нашёл по проекту:
@@ -57,12 +57,12 @@ done
 Дальше делаю: [next action].
 ```
 
-For a simple question, show only relevant facts.
+Для простого вопроса показывай только релевантные факты.
 
-## Project context file
+## Файл контекста проекта
 
-Create/update `BITRIX_PROJECT_CONTEXT.md` after full project study, multi-step work, handoff, or discovery of important module/template/shop/1C/integration facts. If template asset is unavailable, create the same sections manually: project passport, public root, modules/versions, templates/head, components, shop, 1С, REST/webservice, events/agents, tooling, cache/SEO/routing, risks, open questions, sources.
+Создавай/обновляй `BITRIX_PROJECT_CONTEXT.md` после полного изучения проекта, многошаговой работы, handoff или обнаружения важных фактов по modules/templates/shop/1C/integrations. Если шаблон недоступен, создай те же разделы вручную: паспорт проекта, public root, modules/versions, templates/head, components, shop, 1С, REST/webservice, events/agents, tooling, cache/SEO/routing, risks, open questions, sources.
 
-## Stop
+## Когда остановиться
 
-Stop intake when target file/layer, module presence, next check/patch, and side effects are clear. Then use the narrow bundle or implement the patch.
+Останови быстрый аудит, когда понятны target file/layer, наличие модуля, следующая проверка/patch и побочные эффекты. Дальше используй узкий bundle или делай патч.

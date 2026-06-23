@@ -72,6 +72,8 @@
 | B048 | Как добавить REST webhook? | `rest`, `http`, `security` | app/webhook scopes, auth, events, permissions | store token in public template |
 | B049 | Как сделать robots noindex для страницы? | `seo-cache-access`, `developer-cards` | `SetPageProperty('robots','noindex, nofollow')`, `ShowHead`, page/component layer | hardcoded meta everywhere |
 | B050 | Как проверить, можно ли идти в catalog/sale? | `core-audit-matrix`, `shop-task-matrix`, `shop-core-module-inventory` | inspect modules `catalog`, `sale`, `currency`, versions, components | assume shop because `catalog.*` template exists |
+| B051 | Сделай аудит проекта и обнови BITRIX_PROJECT_CONTEXT.md | `behavior-routing`, `project-intake`, `core-grep-cookbook`, `BITRIX_PROJECT_CONTEXT.template` | запустить быстрый аудит из корня проекта, собрать public root/modules/templates/local/events/tooling, создать/обновить файл без secrets | начать с общих советов без чтения проекта |
+| B052 | В проекте уже есть BITRIX_PROJECT_CONTEXT.md — что читать перед правкой? | `project-intake`, `answer-contracts`, `core-grep-cookbook` | сначала `AGENTS.md`, затем `BITRIX_PROJECT_CONTEXT.md`, потом перепроверить рискованные факты в текущем коде | верить снимку проекта вслепую |
 
 ## Expected answer skeletons
 

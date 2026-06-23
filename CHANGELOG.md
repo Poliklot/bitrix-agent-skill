@@ -4,15 +4,21 @@
 
 ## [Unreleased]
 
+### Changed
+- Пользовательская терминология сценария проекта выровнена на “аудит проекта” и “снимок проекта” в README, `SKILL.md`, full/compact `project-intake.md`, reference-map, template `BITRIX_PROJECT_CONTEXT.md` и MCP Market compact-навигации.
+- `PLAN.md` обновлён как living-status документ: `version-impact.md`, shop-core tail modules и сценарий `BITRIX_PROJECT_CONTEXT.md` отмечены как закрытые code-first/UX слои, а главным следующим этапом оставлен Docker/runtime smoke evidence.
+- В full и compact `eval-prompts.md` добавлены regression prompts для команды аудита проекта и повторного чтения `BITRIX_PROJECT_CONTEXT.md`.
+- `runtime-smoke-verification.md` и compact `core-routing.md` дополнены порядком smoke-прохода: preflight, fixtures, read-only, write-mode, cache pass, evidence pack и перенос findings обратно в references.
+
 ## [1.28.0] — 2026-06-22
 
 ### Added
 - `version-impact.md` в полной и MCP Market версиях: правила проверки module version mismatch, version-sensitive контрактов и осторожных ответов при отличии локального core от baseline.
 - `shop-core-tail-modules.md` в полной и MCP Market версиях: code-first route для `calendar`, `idea`, `learning`, `support`, `wiki`, а также shop-specific частей `b24connector`, `landing`, `mobileapp`.
-- `BITRIX_PROJECT_CONTEXT.template.md` в полной и MCP Market версиях: шаблон корневого файла `BITRIX_PROJECT_CONTEXT.md` для безопасного snapshot проекта после полного project audit.
+- `BITRIX_PROJECT_CONTEXT.template.md` в полной и MCP Market версиях: шаблон корневого файла `BITRIX_PROJECT_CONTEXT.md` для безопасного снимка проекта после полного аудита проекта.
 
 ### Changed
-- README, `SKILL.md`, `project-intake.md`, `behavior-routing.md`, `reference-map.md` и MCP Market compact-версия закрепляют project intake workflow: агент читает `BITRIX_PROJECT_CONTEXT.md` после `AGENTS.md`, а после полного аудита создаёт или обновляет этот файл.
+- README, `SKILL.md`, `project-intake.md`, `behavior-routing.md`, `reference-map.md` и MCP Market compact-версия закрепляют сценарий аудита проекта: агент читает `BITRIX_PROJECT_CONTEXT.md` после `AGENTS.md`, а после полного аудита создаёт или обновляет этот файл.
 - `runtime-smoke-verification.md` и MCP Market compact bundle усилены Docker execution plan: sandbox harness без распространения ядра, secrets, DB dumps и production данных.
 - `shop-core-module-inventory.md` обновлён: хвостовые модули больше не остаются в `needs deep audit`, но runtime pass по-прежнему требует sandbox/fixtures smoke.
 - `PLAN.md` актуализирован под версию `1.28.0` и roadmap `v1.28+`: Docker/runtime smoke, version impact layer, доаудит хвоста shop-core modules и `BITRIX_PROJECT_CONTEXT.md` workflow.
@@ -24,7 +30,7 @@
 - `bitrix/agents/openai.yaml` и `mcpmarket/bitrix/agents/openai.yaml` — UI metadata для Codex/OpenAI skill-карточки: понятное имя, короткое описание и default prompt с `$bitrix`.
 - `bitrix/references/task-playbooks.md` и compact `mcpmarket/bitrix/references/task-playbooks.md` — практические маршруты “найти → понять слой → изменить → проверить” для meta/head, assets, component/template, iblock property, visibility chain, 404/redirect, form mail, ajax, cache/personalization, shop/catalog/sale, 1С/CommerceML и custom logic задач.
 - `bitrix/references/reference-map.md` и compact `mcpmarket/bitrix/references/reference-map.md` — вынесенная из главного `SKILL.md` карта доменных references и guardrails, чтобы основной skill быстрее маршрутизировал задачу и не загружал длинную навигационную простыню.
-- `bitrix/references/behavior-routing.md`, `bitrix/references/project-intake.md` и compact-версии в `mcpmarket/bitrix/references/` — project-first UX слой: режимы работы агента, 30-секундное определение маршрута, быстрый intake структуры Bitrix-проекта, module/template/head/component facts перед ответом и запрет отвечать общей теорией при доступном проекте.
+- `bitrix/references/behavior-routing.md`, `bitrix/references/project-intake.md` и compact-версии в `mcpmarket/bitrix/references/` — проектный UX-слой: режимы работы агента, 30-секундное определение маршрута, быстрый аудит структуры Bitrix-проекта, факты по module/template/head/component перед ответом и запрет отвечать общей теорией при доступном проекте.
 - `bitrix/references/release-gate.md` и compact `mcpmarket/bitrix/references/release-gate.md` — pre-release checklist для бытового слоя: validate full/compact skills, `git diff --check`, MCP Market file-count, changelog/version sync, full/compact reference sync и минимум 15 eval prompts с `fail = 0`.
 - `bitrix/references/answer-contracts.md` и compact `mcpmarket/bitrix/references/answer-contracts.md` — контракты первого ответа для бытовых задач: short how-to, project-confirmed answer, debug chain, layer answer, module-dependent answer и dangerous data confirmation, чтобы агент отвечал коротко, Bitrix-native и с project checks/side effects.
 - `bitrix/references/core-grep-cookbook.md` и compact `mcpmarket/bitrix/references/core-grep-cookbook.md` — read-only grep cookbook для быстрых project-evidence проверок: public root/modules, meta/head/assets, components/templates, component params, iblock/HL, cache/composite, routing/404/redirect, request/user/CSRF, events/agents, ajax/controllers, mail/webforms, SEO/search, sale/catalog/currency, 1С/CommerceML, admin/grid и logs.

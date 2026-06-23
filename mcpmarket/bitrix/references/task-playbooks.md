@@ -5,7 +5,7 @@
 ## Universal flow
 
 ```text
-1. Find project fact: file, component call, param, module, template.
+1. Найти факт проекта: file, component call, param, module, template.
 2. Pick change layer: page property / component params / template / result_modifier / local module / migration.
 3. Make minimal patch or give exact next action.
 4. Verify side effects: cache, rights, SEO, SEF, composite, events, agents.
@@ -31,7 +31,7 @@
 ## Answer format
 
 ```text
-Проверил: [project fact/path].
+Проверил: [факт проекта/path].
 Причина/слой: [why].
 Делаю/предлагаю: [patch or next action].
 Проверить после: [cache/status/page/test].

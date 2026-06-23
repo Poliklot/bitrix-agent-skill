@@ -22,7 +22,7 @@
 - integration/webservice слой магазина разобран по shop-core: `webservice`, `webservice.sale`, `webservice.statistic`, SOAP/WSDL, `stssync`, REST apps/webhooks/events/placements, sale/catalog REST controllers/events и external app handlers;
 - production best-practices слой добавлен как cross-cutting маршрут: update-safe кастомизация, D7 vs legacy, boundary/service layer, side effects, cache/index/RBAC, security, performance, pitfalls matrix и runtime smoke verification plan;
 - developer-primitives слой добавлен как быстрый бытовой маршрут: meta/title/head, Asset, IncludeFile, breadcrumbs, request/current user, Loader, CFile, Loc и другие типовые Bitrix-примитивы;
-- project-first слой добавлен как рабочий UX: `behavior-routing.md`, `project-intake.md`, `task-playbooks.md`, `core-grep-cookbook.md`, `answer-contracts.md`, `first-answer-pitfalls.md`, `developer-cards.md`, `eval-prompts.md` и `release-gate.md`;
+- проектный UX-слой добавлен как рабочий маршрут: `behavior-routing.md`, `project-intake.md`, `task-playbooks.md`, `core-grep-cookbook.md`, `answer-contracts.md`, `first-answer-pitfalls.md`, `developer-cards.md`, `eval-prompts.md` и `release-gate.md`;
 - пагинационный слой переаудирован по `main` 26.150.0 и shop-core: legacy `CDBResult`, D7 `PageNavigation`, `system.pagenavigation`, `main.pagenavigation`, admin/grid и ajax/lazy load.
 
 ## Активный и условный контур
@@ -130,12 +130,12 @@ bitrix-agent-skill/
 1. Любое новое утверждение в reference-файлах должно подтверждаться локальным core или явно помечаться как version/module-dependent.
 2. Если API найден только в другом Bitrix-стеке, но не в установленном ядре, его нельзя описывать как штатный контракт.
 3. Если проектный код расходится со стандартным ядром, приоритет у проектного кода, но с явной пометкой об оверрайде.
-4. Магазинные задачи и обмен с 1С не должны становиться частью активного маршрута до установки отдельного shop-core и ревизии по реальному коду.
+4. Магазинные задачи и обмен с 1С в каждом клиентском проекте остаются условными до проверки локальных модулей `catalog`, `sale`, `currency` и связанных runtime-контрактов; shop-core baseline — ориентир, а не доказательство для чужого проекта.
 5. После каждой волны ревизии должны синхронно обновляться `SKILL.md`, `VERSION`, а при необходимости `README.md` и `CHANGELOG.md`.
 6. Для commerce/1C-аудита нельзя использовать production-данные, живые ключи и реальные персональные данные клиентов; нужны sandbox и тестовые CommerceML fixtures.
 7. Code-first coverage не равен runtime pass: для production-утверждений нужны smoke fixtures/evidence по `runtime-smoke-verification.md`.
 
-## Roadmap v1.28+
+## Roadmap v1.29+
 
 ### 0. Синхронизировать living-plan
 
@@ -144,9 +144,10 @@ bitrix-agent-skill/
 - текущую версию из `bitrix/VERSION`;
 - какие references считаются активными;
 - где есть только code-first coverage;
-- какие зоны требуют runtime evidence или локальной проверки проекта.
+- какие зоны требуют runtime evidence или локальной проверки проекта;
+- какие пользовательские workflow уже описаны в README и compact-версии.
 
-Definition of done: версия и roadmap не расходятся с `README.md`, `CHANGELOG.md`, `bitrix/SKILL.md` и MCP Market compact-навигацией.
+Definition of done: версия и roadmap не расходятся с `README.md`, `CHANGELOG.md`, `bitrix/SKILL.md`, `bitrix/references/*` и MCP Market compact-навигацией.
 
 ### 1. Docker/runtime smoke evidence
 
@@ -167,58 +168,73 @@ Definition of done: версия и roadmap не расходятся с `README
 
 Definition of done: по каждому сценарию есть sandbox facts, fixtures, steps, expected/actual, logs/screenshots/CLI-output и статус `pass`, `fail` или `blocked` в формате `runtime-smoke-verification.md`.
 
-### 2. Version impact layer
+### 2. Docker/sandbox execution kit
 
-Цель: перестать говорить о версиях как о декоративных числах и сделать практичный слой “что делать, если версия клиента отличается от проверенной”.
+Цель: превратить `runtime-smoke-verification.md` из плана проверки в воспроизводимый набор шагов для агента и человека.
 
-Нужно описать:
+Нужно подготовить:
 
-- где читать версию модуля (`install/version.php`, для `main` — fallback `classes/general/version.php`);
-- какие версии были проверены в shop-core;
-- какие контракты наиболее version-sensitive;
-- какие файлы читать при version mismatch;
-- как формулировать ответ, если локальная версия не совпадает с reference.
+- безопасную структуру sandbox без публикации ядра, secrets, DB dumps и production данных;
+- список обязательных env/config-заглушек;
+- fixtures для каталога, SKU, цены, остатка, корзины, заказа, CommerceML, REST/webservice, marketing и bizproc;
+- read-only и write-mode smoke-команды;
+- правила reset/rollback после каждого сценария;
+- формат evidence, который можно переносить обратно в reference-файлы.
 
-Definition of done: агент не обещает совместимость по памяти, а явно говорит: “контракт проверен на X; в вашем проекте версия Y, поэтому проверяю такие-то файлы”.
+Definition of done: агент может взять пустой sandbox checklist, понять prerequisites, выполнить smoke по шагам и зафиксировать pass/fail/blocked без обращения к production.
 
-### 3. Закрыть хвост shop-core modules
+### 3. Аудит проекта и `BITRIX_PROJECT_CONTEXT.md`
 
-Цель: убрать из inventory слепые зоны, которые сейчас мешают честно говорить о покрытии shop-core.
+Статус: сценарий уже закреплён в `README.md`, `SKILL.md`, `project-intake.md`, MCP Market compact-версии и template файла. В README добавлена явная команда запуска:
 
-В первую очередь доаудировать:
+```text
+/bitrix Сделай аудит проекта и обнови BITRIX_PROJECT_CONTEXT.md
+```
 
-- `calendar`;
-- `idea`;
-- `learning`;
-- `support`;
-- `wiki`;
-- shop-specific части `b24connector`, `landing`, `mobileapp`.
+Дальше поддерживать качество:
 
-Definition of done: для каждого модуля есть code-first route: версия, компоненты, admin entrypoints, legacy/D7 классы, таблицы/side effects, события/агенты, связи с shop/1С и честные ограничения runtime.
+- держать русскую терминологию “аудит проекта” во всех пользовательских описаниях;
+- не переименовывать файл `project-intake.md`, чтобы не ломать ссылки, но внутри писать по-русски;
+- поддерживать regression/eval prompts на запуск аудита и повторное чтение `BITRIX_PROJECT_CONTEXT.md`;
+- следить, чтобы compact MCP Market-версия не отставала от полной.
 
-### 4. Project intake + корневой файл контекста проекта
+Definition of done: новый агент по README понимает, как запустить аудит проекта, где появится `BITRIX_PROJECT_CONTEXT.md`, что в него нельзя писать и когда факты надо перепроверять.
 
-Цель: после полного изучения конкретного Bitrix-проекта агент должен не терять найденные факты и не начинать следующий заход “с нуля”.
+### 4. Version impact layer — поддержка
 
-Нужно закрепить workflow:
+Статус: базовый слой уже добавлен в `version-impact.md` и связан с module check.
 
-1. первый заход: выполнить `project-intake.md`;
-2. полный аудит проекта: собрать facts по public root, модулям, версиям, шаблонам, компонентам, `local/*`, events/agents, tooling, shop/1С endpoints;
-3. создать или обновить в корне клиентского проекта файл `BITRIX_PROJECT_CONTEXT.md`;
-4. в следующих задачах после `AGENTS.md` сначала читать `BITRIX_PROJECT_CONTEXT.md`, затем сверять факты с текущим кодом, если задача рискованная или данные могли измениться.
+Дальше поддерживать:
 
-Definition of done: `README.md`, `SKILL.md`, `project-intake.md`, MCP Market compact-версия и template файла явно описывают этот workflow.
+- список version-sensitive контрактов по мере новых находок;
+- формулировки ответа при mismatch: “контракт проверен на X; в вашем проекте версия Y, поэтому проверяю такие-то файлы”;
+- ссылки из доменных references на `version-impact.md`, если появляется риск слепой совместимости;
+- compact-версию в `mcpmarket/bitrix/references/version-impact.md`.
+
+Definition of done: агент не обещает совместимость по памяти и всегда указывает локальные файлы, которые проверил при отличии версии.
+
+### 5. Shop-core tail modules — поддержка
+
+Статус: хвостовые модули (`calendar`, `idea`, `learning`, `support`, `wiki`, shop-specific части `b24connector`, `landing`, `mobileapp`) закрыты code-first маршрутом в `shop-core-tail-modules.md`.
+
+Дальше поддерживать:
+
+- честную границу “code-first route есть, runtime pass ещё нет”;
+- связи tail modules с shop/1С, REST, mobile, landing и support flows;
+- inventory coverage в `shop-core-module-inventory.md`;
+- compact-навигацию MCP Market.
+
+Definition of done: хвостовые модули не выглядят слепыми зонами, но агент не выдаёт их за runtime-проверенные без smoke evidence.
 
 ## Следующие шаги
 
 ### Ближайшие
 
-1. Зафиксировать этот roadmap как актуальный план развития.
-2. Усилить `runtime-smoke-verification.md` под Docker/sandbox execution plan.
-3. Добавить отдельный version-impact reference и связать его с module check.
-4. Доаудировать хвост shop-core modules и обновить inventory coverage.
-5. Прописать `BITRIX_PROJECT_CONTEXT.md` workflow в README/SKILL/project-intake и дать template для проекта.
-6. После этого запускать реальный Docker/runtime smoke и переносить findings обратно в references.
+1. Подготовить первый sandbox smoke-пакет: catalog visibility + SKU/price/stock + basket/order.
+2. После первого runtime smoke перенести findings обратно в `catalog.md`, `sale.md`, `commerce-1c-integration.md`, `shop-task-matrix.md` и compact bundle.
+3. Расширить smoke-пакет до CommerceML import/export, REST/webservice, marketing и bizproc.
+4. Поддерживать sync full/compact по терминологии “аудит проекта” и “снимок проекта”.
+5. Перед релизом прогонять `scripts/validate_skill.py` и минимум 15 eval prompts, включая новые сценарии аудита проекта.
 
 ### Завершённый целевой этап: Production best practices / pitfalls / runtime verification
 

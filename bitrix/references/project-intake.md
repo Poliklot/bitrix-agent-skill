@@ -1,18 +1,18 @@
-# Project intake для Bitrix-проекта
+# Аудит Bitrix-проекта
 
 Открывай, когда задача относится к конкретному репозиторию: “у нас”, “в этом проекте”, “найди где”, “почему не работает”, “почини”, “сделай патч”. Цель — за 1–3 минуты понять структуру Bitrix-проекта и отвечать по фактам, а не по памяти.
 
-Не запускай этот intake для чисто теоретического вопроса без доступа к проекту.
+Не запускай этот аудит для чисто теоретического вопроса без доступа к проекту.
 
 ## Долгоживущий контекст проекта
 
-Если в корне проекта есть `BITRIX_PROJECT_CONTEXT.md`, прочитай его после `AGENTS.md` и пользовательских инструкций, но до нового широкого intake. Это snapshot уже изученного проекта, а не абсолютная истина: для рискованных задач, изменений данных, shop/1С, прав, кеша, REST/webservice и обновлений перепроверяй факты в текущем коде.
+Если в корне проекта есть `BITRIX_PROJECT_CONTEXT.md`, прочитай его после `AGENTS.md` и пользовательских инструкций, но до нового широкого аудита. Это сохранённый снимок уже изученного проекта, а не абсолютная истина: для рискованных задач, изменений данных, shop/1С, прав, кеша, REST/webservice и обновлений перепроверяй факты в текущем коде.
 
-Если файла нет и ты провёл полный intake/audit проекта, создай `BITRIX_PROJECT_CONTEXT.md` в корне клиентского проекта по шаблону [../assets/BITRIX_PROJECT_CONTEXT.template.md](../assets/BITRIX_PROJECT_CONTEXT.template.md). Для короткого одноразового вопроса файл можно не создавать; для длинной разработки, серии задач или handoff — создавать обязательно.
+Если файла нет и ты провёл полный аудит проекта, создай `BITRIX_PROJECT_CONTEXT.md` в корне клиентского проекта по шаблону [../assets/BITRIX_PROJECT_CONTEXT.template.md](../assets/BITRIX_PROJECT_CONTEXT.template.md). Для короткого одноразового вопроса файл можно не создавать; для длинной разработки, серии задач или handoff — создавать обязательно.
 
-В `BITRIX_PROJECT_CONTEXT.md` нельзя записывать secrets, cookies, tokens, пароли, license keys, production XML/дампы, персональные данные и приватные payloads. Файл должен содержать только безопасные project facts: public root, modules/versions, шаблоны, компоненты, `local/*`, events/agents, tooling, shop/1С endpoints, runtime/smoke status, риски и открытые вопросы.
+В `BITRIX_PROJECT_CONTEXT.md` нельзя записывать secrets, cookies, tokens, пароли, license keys, production XML/дампы, персональные данные и приватные payloads. Файл должен содержать только безопасные факты проекта: public root, modules/versions, шаблоны, компоненты, `local/*`, events/agents, tooling, shop/1С endpoints, runtime/smoke status, риски и открытые вопросы.
 
-## Быстрый intake
+## Быстрый аудит
 
 Запускать из корня репозитория. Если команда падает из-за отсутствующей папки — это факт проекта, не ошибка.
 
@@ -40,11 +40,11 @@ rg -n 'ShowHead|ShowTitle|ShowBodyScripts|ShowPanel|IncludeComponent\(' \
 | Факт | Как искать | Почему важно |
 |---|---|---|
 | Public root | `*/bitrix/modules/main` | Все Bitrix paths зависят от public root. |
-| Project layer | `local/`, `local/modules`, `local/components`, `local/templates` | Постоянные правки должны идти сюда, не в core. |
-| Active template | `header.php`, `footer.php`, `SITE_TEMPLATE_PATH`, calls on pages | Для meta/assets/panel/layout. |
-| Head contract | `ShowHead`, `ShowTitle`, `ShowBodyScripts` | Решает бытовые meta/CSS/JS вопросы. |
-| Components | `IncludeComponent(` and `local/templates/*/components` | Где править вывод и параметры. |
-| Module inventory | `www/bitrix/modules/*/install/version.php` | Нельзя обещать API отсутствующего module. |
+| Слой проекта | `local/`, `local/modules`, `local/components`, `local/templates` | Постоянные правки должны идти сюда, не в core. |
+| Активный шаблон | `header.php`, `footer.php`, `SITE_TEMPLATE_PATH`, calls on pages | Для meta/assets/panel/layout. |
+| Контракт head | `ShowHead`, `ShowTitle`, `ShowBodyScripts` | Решает бытовые meta/CSS/JS вопросы. |
+| Компоненты | `IncludeComponent(` and `local/templates/*/components` | Где править вывод и параметры. |
+| Состав модулей | `www/bitrix/modules/*/install/version.php` | Нельзя обещать API отсутствующего модуля. |
 | 404/routing | `404.php`, `urlrewrite.php`, `SEF_MODE`, `SET_STATUS_404` | Для status/SEO/SEF diagnostics. |
 | Cache/composite | `CACHE_TYPE`, `CACHE_GROUPS`, `StartResultCache`, `Composite`, `Frame` | Для “изменения не видны” и персонализации. |
 | Tooling | `composer.json`, `phpunit.xml*`, `phpstan*`, `psalm*`, `rector.php` | Не тащить новый PHP-stack, если проектный уже есть. |
@@ -75,9 +75,9 @@ find . -maxdepth 3 \( -name composer.json -o -name 'phpunit.xml*' -o -name 'phps
 
 Не считать `www/bitrix/modules/*/vendor/composer.json` project tooling.
 
-## Intake report format
+## Формат отчёта
 
-После intake отвечай кратко:
+После аудита отвечай кратко:
 
 ```text
 Нашёл по проекту:
@@ -98,7 +98,7 @@ find . -maxdepth 3 \( -name composer.json -o -name 'phpunit.xml*' -o -name 'phps
 Значит meta руками вставлять не надо; меняем [page property/component SEO param].
 ```
 
-## Intake для частых задач
+## Быстрый аудит для частых задач
 
 ### Meta/title/CSS/JS
 
@@ -159,7 +159,7 @@ test -f BITRIX_PROJECT_CONTEXT.md || cp path/to/bitrix/assets/BITRIX_PROJECT_CON
 
 ## Когда остановиться
 
-Intake не должен превращаться в аудит всего проекта. Остановиться, когда есть:
+Быстрый аудит не должен превращаться в полный разбор всего проекта. Остановиться, когда есть:
 
 - найденный target file/layer;
 - подтверждённый или отсутствующий module;

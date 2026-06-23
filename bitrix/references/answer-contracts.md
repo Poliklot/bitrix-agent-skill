@@ -32,7 +32,7 @@
 | “Как сделать X?” | **Short how-to**: штатный механизм → где проверить → минимальный пример → side effects. |
 | “Почему X не работает?” | **Debug chain**: источник данных → параметры компонента → result/template → cache/index/rights → что проверить командами. |
 | “Куда править?” | **Layer answer**: страница/параметры компонента/шаблон в `local`/local module/migration; явно сказать “не `www/bitrix/modules`”. |
-| “Напиши код” | **Code answer**: сначала module/project facts, потом production-ready snippet с `use`, checks, errors, escaping. |
+| “Напиши код” | **Code answer**: сначала факты по module/project, потом production-ready snippet с `use`, checks, errors, escaping. |
 | “Есть ли sale/catalog/1C?” | **Module-dependent answer**: сначала module check; если нет — не обещать API. |
 | “Поменяй данные/права/контент” | **Confirmation answer**: перед прямым изменением данных дать блок подтверждения из `SKILL.md`. |
 | “Как правильно/лучшие практики?” | **Practice answer**: открыть production/pitfalls reference, не ограничиваться кликом в админке. |
@@ -67,7 +67,7 @@
 Side effects: [кеш/SEO/права].
 ```
 
-Не писать “обычно” как финальный вывод, если есть конкретный project fact.
+Не писать “обычно” как финальный вывод, если есть конкретный факт проекта.
 
 ## Debug chain
 
