@@ -4,12 +4,17 @@
 
 ## [Unreleased]
 
+## [1.29.0] — 2026-06-23
+
 ### Changed
 - Пользовательская терминология сценария проекта выровнена на “аудит проекта” и “снимок проекта” в README, `SKILL.md`, full/compact `project-intake.md`, reference-map, template `BITRIX_PROJECT_CONTEXT.md` и MCP Market compact-навигации.
 - `PLAN.md` обновлён как living-status документ: `version-impact.md`, shop-core tail modules и сценарий `BITRIX_PROJECT_CONTEXT.md` отмечены как закрытые code-first/UX слои, а главным следующим этапом оставлен Docker/runtime smoke evidence.
 - В full и compact `eval-prompts.md` добавлены regression prompts для команды аудита проекта и повторного чтения `BITRIX_PROJECT_CONTEXT.md`.
 - `runtime-smoke-verification.md` и compact `core-routing.md` дополнены порядком smoke-прохода: preflight, fixtures, read-only, write-mode, cache pass, evidence pack и перенос findings обратно в references.
 - Добавлены конкретные runtime smoke-пакеты `P1–P4`: catalog/SKU/basket/order, CommerceML, REST/webservice, marketing/automation/realtime; compact `core-routing.md` и `shop-task-matrix.md` синхронизированы с очередью smoke-проверок и naming convention для evidence pack.
+- Добавлены шаблоны `assets/runtime-smoke/*`, helper `scripts/init_runtime_evidence.py`, валидатор `scripts/validate_runtime_evidence.py` и проверки в `scripts/validate_skill.py`, чтобы runtime evidence pack был воспроизводимо создаваемым, структурно проверяемым и не содержал очевидных secrets.
+- README и release gate обновлены под runtime evidence workflow: code-first coverage отделён от runtime pass, а релиз с evidence требует `validate_runtime_evidence.py`.
+- В full и compact `eval-prompts.md` добавлены runtime smoke prompts: граница code-first/runtime, blocked write-mode, CommerceML без production 1С, REST scopes и проверка evidence pack.
 
 ## [1.28.0] — 2026-06-22
 
@@ -381,7 +386,8 @@
 ### Added
 - Первый публичный релиз: `SKILL.md`, progressive disclosure архитектура
 
-[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.28.0...HEAD
+[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.29.0...HEAD
+[1.29.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.28.0...v1.29.0
 [1.28.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.27.0...v1.28.0
 [1.27.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.26.0...v1.27.0
 [1.26.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.25.0...v1.26.0

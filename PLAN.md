@@ -7,7 +7,7 @@
 ## Текущий статус
 
 На дату этого плана:
-- актуальная версия навыка: `1.28.0`;
+- актуальная версия навыка: `1.29.0`;
 - точка входа: `bitrix/SKILL.md`;
 - reference-слой: `bitrix/references/*.md`;
 - non-commerce reference-слой прошёл ревизию против установленного core;
@@ -181,7 +181,9 @@ Definition of done: по каждому сценарию есть sandbox facts,
 - правила reset/rollback после каждого сценария;
 - формат evidence, который можно переносить обратно в reference-файлы.
 
-Definition of done: агент может взять пустой sandbox checklist, понять prerequisites, выполнить smoke по шагам и зафиксировать pass/fail/blocked без обращения к production.
+Статус: базовый kit добавлен — `assets/runtime-smoke/*`, `scripts/init_runtime_evidence.py`, `scripts/validate_runtime_evidence.py`, smoke-пакеты `P1–P4`, release gate и compact-навигация. Следующий уровень — реальные runnable smoke scripts или первый sandbox-run.
+
+Definition of done: агент может взять пустой sandbox checklist, понять prerequisites, выполнить smoke по шагам, зафиксировать pass/fail/blocked и проверить evidence pack без обращения к production.
 
 ### 3. Аудит проекта и `BITRIX_PROJECT_CONTEXT.md`
 
@@ -231,10 +233,10 @@ Definition of done: хвостовые модули не выглядят сле
 ### Ближайшие
 
 1. Запустить первый sandbox smoke-пакет `P1`: catalog visibility + SKU/price/stock + basket/order.
-2. После первого runtime smoke перенести findings обратно в `catalog.md`, `sale.md`, `commerce-1c-integration.md`, `shop-task-matrix.md` и compact bundle.
-3. Детализировать fixtures и команды запуска для `P2 CommerceML`, `P3 REST/webservice`, `P4 marketing/automation/realtime`.
-4. Поддерживать sync full/compact по терминологии “аудит проекта” и “снимок проекта”.
-5. Перед релизом прогонять `scripts/validate_skill.py` и минимум 15 eval prompts, включая новые сценарии аудита проекта.
+2. Если sandbox ещё не готов, подготовить runnable helper scripts для P1 route discovery/evidence bootstrap без распространения ядра и secrets.
+3. После первого runtime smoke перенести findings обратно в `catalog.md`, `sale.md`, `commerce-1c-integration.md`, `shop-task-matrix.md` и compact bundle.
+4. Детализировать runnable fixtures/commands для `P2 CommerceML`, `P3 REST/webservice`, `P4 marketing/automation/realtime`.
+5. Перед релизом прогонять `scripts/validate_skill.py`, `scripts/validate_runtime_evidence.py` для всех evidence packs и минимум 15 eval prompts, включая аудит проекта и runtime smoke.
 
 ### Завершённый целевой этап: Production best practices / pitfalls / runtime verification
 

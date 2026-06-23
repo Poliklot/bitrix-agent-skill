@@ -10,6 +10,7 @@
 - `git diff --check` не пустой;
 - `mcpmarket/bitrix` содержит больше 50 файлов;
 - changelog не отражает новый reference/поведение;
+- runtime smoke templates, `scripts/init_runtime_evidence.py` или `scripts/validate_runtime_evidence.py` отсутствуют после изменений runtime smoke слоя;
 - бытовой eval даёт `fail > 0`;
 - compact `SKILL.md` не ссылается на новый critical reference;
 - frontmatter `description` не покрывает новый важный trigger.
@@ -18,6 +19,8 @@
 
 ```bash
 python3 scripts/validate_skill.py
+python3 scripts/init_runtime_evidence.py --package P1 --output /tmp/bitrix-p1-evidence-check
+python3 scripts/validate_runtime_evidence.py path/to/evidence/YYYY-MM-DD-p1-shop-path --package P1  # если есть runtime evidence pack
 python3 /Users/igormajorov/.codex/skills/.system/skill-creator/scripts/quick_validate.py bitrix
 python3 /Users/igormajorov/.codex/skills/.system/skill-creator/scripts/quick_validate.py mcpmarket/bitrix
 git diff --check
@@ -28,12 +31,25 @@ git status -sb
 Expected:
 
 - `scripts/validate_skill.py`: `All validation checks passed.`;
+- `scripts/init_runtime_evidence.py`: создаёт `summary.md`, `00-preflight.md` и scenario files;
+- `scripts/validate_runtime_evidence.py`: `Runtime evidence validation passed.`, если релиз включает runtime evidence pack;
 - both validates: `Skill is valid!`;
 - `git diff --check`: no output;
 - file count: `<= 50`;
 - status: only intended files.
 
-If `quick_validate.py` fails because the local Python has no `yaml` module, treat that as an environment issue and require `scripts/validate_skill.py` as fallback. It checks frontmatter, `agents/openai.yaml`, MCP file count, internal links, critical-reference sync, eval prompt coverage, forbidden markers and `git diff --check` without third-party packages.
+If `quick_validate.py` fails because the local Python has no `yaml` module, treat that as an environment issue and require `scripts/validate_skill.py` as fallback. It checks frontmatter, `agents/openai.yaml`, MCP file count, internal links, critical-reference sync, runtime smoke templates/validator, eval prompt coverage, forbidden markers and `git diff --check` without third-party packages.
+
+## Runtime evidence gate
+
+Если в релиз входит runtime evidence pack или утверждение “runtime-проверено”, запустить:
+
+```bash
+python3 scripts/init_runtime_evidence.py --package P1 --output evidence/YYYY-MM-DD-p1-shop-path
+python3 scripts/validate_runtime_evidence.py evidence/YYYY-MM-DD-p1-shop-path --package P1
+```
+
+Для `P2–P4` заменить `--package`. `blocked` — допустимый finding, но не runtime pass; в changelog/reference писать “runtime verification blocked by X”.
 
 ## Everyday eval gate
 
@@ -41,7 +57,8 @@ Run at least 15 prompts from `eval-prompts.md` across different domains. Recomme
 
 ```text
 B001, B004, B007, B009, B011, B013, B016, B018,
-B021, B023, B025, B028, B030, B031, B043, B046
+B021, B023, B025, B028, B030, B031, B043, B046,
+B048, B052
 ```
 
 Threshold:

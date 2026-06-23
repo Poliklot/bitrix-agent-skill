@@ -51,5 +51,10 @@
 | B045 | REST webhook | scopes/auth/permissions | token in public template |
 | B046 | Сделай аудит проекта и обнови BITRIX_PROJECT_CONTEXT.md | behavior-routing + project-intake + core-grep + template | общие советы без чтения проекта |
 | B047 | В проекте уже есть BITRIX_PROJECT_CONTEXT.md | project-intake + answer-contracts + core-grep | верить снимку проекта вслепую |
+| B048 | Можно ли считать магазин runtime-проверенным? | runtime smoke + shop matrix + release gate | “да, покрыто справочником” |
+| B049 | P1 smoke без safe write sandbox | runtime smoke | запускать заказ/оплату на production |
+| B050 | CommerceML без production 1С | runtime smoke + commerce | подключить реальную 1С |
+| B051 | REST webhook scopes неизвестны | runtime smoke + REST/webservice | сохранить токен в evidence |
+| B052 | Проверить evidence pack перед релизом | release gate + runtime smoke validator | принять папку без validation |
 
 Gate: перед релизом бытового слоя выбрать минимум 15 prompt из разных доменов; `fail = 0`. Полный checklist — `release-gate.md`.

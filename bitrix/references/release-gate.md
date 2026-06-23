@@ -12,6 +12,7 @@
 - `git diff --check` находит whitespace/error;
 - MCP Market folder содержит `> 50` файлов;
 - changelog не описывает новый reference/поведение;
+- runtime smoke templates, `scripts/init_runtime_evidence.py` или `scripts/validate_runtime_evidence.py` отсутствуют после изменений runtime smoke слоя;
 - бытовой regression даёт `fail > 0`;
 - в ответах eval есть первый шаг из [first-answer-pitfalls.md](first-answer-pitfalls.md);
 - compact-версия не содержит новый critical reference или ссылку на него из `mcpmarket/bitrix/SKILL.md`;
@@ -23,6 +24,8 @@
 
 ```bash
 python3 scripts/validate_skill.py
+python3 scripts/init_runtime_evidence.py --package P1 --output /tmp/bitrix-p1-evidence-check
+python3 scripts/validate_runtime_evidence.py path/to/evidence/YYYY-MM-DD-p1-shop-path --package P1  # если есть runtime evidence pack
 python3 /Users/igormajorov/.codex/skills/.system/skill-creator/scripts/quick_validate.py bitrix
 python3 /Users/igormajorov/.codex/skills/.system/skill-creator/scripts/quick_validate.py mcpmarket/bitrix
 git diff --check
@@ -33,12 +36,33 @@ git status -sb
 Ожидание:
 
 - `python3 scripts/validate_skill.py` → `All validation checks passed.`;
+- `python3 scripts/init_runtime_evidence.py ...` → создаёт `summary.md`, `00-preflight.md` и scenario files;
+- `python3 scripts/validate_runtime_evidence.py ...` → `Runtime evidence validation passed.`, если в релиз входит runtime evidence pack;
 - оба `quick_validate.py` → `Skill is valid!`;
 - `git diff --check` без вывода;
 - `find ... | wc -l` ≤ `50`;
 - `git status -sb` показывает только ожидаемые файлы.
 
-Если `quick_validate.py` недоступен из-за локального окружения, например `ModuleNotFoundError: No module named 'yaml'`, не чинить это правкой skill-а. Зафиксировать причину как environment issue и использовать `scripts/validate_skill.py` как обязательный fallback: он проверяет frontmatter, `agents/openai.yaml`, MCP Market file-count, внутренние markdown-ссылки, синхронизацию critical references, eval prompt coverage, forbidden markers и `git diff --check` без сторонних Python-пакетов.
+Если `quick_validate.py` недоступен из-за локального окружения, например `ModuleNotFoundError: No module named 'yaml'`, не чинить это правкой skill-а. Зафиксировать причину как environment issue и использовать `scripts/validate_skill.py` как обязательный fallback: он проверяет frontmatter, `agents/openai.yaml`, MCP Market file-count, внутренние markdown-ссылки, синхронизацию critical references, runtime smoke templates/validator, eval prompt coverage, forbidden markers и `git diff --check` без сторонних Python-пакетов.
+
+## Runtime evidence gate
+
+Если изменения включают runtime smoke evidence или утверждение “проверено в runtime”, дополнительно проверить evidence pack:
+
+```bash
+python3 scripts/init_runtime_evidence.py --package P1 --output evidence/YYYY-MM-DD-p1-shop-path
+python3 scripts/validate_runtime_evidence.py evidence/YYYY-MM-DD-p1-shop-path --package P1
+```
+
+Для пакетов `P2–P4` указывать соответствующий `--package`. Валидатор должен подтвердить:
+
+- есть `summary.md`;
+- есть строки обязательных scenarios и verdict `pass/fail/blocked`;
+- есть отдельные scenario files;
+- есть rows по core modules;
+- явные secrets/tokens/cookies не найдены.
+
+Если проверка `blocked`, это допустимый runtime finding, но не runtime pass. В changelog/reference писать “runtime verification blocked by X”, а не “проверено”.
 
 ## Link/readability sanity
 
@@ -94,6 +118,8 @@ grep -R "behavior-routing\\|project-intake\\|reference-map\\|developer-primitive
 | B031 | events |
 | B043 | catalog price after module check |
 | B046 | 1C/CommerceML |
+| B053 | runtime smoke boundary |
+| B057 | evidence validator |
 
 Оценка:
 

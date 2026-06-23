@@ -33,6 +33,7 @@
   - [Windows PowerShell](#windows-powershell)
   - [MCP Market](#mcp-market)
 - [Что покрывает](#что-покрывает)
+- [Статус runtime-проверок](#статус-runtime-проверок)
 - [Примеры запросов](#примеры-запросов)
 - [Как устроено](#как-устроено)
 - [Правила безопасности](#правила-безопасности)
@@ -135,7 +136,7 @@ curl -fsSL https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/
 Установить конкретную версию:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.sh | bash -s -- --version 1.28.0 --claude
+curl -fsSL https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.sh | bash -s -- --version 1.29.0 --claude
 ```
 
 То же самое для PowerShell:
@@ -144,7 +145,7 @@ curl -fsSL https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/
 & ([scriptblock]::Create((irm https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.ps1))) -Claude
 & ([scriptblock]::Create((irm https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.ps1))) -Codex
 & ([scriptblock]::Create((irm https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.ps1))) -Both
-& ([scriptblock]::Create((irm https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.ps1))) -Version 1.28.0 -Claude
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.ps1))) -Version 1.29.0 -Claude
 ```
 
 </details>
@@ -164,6 +165,19 @@ curl -fsSL https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/
 | Эксплуатация | миграции, agents/cron, пошаговые процессы, импорты, резервное копирование, мониторинг, диагностика производительности |
 
 Магазинный маршрут включается в каждом проекте отдельно — только после проверки нужных модулей в `www/bitrix/modules`, если рабочая копия доступна агенту. Отдельная база shop-core описывает 49 модулей, но это не отменяет локальную проверку клиентского проекта.
+
+## Статус runtime-проверок
+
+Справочный слой даёт **code-first** покрытие: агент знает, какие файлы ядра читать и какие маршруты применять. Это не равно runtime pass в конкретном проекте.
+
+Для живой проверки используются smoke-пакеты `P1–P4` из [`bitrix/references/runtime-smoke-verification.md`](bitrix/references/runtime-smoke-verification.md): каталог/SKU/корзина/заказ, CommerceML, REST/webservice, marketing/automation/realtime. Evidence оформляется по шаблонам из [`bitrix/assets/runtime-smoke/`](bitrix/assets/runtime-smoke/):
+
+```bash
+python3 scripts/init_runtime_evidence.py --package P1 --output evidence/YYYY-MM-DD-p1-shop-path
+python3 scripts/validate_runtime_evidence.py evidence/YYYY-MM-DD-p1-shop-path --package P1
+```
+
+Если безопасного sandbox, fixtures или stub-интеграций нет, сценарий отмечается как `blocked`, а не как “проверено”.
 
 ## Примеры запросов
 

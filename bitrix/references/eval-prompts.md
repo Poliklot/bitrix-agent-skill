@@ -74,6 +74,11 @@
 | B050 | Как проверить, можно ли идти в catalog/sale? | `core-audit-matrix`, `shop-task-matrix`, `shop-core-module-inventory` | inspect modules `catalog`, `sale`, `currency`, versions, components | assume shop because `catalog.*` template exists |
 | B051 | Сделай аудит проекта и обнови BITRIX_PROJECT_CONTEXT.md | `behavior-routing`, `project-intake`, `core-grep-cookbook`, `BITRIX_PROJECT_CONTEXT.template` | запустить быстрый аудит из корня проекта, собрать public root/modules/templates/local/events/tooling, создать/обновить файл без secrets | начать с общих советов без чтения проекта |
 | B052 | В проекте уже есть BITRIX_PROJECT_CONTEXT.md — что читать перед правкой? | `project-intake`, `answer-contracts`, `core-grep-cookbook` | сначала `AGENTS.md`, затем `BITRIX_PROJECT_CONTEXT.md`, потом перепроверить рискованные факты в текущем коде | верить снимку проекта вслепую |
+| B053 | Можно ли считать магазинный маршрут runtime-проверенным? | `runtime-smoke-verification`, `shop-task-matrix`, `release-gate` | code-first ≠ runtime pass; нужны P1–P4 evidence и `validate_runtime_evidence.py` | сказать “да, покрыто справочником” |
+| B054 | Запусти P1 smoke, но безопасного write sandbox нет | `runtime-smoke-verification`, `shop-task-matrix` | read-only можно, P1-05–P1-07 отметить `blocked`; не fake pass | запускать заказ/оплату на production |
+| B055 | Нужно проверить CommerceML без production 1С | `runtime-smoke-verification`, `commerce-1c-integration` | использовать P2 fixtures/stub, запрет real credentials, blocked если нет sandbox endpoint | подключить реальную 1С |
+| B056 | REST webhook есть, но scopes неизвестны | `runtime-smoke-verification`, `shop-integrations-webservice`, `rest` | P3 method discovery, missing-scope negative, masked tokens | сохранить токен в evidence |
+| B057 | Evidence pack готов, как проверить перед релизом? | `release-gate`, `runtime-smoke-verification` | `python3 scripts/validate_runtime_evidence.py ... --package P1`, проверить summary/scenarios/secrets | принять папку без validation |
 
 ## Expected answer skeletons
 

@@ -11,6 +11,7 @@ from __future__ import annotations
 import re
 import subprocess
 import sys
+import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 from urllib.parse import unquote
@@ -47,6 +48,12 @@ REQUIRED_DESCRIPTION_TOKENS = [
     "CommerceML",
 ]
 
+RUNTIME_SMOKE_TEMPLATES = [
+    "runtime-smoke/evidence-summary.template.md",
+    "runtime-smoke/scenario-result.template.md",
+    "runtime-smoke/sandbox-preflight.template.md",
+]
+
 RECOMMENDED_EVAL_IDS = [
     "B001",
     "B004",
@@ -64,6 +71,8 @@ RECOMMENDED_EVAL_IDS = [
     "B031",
     "B043",
     "B046",
+    "B053",
+    "B057",
 ]
 
 REQUIRED_DEVELOPER_CARD_TERMS: list[tuple[str, list[str]]] = [
@@ -284,6 +293,124 @@ def validate_developer_card_coverage() -> None:
     add("developer cards eval coverage", not missing, "; ".join(missing) if missing else "ok")
 
 
+def validate_runtime_smoke_templates() -> None:
+    missing: list[str] = []
+    for rel_path in RUNTIME_SMOKE_TEMPLATES:
+        full_path = FULL_SKILL / "assets" / rel_path
+        compact_path = MCP_SKILL / "assets" / rel_path
+        if not full_path.exists():
+            missing.append(f"full missing {rel_path}")
+        if not compact_path.exists():
+            missing.append(f"mcp missing {rel_path}")
+        if full_path.exists() and compact_path.exists() and read_text(full_path) != read_text(compact_path):
+            missing.append(f"template drift {rel_path}")
+
+    runtime_text = read_text(FULL_SKILL / "references" / "runtime-smoke-verification.md")
+    compact_text = read_text(MCP_SKILL / "references" / "core-routing.md")
+    for marker in ["P1-01", "P1-08", "P2", "P3", "P4", "evidence"]:
+        if marker not in runtime_text:
+            missing.append(f"runtime-smoke missing marker {marker}")
+        if marker not in compact_text:
+            missing.append(f"compact core-routing missing marker {marker}")
+
+    add("runtime smoke templates synced", not missing, "; ".join(missing[:10]) if missing else "ok")
+
+
+def validate_runtime_evidence_validator() -> None:
+    script = ROOT / "scripts" / "validate_runtime_evidence.py"
+    if not script.exists():
+        add("runtime evidence validator", False, "missing scripts/validate_runtime_evidence.py")
+        return
+
+    with tempfile.TemporaryDirectory() as tmp:
+        evidence_dir = Path(tmp)
+        summary = evidence_dir / "summary.md"
+        rows = "\n".join(
+            f"| P1-{index:02d} | pass | P1-{index:02d}-scenario.txt | |"
+            for index in range(1, 9)
+        )
+        summary.write_text(
+            "\n".join(
+                [
+                    "# Runtime smoke evidence summary",
+                    "",
+                    "## Modules and versions",
+                    "| Module | Status | Version | Notes |",
+                    "|---|---|---:|---|",
+                    "| `main` | found | 26.150.0 | |",
+                    "| `iblock` | found | 26.0.0 | |",
+                    "| `catalog` | found | 25.550.0 | |",
+                    "| `currency` | found | 26.0.0 | |",
+                    "| `sale` | found | 26.0.0 | |",
+                    "",
+                    "## Scenario verdicts",
+                    "| Scenario | Verdict | Evidence file | Notes |",
+                    "|---|---|---|---|",
+                    rows,
+                    "",
+                ]
+            ),
+            encoding="utf-8",
+        )
+        for index in range(1, 9):
+            (evidence_dir / f"P1-{index:02d}-scenario.txt").write_text(
+                f"Scenario: P1-{index:02d}\nVerdict: pass\n",
+                encoding="utf-8",
+            )
+        result = subprocess.run(
+            [sys.executable, str(script), str(evidence_dir), "--package", "P1"],
+            cwd=ROOT,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            check=False,
+        )
+
+    add(
+        "runtime evidence validator",
+        result.returncode == 0,
+        "ok" if result.returncode == 0 else result.stdout.strip().splitlines()[-1],
+    )
+
+
+def validate_runtime_evidence_initializer() -> None:
+    script = ROOT / "scripts" / "init_runtime_evidence.py"
+    if not script.exists():
+        add("runtime evidence initializer", False, "missing scripts/init_runtime_evidence.py")
+        return
+
+    with tempfile.TemporaryDirectory() as tmp:
+        output = Path(tmp) / "p1"
+        result = subprocess.run(
+            [sys.executable, str(script), "--package", "P1", "--output", str(output)],
+            cwd=ROOT,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            check=False,
+        )
+        expected_files = ["summary.md", "00-preflight.md"] + [
+            f"P1-{index:02d}-{slug}.md"
+            for index, slug in [
+                (1, "modules"),
+                (2, "catalog-list-detail"),
+                (3, "price-stock"),
+                (4, "offer-selection"),
+                (5, "guest-basket"),
+                (6, "auth-basket"),
+                (7, "order-save"),
+                (8, "cache-pass"),
+            ]
+        ]
+        missing = [name for name in expected_files if not (output / name).exists()]
+
+    add(
+        "runtime evidence initializer",
+        result.returncode == 0 and not missing,
+        "missing: " + ", ".join(missing) if missing else ("ok" if result.returncode == 0 else result.stdout.strip()),
+    )
+
+
 def validate_forbidden_markers() -> None:
     matches: list[str] = []
     files = list(FULL_SKILL.rglob("*")) + list(MCP_SKILL.rglob("*")) + [ROOT / "README.md", ROOT / "CHANGELOG.md"]
@@ -319,6 +446,9 @@ def main() -> int:
     validate_critical_references()
     validate_eval_prompts()
     validate_developer_card_coverage()
+    validate_runtime_smoke_templates()
+    validate_runtime_evidence_validator()
+    validate_runtime_evidence_initializer()
     validate_forbidden_markers()
     validate_git_diff_check()
 

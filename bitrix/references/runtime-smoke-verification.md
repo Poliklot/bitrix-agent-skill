@@ -175,6 +175,19 @@ mkdir -p "$SMOKE_EVIDENCE_DIR"
 
 Read-only часть можно начинать с HTTP/browser checks. Write-mode часть (`P1-05`–`P1-07`) запускай только после явного подтверждения sandbox и reset plan. Если нет проектных URL каталога/корзины/checkout, сначала найти их через `IncludeComponent`, `urlrewrite.php`, шаблоны и shop standard components; не угадывать `/catalog/` или `/personal/cart/` как универсальные пути.
 
+Готовые шаблоны лежат в assets:
+
+- [../assets/runtime-smoke/sandbox-preflight.template.md](../assets/runtime-smoke/sandbox-preflight.template.md)
+- [../assets/runtime-smoke/scenario-result.template.md](../assets/runtime-smoke/scenario-result.template.md)
+- [../assets/runtime-smoke/evidence-summary.template.md](../assets/runtime-smoke/evidence-summary.template.md)
+
+Skeleton evidence pack можно создать командой, а после заполнения — проверить:
+
+```bash
+python3 scripts/init_runtime_evidence.py --package P1 --output evidence/YYYY-MM-DD-p1-shop-path
+python3 scripts/validate_runtime_evidence.py evidence/YYYY-MM-DD-p1-shop-path --package P1
+```
+
 Если сценарий падает, не перепрыгивай сразу к следующему “зелёному” результату: сначала классифицируй причину как missing module, bad fixture, component params, rights/site binding, cache, JS/AJAX, sale provider, delivery/payment restriction или sandbox blocker.
 
 ## Пакет 2: 1С / CommerceML
