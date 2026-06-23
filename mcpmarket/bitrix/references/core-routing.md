@@ -1144,6 +1144,41 @@ Docker-слой — это harness, а не поставка proprietary Bitrix 
 
 Порядок: preflight → fixture import → read-only smoke → write-mode smoke только в sandbox → second request/cache pass → evidence pack → reference feedback. Не смешивать read-only и write-mode: если безопасного write sandbox нет, сценарий фиксируется как `blocked`, а не как pass.
 
+## Пакет 1: каталог → SKU/цены/остатки → корзина/заказ
+
+Первый runtime smoke-пакет доказывает минимальный shop path: товар виден, offer выбирается, цена/остаток корректны, товар добавляется в корзину, заказ сохраняется в test mode.
+
+Prerequisites: `main`, `iblock`, `catalog`, `currency`, `sale`; sandbox site/template; test user или guest-only path; fake delivery/payment; mail/SMS stub; rollback/reset plan.
+
+Fixtures: active section, visible simple product, inactive product, product without price, product with zero stock, product with two offers and `CML2_LINK`, store stock, test user, test delivery, test pay system.
+
+Scenarios:
+
+| ID | Что проверить | Pass |
+|---|---|---|
+| P1-01 | module/PHP/DB/site/template preflight | обязательные modules найдены, версии зафиксированы |
+| P1-02 | public catalog list/detail | active виден, inactive скрыт |
+| P1-03 | price/currency/stock | цена/валюта/zero-stock поведение соответствуют настройкам |
+| P1-04 | SKU/offer selection | добавляется offer, а не parent product |
+| P1-05 | guest basket | корзина сохраняется после reload, site/FUSER понятны |
+| P1-06 | auth basket | test user видит корректную цену и корзину |
+| P1-07 | checkout/order save | заказ создан в test mode, payment/shipment collections есть |
+| P1-08 | second request/cache pass | кеш/composite не скрывает товар и не смешивает корзины |
+
+Evidence: `Scenario`, sandbox URL/CLI, modules/versions, fixture names, user mode, steps, expected/actual, HTTP/CLI output, cache state, logs, rollback/reset, verdict `pass/fail/blocked`, follow-up reference changes.
+
+Evidence convention: `evidence/YYYY-MM-DD-p1-shop-path/00-preflight.txt`, `P1-01-modules.txt` … `P1-08-cache-pass.txt`, `summary.md`. Минимальные env: `SMOKE_BASE_URL`, `SMOKE_PUBLIC_ROOT`, `SMOKE_EVIDENCE_DIR`. Write-mode (`P1-05`–`P1-07`) запускать только при подтверждённом sandbox/reset plan. Если URL каталога/корзины/checkout неизвестны, найти их через `IncludeComponent`, `urlrewrite.php` и templates; не угадывать universal paths.
+
+## Пакеты 2–4: следующий runtime smoke
+
+| Пакет | Цель | Минимальные сценарии |
+|---|---|---|
+| P2 CommerceML | проверить sandbox 1С-flow без production credentials | `checkauth`, `init`, `file`, catalog `import`, repeated import idempotency, broken XML negative, order export, non-eligible order exclusion |
+| P3 REST/webservice | развести REST, SOAP/WSDL и CommerceML | method discovery, missing scope negative, sale event, catalog event, placement if needed, `webservice.sale`, `webservice.statistic` |
+| P4 marketing/automation/realtime | проверить побочные shop-маршруты без реальных коммуникаций | sender segment, subscribe/unsubscribe, MailHog/stub mail, SMS fake provider, banner/click, conversion/report/statistic, bizproc/list task, pull/realtime |
+
+Каждый сценарий запускать только после module check. Если нет safe sandbox, stub-а или test fixture — ставить `blocked`, не fake pass.
+
 ## Минимальный preflight
 
 ```bash

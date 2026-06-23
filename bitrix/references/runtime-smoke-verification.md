@@ -85,6 +85,167 @@ find www/bitrix/modules -maxdepth 1 -mindepth 1 -type d | sort
 
 Не смешивай read-only и write-mode: если безопасного write sandbox нет, smoke фиксируется как `blocked`, а не как “не нужен”.
 
+## Пакет 1: каталог → SKU/цены/остатки → корзина/заказ
+
+Это первый обязательный smoke-пакет для превращения shop-route из code-first в runtime-подтверждённый. Его цель — доказать минимальный пользовательский путь: товар виден, offer выбирается, цена/остаток понятны, товар добавляется в корзину, заказ сохраняется в test mode.
+
+### Prerequisites
+
+- Подтверждены модули `main`, `iblock`, `catalog`, `currency`, `sale`.
+- Есть sandbox site id и активный site template.
+- Есть тестовый пользователь или понятный guest-only сценарий.
+- Есть fake/test доставка и fake/test платёжная система; реальные оплаты, кассы и службы доставки не используются.
+- Mail/SMS перехватываются stub/MailHog или отключены безопасно.
+- Есть rollback/reset plan для созданных товаров, корзин, заказов и связанных файлов.
+
+### Минимальные fixtures
+
+| Fixture | Требование | Зачем |
+|---|---|---|
+| `section_active` | активный раздел каталога, привязанный к сайту | public list visibility |
+| `product_simple_visible` | активный товар с ценой, валютой и положительным остатком | базовая карточка/list/detail |
+| `product_inactive` | неактивный товар | negative visibility |
+| `product_no_price` | активный товар без цены для группы пользователя | negative purchaseability |
+| `product_zero_stock` | активный товар с ценой и нулевым остатком | проверка настроек `CAN_BUY_ZERO`/availability |
+| `product_with_offers` | товар с двумя offers и `CML2_LINK` | SKU selection, offer-vs-product add |
+| `store_stock` | минимум один склад/остаток | stock/store behavior |
+| `test_user` | пользователь с предсказуемыми группами | auth basket/order path |
+| `test_delivery` | stub delivery service | checkout без внешней службы |
+| `test_pay_system` | stub pay system | order save без реальной оплаты |
+
+### Сценарии пакета
+
+| ID | Сценарий | Expected evidence | Pass criteria | Blocked if |
+|---|---|---|---|---|
+| P1-01 | Preflight commerce modules | versions for `main`, `iblock`, `catalog`, `currency`, `sale`; PHP/DB/site/template facts | все обязательные modules найдены, версии зафиксированы | отсутствует любой обязательный module |
+| P1-02 | Public catalog list/detail | HTTP/CLI/browser output для list и detail, inactive hidden | активный товар виден в списке и детальной, inactive не виден | нет public route или component/template |
+| P1-03 | Price/currency/stock | output по цене, валюте, stock/store, zero-stock behavior | цена и валюта соответствуют fixture, zero-stock поведение объяснено настройками | нет price type/store settings |
+| P1-04 | SKU/offer selection | выбранный offer id, price/stock выбранного offer, add target | добавляется offer, а не parent product; неверный target диагностирован | нет offers iblock или `CML2_LINK` |
+| P1-05 | Guest basket | add-to-basket response, FUSER/session/site, reload check | товар остаётся в корзине после reload, site/fuser понятны | session/FUSER недоступен в sandbox |
+| P1-06 | Auth basket | login/test user, basket refresh, group price behavior | auth user видит корректную цену и корзину | нет безопасного test user |
+| P1-07 | Checkout/order save | delivery/payment/order props, `Order::save()` result, order id | заказ создан в test mode, payment/shipment collections есть | нет stub delivery/payment или write sandbox |
+| P1-08 | Second request/cache pass | повтор list/detail/basket с кешем/composite | второй запрос не скрывает fixture и не показывает чужую корзину | cache/composite нельзя безопасно включить |
+
+### Evidence pack для пакета 1
+
+Сохраняй отдельный блок или файл evidence для каждого `P1-*`:
+
+```text
+Scenario: P1-XX
+Sandbox URL/CLI:
+Modules/versions:
+Fixture names:
+User mode: guest/auth user id or group
+Steps:
+Expected:
+Actual:
+HTTP status / CLI output:
+Cache/composite state:
+Logs:
+Rollback/reset:
+Verdict: pass/fail/blocked
+Follow-up reference changes:
+```
+
+Рекомендуемая структура evidence для одного прохода:
+
+```text
+evidence/
+└── YYYY-MM-DD-p1-shop-path/
+    ├── 00-preflight.txt
+    ├── P1-01-modules.txt
+    ├── P1-02-catalog-list-detail.txt
+    ├── P1-03-price-stock.txt
+    ├── P1-04-offer-selection.txt
+    ├── P1-05-guest-basket.txt
+    ├── P1-06-auth-basket.txt
+    ├── P1-07-order-save.txt
+    ├── P1-08-cache-pass.txt
+    └── summary.md
+```
+
+Минимальные переменные запуска:
+
+```bash
+export SMOKE_BASE_URL="http://localhost"
+export SMOKE_PUBLIC_ROOT="www"
+export SMOKE_EVIDENCE_DIR="evidence/$(date +%F)-p1-shop-path"
+mkdir -p "$SMOKE_EVIDENCE_DIR"
+```
+
+Read-only часть можно начинать с HTTP/browser checks. Write-mode часть (`P1-05`–`P1-07`) запускай только после явного подтверждения sandbox и reset plan. Если нет проектных URL каталога/корзины/checkout, сначала найти их через `IncludeComponent`, `urlrewrite.php`, шаблоны и shop standard components; не угадывать `/catalog/` или `/personal/cart/` как универсальные пути.
+
+Если сценарий падает, не перепрыгивай сразу к следующему “зелёному” результату: сначала классифицируй причину как missing module, bad fixture, component params, rights/site binding, cache, JS/AJAX, sale provider, delivery/payment restriction или sandbox blocker.
+
+## Пакет 2: 1С / CommerceML
+
+Цель — доказать, что обмен проверяется как управляемый sandbox-flow, а не как “загрузили XML и вроде норм”.
+
+### Prerequisites
+
+- Подтверждены `catalog`, `sale`, `currency`.
+- Включены только sandbox endpoints обмена; production 1С credentials не используются.
+- Есть синтетические CommerceML XML: catalog import, offers/prices/stocks, broken negative fixture, repeated import fixture, order export case.
+- Временная директория обмена очищается до/после сценария; cookies/session ids не попадают в commit.
+
+### Сценарии пакета
+
+| ID | Сценарий | Pass criteria | Blocked if |
+|---|---|---|---|
+| P2-01 | `checkauth` / session contract | sandbox endpoint выдаёт ожидаемый auth/session ответ без production secrets | endpoint недоступен или требует production credentials |
+| P2-02 | `init` settings | понятны zip/file limit/sessid/temp path настройки | настройки не получить безопасно |
+| P2-03 | `file` upload | XML fixture загружается/chunk-ится в temp path | нет write sandbox/temp permissions |
+| P2-04 | catalog `import` | создаются/обновляются товар, offer, price, stock, XML_ID/CML2_LINK | нет catalog fixture или import падает до данных |
+| P2-05 | repeated import idempotency | повторный import не дублирует сущности | idempotency нельзя проверить без reset |
+| P2-06 | broken XML negative | ошибка контролируемая, лог понятен, данные не портятся | нет safe negative fixture |
+| P2-07 | order export | тестовый eligible order попадает в XML export с payment/shipment fields | нет test order или sale export route |
+| P2-08 | non-eligible order exclusion | неподходящий заказ исключён по status/date/site/person type | нет настроек фильтра |
+
+## Пакет 3: REST и webservice
+
+Цель — проверить интеграционный слой без смешивания REST, SOAP/WSDL и CommerceML.
+
+### Prerequisites
+
+- Подтверждены `rest`; для SOAP — `webservice`, при статистике — `statistic`.
+- Используются sandbox app/webhook credentials со строго ограниченными scopes.
+- Токены не пишутся в evidence; в логах оставляются только masked values.
+
+### Сценарии пакета
+
+| ID | Сценарий | Pass criteria | Blocked if |
+|---|---|---|---|
+| P3-01 | REST method discovery | `methods`/`method.get` показывает нужные методы и scopes | нет sandbox app/webhook |
+| P3-02 | missing scope negative | запрос без scope падает безопасно и понятно | нельзя создать negative auth case |
+| P3-03 | sale event binding | test order change создаёт ожидаемое REST event delivery/log | нет `sale` или event delivery недоступна |
+| P3-04 | catalog event binding | product/price change создаёт ожидаемый event/log | нет `catalog` или event binding |
+| P3-05 | placement registration | placement виден только если нужен задаче | placement не используется в sandbox |
+| P3-06 | `webservice.sale` WSDL/SOAP | endpoint доступен в sandbox и не трактуется как order CRUD | нет `webservice.sale` |
+| P3-07 | `webservice.statistic` | результат соответствует sandbox statistic data или честно blocked | нет `statistic` data |
+
+## Пакет 4: marketing, analytics, automation, realtime
+
+Цель — проверить побочные shop-маршруты безопасно: без реальных писем, SMS, рекламы, customer data и production realtime.
+
+### Prerequisites
+
+- Подтверждены нужные модули: `sender`, `mail`, `messageservice`, `subscribe`, `advertising`, `abtest`, `conversion`, `report`, `statistic`, `bizproc`, `lists`, `pull` — каждый сценарий запускается только после module check.
+- Email/SMS только через stub/MailHog/fake provider.
+- Realtime проверяется на sandbox pull config или фиксируется как `blocked`.
+
+### Сценарии пакета
+
+| ID | Сценарий | Pass criteria | Blocked if |
+|---|---|---|---|
+| P4-01 | sender contact/list/segment | sandbox contact попадает в ожидаемый segment | нет `sender` или safe contact fixture |
+| P4-02 | subscribe/unsubscribe | test subscription меняет состояние без реальной рассылки | нет safe mail stub |
+| P4-03 | mail capture | письмо уходит в MailHog/stub, не наружу | mail transport нельзя безопасно перехватить |
+| P4-04 | SMS provider stub | SMS создаётся в fake provider/log, не отправляется клиенту | нет fake provider |
+| P4-05 | advertising/banner click | test banner/click фиксируется в sandbox counters | нет `advertising` или counters |
+| P4-06 | conversion/report/statistic | counters/reports строятся на тестовых данных | нет statistic/report data |
+| P4-07 | bizproc/list task | workflow/list process стартует, task назначен test user | нет safe BP template |
+| P4-08 | pull/realtime | watch/event доходит до sandbox client или fallback documented | нет pull server/client |
+
 ## Минимальный preflight
 
 ```bash

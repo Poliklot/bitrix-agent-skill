@@ -230,9 +230,9 @@ Definition of done: хвостовые модули не выглядят сле
 
 ### Ближайшие
 
-1. Подготовить первый sandbox smoke-пакет: catalog visibility + SKU/price/stock + basket/order.
+1. Запустить первый sandbox smoke-пакет `P1`: catalog visibility + SKU/price/stock + basket/order.
 2. После первого runtime smoke перенести findings обратно в `catalog.md`, `sale.md`, `commerce-1c-integration.md`, `shop-task-matrix.md` и compact bundle.
-3. Расширить smoke-пакет до CommerceML import/export, REST/webservice, marketing и bizproc.
+3. Детализировать fixtures и команды запуска для `P2 CommerceML`, `P3 REST/webservice`, `P4 marketing/automation/realtime`.
 4. Поддерживать sync full/compact по терминологии “аудит проекта” и “снимок проекта”.
 5. Перед релизом прогонять `scripts/validate_skill.py` и минимум 15 eval prompts, включая новые сценарии аудита проекта.
 

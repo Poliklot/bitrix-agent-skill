@@ -97,6 +97,25 @@ done
 
 Полный формат runtime verification смотри в `runtime-smoke-verification.md`; ниже только короткий shop-набор.
 
+Первым запускать **пакет 1** из `runtime-smoke-verification.md`: каталог → SKU/цены/остатки → корзина/заказ. Минимальная матрица пакета:
+
+| ID | Проверка |
+|---|---|
+| P1-01 | preflight modules/PHP/DB/site/template |
+| P1-02 | public catalog list/detail |
+| P1-03 | price/currency/stock |
+| P1-04 | SKU/offer selection |
+| P1-05 | guest basket |
+| P1-06 | auth basket |
+| P1-07 | checkout/order save в test mode |
+| P1-08 | second request/cache pass |
+
+Дальше по очереди:
+
+- `P2 CommerceML`: `checkauth`, `init`, `file`, catalog `import`, repeated import, broken XML, order export;
+- `P3 REST/webservice`: method discovery, missing scope, sale/catalog events, `webservice.sale`, `webservice.statistic`;
+- `P4 marketing/automation/realtime`: sender/subscription, mail/SMS stubs, banner/conversion/report/statistic, bizproc/list task, pull/realtime.
+
 Минимальный sandbox-набор:
 
 - один раздел каталога;

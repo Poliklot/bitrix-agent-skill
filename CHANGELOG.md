@@ -9,6 +9,7 @@
 - `PLAN.md` обновлён как living-status документ: `version-impact.md`, shop-core tail modules и сценарий `BITRIX_PROJECT_CONTEXT.md` отмечены как закрытые code-first/UX слои, а главным следующим этапом оставлен Docker/runtime smoke evidence.
 - В full и compact `eval-prompts.md` добавлены regression prompts для команды аудита проекта и повторного чтения `BITRIX_PROJECT_CONTEXT.md`.
 - `runtime-smoke-verification.md` и compact `core-routing.md` дополнены порядком smoke-прохода: preflight, fixtures, read-only, write-mode, cache pass, evidence pack и перенос findings обратно в references.
+- Добавлены конкретные runtime smoke-пакеты `P1–P4`: catalog/SKU/basket/order, CommerceML, REST/webservice, marketing/automation/realtime; compact `core-routing.md` и `shop-task-matrix.md` синхронизированы с очередью smoke-проверок и naming convention для evidence pack.
 
 ## [1.28.0] — 2026-06-22
 
