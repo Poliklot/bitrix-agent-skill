@@ -2,7 +2,7 @@
 
 Открывай перед пушем, тегом, GitHub release или публикацией MCP Market-версии, когда изменения затрагивают бытовой слой: [behavior-routing.md](behavior-routing.md), [project-intake.md](project-intake.md), [task-playbooks.md](task-playbooks.md), [reference-map.md](reference-map.md), [developer-primitives.md](developer-primitives.md), [developer-cards.md](developer-cards.md), [first-answer-pitfalls.md](first-answer-pitfalls.md), [answer-contracts.md](answer-contracts.md), [core-grep-cookbook.md](core-grep-cookbook.md), [eval-prompts.md](eval-prompts.md) или навигацию в `SKILL.md`.
 
-Цель: релизить только тогда, когда skill валиден, compact-версия не раздута, changelog отражает изменения, а бытовые prompt не проваливаются в чистый PHP/SQL/правку ядра.
+Цель: релизить только тогда, когда skill валиден локально и в CI, compact-версия не раздута, changelog/версия/PLAN синхронизированы, runtime evidence не содержит secrets, а бытовые prompt не проваливаются в чистый PHP/SQL/правку ядра.
 
 ## Стоп-условия
 
@@ -12,7 +12,9 @@
 - `git diff --check` находит whitespace/error;
 - MCP Market folder содержит `> 50` файлов;
 - changelog не описывает новый reference/поведение;
+- `bitrix/VERSION` не имеет секции в `CHANGELOG.md`, `PLAN.md` не упоминает текущую версию или `[Unreleased]` сравнивается не от последнего тега;
 - runtime smoke templates, `scripts/init_runtime_evidence.py` или `scripts/validate_runtime_evidence.py` отсутствуют после изменений runtime smoke слоя;
+- `scripts/bitrix_runtime_preflight.py`, `Makefile`, `.github/workflows/validate.yml` или sample blocked evidence отсутствуют после изменений release/evidence workflow;
 - бытовой regression даёт `fail > 0`;
 - в ответах eval есть первый шаг из [first-answer-pitfalls.md](first-answer-pitfalls.md);
 - compact-версия не содержит новый critical reference или ссылку на него из `mcpmarket/bitrix/SKILL.md`;
@@ -23,8 +25,13 @@
 Запускать из корня репозитория:
 
 ```bash
+make validate
+make release-check
 python3 scripts/validate_skill.py
+python3 scripts/bitrix_runtime_preflight.py --public-root www --base-url http://localhost
 python3 scripts/init_runtime_evidence.py --package P1 --output /tmp/bitrix-p1-evidence-check
+python3 scripts/init_runtime_evidence.py --all --output /tmp/bitrix-all-evidence-check
+python3 scripts/validate_runtime_evidence.py examples/runtime-smoke/blocked-p1 --package P1
 python3 scripts/validate_runtime_evidence.py path/to/evidence/YYYY-MM-DD-p1-shop-path --package P1  # если есть runtime evidence pack
 python3 /Users/igormajorov/.codex/skills/.system/skill-creator/scripts/quick_validate.py bitrix
 python3 /Users/igormajorov/.codex/skills/.system/skill-creator/scripts/quick_validate.py mcpmarket/bitrix
@@ -36,7 +43,10 @@ git status -sb
 Ожидание:
 
 - `python3 scripts/validate_skill.py` → `All validation checks passed.`;
+- `make validate` → проходит repo-local validation, sample blocked evidence и shell syntax check;
 - `python3 scripts/init_runtime_evidence.py ...` → создаёт `summary.md`, `00-preflight.md` и scenario files;
+- `python3 scripts/init_runtime_evidence.py --all ...` → создаёт подкаталоги `p1-shop-path`, `p2-commerceml`, `p3-rest-webservice`, `p4-marketing-automation`;
+- `python3 scripts/bitrix_runtime_preflight.py ...` → печатает Markdown-фрагмент preflight без secrets;
 - `python3 scripts/validate_runtime_evidence.py ...` → `Runtime evidence validation passed.`, если в релиз входит runtime evidence pack;
 - оба `quick_validate.py` → `Skill is valid!`;
 - `git diff --check` без вывода;
@@ -51,6 +61,8 @@ git status -sb
 
 ```bash
 python3 scripts/init_runtime_evidence.py --package P1 --output evidence/YYYY-MM-DD-p1-shop-path
+python3 scripts/bitrix_runtime_preflight.py --public-root www --base-url http://localhost > evidence/YYYY-MM-DD-p1-shop-path/00-preflight.md
+python3 scripts/init_runtime_evidence.py --all --output evidence/YYYY-MM-DD-runtime-smoke-all
 python3 scripts/validate_runtime_evidence.py evidence/YYYY-MM-DD-p1-shop-path --package P1
 ```
 
@@ -61,6 +73,7 @@ python3 scripts/validate_runtime_evidence.py evidence/YYYY-MM-DD-p1-shop-path --
 - есть отдельные scenario files;
 - есть rows по core modules;
 - явные secrets/tokens/cookies не найдены.
+- sample blocked pack проходит: `python3 scripts/validate_runtime_evidence.py examples/runtime-smoke/blocked-p1 --package P1`.
 
 Если проверка `blocked`, это допустимый runtime finding, но не runtime pass. В changelog/reference писать “runtime verification blocked by X”, а не “проверено”.
 

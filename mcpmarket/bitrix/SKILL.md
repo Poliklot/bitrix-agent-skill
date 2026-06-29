@@ -14,7 +14,7 @@ description: >-
   local core and `local/*`; missing optional modules are deferred.
 metadata:
   author: poliklot
-  version: "1.29.0"
+  version: "1.30.0"
 ---
 
 # Bitrix Expert Skill — MCP Market Edition

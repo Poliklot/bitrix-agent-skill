@@ -28,6 +28,13 @@ SECRET_PATTERNS = [
     re.compile(r"(?i)\b(?:password|passwd|secret|token|cookie|sessid|php_sessid|phpsessid)\b\s*[:=]\s*[^\s`'\"]{8,}"),
     re.compile(r"(?i)\bAuthorization\s*:\s*Bearer\s+[A-Za-z0-9._~+/=-]{12,}"),
     re.compile(r"(?i)\bBX_USER_ID\s*[:=]\s*[^\s`'\"]{8,}"),
+    re.compile(r"(?i)\b(?:access_token|refresh_token|client_secret|application_token)\b\s*[:=]\s*[^\s`'\"]{8,}"),
+    re.compile(r"(?i)\b(?:BITRIX_SM_LOGIN|BITRIX_SM_UIDH|PHPSESSID|BX_USER_ID)\b\s*[:=]\s*[^\s`'\"]{8,}"),
+    re.compile(r"(?i)\b(?:DBPassword|DBLogin|DBName)\b\s*=\s*['\"][^'\"]{4,}['\"]"),
+    re.compile(r"(?i)['\"](?:password|passwd|secret|token|license_key)['\"]\s*=>\s*['\"][^'\"]{8,}['\"]"),
+    re.compile(r"(?i)['\"](?:password|passwd|secret|token|license_key)['\"]\s*=>\s*array\s*\([^)]*['\"]value['\"]\s*=>\s*['\"][^'\"]{8,}['\"]", re.DOTALL),
+    re.compile(r"(?i)\b(?:BITRIX_LICENSE_KEY|LICENSE_KEY|BX_LICENSE_KEY)\b\s*[:=]\s*[^\s`'\"]{8,}"),
+    re.compile(r"https?://[^\s`'\"]+/rest/\d+/[A-Za-z0-9._~+=-]{8,}/"),
 ]
 
 

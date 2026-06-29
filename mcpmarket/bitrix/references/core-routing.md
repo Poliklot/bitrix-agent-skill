@@ -1167,9 +1167,9 @@ Scenarios:
 
 Evidence: `Scenario`, sandbox URL/CLI, modules/versions, fixture names, user mode, steps, expected/actual, HTTP/CLI output, cache state, logs, rollback/reset, verdict `pass/fail/blocked`, follow-up reference changes.
 
-Evidence convention: `evidence/YYYY-MM-DD-p1-shop-path/00-preflight.txt`, `P1-01-modules.txt` … `P1-08-cache-pass.txt`, `summary.md`. Минимальные env: `SMOKE_BASE_URL`, `SMOKE_PUBLIC_ROOT`, `SMOKE_EVIDENCE_DIR`. Write-mode (`P1-05`–`P1-07`) запускать только при подтверждённом sandbox/reset plan. Если URL каталога/корзины/checkout неизвестны, найти их через `IncludeComponent`, `urlrewrite.php` и templates; не угадывать universal paths.
+Evidence convention: `evidence/YYYY-MM-DD-p1-shop-path/00-preflight.md`, `P1-01-modules.md` … `P1-08-cache-pass.md`, `summary.md`. Минимальные env: `SMOKE_BASE_URL`, `SMOKE_PUBLIC_ROOT`, `SMOKE_EVIDENCE_DIR`. Write-mode (`P1-05`–`P1-07`) запускать только при подтверждённом sandbox/reset plan. Если URL каталога/корзины/checkout неизвестны, найти их через `IncludeComponent`, `urlrewrite.php` и templates; не угадывать universal paths.
 
-Готовые шаблоны: `assets/runtime-smoke/sandbox-preflight.template.md`, `scenario-result.template.md`, `evidence-summary.template.md`. Skeleton создаётся через `python3 scripts/init_runtime_evidence.py --package P1 --output evidence/YYYY-MM-DD-p1-shop-path`, после заполнения запускать `python3 scripts/validate_runtime_evidence.py evidence/YYYY-MM-DD-p1-shop-path --package P1`.
+Готовые шаблоны: `assets/runtime-smoke/sandbox-preflight.template.md`, `scenario-result.template.md`, `evidence-summary.template.md`. Skeleton создаётся через `python3 scripts/init_runtime_evidence.py --package P1 --output evidence/YYYY-MM-DD-p1-shop-path`, полный набор P1–P4 — через `python3 scripts/init_runtime_evidence.py --all --output evidence/YYYY-MM-DD-runtime-smoke-all`; preflight можно собрать read-only helper-ом `python3 scripts/bitrix_runtime_preflight.py --public-root www --base-url "$SMOKE_BASE_URL"`. После заполнения запускать `python3 scripts/validate_runtime_evidence.py evidence/YYYY-MM-DD-p1-shop-path --package P1`. Если sandbox отсутствует, ориентироваться на `examples/runtime-smoke/blocked-p1`: это пример честного `blocked`, а не runtime pass.
 
 ## Пакеты 2–4: следующий runtime smoke
 
@@ -1185,6 +1185,7 @@ Evidence convention: `evidence/YYYY-MM-DD-p1-shop-path/00-preflight.txt`, `P1-01
 
 ```bash
 pwd
+python3 scripts/bitrix_runtime_preflight.py --public-root www --base-url http://localhost
 find www/bitrix/modules -maxdepth 1 -mindepth 1 -type d | sort
 for m in main iblock currency catalog sale rest webservice statistic sender mail messageservice bizproc lists pull; do
   test -f "www/bitrix/modules/$m/install/version.php" && sed -n '1,40p' "www/bitrix/modules/$m/install/version.php"

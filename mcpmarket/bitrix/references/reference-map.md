@@ -18,6 +18,103 @@
 | REST/webhooks/apps/events | `integrations-rest.md` |
 | Commerce: catalog/sale/currency/shop components/marketing/bizproc/webservice/1C | `commerce-shop.md` |
 
+## Full-to-compact coverage manifest
+
+Этот manifest нужен для CI-защиты от drift: каждый full reference должен быть либо отдельным compact-файлом, либо входить в один из compact bundles.
+
+| Full reference | Compact coverage |
+|---|---|
+| `access-rbac.md` | `users-security.md` |
+| `admin-ui.md` | `components-admin-ui.md` |
+| `answer-contracts.md` | `answer-contracts.md` |
+| `b24connector.md` | `site-cloud-mobile.md` |
+| `behavior-routing.md` | `behavior-routing.md` |
+| `bitrixcloud.md` | `site-cloud-mobile.md` |
+| `blog-socialnet.md` | `content-modules.md` |
+| `cache-infra.md` | `search-seo-ops.md` |
+| `catalog.md` | `commerce-shop.md` |
+| `clouds.md` | `site-cloud-mobile.md` |
+| `commerce-1c-integration.md` | `commerce-shop.md` |
+| `commerce-workflows.md` | `commerce-shop.md` |
+| `component-dataflow-debugging.md` | `search-seo-ops.md` |
+| `components.md` | `components-admin-ui.md` |
+| `core-audit-matrix.md` | `core-routing.md` |
+| `core-grep-cookbook.md` | `core-grep-cookbook.md` |
+| `currency.md` | `commerce-shop.md` |
+| `custom-uf-types.md` | `content-data.md` |
+| `database-layer.md` | `php-architecture.md` |
+| `developer-cards.md` | `developer-cards.md` |
+| `developer-primitives.md` | `developer-primitives.md` |
+| `diagnostic-visibility.md` | `search-seo-ops.md` |
+| `entities-migrations.md` | `content-data.md` |
+| `eval-prompts.md` | `eval-prompts.md` |
+| `events-routing.md` | `php-architecture.md` |
+| `file-upload-modern.md` | `components-admin-ui.md` |
+| `fileman.md` | `site-cloud-mobile.md` |
+| `first-answer-pitfalls.md` | `first-answer-pitfalls.md` |
+| `forum.md` | `content-modules.md` |
+| `grid-admin-modern.md` | `components-admin-ui.md` |
+| `highloadblock.md` | `content-data.md` |
+| `http.md` | `php-architecture.md` |
+| `iblock-hl-relations.md` | `content-data.md` |
+| `iblocks.md` | `content-data.md` |
+| `import-export.md` | `content-data.md` |
+| `index-cache-diagnostics.md` | `search-seo-ops.md` |
+| `landing.md` | `site-cloud-mobile.md` |
+| `location.md` | `site-cloud-mobile.md` |
+| `mail-notifications.md` | `content-modules.md` |
+| `messageservice.md` | `site-cloud-mobile.md` |
+| `mobileapp.md` | `site-cloud-mobile.md` |
+| `modules-loader.md` | `php-architecture.md` |
+| `noncommerce-task-matrix.md` | `core-routing.md` |
+| `numerator.md` | `components-admin-ui.md` |
+| `operations-runbook.md` | `search-seo-ops.md` |
+| `orm.md` | `php-architecture.md` |
+| `pagination.md` | `components-admin-ui.md` |
+| `perfmon.md` | `search-seo-ops.md` |
+| `photogallery.md` | `site-cloud-mobile.md` |
+| `php-legacy-modernization.md` | `php-architecture.md` |
+| `php-quality.md` | `php-architecture.md` |
+| `php-testing.md` | `php-architecture.md` |
+| `php-workflow.md` | `php-architecture.md` |
+| `pitfalls-matrix.md` | `core-routing.md` |
+| `production-best-practices.md` | `core-routing.md` |
+| `project-intake.md` | `project-intake.md` |
+| `push-pull.md` | `commerce-shop.md` |
+| `reference-map.md` | `reference-map.md` |
+| `release-gate.md` | `release-gate.md` |
+| `rest.md` | `integrations-rest.md` |
+| `runtime-smoke-verification.md` | `core-routing.md` |
+| `sale.md` | `commerce-shop.md` |
+| `search.md` | `search-seo-ops.md` |
+| `security.md` | `users-security.md` |
+| `sef-urls.md` | `content-data.md` |
+| `seo-cache-access.md` | `search-seo-ops.md` |
+| `session-auth.md` | `users-security.md` |
+| `shop-automation-bizproc.md` | `commerce-shop.md` |
+| `shop-core-module-inventory.md` | `core-routing.md` |
+| `shop-core-tail-modules.md` | `shop-core-tail-modules.md` |
+| `shop-integrations-webservice.md` | `commerce-shop.md` |
+| `shop-marketing-analytics.md` | `commerce-shop.md` |
+| `shop-standard-components.md` | `commerce-shop.md` |
+| `shop-task-matrix.md` | `core-routing.md` |
+| `sitecorporate.md` | `site-cloud-mobile.md` |
+| `socialservices.md` | `users-security.md` |
+| `standard-components-noncommerce.md` | `components-admin-ui.md` |
+| `storeassist.md` | `commerce-shop.md` |
+| `subscribe.md` | `content-modules.md` |
+| `task-playbooks.md` | `task-playbooks.md` |
+| `templates.md` | `components-admin-ui.md` |
+| `translate.md` | `site-cloud-mobile.md` |
+| `update-stepper.md` | `search-seo-ops.md` |
+| `userconsent.md` | `components-admin-ui.md` |
+| `users.md` | `users-security.md` |
+| `validation.md` | `php-architecture.md` |
+| `version-impact.md` | `version-impact.md` |
+| `vote.md` | `content-modules.md` |
+| `webforms.md` | `content-modules.md` |
+| `workflow.md` | `content-modules.md` |
+
 ## Compact guardrails
 
 - Если задача про конкретный repo — сначала `BITRIX_PROJECT_CONTEXT.md` при наличии, затем факты проекта, потом ответ.

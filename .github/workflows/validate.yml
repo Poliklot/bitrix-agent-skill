@@ -1,0 +1,27 @@
+name: Validate Skill
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Validate repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          make validate
+          python3 scripts/bitrix_runtime_preflight.py --public-root /tmp/missing-bitrix-sandbox >/tmp/bitrix-preflight.md
+          grep -q 'Verdict: `blocked`' /tmp/bitrix-preflight.md

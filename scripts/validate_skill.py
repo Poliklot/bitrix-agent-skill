@@ -98,6 +98,13 @@ FORBIDDEN_MARKERS = [
     "developer" + "_" + "wow",
 ]
 
+REQUIRED_REPO_FILES = [
+    ".github/workflows/validate.yml",
+    "Makefile",
+    "scripts/bitrix_runtime_preflight.py",
+    "examples/runtime-smoke/blocked-p1/summary.md",
+]
+
 
 @dataclass
 class Check:
@@ -410,6 +417,96 @@ def validate_runtime_evidence_initializer() -> None:
         "missing: " + ", ".join(missing) if missing else ("ok" if result.returncode == 0 else result.stdout.strip()),
     )
 
+    with tempfile.TemporaryDirectory() as tmp:
+        output = Path(tmp) / "all"
+        result = subprocess.run(
+            [sys.executable, str(script), "--all", "--output", str(output)],
+            cwd=ROOT,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            check=False,
+        )
+        expected_dirs = ["p1-shop-path", "p2-commerceml", "p3-rest-webservice", "p4-marketing-automation"]
+        missing_dirs = [name for name in expected_dirs if not (output / name / "summary.md").exists()]
+
+    add(
+        "runtime evidence initializer --all",
+        result.returncode == 0 and not missing_dirs,
+        "missing: " + ", ".join(missing_dirs) if missing_dirs else ("ok" if result.returncode == 0 else result.stdout.strip()),
+    )
+
+
+def validate_runtime_preflight_helper() -> None:
+    script = ROOT / "scripts" / "bitrix_runtime_preflight.py"
+    if not script.exists():
+        add("runtime preflight helper", False, "missing scripts/bitrix_runtime_preflight.py")
+        return
+
+    with tempfile.TemporaryDirectory() as tmp:
+        result = subprocess.run(
+            [sys.executable, str(script), "--public-root", str(Path(tmp) / "missing")],
+            cwd=ROOT,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            check=False,
+        )
+
+    ok = result.returncode == 0 and "Verdict: `blocked`" in result.stdout
+    output_lines = result.stdout.strip().splitlines()
+    add("runtime preflight helper", ok, "ok" if ok else (output_lines[-1] if output_lines else "no output"))
+
+
+def validate_version_changelog_plan() -> None:
+    version_text = read_text(ROOT / "bitrix" / "VERSION").strip()
+    semver_ok = re.fullmatch(r"\d+\.\d+\.\d+", version_text) is not None
+    add("version semver", semver_ok, version_text)
+
+    changelog = read_text(ROOT / "CHANGELOG.md")
+    has_changelog_section = f"## [{version_text}]" in changelog
+    add("version changelog section", has_changelog_section, f"## [{version_text}]" if has_changelog_section else "missing")
+
+    plan = read_text(ROOT / "PLAN.md")
+    has_plan_version = f"`{version_text}`" in plan or f" {version_text}" in plan
+    add("version plan sync", has_plan_version, "ok" if has_plan_version else f"{version_text} not mentioned in PLAN.md")
+
+    unreleased_link = re.search(r"\[Unreleased\]:\s+https://github\.com/Poliklot/bitrix-agent-skill/compare/v([0-9.]+)\.\.\.HEAD", changelog)
+    add(
+        "unreleased compare base",
+        bool(unreleased_link) and unreleased_link.group(1) == version_text,
+        unreleased_link.group(1) if unreleased_link else "missing",
+    )
+
+
+def validate_compact_reference_coverage() -> None:
+    compact_map = read_text(MCP_SKILL / "references" / "reference-map.md")
+    missing: list[str] = []
+    full_ref_names = {path.name for path in (FULL_SKILL / "references").glob("*.md")}
+    for path in sorted((FULL_SKILL / "references").glob("*.md")):
+        if path.name not in compact_map:
+            missing.append(path.name)
+
+    compact_refs = {path.name for path in (MCP_SKILL / "references").glob("*.md")}
+    referenced_compact = sorted(set(re.findall(r"`([^`]+\.md)`", compact_map)))
+    missing_compact = [
+        name for name in referenced_compact
+        if name not in compact_refs and name not in full_ref_names and not name.startswith("../")
+        and "/" not in name
+        and not name.startswith("BITRIX_PROJECT_CONTEXT")
+    ]
+    details: list[str] = []
+    if missing:
+        details.append("full refs not mapped: " + ", ".join(missing[:10]))
+    if missing_compact:
+        details.append("compact refs missing: " + ", ".join(missing_compact[:10]))
+    add("compact reference coverage", not details, "; ".join(details) if details else "ok")
+
+
+def validate_required_repo_files() -> None:
+    missing = [path for path in REQUIRED_REPO_FILES if not (ROOT / path).exists()]
+    add("repo automation files", not missing, "missing: " + ", ".join(missing) if missing else "ok")
+
 
 def validate_forbidden_markers() -> None:
     matches: list[str] = []
@@ -437,18 +534,22 @@ def validate_git_diff_check() -> None:
 
 
 def main() -> int:
+    validate_required_repo_files()
+    validate_version_changelog_plan()
     validate_skill_frontmatter(FULL_SKILL)
     validate_skill_frontmatter(MCP_SKILL)
     validate_openai_yaml(FULL_SKILL)
     validate_openai_yaml(MCP_SKILL)
     validate_mcp_file_count()
     validate_internal_links()
+    validate_compact_reference_coverage()
     validate_critical_references()
     validate_eval_prompts()
     validate_developer_card_coverage()
     validate_runtime_smoke_templates()
     validate_runtime_evidence_validator()
     validate_runtime_evidence_initializer()
+    validate_runtime_preflight_helper()
     validate_forbidden_markers()
     validate_git_diff_check()
 

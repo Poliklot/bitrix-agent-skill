@@ -4,6 +4,22 @@
 
 ## [Unreleased]
 
+## [1.30.0] — 2026-06-29
+
+### Added
+- `.github/workflows/validate.yml` — CI-gate для проверки навыка: `validate_skill.py`, sample blocked evidence, preflight-helper и shell syntax check.
+- `scripts/bitrix_runtime_preflight.py` — read-only helper для Bitrix sandbox: проверяет public root, версии модулей, safety markers и route candidates без вывода secrets.
+- `Makefile` с короткими командами `validate`, `release-check`, `evidence-p1`, `evidence-all` и `preflight`.
+- `examples/runtime-smoke/blocked-p1/` — безопасный пример blocked evidence pack, который проходит `validate_runtime_evidence.py` и не заявляет runtime pass.
+
+### Changed
+- Release workflow теперь сначала запускает validation gate и не публикует релиз поверх несинхронизированного skill/reference/evidence слоя.
+- `scripts/validate_skill.py` усилен проверкой version/changelog/PLAN sync, compact coverage manifest, repo automation files, preflight-helper и режима `init_runtime_evidence.py --all`.
+- `scripts/init_runtime_evidence.py` теперь умеет создавать все пакеты `P1–P4` одной командой `--all` и поддерживает стабильный `--date` для default output.
+- `scripts/validate_runtime_evidence.py` расширил secret scan для Bitrix cookies, DB credentials, license keys, OAuth tokens и webhook URLs.
+- MCP Market `reference-map.md` получил full-to-compact coverage manifest, чтобы compact-версия не отставала молча.
+- README, release gate и PLAN обновлены под runtime evidence workflow, CI/self-check команды и regression checklist перед релизом.
+
 ## [1.29.0] — 2026-06-23
 
 ### Changed
@@ -386,7 +402,8 @@
 ### Added
 - Первый публичный релиз: `SKILL.md`, progressive disclosure архитектура
 
-[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.29.0...HEAD
+[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.30.0...HEAD
+[1.30.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.29.0...v1.30.0
 [1.29.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.28.0...v1.29.0
 [1.28.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.27.0...v1.28.0
 [1.27.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.26.0...v1.27.0

@@ -8,6 +8,7 @@
 <p align="center">
   <a href="https://github.com/Poliklot/bitrix-agent-skill/releases/latest"><img src="https://img.shields.io/github/v/release/Poliklot/bitrix-agent-skill?sort=semver&label=release" alt="Последний релиз" /></a>
   <a href="https://github.com/Poliklot/bitrix-agent-skill/actions/workflows/release.yml"><img src="https://github.com/Poliklot/bitrix-agent-skill/actions/workflows/release.yml/badge.svg" alt="Publish Release" /></a>
+  <a href="https://github.com/Poliklot/bitrix-agent-skill/actions/workflows/validate.yml"><img src="https://github.com/Poliklot/bitrix-agent-skill/actions/workflows/validate.yml/badge.svg" alt="Validate Skill" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/github/license/Poliklot/bitrix-agent-skill" alt="Лицензия MIT" /></a>
 </p>
 
@@ -136,7 +137,7 @@ curl -fsSL https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/
 Установить конкретную версию:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.sh | bash -s -- --version 1.29.0 --claude
+curl -fsSL https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.sh | bash -s -- --version 1.30.0 --claude
 ```
 
 То же самое для PowerShell:
@@ -145,7 +146,7 @@ curl -fsSL https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/
 & ([scriptblock]::Create((irm https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.ps1))) -Claude
 & ([scriptblock]::Create((irm https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.ps1))) -Codex
 & ([scriptblock]::Create((irm https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.ps1))) -Both
-& ([scriptblock]::Create((irm https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.ps1))) -Version 1.29.0 -Claude
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.ps1))) -Version 1.30.0 -Claude
 ```
 
 </details>
@@ -173,9 +174,23 @@ curl -fsSL https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/
 Для живой проверки используются smoke-пакеты `P1–P4` из [`bitrix/references/runtime-smoke-verification.md`](bitrix/references/runtime-smoke-verification.md): каталог/SKU/корзина/заказ, CommerceML, REST/webservice, marketing/automation/realtime. Evidence оформляется по шаблонам из [`bitrix/assets/runtime-smoke/`](bitrix/assets/runtime-smoke/):
 
 ```bash
+python3 scripts/bitrix_runtime_preflight.py --public-root www --base-url http://localhost
 python3 scripts/init_runtime_evidence.py --package P1 --output evidence/YYYY-MM-DD-p1-shop-path
+python3 scripts/init_runtime_evidence.py --all --output evidence/YYYY-MM-DD-runtime-smoke-all
 python3 scripts/validate_runtime_evidence.py evidence/YYYY-MM-DD-p1-shop-path --package P1
 ```
+
+Короткие команды для сопровождения репозитория:
+
+```bash
+make validate
+make evidence-p1
+make evidence-all
+make preflight PUBLIC_ROOT=www BASE_URL=http://localhost
+make release-check
+```
+
+Пример честного `blocked` без runtime pass лежит в [`examples/runtime-smoke/blocked-p1/`](examples/runtime-smoke/blocked-p1/).
 
 Если безопасного sandbox, fixtures или stub-интеграций нет, сценарий отмечается как `blocked`, а не как “проверено”.
 
@@ -200,6 +215,9 @@ bitrix-agent-skill/
 ├── bitrix/references/*.md       # 80+ узких справочников, загружаются только по необходимости
 ├── bitrix/assets/               # шаблоны для артефактов агента, включая BITRIX_PROJECT_CONTEXT.md
 ├── mcpmarket/bitrix/            # компактная версия для MCP Market, только для чтения
+├── scripts/                     # локальные validation/evidence/preflight helpers
+├── examples/runtime-smoke/      # безопасные примеры evidence pack
+├── Makefile                     # короткие команды validate/evidence/release-check
 ├── install.sh / install.ps1     # установщики для Claude Code и Codex
 └── CHANGELOG.md / PLAN.md       # история релизов и план аудита
 ```

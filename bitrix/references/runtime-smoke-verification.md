@@ -152,15 +152,15 @@ Follow-up reference changes:
 ```text
 evidence/
 └── YYYY-MM-DD-p1-shop-path/
-    ├── 00-preflight.txt
-    ├── P1-01-modules.txt
-    ├── P1-02-catalog-list-detail.txt
-    ├── P1-03-price-stock.txt
-    ├── P1-04-offer-selection.txt
-    ├── P1-05-guest-basket.txt
-    ├── P1-06-auth-basket.txt
-    ├── P1-07-order-save.txt
-    ├── P1-08-cache-pass.txt
+    ├── 00-preflight.md
+    ├── P1-01-modules.md
+    ├── P1-02-catalog-list-detail.md
+    ├── P1-03-price-stock.md
+    ├── P1-04-offer-selection.md
+    ├── P1-05-guest-basket.md
+    ├── P1-06-auth-basket.md
+    ├── P1-07-order-save.md
+    ├── P1-08-cache-pass.md
     └── summary.md
 ```
 
@@ -185,8 +185,12 @@ Skeleton evidence pack можно создать командой, а после
 
 ```bash
 python3 scripts/init_runtime_evidence.py --package P1 --output evidence/YYYY-MM-DD-p1-shop-path
+python3 scripts/bitrix_runtime_preflight.py --public-root www --base-url "$SMOKE_BASE_URL" > evidence/YYYY-MM-DD-p1-shop-path/00-preflight.md
+python3 scripts/init_runtime_evidence.py --all --output evidence/YYYY-MM-DD-runtime-smoke-all
 python3 scripts/validate_runtime_evidence.py evidence/YYYY-MM-DD-p1-shop-path --package P1
 ```
+
+Если sandbox ещё не готов, ориентируйся на безопасный пример [`examples/runtime-smoke/blocked-p1`](../../examples/runtime-smoke/blocked-p1): он показывает, как фиксировать blocker без runtime pass и проходит `validate_runtime_evidence.py`.
 
 Если сценарий падает, не перепрыгивай сразу к следующему “зелёному” результату: сначала классифицируй причину как missing module, bad fixture, component params, rights/site binding, cache, JS/AJAX, sale provider, delivery/payment restriction или sandbox blocker.
 
@@ -263,6 +267,7 @@ python3 scripts/validate_runtime_evidence.py evidence/YYYY-MM-DD-p1-shop-path --
 
 ```bash
 pwd
+python3 scripts/bitrix_runtime_preflight.py --public-root www --base-url http://localhost
 find www/bitrix/modules -maxdepth 1 -mindepth 1 -type d | sort
 for m in main iblock currency catalog sale rest webservice statistic sender mail messageservice bizproc lists pull; do
   test -f "www/bitrix/modules/$m/install/version.php" && sed -n '1,40p' "www/bitrix/modules/$m/install/version.php"

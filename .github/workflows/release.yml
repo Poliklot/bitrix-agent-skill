@@ -19,6 +19,12 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Validate repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          make validate
+
       - name: Resolve version and release state
         id: meta
         env:

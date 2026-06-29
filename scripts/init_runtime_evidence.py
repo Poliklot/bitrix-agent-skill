@@ -83,6 +83,10 @@ def build_summary(package: str, scenarios: list[tuple[str, str]]) -> str:
         f"| {scenario_id} | pass/fail/blocked | {scenario_id}-{slug}.md | |"
         for scenario_id, slug in scenarios
     )
+    template = template.replace(
+        "- Smoke package: `P1` / `P2` / `P3` / `P4` / mixed",
+        f"- Smoke package: `{package}`",
+    )
     start = template.find("| P1-01 |")
     if start == -1:
         return template + "\n" + rows + "\n"
@@ -109,24 +113,79 @@ def init_evidence(package: str, output: Path, force: bool) -> None:
         write_file(output / f"{scenario_id}-{slug}.md", text, force)
 
 
+def init_all(output: Path, force: bool) -> list[tuple[str, Path]]:
+    created: list[tuple[str, Path]] = []
+    output.mkdir(parents=True, exist_ok=True)
+    for package in sorted(SCENARIOS):
+        package_output = output / DEFAULT_SLUG[package]
+        init_evidence(package, package_output, force)
+        created.append((package, package_output))
+    readme_rows = "\n".join(
+        f"| {package} | `{path.name}/summary.md` | "
+        f"`python3 scripts/validate_runtime_evidence.py {output}/{path.name} --package {package}` |"
+        for package, path in created
+    )
+    write_file(
+        output / "README.md",
+        "\n".join(
+            [
+                "# Runtime smoke evidence pack",
+                "",
+                "Сгенерированный набор шаблонов для `P1–P4`.",
+                "Перед коммитом evidence удали secrets, cookies, session ids, production XML/дампы и персональные данные.",
+                "",
+                "| Package | Summary | Validation command |",
+                "|---|---|---|",
+                readme_rows,
+                "",
+            ]
+        ),
+        force,
+    )
+    return created
+
+
+def resolve_default_output(package: str | None, date_value: str, all_packages: bool) -> Path:
+    if all_packages:
+        return Path("evidence") / f"{date_value}-runtime-smoke-all"
+    selected = package or "P1"
+    return Path("evidence") / f"{date_value}-{DEFAULT_SLUG[selected]}"
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Initialize Bitrix runtime smoke evidence pack")
-    parser.add_argument("--package", choices=sorted(SCENARIOS), default="P1", help="Smoke package to initialize")
+    parser.add_argument("--package", choices=sorted(SCENARIOS), default=None, help="Smoke package to initialize")
+    parser.add_argument("--all", action="store_true", help="Initialize all smoke packages P1-P4 under one directory")
     parser.add_argument("--output", type=Path, help="Output evidence directory")
+    parser.add_argument("--date", default=dt.date.today().isoformat(), help="Date prefix for default output directory, YYYY-MM-DD")
     parser.add_argument("--force", action="store_true", help="Overwrite existing files")
     args = parser.parse_args()
 
-    package = args.package.upper()
-    output = args.output or Path("evidence") / f"{dt.date.today().isoformat()}-{DEFAULT_SLUG[package]}"
     try:
-        init_evidence(package, output, args.force)
+        dt.date.fromisoformat(args.date)
+    except ValueError:
+        print(f"ERROR: --date must be YYYY-MM-DD, got: {args.date}", file=sys.stderr)
+        return 2
+
+    package = (args.package or "P1").upper()
+    output = args.output or resolve_default_output(package, args.date, args.all)
+    try:
+        if args.all:
+            created = init_all(output, args.force)
+        else:
+            init_evidence(package, output, args.force)
+            created = [(package, output)]
     except Exception as exc:  # noqa: BLE001 - CLI should report concise error
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
 
-    print(f"Initialized {package} evidence pack: {output}")
-    print("Fill summary.md and scenario files, then run:")
-    print(f"  python3 scripts/validate_runtime_evidence.py {output} --package {package}")
+    if args.all:
+        print(f"Initialized runtime evidence packs: {output}")
+    else:
+        print(f"Initialized {package} evidence pack: {output}")
+    print("Fill summary.md and scenario files, remove secrets, then run:")
+    for created_package, created_output in created:
+        print(f"  python3 scripts/validate_runtime_evidence.py {created_output} --package {created_package}")
     return 0
 
 
