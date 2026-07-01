@@ -74,7 +74,7 @@ done
 | 1С/CommerceML | step names, temp files, zip/chunk, options | `catalog.import.1c`, `catalog.export.1c`, `sale.export.1c`, exchange logs |
 | Admin UI/grid | filters, actions, nav, ajax endpoints | `admin/*.php`, grid/list classes, UI extensions |
 | Agents/stepper | intervals, state storage, cleanup behavior | `CAgent::AddAgent`, stepper classes, options |
-| Cache/composite | cache keys, tagged cache, frame behavior | `StartResultCache`, tagged cache calls, composite frames |
+| Cache/composite | cache keys, tagged cache, `setFrameMode` vote, `COMPOSITE_FRAME_*`, `AutomaticArea`, `createFrame`/`BufferArea`, HTML cache backend | `StartResultCache`, tagged cache calls, `/bitrix/html_pages/`, `X-Bitrix-Composite`, canonical `Composite\Page`, legacy alias `Data\StaticHtmlCache` |
 
 ## Version mismatch workflow
 

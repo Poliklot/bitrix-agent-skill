@@ -103,7 +103,7 @@ catalog product → offer/SKU → price/currency → stock/store → basket avai
 | В поиске нет нового элемента | index, `BeforeIndex`, rights/site/url | write path skipped indexing, rights filter hides result | `search.md`, `index-cache-diagnostics.md` |
 | SEO дубль страниц | SEF/urlrewrite/canonical/sort/filter pages | pagination/filter canonical missing/wrong | `seo-cache-access.md`, `sef-urls.md`, `pagination.md` |
 | Sitemap не обновился | sitemap generation, site, iblock/SEO options | URL template mismatch, generation not rerun | `seo-cache-access.md` |
-| Composite shows wrong personal data | dynamic areas, cache key, auth state | personal block in static cache | `templates.md`, `cache-infra.md`, `session-auth.md` |
+| Composite shows wrong personal data | dynamic areas (`createFrame`/`FrameHelper`), component cache key, auth state, `/bitrix/html_pages/` | personal block in static cache or shared component cache | `composite-cache.md`, `templates.md`, `cache-infra.md`, `session-auth.md` |
 
 ## Users / auth / rights
 

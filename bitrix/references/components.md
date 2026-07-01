@@ -2,13 +2,13 @@
 
 > Reference для Bitrix-скилла. Загружай когда задача связана с компонентами, CBitrixComponent, шаблонами, кешированием в компонентах, CComponentEngine или Edit Area.
 >
-> Audit note: ниже сверено с текущим `main/classes/general/component.php`. В этой версии класс компонента действительно ищется через diff `get_declared_classes()` после `include_once(class.php)`, а `startResultCache()` сам открывает tag cache при `BX_COMP_MANAGED_CACHE`. Для public/admin компонентов интернет-магазина дополнительно читай `shop-standard-components.md`.
+> Audit note: ниже сверено с текущим `main/classes/general/component.php`. В этой версии класс компонента действительно ищется через diff `get_declared_classes()` после `include_once(class.php)`, `startResultCache()` сам открывает tag cache при `BX_COMP_MANAGED_CACHE`, а composite-адаптация идёт через `setFrameMode`, `COMPOSITE_FRAME_*` и `Composite\Internals\AutomaticArea`. Для composite/static HTML дополнительно читай `composite-cache.md`; для public/admin компонентов интернет-магазина — `shop-standard-components.md`.
 
 ## Содержание
 - Структура компонента: .parameters.php, .description.php, class.php, шаблоны
 - CBitrixComponent: жизненный цикл, onPrepareComponentParams, executeComponent
 - Кеширование: startResultCache/endResultCache/abortResultCache, тегированный кеш
-- Шаблоны: переменные, setFrameMode, AddEditAction, GetEditAreaId
+- Шаблоны: переменные, setFrameMode/createFrame, AddEditAction, GetEditAreaId
 - CComponentEngine: URL-роутинг, #VAR#-шаблоны, addGreedyPart
 - ~KEY в arParams
 
@@ -213,6 +213,8 @@ $CACHE_MANAGER->ClearByTag('iblock_id_5');
 
 Если компонент строит список с `NavNum`, `PAGEN_N`, `NavStart()`, `main.pagenavigation` или ajax “Показать ещё”, подгружай `pagination.md` вместе с этим файлом.
 
+Если вопрос именно про “Композитный сайт”, `X-Bitrix-Composite`, `/bitrix/html_pages/`, `COMPOSITE_FRAME_MODE/TYPE`, `AutomaticArea`, `createFrame()` или персональные блоки в static HTML, не ограничивайся component cache: открывай [composite-cache.md](composite-cache.md).
+
 **Gotcha: `arParams['~KEY']`** — после `onPrepareComponentParams()` и `__prepareComponentParams()` все строковые параметры HTML-экранируются. Raw-значение доступно через `$this->arParams['~IBLOCK_ID']`. Это сделано для безопасности шаблонов.
 
 **Gotcha: `arResultCacheKeys`** — после шаблона Bitrix урежет `arResult` до перечисленных ключей и уже этот сокращённый набор сохранит в кеш. Сам шаблон при этом ещё видит полный `arResult`.
@@ -239,7 +241,8 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die();
  * @var CUser $USER
  */
 
-// Включает composite caching (статические блоки)
+// Шаблон голосует “за” composite compatibility и считается адаптированным.
+// Dynamic-блоки создаются отдельно через createFrame(); сам setFrameMode не отключает кеш.
 $this->setFrameMode(true);
 ?>
 <div class="my-list">

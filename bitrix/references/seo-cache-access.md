@@ -10,8 +10,7 @@
 |-----|-------------|-------|
 | Файловый кеш компонентов | `/bitrix/cache/` | `\Bitrix\Main\Data\Cache` |
 | Managed cache (ORM, таблицы) | `/bitrix/managed_cache/` | `\Bitrix\Main\Data\ManagedCache` |
-| Статический HTML (composite) | `/bitrix/html_pages/` | `\Bitrix\Main\Composite\Page` |
-| HTML-кеш страниц | `/bitrix/html_pages/` | управляется ядром |
+| Статический HTML (composite) | `/bitrix/html_pages/` или configured storage | canonical `\Bitrix\Main\Composite\Page`; legacy alias `\Bitrix\Main\Data\StaticHtmlCache` |
 
 ### Сброс файлового кеша (D7)
 
@@ -50,17 +49,20 @@ $managedCache->cleanAll();                          // весь managed cache
 
 ### Сброс HTML/composite кеша страниц
 
-Composite cache хранит финальный HTML в `/bitrix/html_pages/`. Сбрасывается:
+Composite cache хранит финальный HTML в `/bitrix/html_pages/`. Для подробной диагностики dynamic areas и персонализации открывай [composite-cache.md](composite-cache.md). Сброс: сначала проверь локальный core; для `main` 26.150.0 canonical-класс — `Bitrix\Main\Composite\Page`.
 
 ```php
 use Bitrix\Main\Composite\Page;
 
-// Полный сброс HTML-кеша всего сайта
+// Полный сброс HTML-кеша всего сайта в текущем подтверждённом core
 $page = Page::getInstance();
 $page->deleteAll();
 
-// Точечный сброс — через конкретный объект Page, когда известен cache key/URI.
-// В текущем core НЕ подтверждены методы Engine::clearByUrl() / Engine::clearAll().
+// Compatibility alias в этом core, встречается в legacy-коде:
+\Bitrix\Main\Data\StaticHtmlCache::getInstance()->deleteAll();
+
+// Точечный сброс — только через подтверждённый локальным core объект/ключ.
+// Не обещай Engine::clearByUrl() / Engine::clearAll(), если их нет в установленной версии.
 ```
 
 Сброс из shell (CLI) или деплой-скрипта:

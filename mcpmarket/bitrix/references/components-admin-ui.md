@@ -9,13 +9,13 @@
 
 > Reference для Bitrix-скилла. Загружай когда задача связана с компонентами, CBitrixComponent, шаблонами, кешированием в компонентах, CComponentEngine или Edit Area.
 >
-> Audit note: ниже сверено с текущим `main/classes/general/component.php`. В этой версии класс компонента действительно ищется через diff `get_declared_classes()` после `include_once(class.php)`, а `startResultCache()` сам открывает tag cache при `BX_COMP_MANAGED_CACHE`. Для public/admin компонентов интернет-магазина дополнительно читай `shop-standard-components.md`.
+> Audit note: ниже сверено с текущим `main/classes/general/component.php`. В этой версии класс компонента действительно ищется через diff `get_declared_classes()` после `include_once(class.php)`, `startResultCache()` сам открывает tag cache при `BX_COMP_MANAGED_CACHE`, а composite-адаптация идёт через `setFrameMode`, `COMPOSITE_FRAME_*` и `Composite\Internals\AutomaticArea`. Для public/admin компонентов интернет-магазина дополнительно читай `shop-standard-components.md`.
 
 ## Содержание
 - Структура компонента: .parameters.php, .description.php, class.php, шаблоны
 - CBitrixComponent: жизненный цикл, onPrepareComponentParams, executeComponent
 - Кеширование: startResultCache/endResultCache/abortResultCache, тегированный кеш
-- Шаблоны: переменные, setFrameMode, AddEditAction, GetEditAreaId
+- Шаблоны: переменные, setFrameMode/createFrame, AddEditAction, GetEditAreaId
 - CComponentEngine: URL-роутинг, #VAR#-шаблоны, addGreedyPart
 - ~KEY в arParams
 
@@ -246,7 +246,8 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die();
  * @var CUser $USER
  */
 
-// Включает composite caching (статические блоки)
+// Шаблон голосует “за” composite compatibility и считается адаптированным.
+// Dynamic-блоки создаются отдельно через createFrame(); сам setFrameMode не отключает кеш.
 $this->setFrameMode(true);
 ?>
 <div class="my-list">
@@ -587,31 +588,39 @@ $response->flush('');
 
 ## Composite cache и шаблоны
 
-Composite (статический HTML-кеш) кеширует **весь HTML страницы**. Части, которые не должны кешироваться (корзина, имя пользователя), выносятся в динамические блоки:
+Composite cache — это page-level static HTML cache. Он кеширует финальный HTML страницы, а не только результат компонента. Поэтому разделяй:
+
+- `StartResultCache()` / `CACHE_TYPE` — component result cache;
+- `$this->setFrameMode(true)` — шаблон компонента голосует “за” совместимость с composite и считается адаптированным;
+- `COMPOSITE_FRAME_MODE/TYPE` и `AutomaticArea` — автокомпозитная обёртка first-level components, если шаблон не адаптирован вручную;
+- `$this->createFrame(...)->begin()/end()` — manual dynamic area, которая не должна замораживаться в static HTML.
+
+Статичный шаблон компонента:
 
 ```php
-// В шаблоне компонента или template.php:
-if ($this->__component->StartResultCache()) {
-    // кешируемая часть
-    ...
-    $this->__component->EndResultCache();
-} else {
-    // при выдаче из composite-кеша эта часть НЕ выполняется
-}
+<?php
+/** @var CBitrixComponentTemplate $this */
+$this->setFrameMode(true); // не делает блок dynamic; vote + manual adaptation marker
+?>
+<div class="static-list">
+    ...одинаковый для всех пользователей HTML...
+</div>
 ```
 
-Компонент в **Frame-режиме** (динамический блок, не кешируется composite):
+Динамическая область в шаблоне:
 
 ```php
-// В component.php
-$this->setFrameMode(true);   // этот компонент всегда рендерится динамически
+<?php
+$this->setFrameMode(true);
+$frame = $this->createFrame('header-cart-counter')->begin('');
+?>
+<span class="header-cart-counter"><?= (int)$arResult['COUNT'] ?></span>
+<?php $frame->end(); ?>
 ```
 
-### Что НЕ кешировать composite:
-- Корзина, сумма заказов
-- Имя авторизованного пользователя
-- Персональные данные
-- CSRF-токены
+Что не должно попадать в static HTML без dynamic area: корзина, имя пользователя, персональные цены/скидки, региональность, session/CSRF tokens, cookie/User-Agent/time-dependent HTML и random IDs.
+
+Для полной версии смотри full reference `composite-cache.md`; в compact-версии этот слой также сжат в `search-seo-ops.md` и `users-security.md`.
 
 ---
 

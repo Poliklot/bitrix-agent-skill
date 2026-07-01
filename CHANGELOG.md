@@ -4,6 +4,14 @@
 
 ## [Unreleased]
 
+## [1.31.0] — 2026-07-01
+
+### Added
+- `bitrix/references/composite-cache.md` — отдельный core-backed reference по “Композитному сайту” на базе `main` 26.150.0: отличие composite от component/data cache, `setFrameMode` как голосование, `AutomaticArea`/`COMPOSITE_FRAME_*`, `createFrame`/`FrameHelper` как dynamic boundary, `/bitrix/html_pages/`, `X-Bitrix-Composite`, персонализация, очистка и second request/cache pass.
+
+### Changed
+- Components/templates/cache/security references в full и MCP Market compact-версии синхронизированы с новым composite-слоем: убраны формулировки, где `setFrameMode(true)` фактически смешивался с динамическим блоком, добавлены canonical `Bitrix\Main\Composite\Page`, compatibility alias `Data\StaticHtmlCache`, `BufferArea`/stub-механика, core-grep маршруты и security-проверки персональных блоков.
+
 ## [1.30.0] — 2026-06-29
 
 ### Added
@@ -402,7 +410,8 @@
 ### Added
 - Первый публичный релиз: `SKILL.md`, progressive disclosure архитектура
 
-[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.30.0...HEAD
+[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.31.0...HEAD
+[1.31.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.30.0...v1.31.0
 [1.30.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.29.0...v1.30.0
 [1.29.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.28.0...v1.29.0
 [1.28.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.27.0...v1.28.0

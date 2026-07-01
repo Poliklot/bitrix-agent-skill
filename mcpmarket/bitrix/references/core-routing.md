@@ -704,7 +704,7 @@ rg -n 'ACTIVE|ACTIVE_FROM|ACTIVE_TO|SITE_ID|LID|GROUP_ID|PERMISSION|RIGHT|CHECK_
 | Component cache | стандартные компоненты, `$arParams['CACHE_*']` | `components.md` |
 | Tagged cache | инфоблоки, HL, связанные данные | `cache-infra.md`, `iblocks.md` |
 | Managed cache | options, ORM metadata, module state | `cache-infra.md`, `modules-loader.md` |
-| Composite/static HTML | публичные страницы, персональные блоки | `templates.md` |
+| Composite/static HTML | публичные страницы, персональные блоки, `/bitrix/html_pages/`, `X-Bitrix-Composite` | `components-admin-ui.md`, `search-seo-ops.md`, `users-security.md` |
 | Search index | `CSearch`, `search.page`, `search.title` | `search.md` |
 | SEO artifacts | sitemap, robots, canonical, OpenGraph | `seo-cache-access.md` |
 | Landing cache | landing blocks/pages/hooks | `landing.md` |
@@ -1038,7 +1038,7 @@ catalog product → offer/SKU → price/currency → stock/store → basket avai
 | В поиске нет нового элемента | index, `BeforeIndex`, rights/site/url | write path skipped indexing, rights filter hides result | `search.md`, `index-cache-diagnostics.md` |
 | SEO дубль страниц | SEF/urlrewrite/canonical/sort/filter pages | pagination/filter canonical missing/wrong | `seo-cache-access.md`, `sef-urls.md`, `pagination.md` |
 | Sitemap не обновился | sitemap generation, site, iblock/SEO options | URL template mismatch, generation not rerun | `seo-cache-access.md` |
-| Composite shows wrong personal data | dynamic areas, cache key, auth state | personal block in static cache | `templates.md`, `cache-infra.md`, `session-auth.md` |
+| Composite shows wrong personal data | dynamic areas (`createFrame`/`FrameHelper`), component cache key, auth state, `/bitrix/html_pages/` | personal block in static cache or shared component cache | `components-admin-ui.md`, `search-seo-ops.md`, `users-security.md` |
 
 ## Users / auth / rights
 
@@ -1204,7 +1204,7 @@ Runtime facts to capture:
 | Agent mode hit/cron | background tasks |
 | Mail/SMS transport mode | no accidental real sends |
 | Payment/delivery/cashbox mode | no real transaction |
-| Composite/cache mode | public smoke validity |
+| Composite/cache mode | public smoke validity: `X-Bitrix-Composite`, `?ncc=1`, `/bitrix/html_pages/`, dynamic areas |
 
 ## Fixture set
 
@@ -1276,12 +1276,13 @@ Expected evidence:
 - product visible in detail;
 - inactive product hidden;
 - guest vs authorized behavior documented;
-- component cache verified after first and second request.
+- component cache verified after first and second request;
+- composite static HTML and dynamic areas verified by `X-Bitrix-Composite`, `?ncc=1`, guest/auth user checks.
 
 Diagnostic chain:
 
 ```text
-iblock data → section active chain → rights/site binding → component params/filter → pagination/sort → template → cache/composite
+iblock data → section active chain → rights/site binding → component params/filter → pagination/sort → template → component/tagged cache → composite static HTML/dynamic areas
 ```
 
 ### 2. Offer/price/stock purchaseability

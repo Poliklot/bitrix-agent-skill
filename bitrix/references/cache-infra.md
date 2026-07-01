@@ -1,9 +1,10 @@
 # Bitrix Кеширование, Агенты, Файловая система — справочник
 
-> Reference для Bitrix-скилла. Загружай когда задача связана с кешированием (Data\Cache), тегированным кешем (TaggedCache), агентами (CAgent) или файловой системой (IO).
+> Reference для Bitrix-скилла. Загружай когда задача связана с кешированием (Data\Cache), тегированным кешем (TaggedCache), агентами (CAgent) или файловой системой (IO). Если задача про “Композитный сайт”, `/bitrix/html_pages/`, `X-Bitrix-Composite`, `setFrameMode` или dynamic areas — дополнительно загружай [composite-cache.md](composite-cache.md).
 
 ## Содержание
 - Data\Cache: два режима (data/output), полный API, gotchas
+- Composite/static HTML: когда уходить в `composite-cache.md`
 - Data\TaggedCache: startTagCache/registerTag/clearByTag
 - CAgent: AddAgent, IS_PERIOD, паттерн функции, gotchas
 - IO\File, IO\Directory, IO\Path — безопасная работа с ФС
@@ -100,6 +101,22 @@ Cache::getPath($cacheId);       // путь к файлу кеша: 'ab/abcde...
 - **`endDataCache` без `startDataCache`** → тихий no-op (ядро проверяет `$this->isStarted`)
 - **`$baseDir`** — обычно `'cache'`. Менять нет смысла в 99% случаев
 - **`$initDir` = false** → ядро подставляет `'default'` — все кеши смешаются в одной папке. Всегда задавай уникальный путь
+
+---
+
+## Composite/static HTML cache — отдельный слой
+
+Composite cache не является `Data\Cache`: он хранит финальный HTML страницы через `Bitrix\Main\Composite\Page` в `/bitrix/html_pages/` или другом backend-е и может отдаваться без запуска PHP. `Bitrix\Main\Data\StaticHtmlCache` в `main` 26.150.0 — compatibility alias к `Composite\Page`. Для него используй [composite-cache.md](composite-cache.md).
+
+Короткое правило диагностики:
+
+```text
+component/data cache отвечает за данные и output компонента;
+composite отвечает за уже собранный HTML страницы;
+browser/CDN отвечает за внешний HTTP-кеш.
+```
+
+Не лечи composite-проблему только `Cache::cleanDir()`, и не лечи component-result проблему только очисткой `/bitrix/html_pages/`. Сначала назови слой.
 
 ---
 

@@ -183,7 +183,7 @@ if (!Loader::includeModule('<module>')) {
 
 Первый ответ: назвать слой кеша, а не “выключи весь кеш”.
 
-Проверить: `CACHE_TYPE`, `CACHE_TIME`, `CACHE_GROUPS`, `StartResultCache`, `setResultCacheKeys`, managed/tagged cache, composite frame, personalized HTML.
+Проверить: `CACHE_TYPE`, `CACHE_TIME`, `CACHE_GROUPS`, `StartResultCache`, `setResultCacheKeys`, managed/tagged cache, `/bitrix/html_pages/`, `X-Bitrix-Composite`, `setFrameMode` как голосование, `createFrame`/`FrameHelper` как dynamic boundary, personalized HTML.
 
 ### Forms/mail/ajax
 

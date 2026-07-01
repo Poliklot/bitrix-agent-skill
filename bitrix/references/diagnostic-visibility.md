@@ -45,7 +45,7 @@ rg -n 'ACTIVE|ACTIVE_FROM|ACTIVE_TO|SITE_ID|LID|GROUP_ID|PERMISSION|RIGHT|CHECK_
 |---|---|
 | В админке есть, на публичке пусто | `ACTIVE`, даты активности, site binding, section active chain, права |
 | У админа видно, у гостя нет | группы пользователя, `CHECK_PERMISSIONS`, inherited rights, component params |
-| После правки не меняется | component cache, tagged cache, managed cache, composite/static cache |
+| После правки не меняется | component cache, tagged cache, managed cache, composite/static cache (`/bitrix/html_pages/`, `X-Bitrix-Composite`) |
 | В списке нет, детальная открывается | фильтр списка, section filter, `pagination.md`, sort, `INCLUDE_SUBSECTIONS` |
 | В поиске нет | search index, module `search`, `BeforeIndex`, rights, site, URL function |
 | SEO/URL странный | `urlrewrite.php`, SEF params, canonical, redirects, robots/noindex |
@@ -57,7 +57,7 @@ rg -n 'ACTIVE|ACTIVE_FROM|ACTIVE_TO|SITE_ID|LID|GROUP_ID|PERMISSION|RIGHT|CHECK_
 - IBlock/HL: сначала `iblocks.md`, `highloadblock.md`, потом кеш и права.
 - Forms: `webforms.md`, затем status/validator/handler/secure files.
 - Blog/forum/vote: legacy API и standard component template layer.
-- Search/SEO: `search.md`, `seo-cache-access.md`, `index-cache-diagnostics.md`.
+- Search/SEO/cache: `search.md`, `seo-cache-access.md`, `index-cache-diagnostics.md`, `composite-cache.md`.
 - File/address/media: `fileman.md`, `location.md`, `clouds.md`.
 - Security: WAF/MFA/redirect/IP restrictions can affect visibility and access.
 
@@ -72,7 +72,7 @@ rg -n 'ACTIVE|ACTIVE_FROM|ACTIVE_TO|SITE_ID|LID|GROUP_ID|PERMISSION|RIGHT|CHECK_
 ## С чем читать вместе
 
 - Component/data flow — [component-dataflow-debugging.md](component-dataflow-debugging.md)
-- Cache/index — [index-cache-diagnostics.md](index-cache-diagnostics.md)
+- Cache/index/composite — [index-cache-diagnostics.md](index-cache-diagnostics.md), [composite-cache.md](composite-cache.md)
 - Components/templates — [components.md](components.md), [templates.md](templates.md)
 - Search/SEO — [search.md](search.md), [seo-cache-access.md](seo-cache-access.md)
 - Security/access — [security.md](security.md), [access-rbac.md](access-rbac.md)

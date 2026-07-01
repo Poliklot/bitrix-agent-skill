@@ -14,7 +14,7 @@
 | Users/RBAC/auth/session/security/socialservices | `users-security.md` |
 | Blog/forum/vote/webforms/mail/subscribe | `content-modules.md` |
 | Landing/sitecorporate/photogallery/fileman/location/messageservice/clouds/mobileapp/b24connector/translate | `site-cloud-mobile.md`, `shop-core-tail-modules.md` |
-| Search/SEO/cache/update/perf/operations | `search-seo-ops.md` |
+| Search/SEO/cache/composite/update/perf/operations | `search-seo-ops.md`, plus `components-admin-ui.md` and `users-security.md` for dynamic/personal blocks |
 | REST/webhooks/apps/events | `integrations-rest.md` |
 | Commerce: catalog/sale/currency/shop components/marketing/bizproc/webservice/1C | `commerce-shop.md` |
 
@@ -37,6 +37,7 @@
 | `commerce-1c-integration.md` | `commerce-shop.md` |
 | `commerce-workflows.md` | `commerce-shop.md` |
 | `component-dataflow-debugging.md` | `search-seo-ops.md` |
+| `composite-cache.md` | `search-seo-ops.md`, `components-admin-ui.md`, `users-security.md` |
 | `components.md` | `components-admin-ui.md` |
 | `core-audit-matrix.md` | `core-routing.md` |
 | `core-grep-cookbook.md` | `core-grep-cookbook.md` |
@@ -119,6 +120,6 @@
 
 - Если задача про конкретный repo — сначала `BITRIX_PROJECT_CONTEXT.md` при наличии, затем факты проекта, потом ответ.
 - Если модуль optional — сначала module check; если версия отличается от baseline — `version-impact.md`.
-- Не отвечать прямым SQL/core edit/global cache-off/manual meta первым вариантом.
+- Не отвечать прямым SQL/core edit/global cache-off/manual meta первым вариантом; для composite не путать `setFrameMode` vote и `createFrame` dynamic boundary.
 - Для shop/1C не использовать commerce route без `catalog`/`sale`/`currency` checks.
 - Для подробной полной карты использовать full edition `bitrix/references/reference-map.md`.

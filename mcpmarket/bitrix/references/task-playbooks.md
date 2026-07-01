@@ -23,7 +23,7 @@
 | 404/redirect | `CHTTP::SetStatus`, `ERROR_404`, `SET_STATUS_404`, `SHOW_404`, `LocalRedirect`, `urlrewrite` | project `404.php`, component strict params, redirect service | HTTP status, SEO, loops, composite |
 | form mail | `CEvent::Send`, `Main\\Mail\\Event::send`, `EVENT_NAME`, `SITE_ID`, `CForm`, `check_bitrix_sessid` | form handler/webform/project mail service | event template, site binding, queue/agents/logs |
 | ajax | `BX.ajax`, `runComponentAction`, `ajax.php`, `Controller`, `JsonResponse`, `bitrix_sessid` | component action, D7 controller, legacy endpoint with prolog/sessid | CSRF, auth, JSON headers, composite |
-| cache/personalization | `CACHE_TYPE`, `CACHE_GROUPS`, `StartResultCache`, `setResultCacheKeys`, `TaggedCache`, `Composite`, `createFrame` | cache key, managed tag, composite frame | no global cache-off first |
+| cache/personalization/composite | `CACHE_TYPE`, `CACHE_GROUPS`, `StartResultCache`, `setResultCacheKeys`, `TaggedCache`, `/bitrix/html_pages/`, `X-Bitrix-Composite`, `setFrameMode`, `createFrame` | cache key, managed tag, `setFrameMode` vote/adaptation, `AutomaticArea`/frame type, dynamic boundary, second request/cache pass | no global cache-off first; no `setFrameMode=true` as dynamic |
 | shop/catalog/sale | module check for `catalog`, `sale`, `currency` | catalog/sale/currency API, shop component params | events, recalc, discounts, reserves, order errors |
 | 1C/CommerceML | `catalog.import.1c`, `sale.export.1c`, `checkauth`, `mode=file`, `mode=import`, `XML_ID`, `CML2_LINK` | exchange settings/logs/import flow | upload is not import success |
 | custom logic | `local/modules`, `ServiceLocator`, `EventManager`, autoload | local module/service/migration/event/controller | idempotency, rollback, tooling, smoke |

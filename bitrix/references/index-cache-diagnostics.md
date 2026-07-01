@@ -16,7 +16,7 @@
 | Component cache | стандартные компоненты, `$arParams['CACHE_*']` | `components.md` |
 | Tagged cache | инфоблоки, HL, связанные данные | `cache-infra.md`, `iblocks.md` |
 | Managed cache | options, ORM metadata, module state | `cache-infra.md`, `modules-loader.md` |
-| Composite/static HTML | публичные страницы, персональные блоки | `templates.md` |
+| Composite/static HTML | публичные страницы, персональные блоки, `/bitrix/html_pages/`, `X-Bitrix-Composite` | `composite-cache.md`, `templates.md` |
 | Search index | `CSearch`, `search.page`, `search.title` | `search.md` |
 | SEO artifacts | sitemap, robots, canonical, OpenGraph | `seo-cache-access.md` |
 | Landing cache | landing blocks/pages/hooks | `landing.md` |
@@ -25,10 +25,10 @@
 
 1. Определи, какие данные менялись: element, section, UF, form result, blog post, file, landing block, user, option.
 2. Найди компонент или endpoint, который отдаёт публичный результат.
-3. Проверь, кешируется ли результат и какие cache keys/tag-и используются.
+3. Проверь, кешируется ли результат и какие cache keys/tag-и используются; отдельно проверь, есть ли готовый composite HTML поверх результата.
 4. Проверь, нужно ли переиндексировать поиск или SEO artifacts.
 5. Проверь права и site binding, чтобы не перепутать кеш с access problem.
-6. После исправления обнови только нужный слой, а не весь сайт без причины.
+6. После исправления обнови только нужный слой, а не весь сайт без причины; для composite обязательно сделай second request/cache pass.
 
 ## Что проверять по доменам
 
@@ -59,7 +59,7 @@
 - Сбрасывать весь кеш вместо определения слоя.
 - Обновлять данные через D7 ORM, когда конкретный legacy-модуль ожидает `C*` write API side effects.
 - Забывать search reindex после массового импорта.
-- Кешировать персональные данные в общем component cache.
+- Кешировать персональные данные в общем component cache или static HTML composite без dynamic area.
 - Считать SEO-дубль проблемой шаблона, когда причина в SEF/canonical/urlrewrite.
 
 ## С чем читать вместе

@@ -170,7 +170,7 @@ rg -n 'BX\\.ajax|runComponentAction|signedParameters|ajax\\.php|prolog_before|Co
 **Найти:**
 
 ```bash
-rg -n 'StartResultCache|AbortResultCache|setResultCacheKeys|CACHE_TYPE|CACHE_TIME|CACHE_GROUPS|RegisterTag|clearByTag|TaggedCache|Composite|createFrame|USER->IsAuthorized|GetID\\(' \
+rg -n 'StartResultCache|AbortResultCache|setResultCacheKeys|CACHE_TYPE|CACHE_TIME|CACHE_GROUPS|RegisterTag|clearByTag|TaggedCache|Composite|StaticHtmlCache|Composite\\Page|AutomaticArea|COMPOSITE_FRAME_MODE|COMPOSITE_FRAME_TYPE|createFrame|FrameHelper|markNonCacheable|USER->IsAuthorized|GetID\\(' \
   local bitrix/templates www/bitrix/templates www/bitrix/modules --glob '*.php'
 ```
 
@@ -180,9 +180,10 @@ rg -n 'StartResultCache|AbortResultCache|setResultCacheKeys|CACHE_TYPE|CACHE_TIM
 - `CACHE_GROUPS` для прав;
 - `setResultCacheKeys` для данных в `component_epilog`;
 - tagged/managed cache для зависимых данных;
-- composite frame для персональных блоков.
+- composite layer: `setFrameMode` как голосование/adaptation flag, `AutomaticArea`/`COMPOSITE_FRAME_*`, `createFrame`/`FrameHelper` как dynamic boundary;
+- `/bitrix/html_pages/` и `X-Bitrix-Composite` для second request/cache pass.
 
-**Не делать:** глобально отключать кеш без layer diagnosis.
+**Не делать:** глобально отключать кеш без layer diagnosis; не считать `setFrameMode(true)` динамическим блоком. Для composite открывай `composite-cache.md`.
 
 ## 10. Shop/catalog/sale задача
 

@@ -46,9 +46,9 @@
 | B022 | Как сделать превью картинки? | `developer-cards`, `file-upload-modern`, `clouds` | `CFile::ResizeImageGet`, resize cache, dimensions | HTML width/height как resize |
 | B023 | Как вывести свойство инфоблока в шаблоне? | `developer-cards`, `iblocks`, `components` | `PROPERTY_CODE`, `$arResult['PROPERTIES']`/`DISPLAY_PROPERTIES`, `result_modifier` | SQL в property table |
 | B024 | Почему свойство инфоблока пустое в шаблоне? | `developer-cards`, `iblocks`, `component-dataflow-debugging` | проверить параметры компонента, код свойства, кеш, result_modifier | “свойства всегда есть в arResult” |
-| B025 | Почему изменения в компоненте не видны? | `developer-cards`, `cache-infra`, `component-dataflow-debugging` | component cache, template cache, managed cache, composite | выключить весь кеш первым ответом |
-| B026 | Как кешировать свой компонент? | `developer-cards`, `components`, `cache-infra` | `StartResultCache`, `AbortResultCache`, `setResultCacheKeys`, cache keys | кешировать USER_ID без caveat |
-| B027 | Почему пользователь видит данные другого пользователя? | `developer-cards`, `cache-infra`, `security` | персонализация, `CACHE_GROUPS`, composite frame, cache key | “очисти кеш” без root cause |
+| B025 | Почему изменения в компоненте не видны? | `developer-cards`, `cache-infra`, `component-dataflow-debugging`, `composite-cache` | component cache, template cache, managed/tagged cache, composite static HTML, `X-Bitrix-Composite`, second request/cache pass | выключить весь кеш первым ответом |
+| B026 | Как кешировать свой компонент? | `developer-cards`, `components`, `cache-infra`, `composite-cache` | `StartResultCache`, `AbortResultCache`, `setResultCacheKeys`, cache keys, отличие component cache от composite | кешировать USER_ID без caveat |
+| B027 | Почему пользователь видит данные другого пользователя? | `developer-cards`, `cache-infra`, `security`, `composite-cache` | персонализация, `CACHE_GROUPS`, component cache key, `createFrame`/`FrameHelper`, `/bitrix/html_pages/`, очистка утечки | “очисти кеш” без root cause |
 | B028 | Как отправить письмо? | `developer-cards`, `mail-notifications`, `webforms` | почтовое событие/шаблон, `CEvent::Send`/`Main\Mail\Event::send` | `mail()` как основной путь |
 | B029 | Форма не отправляет письмо — где смотреть? | `developer-cards`, `webforms`, `mail-notifications`, `operations-runbook` | event name, template, SITE_ID, queue/agents, logs | “SMTP сломан” без проверки Bitrix events |
 | B030 | Как сделать AJAX в компоненте? | `developer-cards`, `components`, `http`, `security` | project ajax pattern, sessid, JSON response, composite | endpoint без prolog/sessid |
@@ -79,6 +79,8 @@
 | B055 | Нужно проверить CommerceML без production 1С | `runtime-smoke-verification`, `commerce-1c-integration` | использовать P2 fixtures/stub, запрет real credentials, blocked если нет sandbox endpoint | подключить реальную 1С |
 | B056 | REST webhook есть, но scopes неизвестны | `runtime-smoke-verification`, `shop-integrations-webservice`, `rest` | P3 method discovery, missing-scope negative, masked tokens | сохранить токен в evidence |
 | B057 | Evidence pack готов, как проверить перед релизом? | `release-gate`, `runtime-smoke-verification` | `python3 scripts/validate_runtime_evidence.py ... --package P1`, проверить summary/scenarios/secrets | принять папку без validation |
+| B058 | Как правильно подготовить компонент к композитному кешу? | `components`, `templates`, `composite-cache` | `setFrameMode(true)` = голосование, персональные части через `createFrame`, dynamic areas не вкладывать, verification по headers | сказать что `setFrameMode(true)` делает компонент динамическим |
+| B059 | Корзина/имя пользователя моргает или показывает чужие данные при композите | `developer-cards`, `security`, `composite-cache`, `cache-infra` | dynamic area с безопасной заглушкой, `CACHE_TYPE=N` для персонального блока, проверить guest/user A/user B, `X-Bitrix-Composite` | просто очистить весь кеш |
 
 ## Expected answer skeletons
 

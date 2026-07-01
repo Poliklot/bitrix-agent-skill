@@ -28,9 +28,9 @@
 | B022 | Сделать превью | `ResizeImageGet` | HTML width/height only |
 | B023 | Вывести свойство инфоблока | component params/arResult/API | SQL property table |
 | B024 | PROPERTY пустой | params/cache/result_modifier | assume property exists |
-| B025 | Изменения не видны | component/managed/composite cache | disable all cache |
-| B026 | Кешировать компонент | cache keys, `StartResultCache` | cache user-specific data |
-| B027 | Чужие данные в кеше | personalization/composite/groups | clear cache only |
+| B025 | Изменения не видны | component/managed/tagged cache + `/bitrix/html_pages/` + `X-Bitrix-Composite` + second request/cache pass | disable all cache |
+| B026 | Кешировать компонент | cache keys, `StartResultCache`, отличие component cache от composite | cache user-specific data |
+| B027 | Чужие данные в кеше | personalization, `CACHE_GROUPS`, `createFrame`/`FrameHelper`, `/bitrix/html_pages/` | clear cache only |
 | B028 | Отправить письмо | mail events/templates | PHP `mail()` first |
 | B029 | Форма не шлёт письмо | event/template/SITE_ID/agents | “SMTP сломан” first |
 | B030 | AJAX в компоненте | project ajax/controller + sessid | endpoint without sessid |
@@ -56,5 +56,8 @@
 | B050 | CommerceML без production 1С | runtime smoke + commerce | подключить реальную 1С |
 | B051 | REST webhook scopes неизвестны | runtime smoke + REST/webservice | сохранить токен в evidence |
 | B052 | Проверить evidence pack перед релизом | release gate + runtime smoke validator | принять папку без validation |
+
+| B053 | Композитный кеш компонента | `setFrameMode(true)` = vote, `createFrame` = dynamic, headers verification | say setFrameMode makes dynamic |
+| B054 | Корзина моргает при композите | dynamic area stub, `CACHE_TYPE=N`, guest/user A/user B | clear all cache only |
 
 Gate: перед релизом бытового слоя выбрать минимум 15 prompt из разных доменов; `fail = 0`. Полный checklist — `release-gate.md`.

@@ -183,11 +183,11 @@ rg -n 'StartResultCache|AbortResultCache|IncludeComponentTemplate|setResultCache
 ```
 
 ```bash
-rg -n 'Composite|Frame|createFrame|begin|end|ShowViewContent|SetViewTarget|CACHE_GROUPS|USER->IsAuthorized|GetID\(' \
+rg -n 'Composite|StaticHtmlCache|Composite\\Page|AutomaticArea|COMPOSITE_FRAME_MODE|COMPOSITE_FRAME_TYPE|FrameHelper|Frame|createFrame|startDynamicWithID|finishDynamicWithID|markNonCacheable|begin|end|ShowViewContent|SetViewTarget|CACHE_GROUPS|USER->IsAuthorized|GetID\(' \
   local bitrix/templates www/bitrix/templates --glob '*.php'
 ```
 
-Правило ответа: не начинать с “выключи весь кеш”. Сначала назвать слой: параметры компонента, ключ кеша, `CACHE_GROUPS`, managed/tagged cache, composite frame, result cache keys, ajax payload.
+Правило ответа: не начинать с “выключи весь кеш”. Сначала назвать слой: параметры компонента, ключ кеша, `CACHE_GROUPS`, managed/tagged cache, composite static HTML (`/bitrix/html_pages/`, `X-Bitrix-Composite`, `Composite\Page`), `setFrameMode` vote/adaptation, `AutomaticArea`/`COMPOSITE_FRAME_*`, dynamic boundary (`createFrame`/`FrameHelper`), result cache keys, ajax payload. Для composite деталей открывай `composite-cache.md`.
 
 ## 8. Routing, SEF, 404, redirect
 

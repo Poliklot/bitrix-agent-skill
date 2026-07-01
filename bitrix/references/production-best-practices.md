@@ -151,7 +151,7 @@ Boundary обязан:
 | Component cache | component params/result changed, list/detail output |
 | Tagged cache | iblock/catalog/HL dependent pages |
 | Managed cache | module options, ORM metadata, rights, config |
-| Composite/static cache | public pages with mixed guest/personal blocks |
+| Composite/static cache | public pages with mixed guest/personal blocks; verify `setFrameMode` vote, `createFrame` dynamic boundary, `/bitrix/html_pages/`, `X-Bitrix-Composite` |
 | Search index | content/title/body/url/rules changed |
 | SEO artifacts | SEF, canonical, sitemap, robots, meta |
 | Rights/session | user groups, access rules, auth/session changes |

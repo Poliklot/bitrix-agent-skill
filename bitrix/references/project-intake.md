@@ -46,7 +46,7 @@ rg -n 'ShowHead|ShowTitle|ShowBodyScripts|ShowPanel|IncludeComponent\(' \
 | Компоненты | `IncludeComponent(` and `local/templates/*/components` | Где править вывод и параметры. |
 | Состав модулей | `www/bitrix/modules/*/install/version.php` | Нельзя обещать API отсутствующего модуля. |
 | 404/routing | `404.php`, `urlrewrite.php`, `SEF_MODE`, `SET_STATUS_404` | Для status/SEO/SEF diagnostics. |
-| Cache/composite | `CACHE_TYPE`, `CACHE_GROUPS`, `StartResultCache`, `Composite`, `Frame` | Для “изменения не видны” и персонализации. |
+| Cache/composite | `CACHE_TYPE`, `CACHE_GROUPS`, `StartResultCache`, `setFrameMode`, `createFrame`, `StaticHtmlCache`, `/bitrix/html_pages/`, `X-Bitrix-Composite` | Для “изменения не видны”, second request/cache pass и персонализации. |
 | Tooling | `composer.json`, `phpunit.xml*`, `phpstan*`, `psalm*`, `rector.php` | Не тащить новый PHP-stack, если проектный уже есть. |
 | Events/agents | `EventManager`, `addEventHandler`, `CAgent`, `Stepper` | Для кастомной логики и фоновых задач. |
 

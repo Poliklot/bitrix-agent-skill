@@ -262,31 +262,39 @@ $response->flush('');
 
 ## Composite cache и шаблоны
 
-Composite (статический HTML-кеш) кеширует **весь HTML страницы**. Части, которые не должны кешироваться (корзина, имя пользователя), выносятся в динамические блоки:
+Для задач по “Композитному сайту”, `setFrameMode`, `createFrame`, `/bitrix/html_pages/`, персональным блокам и `X-Bitrix-Composite` сначала открывай [composite-cache.md](composite-cache.md). Здесь — только краткий шаблонный минимум.
+
+Composite cache — это page-level static HTML cache. Он кеширует финальный HTML страницы, а не только результат компонента. Поэтому разделяй:
+
+- `StartResultCache()` / `CACHE_TYPE` — component result cache;
+- `$this->setFrameMode(true)` — шаблон компонента голосует “за” совместимость с composite и считается адаптированным;
+- `COMPOSITE_FRAME_MODE/TYPE` и `AutomaticArea` — автокомпозитная обёртка first-level components, если шаблон не адаптирован вручную;
+- `$this->createFrame(...)->begin()/end()` — manual dynamic area, которая не должна замораживаться в static HTML.
+
+Статичный шаблон компонента:
 
 ```php
-// В шаблоне компонента или template.php:
-if ($this->__component->StartResultCache()) {
-    // кешируемая часть
-    ...
-    $this->__component->EndResultCache();
-} else {
-    // при выдаче из composite-кеша эта часть НЕ выполняется
-}
+<?php
+/** @var CBitrixComponentTemplate $this */
+$this->setFrameMode(true); // не делает блок dynamic; vote + manual adaptation marker
+?>
+<div class="static-list">
+    ...одинаковый для всех пользователей HTML...
+</div>
 ```
 
-Компонент в **Frame-режиме** (динамический блок, не кешируется composite):
+Динамическая область в шаблоне:
 
 ```php
-// В component.php
-$this->setFrameMode(true);   // этот компонент всегда рендерится динамически
+<?php
+$this->setFrameMode(true);
+$frame = $this->createFrame('header-cart-counter')->begin('');
+?>
+<span class="header-cart-counter"><?= (int)$arResult['COUNT'] ?></span>
+<?php $frame->end(); ?>
 ```
 
-### Что НЕ кешировать composite:
-- Корзина, сумма заказов
-- Имя авторизованного пользователя
-- Персональные данные
-- CSRF-токены
+Что не должно попадать в static HTML без dynamic area: корзина, имя пользователя, персональные цены/скидки, региональность, session/CSRF tokens, cookie/User-Agent/time-dependent HTML и random IDs.
 
 ---
 

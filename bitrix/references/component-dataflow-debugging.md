@@ -44,7 +44,7 @@
 | Изменить бизнес-правило | service/module layer |
 | Поменять выборку | component params, service, repository/ORM/legacy API |
 | Добавить AJAX endpoint | controller/action route, не inline chaos в шаблоне |
-| Починить кеш | component cache keys, tagged cache, `setResultCacheKeys` |
+| Починить кеш | component cache keys, tagged cache, `setResultCacheKeys`; для composite — `setFrameMode`, `createFrame`, `/bitrix/html_pages/`, `X-Bitrix-Composite` |
 
 ## Диагностические команды
 
@@ -62,7 +62,7 @@ rg -n 'result_modifier|component_epilog|setResultCacheKeys|AbortResultCache|Star
 
 - Толстая бизнес-логика в `template.php`.
 - SQL или внешнее API прямо из шаблона.
-- `result_modifier.php` меняет данные без учёта кеша.
+- `result_modifier.php` меняет данные без учёта component cache/composite second request.
 - `component_epilog.php` используется для тяжёлых запросов вместо поздних page effects.
 - Копия шаблона оторвана от stock variant и не сверена после обновления core.
 - AJAX endpoint живёт в случайном PHP-файле без CSRF/access checks.

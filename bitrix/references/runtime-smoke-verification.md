@@ -124,7 +124,7 @@ find www/bitrix/modules -maxdepth 1 -mindepth 1 -type d | sort
 | P1-05 | Guest basket | add-to-basket response, FUSER/session/site, reload check | товар остаётся в корзине после reload, site/fuser понятны | session/FUSER недоступен в sandbox |
 | P1-06 | Auth basket | login/test user, basket refresh, group price behavior | auth user видит корректную цену и корзину | нет безопасного test user |
 | P1-07 | Checkout/order save | delivery/payment/order props, `Order::save()` result, order id | заказ создан в test mode, payment/shipment collections есть | нет stub delivery/payment или write sandbox |
-| P1-08 | Second request/cache pass | повтор list/detail/basket с кешем/composite | второй запрос не скрывает fixture и не показывает чужую корзину | cache/composite нельзя безопасно включить |
+| P1-08 | Second request/cache pass | повтор list/detail/basket с component/tagged cache и composite (`/bitrix/html_pages/`, `X-Bitrix-Composite`, dynamic areas) | второй запрос не скрывает fixture, не показывает чужую корзину и dynamic areas обновляются | cache/composite нельзя безопасно включить |
 
 ### Evidence pack для пакета 1
 
@@ -286,7 +286,7 @@ Runtime facts to capture:
 | Agent mode hit/cron | background tasks |
 | Mail/SMS transport mode | no accidental real sends |
 | Payment/delivery/cashbox mode | no real transaction |
-| Composite/cache mode | public smoke validity |
+| Composite/cache mode | public smoke validity: `X-Bitrix-Composite`, `?ncc=1`, `/bitrix/html_pages/`, dynamic areas |
 
 ## Fixture set
 
@@ -358,12 +358,13 @@ Expected evidence:
 - product visible in detail;
 - inactive product hidden;
 - guest vs authorized behavior documented;
-- component cache verified after first and second request.
+- component cache verified after first and second request;
+- composite static HTML and dynamic areas verified by `X-Bitrix-Composite`, `?ncc=1`, guest/auth user checks.
 
 Diagnostic chain:
 
 ```text
-iblock data → section active chain → rights/site binding → component params/filter → pagination/sort → template → cache/composite
+iblock data → section active chain → rights/site binding → component params/filter → pagination/sort → template → component/tagged cache → composite static HTML/dynamic areas
 ```
 
 ### 2. Offer/price/stock purchaseability

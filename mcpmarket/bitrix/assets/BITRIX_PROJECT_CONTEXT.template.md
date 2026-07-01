@@ -56,7 +56,7 @@
 - `ShowBodyScripts()` найден: yes/no/path
 - Asset layer: `Asset::getInstance()` / legacy / custom:
 - Ручные meta/head вставки:
-- Composite/cache особенности:
+- Composite/cache особенности (`setFrameMode`, `createFrame`, `/bitrix/html_pages/`, `X-Bitrix-Composite`, dynamic blocks):
 
 ## Компоненты и шаблоны компонентов
 
@@ -134,7 +134,7 @@
 ## Кеш, поиск, SEO, routing
 
 - Managed/tagged cache:
-- Composite:
+- Composite (`/bitrix/html_pages/`, headers, invalidation, dynamic areas):
 - Search indexing:
 - SEO/meta source:
 - `urlrewrite.php`:

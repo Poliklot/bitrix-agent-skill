@@ -218,17 +218,17 @@ $image = CFile::ResizeImageGet(
 
 **Побочные эффекты:** кеш компонента, права доступа, активность элемента/раздела, разные типы свойств, HTML escaping.
 
-## 14. Кеш компонента
+## 14. Кеш компонента и composite
 
-**Запрос:** “почему изменения не видны”, “почему второй пользователь видит чужие данные”, “как кешировать компонент”.
+**Запрос:** “почему изменения не видны”, “почему второй пользователь видит чужие данные”, “как кешировать компонент”, “как работает композитный кеш”.
 
-**Не делай:** не отключай весь кеш сайта как первый ответ и не кешируй персональные данные без frame/ключей.
+**Не делай:** не отключай весь кеш сайта как первый ответ, не кешируй персональные данные без dynamic area/ключей и не называй `setFrameMode(true)` динамическим блоком.
 
-**Делай:** проверь `CACHE_TYPE`, `CACHE_TIME`, `CACHE_GROUPS`, `StartResultCache`, `AbortResultCache`, `setResultCacheKeys`, tagged cache и composite frames.
+**Делай:** разведи слои: `CACHE_TYPE`, `CACHE_TIME`, `CACHE_GROUPS`, `StartResultCache`, `AbortResultCache`, `setResultCacheKeys`, tagged/managed cache, затем composite static HTML (`/bitrix/html_pages/`, `X-Bitrix-Composite`) и dynamic boundary (`createFrame`/`FrameHelper`).
 
-**Где проверить:** параметры компонента, `component.php`, `result_modifier.php`, `component_epilog.php`, `cache-infra.md`.
+**Где проверить:** параметры компонента, `component.php`, `template.php`, `result_modifier.php`, `component_epilog.php`, `cache-infra.md`, `components.md`, `composite-cache.md`.
 
-**Побочные эффекты:** права групп, персонализация, managed cache tags, composite, ajax lazy blocks.
+**Побочные эффекты:** права групп, персонализация, managed cache tags, composite second request/cache pass, ajax lazy blocks, browser/CDN cache.
 
 ## 15. Почтовое событие / форма обратной связи
 

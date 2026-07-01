@@ -14,7 +14,7 @@ description: >-
   local core and `local/*`; missing optional modules are deferred.
 metadata:
   author: poliklot
-  version: "1.30.0"
+  version: "1.31.0"
 ---
 
 # Bitrix Expert Skill — MCP Market Edition
@@ -99,7 +99,7 @@ foreach (['iblock'] as $module) {
 | Users, RBAC, auth/session, security, socialservices | [references/users-security.md](references/users-security.md) |
 | Blog, forum, vote, webforms, mail, subscribe | [references/content-modules.md](references/content-modules.md) |
 | Landing, sitecorporate, photogallery, fileman, location, messageservice, clouds, bitrixcloud, mobileapp, b24connector, translate | [references/site-cloud-mobile.md](references/site-cloud-mobile.md), [references/shop-core-tail-modules.md](references/shop-core-tail-modules.md) |
-| Search, SEO, cache infra, update stepper, perfmon, operations | [references/search-seo-ops.md](references/search-seo-ops.md) |
+| Search, SEO, cache/composite infra, update stepper, perfmon, operations | [references/search-seo-ops.md](references/search-seo-ops.md); for composite dynamic/personal blocks also [references/components-admin-ui.md](references/components-admin-ui.md), [references/users-security.md](references/users-security.md) |
 | REST integration | [references/integrations-rest.md](references/integrations-rest.md) |
 | Commerce/shop: catalog, sale, currency, standard shop components, StoreAssist, marketing/analytics, automation/bizproc, webservice/SOAP, sale/catalog REST, workflow/lists/pull, 1С/CommerceML | [references/commerce-shop.md](references/commerce-shop.md) |
 
@@ -109,7 +109,7 @@ foreach (['iblock'] as $module) {
 - Для “как вставить meta title/description” не предлагай ручной `<meta>` как первый шаг: проверь `$APPLICATION->ShowHead()` и `<title><?php $APPLICATION->ShowTitle(); ?></title>`, затем свойства страницы/раздела, SEO-параметры компонента, `SetTitle`/`SetPageProperty`.
 - Не принимай `composer.json` и `phpunit.xml.dist` внутри `www/bitrix/modules/*/vendor` за tooling проекта.
 - Для задач “как правильно”, “best practices”, “куда класть код”, “подводные камни” или “можно ли считать покрытым” сначала открывай соответствующий compact bundle: `php-architecture.md` для production practices и `core-routing.md` для pitfalls/runtime smoke.
-- Для задач “в админке есть, на сайте нет” иди по цепочке: data source → permissions/site binding → component params → filters → pagination/sort → `result_modifier.php` → template → cache/index/SEO.
+- Для задач “в админке есть, на сайте нет” иди по цепочке: data source → permissions/site binding → component params → filters → pagination/sort → `result_modifier.php` → template → component/tagged/composite cache → index/SEO.
 - Наличие `catalog.*` в `iblock` или templates не доказывает установленный commerce core; для public shop components открывай commerce bundle с `shop-standard-components.md`.
 - Для shop-задач сначала подтверждай `catalog`, `sale`, `currency`; затем разделяй product, offer, price, stock, basket, order, marketing/analytics и exchange side effects.
 - Для вопросов полного покрытия shop-core сначала смотри inventory bundle и runtime smoke section: standard shop components, marketing/analytics, automation и webservice/REST уже покрыты code-first, но не обещай runtime pass без Docker/runtime проверки.
@@ -118,7 +118,7 @@ foreach (['iblock'] as $module) {
 - Для задач про `webservice.sale`, `webservice.statistic`, SOAP/WSDL, REST sale/catalog events, placements или external app handlers открывай commerce bundle с `shop-integrations-webservice.md`; не смешивай это с 1С CommerceML.
 - Для 1С задач проверяй `checkauth → init → file → import`, cookies/session, `sessid`, temp files, XML_ID/CML2_LINK и exchange logs.
 - Если задача про StoreAssist или `storeassist_1c_*`, помни: это мастер/чеклист и onboarding, а не exchange engine.
-- Для пагинации разводи legacy `PAGEN_N`/`NavStart()` и D7 `PageNavigation`: проверяй unique nav id, count/filter, stable sort, cache key и ajax payload.
+- Для пагинации разводи legacy `PAGEN_N`/`NavStart()` и D7 `PageNavigation`: проверяй unique nav id, count/filter, stable sort, cache key, ajax payload и composite second request/cache pass.
 - Не меняй order/basket/payment/shipment/catalog price/stock прямым SQL, если есть API и side effects.
 - Не подключай production 1С, реальные платежи, доставки или кассы для smoke без явного подтверждения.
 - Не говори “весь core полностью production-проверен”, если нет sandbox/fixtures smoke evidence.

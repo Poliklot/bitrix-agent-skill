@@ -20,7 +20,7 @@
 | “Как сделать redirect?” | HTML/echo до редиректа, невалидированный внешний URL. | `LocalRedirect`, project redirect service, защита от open redirect. |
 | “Как вывести картинку/превью?” | Только HTML `width/height`, ручной путь из `/upload`. | `CFile::GetPath`, `CFile::ResizeImageGet`, project image service. |
 | “Как вывести свойство инфоблока?” | Прямой SQL в property tables. | Параметры компонента, `$arResult`, `iblock` API/ORM, `result_modifier`. |
-| “Почему не обновляется вывод?” | “Выключи весь кеш”. | Найти кеш компонента, managed tags, composite/frame, cache keys. |
+| “Почему не обновляется вывод?” | “Выключи весь кеш”. | Найти слой: component cache, managed/tagged cache, composite static HTML (`/bitrix/html_pages/`, `X-Bitrix-Composite`), dynamic area, cache keys. |
 | “Как отправить письмо?” | Нативный `mail()` как основной путь. | Почтовые события/шаблоны, `CEvent::Send`, `Main\Mail\Event::send`, webform/project service. |
 | “Как сделать ajax?” | Самодельный endpoint без `prolog_before`, sessid, JSON policy. | Проверить project ajax/controller pattern, `bitrix_sessid`, response format, composite. |
 | “Как добавить обработчик события?” | Регистрировать анонимный код в случайном шаблоне. | `EventManager`, `local/php_interface`/local module, idempotent install/uninstall. |
@@ -31,7 +31,7 @@
 1. **Не правь ядро первым вариантом.** Любая постоянная кастомизация должна идти в `local/`, проектный шаблон, локальный модуль или миграцию.
 2. **Не предлагай чистый PHP вместо Bitrix API**, если есть штатный механизм (`Asset`, `IncludeFile`, `CFile`, `Loader`, `Context`, компоненты, почтовые события).
 3. **Не делай прямой SQL первым ответом** для инфоблоков, пользователей, заказов, корзин, цен, остатков, SEO и настроек компонентов.
-4. **Не отключай кеш глобально первым ответом.** Сначала определить слой кеша: компонентный, managed/tagged, composite, браузерный, CDN/proxy.
+4. **Не отключай кеш глобально первым ответом.** Сначала определить слой кеша: компонентный, managed/tagged, composite static HTML, dynamic area, браузерный, CDN/proxy. Помни: `setFrameMode(true)` — голосование за composite, а не dynamic boundary.
 5. **Не смешивай разные сущности:** browser title, H1, meta description; section/page properties; component params; iblock SEO templates.
 6. **Не обещай наличие модуля.** `sale`, `catalog`, `currency`, `bizproc`, `pull`, `socialnet` активны только после проверки в локальном core.
 7. **Не делай “админский клик-путь” единственным решением**, если нужна воспроизводимая разработка: миграция, install step, CLI, сервис.
@@ -66,4 +66,4 @@
 
 Плохо: “поставь `CACHE_TYPE => N` везде”.
 
-Хорошо: “Проверь ключи кеша, `CACHE_GROUPS`, `setResultCacheKeys`, tagged cache и composite frame; отключай кеш только точечно для диагностики.”
+Хорошо: “Проверь ключи кеша, `CACHE_GROUPS`, `setResultCacheKeys`, tagged cache, `/bitrix/html_pages/`, `X-Bitrix-Composite` и `createFrame`/`FrameHelper`; отключай кеш только точечно для диагностики.”

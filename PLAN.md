@@ -7,7 +7,7 @@
 ## Текущий статус
 
 На дату этого плана:
-- актуальная версия навыка: `1.30.0`;
+- актуальная версия навыка: `1.31.0`;
 - точка входа: `bitrix/SKILL.md`;
 - reference-слой: `bitrix/references/*.md`;
 - non-commerce reference-слой прошёл ревизию против установленного core;
@@ -26,6 +26,7 @@
 - release/evidence workflow усилен в версии `1.30.0`: добавлен CI-gate `.github/workflows/validate.yml`, release workflow запускает validation до публикации, `validate_skill.py` проверяет version/changelog/PLAN sync и full-to-compact coverage manifest;
 - runtime evidence kit получил runnable preflight-helper `scripts/bitrix_runtime_preflight.py`, режим `init_runtime_evidence.py --all`, sample blocked evidence pack и короткие команды `make validate`, `make evidence-all`, `make release-check`;
 - пагинационный слой переаудирован по `main` 26.150.0 и shop-core: legacy `CDBResult`, D7 `PageNavigation`, `system.pagenavigation`, `main.pagenavigation`, admin/grid и ajax/lazy load.
+- composite/cache слой в версии `1.31.0` вынесен в отдельный `composite-cache.md` и сверен по `main` 26.150.0: `setFrameMode` как голосование, `COMPOSITE_FRAME_MODE/TYPE` и `AutomaticArea`, `createFrame`/`FrameHelper` как dynamic boundary, `/bitrix/html_pages/`, `X-Bitrix-Composite`, персонализация и second request/cache pass.
 
 ## Активный и условный контур
 
@@ -111,7 +112,7 @@ bitrix-agent-skill/
 Проверены и скорректированы текущие non-commerce reference-файлы, включая:
 - модель данных и инфоблоки;
 - компоненты, шаблоны, ЧПУ и пагинация;
-- поиск, SEO, кеш и агенты;
+- поиск, SEO, component/tagged/composite cache и агенты;
 - сессии, авторизацию, доступ и RBAC;
 - веб-формы, почту, подписки;
 - REST, HTTP, low-level DB;
@@ -133,11 +134,11 @@ bitrix-agent-skill/
 2. Если API найден только в другом Bitrix-стеке, но не в установленном ядре, его нельзя описывать как штатный контракт.
 3. Если проектный код расходится со стандартным ядром, приоритет у проектного кода, но с явной пометкой об оверрайде.
 4. Магазинные задачи и обмен с 1С в каждом клиентском проекте остаются условными до проверки локальных модулей `catalog`, `sale`, `currency` и связанных runtime-контрактов; shop-core baseline — ориентир, а не доказательство для чужого проекта.
-5. После каждой волны ревизии должны синхронно обновляться `SKILL.md`, `VERSION`, а при необходимости `README.md` и `CHANGELOG.md`.
+5. После каждой волны ревизии должны синхронно обновляться `SKILL.md`, `VERSION`, а при необходимости `README.md` и `CHANGELOG.md`; при добавлении reference — full и MCP Market compact-навигация.
 6. Для commerce/1C-аудита нельзя использовать production-данные, живые ключи и реальные персональные данные клиентов; нужны sandbox и тестовые CommerceML fixtures.
 7. Code-first coverage не равен runtime pass: для production-утверждений нужны smoke fixtures/evidence по `runtime-smoke-verification.md`.
 
-## Roadmap v1.30+
+## Roadmap v1.31+
 
 ### 0. Release/evidence automation — поддержка
 
