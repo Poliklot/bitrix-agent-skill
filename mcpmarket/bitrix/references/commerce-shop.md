@@ -4542,3 +4542,11 @@ PRODUCT_ID не уникальный ключ строки. Менять item п
 Проверка: Две строки одного SKU и новый item до save: меняется только выбранная строка, связи после save сохранены.
 
 [Официальный контракт](https://docs.1c-bitrix.ru/api/classes/Bitrix-Sale-BasketItem.html); documentation-backed, 2026-11-01, не runtime pass.
+
+## K14 — Системная отгрузка и распределение количества
+
+System shipment — остаток распределения, не доставка. Отгружать только обычные Shipment, проверять quantities и Result; уменьшение basket согласовать с распределёнными/отгруженными позициями.
+
+Проверка: Разделить 5 единиц на две отправки и остаток; уменьшение ниже уже отгруженного количества должно быть обработано явно.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/sale/technique/shipment.php); documentation-backed, 2026-11-01, не runtime pass.
