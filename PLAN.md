@@ -521,3 +521,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [iblocks.md](bitrix/references/iblocks.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockpropertyenum/getlist.php).
 - Самопроверка B088 — «Вариант имеет разные ID на dev/prod: как перенести значение?»: Разрешить XML_ID внутри конкретного свойства, проверить одну точную запись и сохранить её локальный ID; проверить повтор миграции.
 - Контрпример отвергнут: Копировать dev ID или искать первый вариант по подписи.. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K10: Мутация метаданных свойства и VERSION=2
+
+- Пробел до изменения: Раздел PropertyTable не ограничивал generic CRUD по версии storage и не объяснял выбор CIBlockProperty для schema side effects.
+- Исправление: [iblocks.md](bitrix/references/iblocks.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://docs.1c-bitrix.ru/pages/modules/iblocks/api.html).
+- Самопроверка B089 — «Можно добавить свойство VERSION=2 через PropertyTable::add?»: Выбрать CIBlockProperty API, согласовать миграцию схемы/значений и проверить чтение новым процессом; ORM метаданных оставить для чтения.
+- Контрпример отвергнут: Прямой INSERT метаданных и ручное создание одной колонки.. Результат ручной проверки ответа: pass; runtime: не запускался.

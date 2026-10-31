@@ -2950,3 +2950,11 @@ SetPropertyValuesEx — отдельный путь событий. OnIBlockElem
 Проверка: Одинаковый XML_ID в двух свойствах и ключ с underscore не должны разрешаться в чужой enum.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockpropertyenum/getlist.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K10 — Мутация метаданных свойства и VERSION=2
+
+Для мутации определения свойства использовать CIBlockProperty, особенно VERSION=2; PropertyTable не универсальный write API. Проверить schema/value migration, compiled entity и чтение прежних значений; не чинить storage произвольным DDL.
+
+Проверка: На VERSION=1 и VERSION=2 создать тестовое свойство, записать/прочитать значение; rollback не должен терять существующие свойства.
+
+[Официальный контракт](https://docs.1c-bitrix.ru/pages/modules/iblocks/api.html); documentation-backed, 2026-11-01, не runtime pass.
