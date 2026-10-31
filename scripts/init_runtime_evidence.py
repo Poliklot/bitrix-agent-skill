@@ -5,9 +5,10 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
-import shutil
 import sys
 from pathlib import Path
+
+from evidence_writer import write_pack
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -70,13 +71,6 @@ def read_template(name: str) -> str:
     return path.read_text(encoding="utf-8")
 
 
-def write_file(path: Path, text: str, force: bool) -> None:
-    if path.exists() and not force:
-        raise FileExistsError(f"file exists: {path}; use --force to overwrite")
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(text, encoding="utf-8")
-
-
 def build_summary(package: str, scenarios: list[tuple[str, str]]) -> str:
     template = read_template("evidence-summary.template.md")
     rows = "\n".join(
@@ -99,49 +93,40 @@ def build_summary(package: str, scenarios: list[tuple[str, str]]) -> str:
     return before + rows + template[end:]
 
 
-def init_evidence(package: str, output: Path, force: bool) -> None:
+def render_evidence(package: str) -> dict[str, str]:
     scenarios = SCENARIOS[package]
-    output.mkdir(parents=True, exist_ok=True)
-
-    write_file(output / "summary.md", build_summary(package, scenarios), force)
-    shutil.copyfile(TEMPLATE_DIR / "sandbox-preflight.template.md", output / "00-preflight.md") if force or not (output / "00-preflight.md").exists() else None
-
-    scenario_template = read_template("scenario-result.template.md")
+    files = {
+        "summary.md": build_summary(package, scenarios),
+        "00-preflight.md": read_template("sandbox-preflight.template.md"),
+    }
+    template = read_template("scenario-result.template.md")
     for scenario_id, slug in scenarios:
-        text = scenario_template.replace("- ID сценария:", f"- ID сценария: {scenario_id}")
-        text = text.replace("- Название сценария:", f"- Название сценария: {slug}")
-        write_file(output / f"{scenario_id}-{slug}.md", text, force)
+        text = template.replace("- ID сценария:", f"- ID сценария: {scenario_id}")
+        files[f"{scenario_id}-{slug}.md"] = text.replace("- Название сценария:", f"- Название сценария: {slug}")
+    return files
+
+
+def init_evidence(package: str, output: Path, force: bool) -> None:
+    write_pack(output, render_evidence(package), force)
 
 
 def init_all(output: Path, force: bool) -> list[tuple[str, Path]]:
-    created: list[tuple[str, Path]] = []
-    output.mkdir(parents=True, exist_ok=True)
-    for package in sorted(SCENARIOS):
-        package_output = output / DEFAULT_SLUG[package]
-        init_evidence(package, package_output, force)
-        created.append((package, package_output))
-    readme_rows = "\n".join(
+    created = [(package, output / DEFAULT_SLUG[package]) for package in sorted(SCENARIOS)]
+    files = {}
+    for package, path in created:
+        for name, text in render_evidence(package).items():
+            files[f"{path.name}/{name}"] = text
+    rows = "\n".join(
         f"| {package} | `{path.name}/summary.md` | "
         f"`python3 scripts/validate_runtime_evidence.py {output}/{path.name} --package {package}` |"
         for package, path in created
     )
-    write_file(
-        output / "README.md",
-        "\n".join(
-            [
-                "# Runtime smoke evidence pack",
-                "",
-                "Сгенерированный набор шаблонов для `P1–P4`.",
-                "Перед коммитом evidence удали secrets, cookies, session ids, production XML/дампы и персональные данные.",
-                "",
-                "| Package | Summary | Validation command |",
-                "|---|---|---|",
-                readme_rows,
-                "",
-            ]
-        ),
-        force,
+    files["README.md"] = (
+        "# Runtime smoke evidence pack\n\nСгенерированные шаблоны P1–P4, не runtime pass.\n"
+        "Перед публикацией удалить secrets и персональные данные.\n\n"
+        "| Package | Summary | Validation command |\n|---|---|---|\n" + rows + "\n"
     )
+    write_pack(output, files, force)
     return created
 
 
@@ -154,8 +139,9 @@ def resolve_default_output(package: str | None, date_value: str, all_packages: b
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Initialize Bitrix runtime smoke evidence pack")
-    parser.add_argument("--package", choices=sorted(SCENARIOS), default=None, help="Smoke package to initialize")
-    parser.add_argument("--all", action="store_true", help="Initialize all smoke packages P1-P4 under one directory")
+    selection = parser.add_mutually_exclusive_group()
+    selection.add_argument("--package", choices=sorted(SCENARIOS), default=None, help="Smoke package to initialize")
+    selection.add_argument("--all", action="store_true", help="Initialize all smoke packages P1-P4 under one directory")
     parser.add_argument("--output", type=Path, help="Output evidence directory")
     parser.add_argument("--date", default=dt.date.today().isoformat(), help="Date prefix for default output directory, YYYY-MM-DD")
     parser.add_argument("--force", action="store_true", help="Overwrite existing files")

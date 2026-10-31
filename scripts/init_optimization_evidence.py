@@ -8,6 +8,8 @@ import datetime as dt
 import sys
 from pathlib import Path
 
+from evidence_writer import write_pack, validate_filename
+
 
 ROOT = Path(__file__).resolve().parents[1]
 TEMPLATE_DIR = ROOT / "bitrix" / "assets" / "optimization-evidence"
@@ -27,13 +29,6 @@ def read_template(name: str) -> str:
     if not path.exists():
         raise FileNotFoundError(f"missing template: {path}")
     return path.read_text(encoding="utf-8")
-
-
-def write_file(path: Path, text: str, force: bool) -> None:
-    if path.exists() and not force:
-        raise FileExistsError(f"file exists: {path}; use --force to overwrite")
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(text, encoding="utf-8")
 
 
 def build_summary(finding_count: int, date_value: str, project: str, static_report: str) -> str:
@@ -77,13 +72,16 @@ def init_evidence(
     static_report: str,
     force: bool,
 ) -> None:
-    output.mkdir(parents=True, exist_ok=True)
-    write_file(output / "summary.md", build_summary(finding_count, date_value, project, static_report), force)
-    write_file(output / "00-runtime-metrics.md", read_template("runtime-metrics.template.md"), force)
-    if finding_count > 0:
-        for index in range(1, finding_count + 1):
-            layer = DEFAULT_LAYERS[(index - 1) % len(DEFAULT_LAYERS)]
-            write_file(output / f"OPT-{index:03d}-finding.md", build_finding(index, layer, date_value), force)
+    validate_filename(static_report)
+    if finding_count < 0:
+        raise ValueError("finding count must be non-negative")
+    files = {
+        "summary.md": build_summary(finding_count, date_value, project, static_report),
+        "00-runtime-metrics.md": read_template("runtime-metrics.template.md"),
+    }
+    for index in range(1, finding_count + 1):
+        layer = DEFAULT_LAYERS[(index - 1) % len(DEFAULT_LAYERS)]
+        files[f"OPT-{index:03d}-finding.md"] = build_finding(index, layer, date_value)
     readme = "\n".join(
         [
             "# Optimization evidence pack",
@@ -97,16 +95,11 @@ def init_evidence(
             "",
         ]
     )
-    write_file(output / "README.md", readme, force)
-
-    # Do not overwrite a real static report. Create an empty placeholder only when requested name is absent.
-    static_path = output / static_report
-    if static_report and not static_path.exists():
-        write_file(
-            static_path,
-            "# Static audit placeholder\n\nСюда можно положить вывод `scripts/bitrix_static_optimization_audit.py`.\n",
-            force=False,
-        )
+    files["README.md"] = readme
+    if static_report in files or static_report == ".evidence-init.lock":
+        raise ValueError("static report filename collides with generated evidence")
+    files[static_report] = "# Static audit placeholder\n\nСюда можно положить вывод `scripts/bitrix_static_optimization_audit.py`.\n"
+    write_pack(output, files, force, preserve={static_report})
 
 
 def resolve_default_output(date_value: str) -> Path:
@@ -130,9 +123,6 @@ def main() -> int:
         return 2
     if args.finding_count < 0:
         print("ERROR: --finding-count must be >= 0", file=sys.stderr)
-        return 2
-    if "/" in args.static_report or "\\" in args.static_report:
-        print("ERROR: --static-report must be a filename, not a path", file=sys.stderr)
         return 2
 
     output = args.output or resolve_default_output(args.date)
