@@ -329,3 +329,11 @@ QUERY_LIMIT_EXCEEDED — частота; OPERATION_TIME_LIMIT — стоимос
 Проверка: Обычное файловое поле и привязка к Диску читаются обратно с правильными ID и ожидаемым содержимым.
 
 [Официальный контракт](https://apidocs.bitrix24.ru/api-reference/files/how-to-upload-files.html); documentation-backed, 2026-11-01, не runtime pass.
+
+## K34 — Готовность BX24.js не равна готовности DOM
+
+Ждать BX24.init, не только DOMContentLoaded: до обмена с родителем getAuth/isAdmin могут вернуть false. Открывать в контексте приложения; серверные права проверять независимо.
+
+Проверка: Отложенная инициализация: UI не принимает false до init за реальный отказ в правах.
+
+[Официальный контракт](https://apidocs.bitrix24.ru/sdk/bx24-js-sdk/system-functions/bx24-init.html); documentation-backed, 2026-11-01, не runtime pass.
