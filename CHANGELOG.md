@@ -5,6 +5,7 @@
 ## [Unreleased]
 
 ### Fixed
+- Файловый preflight больше не возвращает `pass`: только `candidate`/`blocked` и `runtime_status: not_checked`; регистрация модулей не предполагается по наличию файлов.
 - Preflight распознаёт `SM_VERSION` через `define`/`const` и массив версии; full/compact согласованы по приоритету main version file. Назначение `SM_VERSION`: [официальная документация](https://dev.1c-bitrix.ru/api_help/main/general/constants.php).
 - Preflight сохраняет только origin HTTP(S)-адреса, без credentials, пути, query и fragment.
 - Диагностические отчёты больше не экспортируют строки исходного кода: только координаты и фиксированные признаки; N+1-классификация сохранена.

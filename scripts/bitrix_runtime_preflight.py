@@ -75,9 +75,12 @@ def resolve_public_root(raw_path: str) -> tuple[Path, list[str]]:
 
 
 def read_small_text(path: Path, limit: int = 200_000) -> str:
-    if not path.exists() or not path.is_file() or path.stat().st_size > limit:
+    try:
+        if not path.is_file() or path.stat().st_size > limit:
+            return ""
+        return path.read_text(encoding="utf-8", errors="strict")
+    except (OSError, UnicodeError):
         return ""
-    return path.read_text(encoding="utf-8", errors="ignore")
 
 
 def module_version_file(public_root: Path, module: str) -> Path:
@@ -110,7 +113,8 @@ def collect_modules(public_root: Path, modules: list[str]) -> list[dict[str, str
         rows.append(
             {
                 "module": module,
-                "status": "found" if path.exists() else "missing",
+                "status": "found" if text else "missing-or-unreadable",
+                "registration": "not_checked",
                 "version": parse_module_version(text) if text else "",
                 "version_file": rel(path, public_root) if path.exists() else "",
             }
@@ -199,17 +203,21 @@ def safe_base_url(value: str) -> str:
 def build_report(public_root: Path, base_url: str, modules: list[str]) -> dict[str, object]:
     resolved_root, notes = resolve_public_root(str(public_root))
     exists = (resolved_root / "bitrix" / "modules").is_dir()
+    module_rows = collect_modules(resolved_root, list(dict.fromkeys(["main", *modules]))) if exists else []
+    main_available = any(row["module"] == "main" and row["version"] for row in module_rows)
+    notes.append("Static filesystem inspection only; module registration, PHP, DB, HTTP and sandbox safety are not checked")
     report: dict[str, object] = {
         "public_root": str(resolved_root),
         "base_url": safe_base_url(base_url),
-        "status": "pass" if exists else "blocked",
+        "status": "candidate" if main_available else "blocked",
+        "runtime_status": "not_checked",
         "notes": notes,
-        "modules": collect_modules(resolved_root, modules) if exists else [],
+        "modules": module_rows,
         "safety": collect_safety(resolved_root) if exists else [],
         "routes": collect_routes(resolved_root) if exists else [],
     }
-    if not exists:
-        report["blocked_reason"] = "public root with bitrix/modules not found"
+    if not main_available:
+        report["blocked_reason"] = "main version unavailable; filesystem presence does not prove a runnable sandbox"
     return report
 
 
@@ -220,6 +228,7 @@ def print_markdown(report: dict[str, object]) -> None:
     if report.get("base_url"):
         print(f"- Base URL: `{report['base_url']}`")
     print(f"- Verdict: `{report['status']}`")
+    print(f"- Runtime: `{report['runtime_status']}`")
     if report.get("blocked_reason"):
         print(f"- Blocker reason: {report['blocked_reason']}")
     notes = report.get("notes") or []

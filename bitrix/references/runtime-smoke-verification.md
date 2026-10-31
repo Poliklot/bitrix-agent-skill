@@ -533,3 +533,7 @@ Then update skill answer as “code contract known, runtime verification blocked
 - 1С — [commerce-1c-integration.md](commerce-1c-integration.md)
 - REST/webservice — [shop-integrations-webservice.md](shop-integrations-webservice.md)
 - Testing — [php-testing.md](php-testing.md)
+
+## Граница статического preflight
+
+`bitrix_runtime_preflight.py` не запускает PHP и не подключается к БД/HTTP. `candidate` означает только найденную распознаваемую версию `main`; `blocked` — её отсутствие/недоступность. `runtime_status: not_checked` сохраняется всегда. Наличие файлов модуля не доказывает его регистрацию, успешный `Loader::includeModule`, безопасность sandbox или прохождение P1–P4. Это нужно подтвердить отдельно в разрешённом окружении; не включать магазинный runtime-маршрут только по каталогу модуля.

@@ -31,3 +31,17 @@ class PreflightTests(unittest.TestCase):
             general.write_text("define('SM_VERSION', '2.0.0');")
             self.assertEqual(preflight.module_version_file(root, "main"), general)
             self.assertEqual(preflight.collect_modules(root, ["main"])[0]["version"], "2.0.0")
+
+    def test_filesystem_never_claims_runtime_pass(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            version = root / "bitrix/modules/main/install/version.php"
+            version.parent.mkdir(parents=True)
+            self.assertEqual(preflight.build_report(root, "", ["main"])["status"], "blocked")
+            version.write_text('"VERSION" => "26.0.0"')
+            report = preflight.build_report(root, "", ["iblock"])
+            self.assertEqual(report["status"], "candidate")
+            self.assertEqual(report["runtime_status"], "not_checked")
+            self.assertEqual(report["modules"][0]["registration"], "not_checked")
+            version.write_bytes(b"\xff")
+            self.assertEqual(preflight.build_report(root, "", ["main"])["status"], "blocked")
