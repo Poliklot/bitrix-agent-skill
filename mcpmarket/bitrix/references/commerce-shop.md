@@ -280,6 +280,8 @@ Order
 
 ## 3. Корзина
 
+Ниже — только свободная корзина посетителя. Если корзина уже принадлежит заказу, сохраняй через `Order::save()`, см. K11.
+
 ```php
 use Bitrix\Sale\Basket;
 use Bitrix\Sale\Fuser;
@@ -4516,3 +4518,11 @@ rg -n 'catalog\.section|catalog\.element|catalog\.smart\.filter|sale\.basket|sal
 Красные флаги: price/stock/discount calls в template loop, offers по одному товару, user/group/region price в общем cache/composite, raw SQL по `b_catalog_*`/`b_sale_*`, полный facet/search rebuild на production без окна.
 
 Safe wins: сузить property/price lists, preload offers/prices/stock, вынести персональные blocks в dynamic area, проверить facet/search indexes, heavy recalculation/import — в stepper/CLI.
+
+## K11 — Корзина заказа сохраняется через агрегат Order
+
+Свободная корзина → Basket::save; корзина заказа → Order::save после проверки всех изменений. Не сохранять дочерний basket отдельно от оплат/отгрузок.
+
+Проверка: Изменить количество в заказе с оплатой и отгрузкой; после reload проверить весь граф, а не одну строку basket.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/sale/technique/basket.php); documentation-backed, 2026-11-01, не runtime pass.
