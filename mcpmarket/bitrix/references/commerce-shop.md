@@ -4529,3 +4529,11 @@ System shipment — остаток распределения, не достав
 Проверка: Два заказа с разными пользователями и купонами не влияют друг на друга; неприменимый купон не объявляется скидкой.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/sale/classes/discountcouponsmanager/init.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K18 — Существующая доставка не обязательно доступна отгрузке
+
+getById не проверяет доступность доставки. Сначала заполнить Shipment, затем restricted list в клиентском режиме и расчёт сервиса; после изменения адреса/состава повторить. Ошибка расчёта не равна бесплатной доставке.
+
+Проверка: Разные location/вес/сумма меняют допустимый список; прежний delivery ID отклоняется, ошибка provider видима.
+
+[Официальный контракт](https://docs.1c-bitrix.ru/api/classes/Bitrix-Sale-Delivery-Services-Manager.html); documentation-backed, 2026-11-01, не runtime pass.
