@@ -137,7 +137,7 @@ curl -fsSL https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/
 Установить конкретную версию:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.sh | bash -s -- --version 1.36.0 --claude
+curl -fsSL https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.sh | bash -s -- --version 1.37.0 --claude
 ```
 
 То же самое для PowerShell:
@@ -146,7 +146,7 @@ curl -fsSL https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/
 & ([scriptblock]::Create((irm https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.ps1))) -Claude
 & ([scriptblock]::Create((irm https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.ps1))) -Codex
 & ([scriptblock]::Create((irm https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.ps1))) -Both
-& ([scriptblock]::Create((irm https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.ps1))) -Version 1.36.0 -Claude
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/Poliklot/bitrix-agent-skill/master/install.ps1))) -Version 1.37.0 -Claude
 ```
 
 </details>

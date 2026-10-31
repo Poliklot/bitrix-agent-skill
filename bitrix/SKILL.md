@@ -14,7 +14,7 @@ description: >-
   local core and `local/*`; missing optional modules are deferred.
 metadata:
   author: poliklot
-  version: "1.36.0"
+  version: "1.37.0"
 ---
 
 # Bitrix Expert Skill
@@ -32,7 +32,7 @@ Designed for Claude Code and Codex on 1C-Bitrix CMS projects.
 
 Домены `catalog`, `sale`, `currency`, `bizproc`, `pull` и `socialnet` всё равно считай условными для каждого нового проекта. Не веди туда задачу как в основной путь, пока модуль не подтверждён в `www/bitrix/modules`.
 
-Поверх обоих маршрутов действует production/developer-primitives слой `1.36.0`: best practices, структура/include, project configuration/stable IDs, pitfalls matrix, tail module routing и runtime smoke verification. Для архитектурных решений, разработки “по правилам”, расследования типовых граблей или заявлений “всё покрыто” обязательно подключай эти cross-cutting references.
+Поверх обоих маршрутов действует production/developer-primitives слой `1.37.0`: best practices, структура/include, project configuration/stable IDs, pitfalls matrix, tail module routing и runtime smoke verification. Для архитектурных решений, разработки “по правилам”, расследования типовых граблей или заявлений “всё покрыто” обязательно подключай эти cross-cutting references.
 
 ## Источник истины
 
@@ -204,3 +204,9 @@ if (!$result->isSuccess()) {
 - Если модуль или компонент отсутствует, не маскируй это. Объясни, что это ограничение проекта, а не “ошибка памяти”.
 
 Для preflight, runtime/optimization evidence и публикации применяй [контракт диагностических доказательств](references/release-gate.md#контракт-диагностических-доказательств): файловые признаки не равны runtime pass, а успешная проверка структуры не доказывает выполнение сценария.
+
+## Уточнённые предметные контракты
+
+Читай только ветку текущей задачи; новые documentation-backed сведения не заменяют проверку установленной версии.
+
+- Инфоблоки/ORM: COUNT и публикация, partial properties и файлы/enum/schema — [iblocks.md](references/iblocks.md); Result/транзакции, OnAfter и 1:N pagination — [orm.md](references/orm.md). Контракты K01–K10, сценарии B080–B089.

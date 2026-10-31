@@ -4,25 +4,19 @@
 
 ## [Unreleased]
 
-- K10: Мутация метаданных свойства и VERSION=2 — дополнены знания, full/compact и сценарий B089.
+## [1.37.0] — 2026-11-01
 
-- K09: Enum: стабильный внешний ключ и локальный ID — дополнены знания, full/compact и сценарий B088.
-
-- K08: Отдельный lifecycle записи свойств — дополнены знания, full/compact и сценарий B087.
-
-- K07: Множественные файлы: ID файла и ID значения — дополнены знания, full/compact и сценарий B086.
-
-- K06: Частичная запись свойств и явное очищение — дополнены знания, full/compact и сценарий B085.
-
-- K05: Публичная ORM-выборка и версии документооборота — дополнены знания, full/compact и сценарий B084.
-
-- K04: Пагинация объектов со связями 1:N — дополнены знания, full/compact и сценарий B083.
-
-- K03: OnAfter ORM не равен после commit — дополнены знания, full/compact и сценарий B082.
-
-- K02: Result внутри транзакции и граница отката — дополнены знания, full/compact и сценарий B081.
-
+### Added
 - K01: Три результата CIBlockElement::GetList — дополнены знания, full/compact и сценарий B080.
+- K02: Result внутри транзакции и граница отката — дополнены знания, full/compact и сценарий B081.
+- K03: OnAfter ORM не равен после commit — дополнены знания, full/compact и сценарий B082.
+- K04: Пагинация объектов со связями 1:N — дополнены знания, full/compact и сценарий B083.
+- K05: Публичная ORM-выборка и версии документооборота — дополнены знания, full/compact и сценарий B084.
+- K06: Частичная запись свойств и явное очищение — дополнены знания, full/compact и сценарий B085.
+- K07: Множественные файлы: ID файла и ID значения — дополнены знания, full/compact и сценарий B086.
+- K08: Отдельный lifecycle записи свойств — дополнены знания, full/compact и сценарий B087.
+- K09: Enum: стабильный внешний ключ и локальный ID — дополнены знания, full/compact и сценарий B088.
+- K10: Мутация метаданных свойства и VERSION=2 — дополнены знания, full/compact и сценарий B089.
 
 ## [1.36.0] — 2026-11-01
 
@@ -497,7 +491,8 @@
 ### Added
 - Первый публичный релиз: `SKILL.md`, progressive disclosure архитектура
 
-[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.36.0...HEAD
+[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.37.0...HEAD
+[1.37.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.36.0...v1.37.0
 [1.36.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.35.0...v1.36.0
 [1.35.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.34.0...v1.35.0
 [1.34.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.33.0...v1.34.0
