@@ -486,3 +486,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [orm.md](bitrix/references/orm.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://docs.1c-bitrix.ru/pages/orm/querying-data.html).
 - Самопроверка B083 — «Почему ORM LIMIT 20 возвращает меньше 20 карточек?»: JOIN размножает строки до LIMIT; отделить страницу уникальных ID от загрузки отношений, проверить полный набор значений и стабильный порядок.
 - Контрпример отвергнут: Добавить DISTINCT ко всему select или увеличить LIMIT наугад.. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K05: Публичная ORM-выборка и версии документооборота
+
+- Пробел до изменения: Примеры D7 не объясняли отличие публичной выборки от истории/неопубликованных версий workflow.
+- Исправление: [iblocks.md](bitrix/references/iblocks.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockelement/getpublicelementsormfilter.php).
+- Самопроверка B084 — «После перехода на ORM посетителям видны черновики: что проверить?»: Сопоставить со stock public selection, проверить getPublicElementsOrmFilter и отдельно права, активность, даты, сайт и кеш.
+- Контрпример отвергнут: Считать ACTIVE=Y полной моделью публикации и доступа.. Результат ручной проверки ответа: pass; runtime: не запускался.

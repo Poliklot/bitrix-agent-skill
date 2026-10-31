@@ -2910,3 +2910,11 @@ File::putFileContents(
 Проверка: Нулевой набор даёт 0; несколько элементов — число; группировка по ACTIVE даёт строки с CNT.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockelement/getlist.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K05 — Публичная ORM-выборка и версии документооборота
+
+Для ElementTable проверить getPublicElementsOrmFilter: он отсекает непубличные версии документооборота, а не выдаёт универсальное разрешение на чтение. Права, даты/активность, site и пользовательский кеш проверяются отдельно.
+
+Проверка: Опубликованная запись, черновик и версия истории; guest и редактор не должны получать одинаковую административную выборку.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockelement/getpublicelementsormfilter.php); documentation-backed, 2026-11-01, не runtime pass.
