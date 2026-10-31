@@ -599,3 +599,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [sale.md](bitrix/references/sale.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://docs.1c-bitrix.ru/pages/modules/sale/architecture.html).
 - Самопроверка B098 — «Поставить CUSTOM_PRICE=Y, чтобы цена перестала меняться?»: Только для согласованной ручной котировки; иначе разобраться с provider. Проверить скидки, налоги, валюту, refresh и серверный источник суммы.
 - Контрпример отвергнут: Копировать PRICE и CUSTOM_PRICE из POST или отключать provider ради симптома.. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K20: События сохранения заказа и повторный save
+
+- Пробел до изменения: Есть REST mapping OnSaleOrderSaved, но нет безопасного PHP-протокола изменения и защиты от повторного save.
+- Исправление: [sale.md](bitrix/references/sale.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/sale/events/order_saved.php).
+- Самопроверка B099 — «В OnSaleOrderSaved меняю поле и вызываю save: почему цикл?»: Изменение перенести в подходящую before-фазу, реакцию ограничить IS_NEW/VALUES; внешние повторы дедуплицировать устойчивым ключом.
+- Контрпример отвергнут: Добавить безусловный save в Saved или считать IS_NEW защитой от любого повтора.. Результат ручной проверки ответа: pass; runtime: не запускался.
