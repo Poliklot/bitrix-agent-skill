@@ -25,6 +25,8 @@
 
 ## Verification
 
+- Runtime evidence:
+
 - Static: grep/diff check.
 - Runtime: before/after page hit, SQL count/time, `X-Bitrix-Composite`, browser network, visual parity.
 - Status: pending / pass / fail / blocked.

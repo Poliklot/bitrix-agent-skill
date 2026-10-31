@@ -573,6 +573,10 @@ def validate_optimization_evidence_validator() -> None:
             "\n".join(
                 [
                     "# Optimization finding — OPT-001",
+                    "- ID: OPT-001",
+                    "- Priority: P1",
+                    "- Layer: db-orm",
+                    "- Verdict: candidate",
                     "",
                     "## Evidence",
                     "test",

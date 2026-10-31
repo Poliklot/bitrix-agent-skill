@@ -59,6 +59,7 @@ def build_finding(index: int, layer: str, date_value: str) -> str:
     finding_id = f"OPT-{index:03d}"
     text = read_template("finding.template.md")
     text = text.replace("OPT-001", finding_id)
+    text = text.replace("- Priority: P1", "- Priority: P1" if index == 1 else "- Priority: P2")
     text = text.replace(
         "- Layer: component-cache / tagged-cache / composite / db-orm / frontend-assets / agents-imports / shop",
         f"- Layer: {layer}",

@@ -1,7 +1,7 @@
 # Optimization finding — OPT-002
 
 - ID: OPT-002
-- Priority: P1
+- Priority: P2
 - Layer: tagged-cache
 - Verdict: candidate
 - Source: static audit / perfmon / grep / manual review

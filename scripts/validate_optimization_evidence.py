@@ -13,7 +13,7 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-from evidence_safety import scan_evidence, read_evidence_text
+from evidence_safety import scan_evidence, read_evidence_text, local_evidence_path, field_values
 
 
 VALID_VERDICTS = {"candidate", "confirmed", "blocked", "fixed", "accepted-risk"}
@@ -73,9 +73,9 @@ def add(checks: list[Check], name: str, ok: bool, detail: str = "") -> None:
 def find_summary(evidence_dir: Path) -> Path | None:
     candidates = [evidence_dir / "summary.md", evidence_dir / "optimization-summary.md"]
     for candidate in candidates:
-        if candidate.exists():
+        if candidate.is_file():
             return candidate
-    matches = sorted(evidence_dir.glob("*summary*.md"))
+    matches = sorted(path for path in evidence_dir.glob("*summary*.md") if path.is_file())
     return matches[0] if matches else None
 
 
@@ -103,16 +103,7 @@ def parse_finding_rows(summary_text: str) -> list[FindingRow]:
 
 
 def referenced_file_exists(evidence_dir: Path, rel_path: str) -> bool:
-    if rel_path in {"", "—", "n/a", "none"}:
-        return False
-    if rel_path.startswith(("http://", "https://")):
-        return True
-    target = (evidence_dir / rel_path).resolve()
-    try:
-        target.relative_to(evidence_dir.resolve())
-    except ValueError:
-        return False
-    return target.is_file()
+    return local_evidence_path(evidence_dir, rel_path) is not None
 
 
 def validate_finding_files(evidence_dir: Path, rows: list[FindingRow], checks: list[Check]) -> None:
@@ -126,9 +117,19 @@ def validate_finding_files(evidence_dir: Path, rows: list[FindingRow], checks: l
 
     missing_tokens: list[str] = []
     for row in rows:
-        if not referenced_file_exists(evidence_dir, row.evidence_file) or row.evidence_file.startswith(("http://", "https://")):
+        if not referenced_file_exists(evidence_dir, row.evidence_file):
             continue
         text = read_text(evidence_dir / row.evidence_file)
+        for label, expected in [("ID", row.finding_id), ("Priority", row.priority), ("Layer", row.layer), ("Verdict", row.verdict)]:
+            if field_values(text, label) != [expected]:
+                missing_tokens.append(f"{row.finding_id}: inconsistent {label}")
+        if row.verdict in {"confirmed", "fixed"}:
+            references = field_values(text, "Runtime evidence")
+            proof = local_evidence_path(evidence_dir, references[0]) if len(references) == 1 else None
+            if (proof is None or proof.resolve() == (evidence_dir / row.evidence_file).resolve()
+                    or not read_evidence_text(proof, evidence_dir).strip()
+                    or field_values(text, "Status") != ["pass"]):
+                missing_tokens.append(f"{row.finding_id}: missing runtime evidence or verification pass")
         for token in [row.finding_id, "## Evidence", "## Impact", "## Fix plan", "## Verification"]:
             if token not in text:
                 missing_tokens.append(f"{row.evidence_file}: {token}")
@@ -166,6 +167,7 @@ def validate_evidence(evidence_dir: Path) -> list[Check]:
 
     rows = parse_finding_rows(summary_text)
     add(checks, "finding rows", bool(rows), f"{len(rows)} finding row(s)")
+    add(checks, "unique finding ids", len({row.finding_id for row in rows}) == len(rows), "one row per finding ID")
 
     invalid_priority = [row.finding_id for row in rows if row.priority not in VALID_PRIORITIES]
     add(checks, "finding priorities", not invalid_priority, "invalid: " + ", ".join(invalid_priority) if invalid_priority else "ok")
