@@ -149,7 +149,7 @@ def collect_routes(public_root: Path, limit: int = 25) -> list[dict[str, str]]:
                     {
                         "file": rel(path, public_root),
                         "line": str(line_no),
-                        "snippet": line.strip()[:180],
+                        "snippet": "route marker detected; source omitted",
                     }
                 )
                 if len(matches) >= limit:

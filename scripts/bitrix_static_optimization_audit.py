@@ -278,7 +278,13 @@ def scan_rule(rule: Rule, files: list[Path], root: Path, max_evidence: int) -> F
             continue
         for index, line in enumerate(read_lines(path), start=1):
             if rule.pattern.search(line):
-                evidence.append(Evidence(rel, index, line.strip()[:220]))
+                # Export only fixed structural signals, never source literals.
+                signals = ["rule matched; source omitted"]
+                if re.search(r"foreach\s*\(|while\s*\(", line):
+                    signals.append("foreach(")
+                if re.search(r"GetList|::getList|DataManager::getList", line):
+                    signals.append("GetList")
+                evidence.append(Evidence(rel, index, "; ".join(signals)))
                 if len(evidence) >= max_evidence:
                     break
         if len(evidence) >= max_evidence:
