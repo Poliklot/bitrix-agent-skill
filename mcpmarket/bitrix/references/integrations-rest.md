@@ -345,3 +345,11 @@ QUERY_LIMIT_EXCEEDED — частота; OPERATION_TIME_LIMIT — стоимос
 Проверка: До/после завершения мастера сравнить INSTALLED и доставку; ошибка первого запуска не блокирует цепочку init.
 
 [Официальный контракт](https://apidocs.bitrix24.ru/sdk/bx24-js-sdk/system-functions/bx24-install-finish.html); documentation-backed, 2026-11-01, не runtime pass.
+
+## K36 — Контекст встройки не является разрешением на объект
+
+placement.info() синхронен; options зависят от точки. Контекст браузера — подсказка, не право читать/изменять ID на backend; проверить объект и авторизацию.
+
+Проверка: Подмена ID в запросе виджета не открывает чужой объект; неподдерживаемый placement обработан явно.
+
+[Официальный контракт](https://apidocs.bitrix24.ru/api-reference/widgets/ui-interaction/bx24-placement-info); documentation-backed, 2026-11-01, не runtime pass.

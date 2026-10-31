@@ -719,3 +719,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [rest.md](bitrix/references/rest.md) и [integrations-rest.md](mcpmarket/bitrix/references/integrations-rest.md); источник: [Официальный контракт](https://apidocs.bitrix24.ru/sdk/bx24-js-sdk/system-functions/bx24-install-finish.html).
 - Самопроверка B114 — «event.bind успешен, но новое приложение не получает события — где причина?»: Проверить завершение установки и INSTALLED; не путать мастер установки с первым запуском пользователя.
 - Контрпример отвергнут: Безусловно завершать проваленный мастер или ждать JS finish в REST-only обработчике. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K36: Контекст встройки не является разрешением на объект
+
+- Пробел до изменения: Есть серверная регистрация placement, но не разобран контекст виджета и его доверенность.
+- Исправление: [rest.md](bitrix/references/rest.md) и [integrations-rest.md](mcpmarket/bitrix/references/integrations-rest.md); источник: [Официальный контракт](https://apidocs.bitrix24.ru/api-reference/widgets/ui-interaction/bx24-placement-info).
+- Самопроверка B115 — «В options пришёл ID сделки: можно сразу читать её своим admin-токеном?»: Нет: проверить конкретный placement, тип/ID и права текущего пользователя на backend.
+- Контрпример отвергнут: Считать клиентский options доказательством доступа или ожидать callback от placement.info. Результат ручной проверки ответа: pass; runtime: не запускался.
