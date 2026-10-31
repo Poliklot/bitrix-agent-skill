@@ -698,3 +698,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [rest.md](bitrix/references/rest.md) и [integrations-rest.md](mcpmarket/bitrix/references/integrations-rest.md); источник: [Официальный контракт](https://apidocs.bitrix24.ru/settings/performance/limits.html).
 - Самопроверка B111 — «После operating_reset_at метод всё ещё заблокирован: менять токен?»: Нет: часть временного окна могла остаться; снизить нагрузку и проверить operating, не обходить блокировку токенами.
 - Контрпример отвергнут: Ускорить параллельные повторы или объявить единый лимит для любого Битрикс24. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K33: Файловое поле REST не равно объекту Диска
+
+- Пробел до изменения: Есть server-side file API, но отсутствует контракт внешней передачи файла по конкретному типу поля.
+- Исправление: [rest.md](bitrix/references/rest.md) и [integrations-rest.md](mcpmarket/bitrix/references/integrations-rest.md); источник: [Официальный контракт](https://apidocs.bitrix24.ru/api-reference/files/how-to-upload-files.html).
+- Самопроверка B112 — «Можно передать FILE_ID из disk.file.get в любое файловое поле?»: Нет: выяснить нужный тип идентификатора и формат поля, выполнить загрузку/прикрепление по контракту метода.
+- Контрпример отвергнут: Подменять Disk ID значением FILE_ID или Base64 локальным путём. Результат ручной проверки ответа: pass; runtime: не запускался.

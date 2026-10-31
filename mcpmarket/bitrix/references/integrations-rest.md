@@ -321,3 +321,11 @@ QUERY_LIMIT_EXCEEDED — частота; OPERATION_TIME_LIMIT — стоимос
 Проверка: Ошибки обеих категорий запускают разные ограниченные стратегии; исчерпание бюджета завершает попытки.
 
 [Официальный контракт](https://apidocs.bitrix24.ru/settings/performance/limits.html); documentation-backed, 2026-11-01, не runtime pass.
+
+## K33 — Файловое поле REST не равно объекту Диска
+
+Формат файла выбирается по методу/полю, не универсальным fileData. Disk ID, FILE_ID и ID привязки различны; при двух шагах сначала загрузка, затем прикрепление.
+
+Проверка: Обычное файловое поле и привязка к Диску читаются обратно с правильными ID и ожидаемым содержимым.
+
+[Официальный контракт](https://apidocs.bitrix24.ru/api-reference/files/how-to-upload-files.html); documentation-backed, 2026-11-01, не runtime pass.
