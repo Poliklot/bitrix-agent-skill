@@ -311,47 +311,15 @@ if (!$result->isSuccess()) {
 
 ## 4. Создание заказа
 
-```php
-use Bitrix\Sale\Order;
-use Bitrix\Sale\Basket;
-use Bitrix\Sale\Delivery;
-use Bitrix\Sale\PaySystem;
+Порядок для собственного checkout-сервиса (каждый Result проверяется):
 
-$order = Order::create(SITE_ID, $userId);
-$order->setPersonTypeId($personTypeId);
-$order->setBasket(Basket::loadItemsForFUser(\Bitrix\Sale\Fuser::getId(), SITE_ID));
+1. Подтвердить site, владельца, person type и разрешённую корзину; создать Order и заполнить свойства.
+2. Построить обычную отгрузку с quantities, выбрать допустимую доставку и получить её расчёт для актуальных данных.
+3. Выполнить штатный refresh/final calculation; при явном вызове `doFinalAction(true)` проверить ошибки/предупреждения. Пересчёт не сохраняет Order.
+4. После расчёта согласовать сумму/валюту неоплаченных Payment с финальной стоимостью, сохраняя уже подтверждённые оплаты. Проверить допустимость pay system.
+5. Выполнить `Order::save()`, проверить Result и перечитать итог. Ни один промежуточный расчёт не означает успешный заказ.
 
-$propertyCollection = $order->getPropertyCollection();
-$email = $propertyCollection->getUserEmail();
-if ($email) {
-    $email->setValue($userEmail);
-}
-
-$shipmentCollection = $order->getShipmentCollection();
-$shipment = $shipmentCollection->createItem();
-$delivery = Delivery\Services\Manager::getById($deliveryId);
-$shipment->setFields([
-    'DELIVERY_ID' => $delivery['ID'],
-    'DELIVERY_NAME' => $delivery['NAME'],
-    'CURRENCY' => $order->getCurrency(),
-]);
-
-foreach ($order->getBasket() as $basketItem) {
-    $shipmentItem = $shipment->getShipmentItemCollection()->createItem($basketItem);
-    $shipmentItem->setQuantity($basketItem->getQuantity());
-}
-
-$payment = $order->getPaymentCollection()->createItem();
-$paySystem = PaySystem\Manager::getObjectById($paySystemId);
-$payment->setFields([
-    'PAY_SYSTEM_ID' => $paySystem->getField('ID'),
-    'PAY_SYSTEM_NAME' => $paySystem->getField('NAME'),
-    'SUM' => $order->getPrice(),
-    'CURRENCY' => $order->getCurrency(),
-]);
-
-$result = $order->save();
-```
+Не копировать эту последовательность в event handler, повторно вызывающий save; использовать реальный контракт проекта и версии sale (K16/K18/K20).
 
 Перед сохранением заказа проверь совместимость:
 
@@ -4545,3 +4513,11 @@ System shipment — остаток распределения, не достав
 Проверка: Две частичные оплаты: подтверждение и повтор первой не оплачивают вторую и не создают повторный эффект.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/sale/classes/payment/setpaid.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K16 — Финальный пересчёт и сумма неоплаченной оплаты
+
+Финальная цена появляется после согласованного расчёта графа. doFinalAction(true) не save; проверять Result, синхронизировать допустимые неоплаченные суммы, не менять уже paid задним числом.
+
+Проверка: Доставка и купон меняют итог; unpaid отражает новый итог, paid остаётся исторически согласованной.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/sale/classes/orderbase/dofinalaction.php); documentation-backed, 2026-11-01, не runtime pass.

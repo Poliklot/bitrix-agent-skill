@@ -571,3 +571,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [sale.md](bitrix/references/sale.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/sale/classes/payment/setpaid.php).
 - Самопроверка B094 — «Пришло подтверждение одной из двух оплат — отметить весь заказ?»: Подтвердить только найденный Payment после проверки callback и повтора; сохранить Order, не трогать вторую оплату и отгрузки.
 - Контрпример отвергнут: foreach всех оплат setPaid(Y), затем DEDUCTED всем отгрузкам.. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K16: Финальный пересчёт и сумма неоплаченной оплаты
+
+- Пробел до изменения: Пример ставил SUM=getPrice до явной финализации, игнорировал множество промежуточных Results.
+- Исправление: [sale.md](bitrix/references/sale.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/sale/classes/orderbase/dofinalaction.php).
+- Самопроверка B095 — «После купона сумма заказа изменилась, а Payment остался прежним — что делать?»: Проверить final calculation и Result, согласовать неоплаченную часть с итогом; paid сумму не переписывать, затем save/reload.
+- Контрпример отвергнут: Считать doFinalAction сохранением или менять уже подтверждённую оплату.. Результат ручной проверки ответа: pass; runtime: не запускался.
