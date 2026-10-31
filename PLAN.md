@@ -684,3 +684,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [rest.md](bitrix/references/rest.md) и [integrations-rest.md](mcpmarket/bitrix/references/integrations-rest.md); источник: [Официальный контракт](https://apidocs.bitrix24.ru/api-reference/events/event-offline-clear.html).
 - Самопроверка B109 — «Все записи пакета упали: отправить clear с message_id=[]?»: Нет: пустой список удалит пакет. Не подтверждать ошибки; проверить process_id и фиксировать только успешные записи.
 - Контрпример отвергнут: Использовать пустые параметры как безопасный no-op. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K31: Повторная обработка ошибочных офлайн-событий
+
+- Пробел до изменения: Метод error перечислен без идентификаторов, режима повторного чтения и опасности неверного пакета.
+- Исправление: [rest.md](bitrix/references/rest.md) и [integrations-rest.md](mcpmarket/bitrix/references/integrations-rest.md); источник: [Официальный контракт](https://apidocs.bitrix24.ru/api-reference/events/event-offline-error.html).
+- Самопроверка B110 — «event.offline.error вернул true, но ошибка не появилась — почему?»: Проверить MESSAGE_ID, принадлежность process_id и непустой список; читать ошибочную ветку error=1.
+- Контрпример отвергнут: Передать ID сделки вместо MESSAGE_ID или чужой process_id и довериться true. Результат ручной проверки ответа: pass; runtime: не запускался.

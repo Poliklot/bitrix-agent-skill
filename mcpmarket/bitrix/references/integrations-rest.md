@@ -305,3 +305,11 @@ event.offline.get: default clear=1 удаляет; для recoverable обраб
 Проверка: Контроль запроса до отправки: ноль успехов не вызывает clear; частичный успех не удаляет оставшиеся записи.
 
 [Официальный контракт](https://apidocs.bitrix24.ru/api-reference/events/event-offline-clear.html); documentation-backed, 2026-11-01, не runtime pass.
+
+## K31 — Повторная обработка ошибочных офлайн-событий
+
+error принимает MESSAGE_ID + свой process_id; затем get(error=1). Неверный пакет опасен удалением, пустой список — true без изменений. Не принимать true за доказательство обработки нужных записей.
+
+Проверка: На выделенной очереди один корректный ключ попадает в error=1; неверные квитанции отвергаются локально до API.
+
+[Официальный контракт](https://apidocs.bitrix24.ru/api-reference/events/event-offline-error.html); documentation-backed, 2026-11-01, не runtime pass.
