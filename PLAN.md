@@ -564,3 +564,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [sale.md](bitrix/references/sale.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/sale/technique/shipment.php).
 - Самопроверка B093 — «Почему в заказе есть системная отгрузка и можно ли её удалить?»: Это часть модели распределения: не удалять; работать с обычными Shipment и сверять quantities с корзиной.
 - Контрпример отвергнут: Удалить системную отгрузку или отметить её как доставленную.. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K15: Частичные оплаты и повтор подтверждения
+
+- Пробел до изменения: Пример помечал все payments оплачены и все shipments отгружены без независимых оснований.
+- Исправление: [sale.md](bitrix/references/sale.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/sale/classes/payment/setpaid.php).
+- Самопроверка B094 — «Пришло подтверждение одной из двух оплат — отметить весь заказ?»: Подтвердить только найденный Payment после проверки callback и повтора; сохранить Order, не трогать вторую оплату и отгрузки.
+- Контрпример отвергнут: foreach всех оплат setPaid(Y), затем DEDUCTED всем отгрузкам.. Результат ручной проверки ответа: pass; runtime: не запускался.

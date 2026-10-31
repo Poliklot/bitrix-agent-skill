@@ -363,22 +363,9 @@ $result = $order->save();
 
 ## 5. Статусы, оплата, отгрузка
 
-```php
-$order = \Bitrix\Sale\Order::load($orderId);
-$order->setField('STATUS_ID', 'P');
+Статус заказа, подтверждение конкретной оплаты и отгрузка — три разные операции. Не связывай их одним универсальным циклом. Сначала проверяются права/внешнее подтверждение и целевая сущность; каждая операция имеет свои проверки и последствия (см. K14–K15).
 
-foreach ($order->getPaymentCollection() as $payment) {
-    $payment->setPaid('Y');
-}
-
-foreach ($order->getShipmentCollection() as $shipment) {
-    if (!$shipment->isSystem()) {
-        $shipment->setField('DEDUCTED', 'Y');
-    }
-}
-
-$result = $order->save();
-```
+Для оплаты: загрузить Order и конкретный Payment из его коллекции, сверить сумму/валюту/связь с подтверждённой транзакцией, обработать повтор. Только затем `Payment::setPaid('Y')`, проверка Result и `Order::save()` с проверкой Result. Это не инструкция пометить весь заказ оплаченным по browser redirect.
 
 Не меняй `b_sale_order.STATUS_ID`, `PAYED`, `DEDUCTED` прямым SQL: потеряешь events, history, exchange flags, reservation/cashbox side effects.
 
@@ -4550,3 +4537,11 @@ System shipment — остаток распределения, не достав
 Проверка: Разделить 5 единиц на две отправки и остаток; уменьшение ниже уже отгруженного количества должно быть обработано явно.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/sale/technique/shipment.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K15 — Частичные оплаты и повтор подтверждения
+
+Подтверждать конкретный Payment после проверки источника/суммы/валюты и повторов, не все оплаты. Проверять setPaid/Order::save; status заказа и отгрузка независимы, browser success не факт оплаты.
+
+Проверка: Две частичные оплаты: подтверждение и повтор первой не оплачивают вторую и не создают повторный эффект.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/sale/classes/payment/setpaid.php); documentation-backed, 2026-11-01, не runtime pass.
