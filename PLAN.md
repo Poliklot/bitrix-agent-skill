@@ -649,3 +649,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [rest.md](bitrix/references/rest.md) и [integrations-rest.md](mcpmarket/bitrix/references/integrations-rest.md); источник: [Официальный контракт](https://apidocs.bitrix24.ru/settings/oauth/auto-renewal.html).
 - Самопроверка B104 — «Два воркера одновременно получили expired_token: что делать?»: Сериализовать refresh по записи авторизации, сохранить пару атомарно, ожидающему перечитать и повторить с новым access_token.
 - Контрпример отвергнут: Независимо обновлять токены в каждом воркере без ограничения повторов. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K26: Портал идентифицируется member_id, а не доменом
+
+- Пробел до изменения: Не описана смена адреса портала без смены идентичности клиента.
+- Исправление: [rest.md](bitrix/references/rest.md) и [integrations-rest.md](mcpmarket/bitrix/references/integrations-rest.md); источник: [Официальный контракт](https://apidocs.bitrix24.ru/settings/how-to-call-rest-api/change-domen.html).
+- Самопроверка B105 — «Портал сменил домен: создавать новую запись клиента?»: Найти установку по member_id и приложению, проверить авторизационные данные и обновить client_endpoint.
+- Контрпример отвергнут: Хранить tenant только по domain или отправить секрет на URL из неподтверждённого события. Результат ручной проверки ответа: pass; runtime: не запускался.
