@@ -740,3 +740,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [rest.md](bitrix/references/rest.md) и [integrations-rest.md](mcpmarket/bitrix/references/integrations-rest.md); источник: [Официальный контракт](https://apidocs.bitrix24.ru/api-reference/common/system/feature-get.html).
 - Самопроверка B117 — «feature.get для придуманного CODE вернул Y: функция точно существует?»: Нет: метод не проверяет существование кода. Использовать опубликованные CODE и проверять сам метод.
 - Контрпример отвергнут: Привести N к true или объявить поддержку по Y неизвестного кода. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K39: Транспортная ошибка HttpClient не доказывает отсутствие записи
+
+- Пробел до изменения: В примере ошибочно утверждалось: любая ошибка соединения/DNS/timeout означает, что запрос не дошёл.
+- Исправление: [http.md](bitrix/references/http.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/web/httpclient/index.php).
+- Самопроверка B118 — «HttpClient получил timeout после создания заказа во внешней системе: повторить POST?»: Не вслепую: операция могла выполниться; сверить внешний ключ/результат или безопасную идемпотентность.
+- Контрпример отвергнут: Считать любой timeout гарантией, что сервер не получил запрос. Результат ручной проверки ответа: pass; runtime: не запускался.
