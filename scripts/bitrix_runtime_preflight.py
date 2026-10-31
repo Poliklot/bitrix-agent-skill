@@ -90,8 +90,10 @@ def module_version_file(public_root: Path, module: str) -> Path:
 
 def parse_module_version(text: str) -> str:
     patterns = [
-        r"['\"]VERSION['\"]\s*=>\s*['\"]([^'\"]+)['\"]",
-        r"\$arModuleVersion\s*\[\s*['\"]VERSION['\"]\s*\]\s*=\s*['\"]([^'\"]+)['\"]",
+        r"define\s*\(\s*['\"]SM_VERSION['\"]\s*,\s*['\"]([0-9]+(?:\.[0-9]+)+)['\"]",
+        r"\bconst\s+SM_VERSION\s*=\s*['\"]([0-9]+(?:\.[0-9]+)+)['\"]",
+        r"['\"]VERSION['\"]\s*=>\s*['\"]([0-9]+(?:\.[0-9]+)+)['\"]",
+        r"\$arModuleVersion\s*\[\s*['\"]VERSION['\"]\s*\]\s*=\s*['\"]([0-9]+(?:\.[0-9]+)+)['\"]",
     ]
     for pattern in patterns:
         match = re.search(pattern, text)

@@ -39,7 +39,7 @@ MCP Market compact read-only import; full lifecycle edition lives in `bitrix/`.
 4. `local/components`, `local/templates`, `bitrix/templates`
 5. `local/php_interface`, `local/modules`, `urlrewrite.php`
 
-Для `main` допускай `www/bitrix/modules/main/classes/general/version.php`, если `install/version.php` отсутствует.
+Для `main` сначала проверяй `www/bitrix/modules/main/classes/general/version.php` (`SM_VERSION`); `install/version.php` — запасной источник при отсутствии первого файла.
 
 ## Быстрые проверки ядра
 
