@@ -62,3 +62,18 @@ def scan_evidence(root: Path) -> list[str]:
             if any(pattern.search(text) for pattern in SECRET_PATTERNS):
                 problems.append(f"{label}: possible secret")
     return problems
+
+
+def local_evidence_path(root: Path, reference: str) -> Path | None:
+    """Only relative, regular files inside this pack can serve as evidence."""
+    path = Path(reference)
+    if not reference or path.is_absolute() or ".." in path.parts or ":" in reference or "\\" in reference:
+        return None
+    target = root / path
+    return target if is_local_file(target, root) else None
+
+
+def field_values(text: str, label: str) -> list[str]:
+    return [match.strip().strip("`") for match in re.findall(
+        rf"^\s*-?\s*(?:{label}):[ \t]*([^\r\n]*)$", text, flags=re.MULTILINE | re.IGNORECASE
+    )]

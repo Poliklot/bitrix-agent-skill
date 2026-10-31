@@ -14,7 +14,7 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-from evidence_safety import scan_evidence, read_evidence_text
+from evidence_safety import scan_evidence, read_evidence_text, local_evidence_path, field_values
 
 
 VALID_VERDICTS = {"pass", "fail", "blocked"}
@@ -46,24 +46,42 @@ def add(checks: list[Check], name: str, ok: bool, detail: str = "") -> None:
 def find_summary(evidence_dir: Path) -> Path | None:
     candidates = [evidence_dir / "summary.md", evidence_dir / "evidence-summary.md"]
     for candidate in candidates:
-        if candidate.exists():
+        if candidate.is_file():
             return candidate
-    matches = sorted(evidence_dir.glob("*summary*.md"))
+    matches = sorted(path for path in evidence_dir.glob("*summary*.md") if path.is_file())
     return matches[0] if matches else None
 
 
-def extract_verdicts(summary_text: str) -> dict[str, str]:
-    verdicts: dict[str, str] = {}
-    # Markdown table rows such as: | P1-01 | pass | P1-01-modules.txt | notes |
-    for scenario, verdict in re.findall(r"\|\s*(P\d-\d{2})\s*\|\s*(pass|fail|blocked)\s*\|", summary_text, flags=re.IGNORECASE):
-        verdicts[scenario.upper()] = verdict.lower()
-    # Fallback free-form lines: Scenario: P1-01 ... Verdict: pass
-    for block in re.split(r"(?=Scenario\s*:\s*P\d-\d{2})", summary_text, flags=re.IGNORECASE):
-        scenario_match = re.search(r"Scenario\s*:\s*(P\d-\d{2})", block, flags=re.IGNORECASE)
-        verdict_match = re.search(r"Verdict\s*:\s*(pass|fail|blocked)", block, flags=re.IGNORECASE)
-        if scenario_match and verdict_match:
-            verdicts[scenario_match.group(1).upper()] = verdict_match.group(1).lower()
-    return verdicts
+@dataclass
+class ScenarioRow:
+    scenario: str
+    verdict: str
+    evidence_file: str
+
+
+def parse_scenario_rows(summary_text: str) -> list[ScenarioRow]:
+    rows = []
+    for line in summary_text.splitlines():
+        cells = [cell.strip().strip("`") for cell in line.strip().strip("|").split("|")]
+        if line.lstrip().startswith("|") and len(cells) >= 3 and re.fullmatch(r"P\d+-\d+", cells[0], re.I):
+            rows.append(ScenarioRow(cells[0].upper(), cells[1].lower(), cells[2]))
+    return rows
+
+
+def validate_scenario_file(root: Path, row: ScenarioRow) -> bool:
+    path = local_evidence_path(root, row.evidence_file)
+    if path is None:
+        return False
+    text = read_evidence_text(path, root)
+    if field_values(text, "ID сценария|Scenario") != [row.scenario]:
+        return False
+    if field_values(text, "Verdict") != [row.verdict]:
+        return False
+    if row.verdict in {"fail", "blocked"}:
+        reasons = field_values(text, "Причина[^:\n]*|Reason")
+        return len(reasons) == 1 and reasons[0] not in {"", "-", "—", "n/a"}
+    # A verdict alone is not an evidence record. This remains a structure check.
+    return bool(re.search(r"^## Evidence\s*\n+(?!#)(?:[^\n]*\S[^\n]*)", text, re.M))
 
 
 def infer_packages(verdicts: dict[str, str], requested: list[str]) -> list[str]:
@@ -71,18 +89,6 @@ def infer_packages(verdicts: dict[str, str], requested: list[str]) -> list[str]:
         return requested
     packages = sorted({scenario.split("-", 1)[0] for scenario in verdicts})
     return packages or ["P1"]
-
-
-def scenario_file_exists(evidence_dir: Path, scenario: str) -> bool:
-    patterns = [
-        f"{scenario}*",
-        f"{scenario.lower()}*",
-    ]
-    for pattern in patterns:
-        for path in evidence_dir.glob(pattern):
-            if path.is_file() and path.suffix.lower() in {".md", ".txt", ".log", ".html"}:
-                return True
-    return False
 
 
 def validate_modules(summary_text: str, checks: list[Check]) -> None:
@@ -121,7 +127,14 @@ def validate_evidence(evidence_dir: Path, packages: list[str]) -> list[Check]:
     summary_text = read_text(summary)
     validate_modules(summary_text, checks)
 
-    verdicts = extract_verdicts(summary_text)
+    rows = parse_scenario_rows(summary_text)
+    verdicts = {row.scenario: row.verdict for row in rows}
+    add(checks, "unique scenario ids", len(rows) == len(verdicts), "duplicate scenario rows" if len(rows) != len(verdicts) else "ok")
+    known = {scenario for required in REQUIRED_SCENARIOS.values() for scenario in required}
+    add(checks, "known scenario ids", all(row.scenario in known for row in rows), "only P1-P4 contract ids are accepted")
+    add(checks, "all verdict values", all(row.verdict in VALID_VERDICTS for row in rows), "pass/fail/blocked only")
+    invalid_files = [row.scenario for row in rows if not validate_scenario_file(evidence_dir, row)]
+    add(checks, "scenario file contracts", not invalid_files, ", ".join(invalid_files) if invalid_files else "ok")
     add(checks, "scenario verdicts present", bool(verdicts), f"{len(verdicts)} verdict(s)")
 
     selected_packages = infer_packages(verdicts, packages)
@@ -145,13 +158,6 @@ def validate_evidence(evidence_dir: Path, packages: list[str]) -> list[Check]:
             f"{package} verdict values",
             not invalid,
             "invalid: " + ", ".join(invalid) if invalid else "ok",
-        )
-        missing_files = [scenario for scenario in required if scenario in verdicts and not scenario_file_exists(evidence_dir, scenario)]
-        add(
-            checks,
-            f"{package} scenario files",
-            not missing_files,
-            "missing files: " + ", ".join(missing_files) if missing_files else "ok",
         )
 
     blocked_or_failed = [scenario for scenario, verdict in verdicts.items() if verdict in {"fail", "blocked"}]

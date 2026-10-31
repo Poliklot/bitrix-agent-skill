@@ -460,7 +460,7 @@ def validate_runtime_evidence_validator() -> None:
         )
         for index in range(1, 9):
             (evidence_dir / f"P1-{index:02d}-scenario.txt").write_text(
-                f"Scenario: P1-{index:02d}\nVerdict: pass\n",
+                f"Scenario: P1-{index:02d}\nVerdict: pass\n\n## Evidence\nSynthetic fixture; no runtime claim.\n",
                 encoding="utf-8",
             )
         result = subprocess.run(
