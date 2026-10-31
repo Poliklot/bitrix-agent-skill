@@ -235,9 +235,12 @@ try {
         throw new \RuntimeException('Ошибка создания заказа');
     }
 
-    OrderItemTable::add(['ORDER_ID' => $orderResult->getId(), ...]);
+    $itemResult = OrderItemTable::add(['ORDER_ID' => $orderResult->getId()]);
+    if (!$itemResult->isSuccess()) {
+        throw new \RuntimeException('Ошибка создания дочерней записи');
+    }
     $connection->commitTransaction();
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     $connection->rollbackTransaction();
     throw $e; // пробрасываем дальше
 }
@@ -696,3 +699,11 @@ try {
 - Сравнивать `DateTime` через `toString()` — только через `getTimestamp()`
 
 ---
+
+## K02 — Result внутри транзакции и граница отката
+
+Транзакция не превращает неуспешный `Result` в исключение. Проверять каждый `add/update/delete/save`, включая дочерние записи; при ошибке прекращать операцию до commit. Владелец транзакции ловит `\Throwable`, выполняет rollback и сохраняет исходную причину. Это правило для собственного service/unit of work: не оборачивать неизвестный sale lifecycle вложенной транзакцией вслепую. Сбой rollback тоже логируется без секретов; внешние HTTP/файловые изменения БД не откатывает.
+
+**Проверка на стенде:** Имитировать failed Result у второго шага и TypeError; оба пути не должны фиксировать родителя.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/db/connection/starttransaction.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.

@@ -1724,9 +1724,12 @@ try {
         throw new \RuntimeException('Ошибка создания заказа');
     }
 
-    OrderItemTable::add(['ORDER_ID' => $orderResult->getId(), ...]);
+    $itemResult = OrderItemTable::add(['ORDER_ID' => $orderResult->getId()]);
+    if (!$itemResult->isSuccess()) {
+        throw new \RuntimeException('Ошибка создания дочерней записи');
+    }
     $connection->commitTransaction();
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     $connection->rollbackTransaction();
     throw $e; // пробрасываем дальше
 }
@@ -3384,3 +3387,11 @@ Context::getCurrent()->getResponse()->addCookie($cookie);
 ---
 
 ---
+
+## K02 — Result внутри транзакции и граница отката
+
+Проверять каждый Result до commit, а не только первую запись. На исключение/TypeError владелец своей транзакции выполняет rollback через catch Throwable. Это не гарантия отката HTTP или файлов.
+
+Проверка: Имитировать failed Result у второго шага и TypeError; оба пути не должны фиксировать родителя.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/db/connection/starttransaction.php); documentation-backed, 2026-11-01, не runtime pass.
