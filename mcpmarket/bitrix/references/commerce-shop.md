@@ -4521,3 +4521,11 @@ System shipment — остаток распределения, не достав
 Проверка: Доставка и купон меняют итог; unpaid отражает новый итог, paid остаётся исторически согласованной.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/sale/classes/orderbase/dofinalaction.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K17 — Контекст менеджера купонов
+
+Выбирать режим DiscountCouponsManager под client/manager/order; userId/orderId задавать явно по контракту. Не переносить состояние между заказами. clearStorage не означает удаление купонов из БД; проверить applied result.
+
+Проверка: Два заказа с разными пользователями и купонами не влияют друг на друга; неприменимый купон не объявляется скидкой.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/sale/classes/discountcouponsmanager/init.php); documentation-backed, 2026-11-01, не runtime pass.

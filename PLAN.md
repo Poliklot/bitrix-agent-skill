@@ -578,3 +578,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [sale.md](bitrix/references/sale.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/sale/classes/orderbase/dofinalaction.php).
 - Самопроверка B095 — «После купона сумма заказа изменилась, а Payment остался прежним — что делать?»: Проверить final calculation и Result, согласовать неоплаченную часть с итогом; paid сумму не переписывать, затем save/reload.
 - Контрпример отвергнут: Считать doFinalAction сохранением или менять уже подтверждённую оплату.. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K17: Контекст менеджера купонов
+
+- Пробел до изменения: Купоны упоминались как side effect без жизненного цикла manager и разграничения состояний.
+- Исправление: [sale.md](bitrix/references/sale.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/sale/classes/discountcouponsmanager/init.php).
+- Самопроверка B096 — «В одном CLI-процессе создаются заказы разных покупателей: что с купонами?»: Изолировать контекст manager по заказу/владельцу и режиму, проверить переинициализацию и применение; не наследовать предыдущий coupon state.
+- Контрпример отвергнут: Один глобальный MODE_CLIENT на весь пакет покупателей.. Результат ручной проверки ответа: pass; runtime: не запускался.
