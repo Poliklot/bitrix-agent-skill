@@ -2926,3 +2926,11 @@ SetPropertyValues без PROPERTY_CODE — полная замена, Ex — ч�
 Проверка: У элемента заполнены A/B/TAGS: изменение A и очистка TAGS сохраняют B; пустой массив не считать явным очищением.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockelement/setpropertyvaluesex.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K07 — Множественные файлы: ID файла и ID значения
+
+Не путать CFile ID с PROPERTY_VALUE_ID. Изменения одного multiple-file свойства собрать в один вызов после чтения актуальных связей; не удалять CFile напрямую и не переиспользовать старые value IDs после записи.
+
+Проверка: Три исходных файла: два удалены, один сохранён, новый добавлен; чужой file/value ID отклонён.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockelement/setpropertyvalues.php); documentation-backed, 2026-11-01, не runtime pass.

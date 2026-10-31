@@ -500,3 +500,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [iblocks.md](bitrix/references/iblocks.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockelement/setpropertyvaluesex.php).
 - Самопроверка B085 — «Как обновить одно свойство и очистить TAGS, не потеряв остальные?»: Использовать SetPropertyValuesEx с нужными ключами, TAGS=false; после записи перечитать значения, не проверять isSuccess у null.
 - Контрпример отвергнут: Передать неполный набор в SetPropertyValues без PROPERTY_CODE.. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K07: Множественные файлы: ID файла и ID значения
+
+- Пробел до изменения: Чтение file ID описано, но нет модели сохранения/удаления нескольких файлов и смены ID связей.
+- Исправление: [iblocks.md](bitrix/references/iblocks.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockelement/setpropertyvalues.php).
+- Самопроверка B086 — «Как удалить два фото и добавить одно в множественное свойство?»: Прочитать связи, проверить принадлежность элементу, сформировать один пакет удаления/добавления и перечитать новые value IDs.
+- Контрпример отвергнут: Два последовательных удаления по старым value IDs или прямой CFile::Delete.. Результат ручной проверки ответа: pass; runtime: не запускался.
