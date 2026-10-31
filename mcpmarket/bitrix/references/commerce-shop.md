@@ -4526,3 +4526,11 @@ Safe wins: сузить property/price lists, preload offers/prices/stock, вы�
 Проверка: Изменить количество в заказе с оплатой и отгрузкой; после reload проверить весь граф, а не одну строку basket.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/sale/technique/basket.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K12 — FUSER и пользователь — разные идентификаторы
+
+FUSER не USER_ID. В web использовать текущий подтверждённый контекст; в фоновой задаче явно определить пользователя/FUSER и сайт. Не доверять FUSER из запроса; после login/merge перечитать корзину.
+
+Проверка: Guest → login с уже существующей корзиной; два сайта и фоновой запуск не должны смешивать владельцев.
+
+[Официальный контракт](https://docs.1c-bitrix.ru/api/classes/Bitrix-Sale-Fuser.html); documentation-backed, 2026-11-01, не runtime pass.

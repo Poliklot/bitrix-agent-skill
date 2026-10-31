@@ -543,3 +543,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [sale.md](bitrix/references/sale.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/sale/technique/basket.php).
 - Самопроверка B090 — «Можно поменять количество в оформленном заказе и вызвать basket->save?»: Нет: загрузить заказ, изменить его корзину и согласованные зависимые сущности, проверить Result и сохранить Order.
 - Контрпример отвергнут: Сохранить только basket заказа или обновить b_sale_basket.. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K12: FUSER и пользователь — разные идентификаторы
+
+- Пробел до изменения: Есть вызов Fuser::getId, но нет различения USER_ID, CLI и слияния гостевой корзины.
+- Исправление: [sale.md](bitrix/references/sale.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://docs.1c-bitrix.ru/api/classes/Bitrix-Sale-Fuser.html).
+- Самопроверка B091 — «В CLI подставить userId в loadItemsForFUser — правильно?»: Нет: отдельно разрешить FUSER целевого пользователя и site, обработать отсутствие; web-клиент не выбирает чужого владельца.
+- Контрпример отвергнут: Считать USER_ID и FUSER_ID взаимозаменяемыми.. Результат ручной проверки ответа: pass; runtime: не запускался.
