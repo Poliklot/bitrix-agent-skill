@@ -14,6 +14,8 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
+from evidence_safety import scan_evidence, read_evidence_text
+
 
 VALID_VERDICTS = {"pass", "fail", "blocked"}
 REQUIRED_SCENARIOS = {
@@ -23,19 +25,7 @@ REQUIRED_SCENARIOS = {
     "P4": [f"P4-{index:02d}" for index in range(1, 9)],
 }
 CORE_MODULES = ["main", "iblock", "catalog", "currency", "sale"]
-SECRET_PATTERNS = [
-    re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----"),
-    re.compile(r"(?i)\b(?:password|passwd|secret|token|cookie|sessid|php_sessid|phpsessid)\b\s*[:=]\s*[^\s`'\"]{8,}"),
-    re.compile(r"(?i)\bAuthorization\s*:\s*Bearer\s+[A-Za-z0-9._~+/=-]{12,}"),
-    re.compile(r"(?i)\bBX_USER_ID\s*[:=]\s*[^\s`'\"]{8,}"),
-    re.compile(r"(?i)\b(?:access_token|refresh_token|client_secret|application_token)\b\s*[:=]\s*[^\s`'\"]{8,}"),
-    re.compile(r"(?i)\b(?:BITRIX_SM_LOGIN|BITRIX_SM_UIDH|PHPSESSID|BX_USER_ID)\b\s*[:=]\s*[^\s`'\"]{8,}"),
-    re.compile(r"(?i)\b(?:DBPassword|DBLogin|DBName)\b\s*=\s*['\"][^'\"]{4,}['\"]"),
-    re.compile(r"(?i)['\"](?:password|passwd|secret|token|license_key)['\"]\s*=>\s*['\"][^'\"]{8,}['\"]"),
-    re.compile(r"(?i)['\"](?:password|passwd|secret|token|license_key)['\"]\s*=>\s*array\s*\([^)]*['\"]value['\"]\s*=>\s*['\"][^'\"]{8,}['\"]", re.DOTALL),
-    re.compile(r"(?i)\b(?:BITRIX_LICENSE_KEY|LICENSE_KEY|BX_LICENSE_KEY)\b\s*[:=]\s*[^\s`'\"]{8,}"),
-    re.compile(r"https?://[^\s`'\"]+/rest/\d+/[A-Za-z0-9._~+=-]{8,}/"),
-]
+
 
 
 @dataclass
@@ -46,7 +36,7 @@ class Check:
 
 
 def read_text(path: Path) -> str:
-    return path.read_text(encoding="utf-8", errors="ignore")
+    return read_evidence_text(path, path.parent)
 
 
 def add(checks: list[Check], name: str, ok: bool, detail: str = "") -> None:
@@ -109,23 +99,8 @@ def validate_modules(summary_text: str, checks: list[Check]) -> None:
 
 
 def validate_forbidden_secrets(evidence_dir: Path, checks: list[Check]) -> None:
-    matches: list[str] = []
-    for path in sorted(evidence_dir.rglob("*")):
-        if not path.is_file():
-            continue
-        if path.stat().st_size > 2_000_000:
-            continue
-        text = read_text(path)
-        for pattern in SECRET_PATTERNS:
-            if pattern.search(text):
-                matches.append(str(path.relative_to(evidence_dir)))
-                break
-    add(
-        checks,
-        "obvious secret scan",
-        not matches,
-        ", ".join(matches[:10]) if matches else "ok",
-    )
+    problems = scan_evidence(evidence_dir)
+    add(checks, "obvious secret scan", not problems, "; ".join(problems[:10]) if problems else "ok")
 
 
 def validate_evidence(evidence_dir: Path, packages: list[str]) -> list[Check]:
@@ -134,10 +109,13 @@ def validate_evidence(evidence_dir: Path, packages: list[str]) -> list[Check]:
     if not evidence_dir.is_dir():
         return checks
 
+    validate_forbidden_secrets(evidence_dir, checks)
+    if not checks[-1].ok:
+        return checks
+
     summary = find_summary(evidence_dir)
     add(checks, "summary file", summary is not None, str(summary.relative_to(evidence_dir)) if summary else "missing summary.md")
     if summary is None:
-        validate_forbidden_secrets(evidence_dir, checks)
         return checks
 
     summary_text = read_text(summary)
@@ -188,7 +166,6 @@ def validate_evidence(evidence_dir: Path, packages: list[str]) -> list[Check]:
     else:
         add(checks, "fail/blocked reasons", True, "no fail/blocked verdicts")
 
-    validate_forbidden_secrets(evidence_dir, checks)
     return checks
 
 
