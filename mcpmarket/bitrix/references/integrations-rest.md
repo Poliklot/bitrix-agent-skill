@@ -297,3 +297,11 @@ event.offline.get: default clear=1 удаляет; для recoverable обраб
 Проверка: На отдельной тестовой очереди упасть после резервирования и повторно получить тот же пакет без удаления.
 
 [Официальный контракт](https://apidocs.bitrix24.ru/api-reference/events/event-offline-get.html); documentation-backed, 2026-11-01, не runtime pass.
+
+## K30 — Подтверждение офлайн-пакета имеет опасные пустые значения
+
+Непустой известный process_id; при частичном успехе — непустой список успешных message_id. Пустой список очищает весь пакет, пустой process_id затрагивает незарезервированные события. Ноль успехов = не вызывать clear.
+
+Проверка: Контроль запроса до отправки: ноль успехов не вызывает clear; частичный успех не удаляет оставшиеся записи.
+
+[Официальный контракт](https://apidocs.bitrix24.ru/api-reference/events/event-offline-clear.html); documentation-backed, 2026-11-01, не runtime pass.
