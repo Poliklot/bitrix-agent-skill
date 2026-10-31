@@ -313,3 +313,11 @@ error принимает MESSAGE_ID + свой process_id; затем get(error=
 Проверка: На выделенной очереди один корректный ключ попадает в error=1; неверные квитанции отвергаются локально до API.
 
 [Официальный контракт](https://apidocs.bitrix24.ru/api-reference/events/event-offline-error.html); documentation-backed, 2026-11-01, не runtime pass.
+
+## K32 — Лимиты частоты и ресурсоёмкости REST различаются
+
+QUERY_LIMIT_EXCEEDED — частота; OPERATION_TIME_LIMIT — стоимость метода. Учитывать operating/reset, не ждать обязательного обнуления; ограниченные повторы и разные настройки облака/коробки.
+
+Проверка: Ошибки обеих категорий запускают разные ограниченные стратегии; исчерпание бюджета завершает попытки.
+
+[Официальный контракт](https://apidocs.bitrix24.ru/settings/performance/limits.html); documentation-backed, 2026-11-01, не runtime pass.

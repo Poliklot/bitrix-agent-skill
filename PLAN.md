@@ -691,3 +691,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [rest.md](bitrix/references/rest.md) и [integrations-rest.md](mcpmarket/bitrix/references/integrations-rest.md); источник: [Официальный контракт](https://apidocs.bitrix24.ru/api-reference/events/event-offline-error.html).
 - Самопроверка B110 — «event.offline.error вернул true, но ошибка не появилась — почему?»: Проверить MESSAGE_ID, принадлежность process_id и непустой список; читать ошибочную ветку error=1.
 - Контрпример отвергнут: Передать ID сделки вместо MESSAGE_ID или чужой process_id и довериться true. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K32: Лимиты частоты и ресурсоёмкости REST различаются
+
+- Пробел до изменения: Коды ошибок перечислены, но не определены разные стратегии регулирования нагрузки.
+- Исправление: [rest.md](bitrix/references/rest.md) и [integrations-rest.md](mcpmarket/bitrix/references/integrations-rest.md); источник: [Официальный контракт](https://apidocs.bitrix24.ru/settings/performance/limits.html).
+- Самопроверка B111 — «После operating_reset_at метод всё ещё заблокирован: менять токен?»: Нет: часть временного окна могла остаться; снизить нагрузку и проверить operating, не обходить блокировку токенами.
+- Контрпример отвергнут: Ускорить параллельные повторы или объявить единый лимит для любого Битрикс24. Результат ручной проверки ответа: pass; runtime: не запускался.
