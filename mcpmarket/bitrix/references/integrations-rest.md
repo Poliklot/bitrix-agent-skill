@@ -289,3 +289,11 @@ member_id стабилен при смене домена; client_endpoint об�
 Проверка: Несколько обновлений одного объекта до чтения: итог синхронизирован, промежуточная история не выдумана.
 
 [Официальный контракт](https://apidocs.bitrix24.ru/api-reference/events/offline-events.html); documentation-backed, 2026-11-01, не runtime pass.
+
+## K29 — Получение офлайн-событий по умолчанию удаляет их
+
+event.offline.get: default clear=1 удаляет; для recoverable обработки явно clear=0 и сохранённый process_id. Повтор пакета с clear=1 удаляет и строки за пределами limit. Проверить доступность режима.
+
+Проверка: На отдельной тестовой очереди упасть после резервирования и повторно получить тот же пакет без удаления.
+
+[Официальный контракт](https://apidocs.bitrix24.ru/api-reference/events/event-offline-get.html); documentation-backed, 2026-11-01, не runtime pass.
