@@ -37,3 +37,19 @@ class ReportPrivacyTests(unittest.TestCase):
             n_plus_one = [f for f in findings if "N+1:" in f.title]
             self.assertTrue(n_plus_one)
             self.assertEqual(n_plus_one[0].kind, "risk")
+
+    def test_base_url_exports_only_origin(self):
+        for value, expected in [
+            ("https://user:FAKE_PASSWORD@example.test:8443/rest/1/FAKE_KEY/?token=FAKE_TOKEN#FAKE_FRAGMENT", "https://example.test:8443"),
+            ("http://[::1]:8080/private", "http://[::1]:8080"),
+            ("https://example.test:invalid/FAKE_KEY", "[invalid URL omitted]"),
+            ("file:///FAKE_KEY", "[invalid URL omitted]"),
+            ("", ""),
+        ]:
+            with self.subTest(value=value):
+                self.assertEqual(preflight.safe_base_url(value), expected)
+                report = preflight.build_report(Path("/missing-test-root"), value, ["main"])
+                output = io.StringIO()
+                with contextlib.redirect_stdout(output):
+                    preflight.print_markdown(report)
+                self.assertNotIn("FAKE_", output.getvalue() + json.dumps(report))

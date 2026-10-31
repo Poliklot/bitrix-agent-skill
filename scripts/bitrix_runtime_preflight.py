@@ -14,6 +14,7 @@ import os
 import re
 import sys
 from pathlib import Path
+from urllib.parse import urlsplit
 
 
 DEFAULT_MODULES = [
@@ -175,12 +176,30 @@ def collect_safety(public_root: Path) -> list[dict[str, str]]:
     ]
 
 
+def safe_base_url(value: str) -> str:
+    """Report only HTTP(S) origin; paths may contain Bitrix webhook credentials."""
+    if not value:
+        return ""
+    try:
+        parsed = urlsplit(value)
+        if parsed.scheme not in {"http", "https"} or not parsed.hostname:
+            raise ValueError("invalid origin")
+        host = parsed.hostname
+        if not re.fullmatch(r"[A-Za-z0-9.:-]+", host):
+            raise ValueError("invalid host")
+        host = f"[{host}]" if ":" in host else host
+        port = f":{parsed.port}" if parsed.port is not None else ""
+        return f"{parsed.scheme}://{host}{port}"
+    except ValueError:
+        return "[invalid URL omitted]"
+
+
 def build_report(public_root: Path, base_url: str, modules: list[str]) -> dict[str, object]:
     resolved_root, notes = resolve_public_root(str(public_root))
     exists = (resolved_root / "bitrix" / "modules").is_dir()
     report: dict[str, object] = {
         "public_root": str(resolved_root),
-        "base_url": base_url,
+        "base_url": safe_base_url(base_url),
         "status": "pass" if exists else "blocked",
         "notes": notes,
         "modules": collect_modules(resolved_root, modules) if exists else [],
