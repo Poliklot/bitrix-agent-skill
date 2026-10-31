@@ -14,7 +14,7 @@ description: >-
   local core and `local/*`; missing optional modules are deferred.
 metadata:
   author: poliklot
-  version: "1.37.0"
+  version: "1.38.0"
 ---
 
 # Bitrix Expert Skill — MCP Market Edition
@@ -132,3 +132,5 @@ foreach (['iblock'] as $module) {
 Читай только ветку текущей задачи; новые documentation-backed сведения не заменяют проверку установленной версии.
 
 - Инфоблоки/ORM: COUNT, публикация и запись свойств — [content-data.md](references/content-data.md); Result/транзакции, OnAfter и 1:N pagination — [php-architecture.md](references/php-architecture.md). Контракты K01–K10, сценарии B080–B089.
+
+- Магазин: владение корзиной/FUSER, позиции и системная отгрузка, частичная оплата, пересчёт, купоны, ограничения доставки, ручная цена и события — [commerce-shop.md](references/commerce-shop.md). Контракты K11–K20, сценарии B090–B099.
