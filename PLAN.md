@@ -726,3 +726,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [rest.md](bitrix/references/rest.md) и [integrations-rest.md](mcpmarket/bitrix/references/integrations-rest.md); источник: [Официальный контракт](https://apidocs.bitrix24.ru/api-reference/widgets/ui-interaction/bx24-placement-info).
 - Самопроверка B115 — «В options пришёл ID сделки: можно сразу читать её своим admin-токеном?»: Нет: проверить конкретный placement, тип/ID и права текущего пользователя на backend.
 - Контрпример отвергнут: Считать клиентский options доказательством доступа или ожидать callback от placement.info. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K37: Общие и пользовательские настройки REST-приложения
+
+- Пробел до изменения: Методы app.option/user.option только перечислены, не определён владелец данных.
+- Исправление: [rest.md](bitrix/references/rest.md) и [integrations-rest.md](mcpmarket/bitrix/references/integrations-rest.md); источник: [Официальный контракт](https://apidocs.bitrix24.ru/api-reference/common/settings/user-option-set.html).
+- Самопроверка B116 — «Сервер сохранил user.option.set, но второй сотрудник не видит настройку — почему?»: Настройка принадлежит пользователю токена; выбрать персональный либо общий app.option слой осознанно.
+- Контрпример отвергнут: Ожидать глобальное действие user.option.set или удаление ключа пустой строкой. Результат ручной проверки ответа: pass; runtime: не запускался.

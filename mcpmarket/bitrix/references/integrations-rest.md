@@ -353,3 +353,11 @@ placement.info() синхронен; options зависят от точки. К�
 Проверка: Подмена ID в запросе виджета не открывает чужой объект; неподдерживаемый placement обработан явно.
 
 [Официальный контракт](https://apidocs.bitrix24.ru/api-reference/widgets/ui-interaction/bx24-placement-info); documentation-backed, 2026-11-01, не runtime pass.
+
+## K37 — Общие и пользовательские настройки REST-приложения
+
+user.option.set относится к владельцу токена; app.option.set — общие настройки администратора. options частично обновляет ключи, пустая строка не удаляет; next/total избегать. Не хранить персональные секреты в общих настройках.
+
+Проверка: Два пользователя: персональные значения изолированы, общая настройка едина; непереданный ключ сохранён.
+
+[Официальный контракт](https://apidocs.bitrix24.ru/api-reference/common/settings/user-option-set.html); documentation-backed, 2026-11-01, не runtime pass.
