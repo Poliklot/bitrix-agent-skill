@@ -14,7 +14,7 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-from evidence_safety import scan_evidence, read_evidence_text, local_evidence_path, field_values
+from evidence_safety import scan_evidence, read_evidence_text, local_evidence_path, field_values, section_has_content
 
 
 VALID_VERDICTS = {"pass", "fail", "blocked"}
@@ -25,7 +25,6 @@ REQUIRED_SCENARIOS = {
     "P4": [f"P4-{index:02d}" for index in range(1, 9)],
 }
 CORE_MODULES = ["main", "iblock", "catalog", "currency", "sale"]
-
 
 
 @dataclass
@@ -81,7 +80,7 @@ def validate_scenario_file(root: Path, row: ScenarioRow) -> bool:
         reasons = field_values(text, "Причина[^:\n]*|Reason")
         return len(reasons) == 1 and reasons[0] not in {"", "-", "—", "n/a"}
     # A verdict alone is not an evidence record. This remains a structure check.
-    return bool(re.search(r"^## Evidence\s*\n+(?!#)(?:[^\n]*\S[^\n]*)", text, re.M))
+    return section_has_content(text, "Evidence")
 
 
 def infer_packages(verdicts: dict[str, str], requested: list[str]) -> list[str]:

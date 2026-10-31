@@ -47,15 +47,6 @@ ROUTE_PATTERNS = [
     re.compile(r"/rest/"),
 ]
 
-SKIP_DIRS = {
-    ".git",
-    "bitrix/cache",
-    "bitrix/managed_cache",
-    "bitrix/stack_cache",
-    "bitrix/html_pages",
-    "upload",
-}
-
 
 def rel(path: Path, base: Path) -> str:
     try:
@@ -131,20 +122,20 @@ def collect_modules(public_root: Path, modules: list[str]) -> list[dict[str, str
     return rows
 
 
-def path_is_skipped(path: Path, public_root: Path) -> bool:
-    relative = rel(path, public_root)
-    return any(relative == skip or relative.startswith(skip + os.sep) for skip in SKIP_DIRS)
-
-
 def iter_route_files(public_root: Path) -> list[Path]:
     excluded = {".git", "upload", "cache", "managed_cache", "stack_cache", "html_pages", "vendor", "node_modules"}
     files: list[Path] = []
-    for path in iter_local_files(public_root, excluded):
-        relative = path.relative_to(public_root).as_posix()
-        if path.suffix == ".php" and (
-            relative.startswith(("local/", "bitrix/templates/")) or relative == "urlrewrite.php"
-        ):
-            files.append(path)
+    for subtree in [public_root / "local", public_root / "bitrix/templates"]:
+        # Check each boundary before entering it; never walk the whole core tree.
+        relative = subtree.relative_to(public_root)
+        parents = [public_root.joinpath(*relative.parts[:i]) for i in range(1, len(relative.parts) + 1)]
+        if any(path.is_symlink() for path in parents):
+            continue
+        if subtree.is_dir():
+            files.extend(path for path in iter_local_files(subtree, excluded) if path.suffix == ".php")
+    rewrite = public_root / "urlrewrite.php"
+    if is_local_file(rewrite, public_root):
+        files.append(rewrite)
     return files
 
 

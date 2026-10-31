@@ -73,7 +73,7 @@ CRITICAL_REFERENCE_MARKERS = {
     ],
 }
 
-NEW_EVAL_IDS = ["B070", "B071", "B072", "B073", "B074"]
+NEW_EVAL_IDS = ["B070", "B071", "B072", "B073", "B074", "B075", "B076", "B077", "B078", "B079"]
 
 RUNTIME_SMOKE_TEMPLATES = [
     "runtime-smoke/evidence-summary.template.md",

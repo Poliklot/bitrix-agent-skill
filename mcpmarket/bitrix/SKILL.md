@@ -124,3 +124,5 @@ foreach (['iblock'] as $module) {
 - Не меняй order/basket/payment/shipment/catalog price/stock прямым SQL, если есть API и side effects.
 - Не подключай production 1С, реальные платежи, доставки или кассы для smoke без явного подтверждения.
 - Не говори “весь core полностью production-проверен”, если нет sandbox/fixtures smoke evidence.
+
+Для preflight, runtime/optimization evidence и публикации применяй [контракт диагностических доказательств](references/release-gate.md#контракт-диагностических-доказательств): файловые признаки не равны runtime pass, а успешная проверка структуры не доказывает выполнение сценария.

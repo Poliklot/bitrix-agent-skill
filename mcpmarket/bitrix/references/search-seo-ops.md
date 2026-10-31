@@ -1901,3 +1901,5 @@ $hits = CPerfomanceHit::GetList(
 - Security — `security.md`
 
 ---
+
+Для автоматического отчёта и evidence pack соблюдай [контракт диагностических доказательств](release-gate.md#контракт-диагностических-доказательств): без исходных snippets и приватных URL; `confirmed`/`fixed` требуют отдельного локального runtime artifact, а не только заполненного шаблона.

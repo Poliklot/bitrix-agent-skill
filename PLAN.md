@@ -399,3 +399,44 @@ Commerce/1C фаза считается завершённой, когда:
 - skill умеет маршрутизировать магазинные задачи без догадок и без смешивания non-commerce core с shop-core;
 - есть smoke-задачи и verification format для каталога, корзины, checkout, заказа, обмена с 1С, `webservice.sale`/`webservice.statistic`, REST app hooks, пагинации, lazy load и диагностики цен/остатков/SKU;
 - фактический runtime pass будет считаться отдельной следующей фазой после запуска sandbox/fixtures.
+
+## Аудит надёжности 2026-11-01
+
+Область: реальный путь «снять диагностику → собрать доказательства → проверить → выпустить skill». До изменений `make validate` проходил, но перечисленные ниже отрицательные случаи не проверялись. Это аудит инструментов и поведения навыка, не повторная сертификация всех Bitrix API и не тест на живом Bitrix-сайте. Все 10 пунктов реализованы последовательно; по каждому выполнены тесты и отдельный commit.
+
+| № | Чего не хватало / подтверждённая причина | Как правильно добавлено | Самопроверка |
+|---|---|---|---|
+| 1 | Raw snippets из PHP попадали в Markdown/JSON | Координаты + фиксированные признаки в обоих сканерах, N+1-сигналы сохранены | `test_report_privacy`: секрет на найденной строке отсутствует в обоих форматах |
+| 2 | `base_url` выводился без обработки | Только HTTP(S) origin; убрать userinfo/path/query/fragment, обработать ошибочный URL | `test_base_url_exports_only_origin`: обычный host, IPv6, неверный порт |
+| 3 | Parser читал только массив версии, а full/compact расходились по main | Распознавать `SM_VERSION` define/const и оба array-формата; main general прежде install | `test_preflight`: четыре записи версии, приоритет/fallback, нечисловое значение |
+| 4 | Пустой `bitrix/modules` давал pass | Проверить доступность версии main; явно candidate/blocked и runtime not_checked | Пустой каталог, корректный файл, невалидный UTF-8; ни один случай не даёт runtime pass |
+| 5 | Сканеры следовали файловым symlink, module argument мог быть путём | Общий обход обычных файлов; отсечь symlink и path-injection, не обходить весь core для routes | `test_scan_scope`: внешний файл/каталог, цикл, module traversal |
+| 6 | Большие файлы молча пропускались, secret patterns расходились | Общая fail-closed проверка текстового evidence, без вывода найденных значений | `test_evidence_safety`: JSON token, Basic auth, URL credentials, binary, invalid UTF-8, oversize, symlink |
+| 7 | Runtime summary проверялся отдельно от фактического файла | Точная локальная ссылка, уникальные известные ID, один совпадающий verdict и причина/evidence | `test_runtime_contracts`: дубликат, неверный путь, внешний URL, ID/verdict mismatch, пустое evidence |
+| 8 | URL автоматически засчитывался как optimization evidence, метаданные расходились | Локальные finding files, уникальные ID, совпадающие поля, отдельный proof для confirmed/fixed | `test_optimization_contracts`: подмена/дубликаты, synthetic fixed proof; исправлена реальная priority-ошибка генератора/sample |
+| 9 | Генераторы записывали summary до обнаружения поздней коллизии | Рендер всего набора, предварительная проверка, lock, exclusive create, atomic per-file force | `test_evidence_initializers`: поздняя коллизия P1/P4/OPT, сохранность файлов/static report, symlink, lock |
+| 10 | CI проверял преимущественно happy path и наличие маркеров | `make test` включён в `make validate`; CLI-тесты и B075–B079; контракты full/compact синхронизированы | 23 unittest-метода с подслучаями, оба sample packs и repo gate |
+
+### Ручная регрессия первого ответа
+
+Самопроверка автором изменений, не независимый agent eval. Условия всех ответов: клиентский проект/ядро не предоставлены, поэтому указаны места будущей проверки, а не выдуманные найденные факты. Прочитаны `answer-contracts`, `developer-primitives`, `first-answer-pitfalls`, `developer-cards`, `behavior-routing` и релевантные диагностические references. Ниже сами сокращённые ответы, проверенные по route / bad-first-step / useful-answer. Выполнение PHP не заявляется.
+
+| ID | Проверенный ответ | Итог |
+|---|---|---|
+| B001 | Для browser title — `SetPageProperty('title', ...)`; в active `header.php` проверить `ShowHead`/`ShowTitle`, затем SEO компонента и кеш. Не вставлять meta вручную. | pass |
+| B004 | Для CSS — Asset или `template_styles.css`. Проверить active template и `ShowHead`; исключить повторное подключение и проверить кеш assets. | pass |
+| B007 | Редактируемый футер — `IncludeFile` по текущей include convention. Проверить `footer.php`, `SITE_DIR`, edit mode и права, не хардкодить контент. | pass |
+| B009 | Добавить через `AddChainItem`, вывести `bitrix:breadcrumb`. Проверить вызов компонента и `ADD_*_CHAIN`, чтобы не получить дубль. | pass |
+| B011 | Текущий пользователь — `$USER` после bootstrap, `IsAuthorized`/`GetID`. Проверить контекст вызова, права и персональный кеш; не читать session напрямую. | pass |
+| B013 | Request — `Context::getCurrent()->getRequest()`. Проверить controller/component boundary, валидировать тип входа и экранировать вывод. | pass |
+| B016 | Проверить локальный module/version и результат `Loader::includeModule`. При false остановить API-путь; наличие каталога не гарантирует регистрацию. | pass |
+| B023 | Для свойства проверить `PROPERTY_CODE`, `DISPLAY_PROPERTIES`, фактический arResult и result_modifier. Учитывать тип свойства/кеш; не начинать с SQL. | pass |
+| B025 | Сначала определить component/tagged/composite слой, проверить `CACHE_*`, key и invalidation в компоненте. Не отключать весь кеш; проверить второй запрос и права. | pass |
+| B028 | Почта — события/шаблоны Bitrix, не `mail()`. Проверить site binding, `CEvent::Send`/`Main\Mail\Event::send`, очередь/агенты и журнал; тестовую отправку согласовать. | pass |
+| B030 | Ajax — существующий project controller/component action. Проверить bootstrap, права, sessid и JSON contract; не создавать анонимный write endpoint. | pass |
+| B043 | Обновление цены: проверить catalog/currency и их загрузку, тип цены/валюту/сумму. Подготовить изменение через catalog API; прямую запись согласовать, учесть скидки, события и инвалидирование. Не SQL. | pass |
+| B046 | Для 1С проверить локальный exchange component и шаги checkauth/init/file/import, XML_ID и повторный импорт. Логи обезличить; production import не запускать без разрешения/rollback. | pass |
+| B053 | Полноту runtime не заявлять по static grep. Открыть runtime-smoke-verification, определить sandbox/fixtures/rollback и P1–P4; без стенда зафиксировать blocked. | pass |
+| B057 | Из checkout запустить validate_runtime_evidence для P1; сверить summary, локальные сценарии, ID/verdict и приватность. Успех validator — не доказательство выполнения smoke. | pass |
+
+Итого ручного regression gate: 15 проверено, fail = 0, warn = 0. Дополнительно просмотрены B075–B079 по новому контракту; их негативные случаи покрыты исполняемыми тестами. Runtime Bitrix smoke: не запускался, sandbox отсутствует. Проверка Windows/PowerShell не заявляется: lifecycle scripts не менялись.

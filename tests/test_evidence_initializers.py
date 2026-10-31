@@ -13,6 +13,7 @@ class InitializerTests(unittest.TestCase):
         cases = [
             ("P1-08-cache-pass.md", lambda p: runtime.init_evidence("P1", p, False)),
             ("00-preflight.md", lambda p: runtime.init_evidence("P1", p, False)),
+            ("p4-marketing-automation", lambda p: runtime.init_all(p, False)),
             ("p4-marketing-automation/P4-08-pull-realtime.md", lambda p: runtime.init_all(p, False)),
             ("OPT-003-finding.md", lambda p: optimization.init_evidence(p, 3, "2026-11-01", "", "static-audit.md", False)),
         ]
@@ -22,7 +23,7 @@ class InitializerTests(unittest.TestCase):
                 sentinel = root / name
                 sentinel.parent.mkdir(parents=True, exist_ok=True)
                 sentinel.write_text("KEEP")
-                with self.assertRaises(FileExistsError):
+                with self.assertRaises((FileExistsError, ValueError)):
                     initialize(root)
                 self.assertEqual(sentinel.read_text(), "KEEP")
                 self.assertEqual([p for p in root.rglob("*") if p.is_file()], [sentinel])

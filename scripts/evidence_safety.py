@@ -77,3 +77,10 @@ def field_values(text: str, label: str) -> list[str]:
     return [match.strip().strip("`") for match in re.findall(
         rf"^\s*-?\s*(?:{label}):[ \t]*([^\r\n]*)$", text, flags=re.MULTILINE | re.IGNORECASE
     )]
+
+
+def section_has_content(text: str, heading: str) -> bool:
+    match = re.search(rf"^## {re.escape(heading)}[ \t]*\n(.*?)(?=^## |\Z)", text, re.M | re.S)
+    if not match:
+        return False
+    return any(line.strip(" -\t\r`") for line in match.group(1).splitlines())

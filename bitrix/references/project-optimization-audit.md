@@ -332,3 +332,5 @@ Verify: как проверить после
 - Agents/imports/operations — [agents-imports-performance.md](agents-imports-performance.md), [operations-runbook.md](operations-runbook.md), [update-stepper.md](update-stepper.md), [import-export.md](import-export.md)
 - Shop performance — [shop-performance.md](shop-performance.md), [catalog.md](catalog.md), [sale.md](sale.md), [shop-standard-components.md](shop-standard-components.md)
 - Runtime proof — [runtime-smoke-verification.md](runtime-smoke-verification.md)
+
+Для автоматического отчёта и evidence pack соблюдай [контракт диагностических доказательств](release-gate.md#контракт-диагностических-доказательств): без исходных snippets и приватных URL; `confirmed`/`fixed` требуют отдельного локального runtime artifact, а не только заполненного шаблона.

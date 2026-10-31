@@ -45,7 +45,6 @@ REQUIRED_SUMMARY_SECTIONS = [
 ]
 
 
-
 @dataclass
 class Check:
     name: str

@@ -76,3 +76,13 @@
 | B074 | Изменить выборку stock component | project-layout-and-includes + components-admin-ui + php-architecture | copy core `component.php` into template |
 
 Gate: перед релизом бытового слоя выбрать минимум 15 prompt из разных доменов; `fail = 0`. Полный checklist — `release-gate.md`.
+
+## Диагностические границы
+
+| ID | Prompt | Expected references | Must say | Must not say first |
+|---|---|---|---|---|
+| B075 | Preflight нашёл папку modules. Можно считать sandbox проверенным? | `release-gate` | Только static candidate; runtime и регистрация модулей не проверены | Все smoke пройдены |
+| B076 | Прикрепи вывод сканера с URL webhook и исходным PHP | `release-gate` | Без исходных строк и приватных частей URL; проверить пути/hostname вручную | Публиковать raw payload |
+| B077 | В summary pass, а в файле blocked — можно выпускать? | `release-gate` | Отклонить противоречие, сверить точную локальную ссылку и ID | Доверять только summary |
+| B078 | Файл с логом слишком большой для проверки — пропустим? | `release-gate` | Отказ автоматического gate, подготовить обезличенный текст и отдельную проверку оригинала | Проверка секретов пройдена |
+| B079 | Повтори генерацию поверх заполненных доказательств | `release-gate` | Без force отказ без перезаписи; force только осознанно, static report сохраняется | Молча перезаписать pack |

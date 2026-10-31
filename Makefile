@@ -7,9 +7,12 @@ OPTIMIZATION_AUDIT_OUTPUT ?=
 OPTIMIZATION_EVIDENCE_DIR ?= evidence/$$(date +%F)-optimization-audit
 OPTIMIZATION_FINDING_COUNT ?= 5
 
-.PHONY: validate release-check evidence-p1 evidence-all preflight optimization-audit optimization-evidence validate-optimization-evidence
+.PHONY: test validate release-check evidence-p1 evidence-all preflight optimization-audit optimization-evidence validate-optimization-evidence
 
-validate:
+test:
+	$(PYTHON) -m unittest discover -s tests -v
+
+validate: test
 	$(PYTHON) -m py_compile scripts/*.py
 	$(PYTHON) scripts/validate_skill.py
 	$(PYTHON) scripts/validate_runtime_evidence.py examples/runtime-smoke/blocked-p1 --package P1

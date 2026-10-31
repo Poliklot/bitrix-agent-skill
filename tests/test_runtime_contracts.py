@@ -38,3 +38,11 @@ class RuntimeContractsTests(unittest.TestCase):
             self.assertFalse(runtime.validate_scenario_file(root, row))
             path.write_text(path.read_text() + "\n## Evidence\nSynthetic check output\n")
             self.assertTrue(runtime.validate_scenario_file(root, row))
+
+    def test_empty_evidence_section_is_not_proof(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            row = runtime.ScenarioRow("P1-01", "pass", "record.md")
+            for body in ["", "-", "\n## Next\nnot evidence"]:
+                (root / "record.md").write_text("Scenario: P1-01\nVerdict: pass\n\n## Evidence\n" + body)
+                self.assertFalse(runtime.validate_scenario_file(root, row))
