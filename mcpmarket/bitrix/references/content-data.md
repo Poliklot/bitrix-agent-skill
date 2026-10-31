@@ -74,12 +74,14 @@ while ($el = $res->GetNext()) {
     $linkedId = $el['PROPERTY_RELATED_VALUE'];
 }
 
-// Только COUNT
-$count = CIBlockElement::GetList([], ['IBLOCK_ID' => 5, 'ACTIVE' => 'Y'], false, false, []);
-// При groupBy=[] (пустой массив) → возвращает CIBlockResult с полем CNT
-$res2 = CIBlockElement::GetList([], ['IBLOCK_ID' => 5], []);
-$row = $res2->Fetch();
-echo $row['CNT'];
+// COUNT — скаляр; [] относится к третьему аргументу arGroupBy
+$count = CIBlockElement::GetList([], ['IBLOCK_ID' => 5, 'ACTIVE' => 'Y'], []);
+echo (int)$count;
+// Непустая группировка возвращает строки с CNT
+$groups = CIBlockElement::GetList([], ['IBLOCK_ID' => 5], ['ACTIVE']);
+while ($row = $groups->Fetch()) {
+    echo (int)$row['CNT'];
+}
 ```
 
 Для сложной пагинации, `PAGEN_N`, `NavNum`, lazy load и диагностики пустой второй страницы смотри `pagination.md`. Важно: `nTopCount` в core — это ограничение выборки, а не полноценная постраничная навигация.
@@ -2900,3 +2902,11 @@ File::putFileContents(
 > **Gotcha:** после ручной правки `urlrewrite.php` нужно сбросить кеш страниц или дождаться следующего запроса — файл читается при каждом хите, кеша нет.
 
 ---
+
+## K01 — Три результата CIBlockElement::GetList
+
+`GetList(..., false)` возвращает выборку, `GetList(..., [])` — количество, непустая группировка — строки с `CNT`. Не читать COUNT через `Fetch()`; фильтр count/list должен совпадать.
+
+Проверка: Нулевой набор даёт 0; несколько элементов — число; группировка по ACTIVE даёт строки с CNT.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockelement/getlist.php); documentation-backed, 2026-11-01, не runtime pass.

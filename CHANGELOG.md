@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+- K01: Три результата CIBlockElement::GetList — дополнены знания, full/compact и сценарий B080.
+
 ## [1.36.0] — 2026-11-01
 
 ### Added

@@ -67,12 +67,14 @@ while ($el = $res->GetNext()) {
     $linkedId = $el['PROPERTY_RELATED_VALUE'];
 }
 
-// Только COUNT
-$count = CIBlockElement::GetList([], ['IBLOCK_ID' => 5, 'ACTIVE' => 'Y'], false, false, []);
-// При groupBy=[] (пустой массив) → возвращает CIBlockResult с полем CNT
-$res2 = CIBlockElement::GetList([], ['IBLOCK_ID' => 5], []);
-$row = $res2->Fetch();
-echo $row['CNT'];
+// COUNT — скаляр; [] относится к третьему аргументу arGroupBy
+$count = CIBlockElement::GetList([], ['IBLOCK_ID' => 5, 'ACTIVE' => 'Y'], []);
+echo (int)$count;
+// Непустая группировка возвращает строки с CNT
+$groups = CIBlockElement::GetList([], ['IBLOCK_ID' => 5], ['ACTIVE']);
+while ($row = $groups->Fetch()) {
+    echo (int)$row['CNT'];
+}
 ```
 
 Для сложной пагинации, `PAGEN_N`, `NavNum`, lazy load и диагностики пустой второй страницы смотри `pagination.md`. Важно: `nTopCount` в core — это ограничение выборки, а не полноценная постраничная навигация.
@@ -546,3 +548,11 @@ class IblockHandler
 - **`SECTION_ID` vs `IBLOCK_SECTION_ID` в GetList**: `SECTION_ID` — фильтрует по разделу (с учётом `INCLUDE_SUBSECTIONS`); в поле результата — `IBLOCK_SECTION_ID`.
 
 ---
+
+## K01 — Три результата CIBlockElement::GetList
+
+Различай третий аргумент: `false` — обычная выборка; `[]` — скалярный COUNT; непустой массив — группировка с `CNT` в строках результата. Не вызывай `Fetch()` на результате режима `[]`. COUNT использует тот же фильтр видимости, что и список, а не только `IBLOCK_ID`. В ORM это другой API: не переносить позиционные аргументы legacy в `getList`.
+
+**Проверка на стенде:** Нулевой набор даёт 0; несколько элементов — число; группировка по ACTIVE даёт строки с CNT.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockelement/getlist.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.
