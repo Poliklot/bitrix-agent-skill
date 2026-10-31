@@ -16,6 +16,8 @@ import sys
 from pathlib import Path
 from urllib.parse import urlsplit
 
+from local_files import is_local_file, iter_local_files
+
 
 DEFAULT_MODULES = [
     "main",
@@ -83,10 +85,17 @@ def read_small_text(path: Path, limit: int = 200_000) -> str:
         return ""
 
 
+def module_id(value: str) -> str:
+    if not re.fullmatch(r"[A-Za-z0-9_]+(?:\.[A-Za-z0-9_]+)*", value):
+        raise ValueError("module must be a module identifier, not a path")
+    return value
+
+
 def module_version_file(public_root: Path, module: str) -> Path:
+    module_id(module)
     if module == "main":
         fallback = public_root / "bitrix" / "modules" / "main" / "classes" / "general" / "version.php"
-        if fallback.exists():
+        if is_local_file(fallback, public_root):
             return fallback
     return public_root / "bitrix" / "modules" / module / "install" / "version.php"
 
@@ -109,7 +118,7 @@ def collect_modules(public_root: Path, modules: list[str]) -> list[dict[str, str
     rows: list[dict[str, str]] = []
     for module in modules:
         path = module_version_file(public_root, module)
-        text = read_small_text(path)
+        text = read_small_text(path) if is_local_file(path, public_root) else ""
         rows.append(
             {
                 "module": module,
@@ -128,19 +137,14 @@ def path_is_skipped(path: Path, public_root: Path) -> bool:
 
 
 def iter_route_files(public_root: Path) -> list[Path]:
-    candidates = [
-        public_root / "local",
-        public_root / "bitrix" / "templates",
-        public_root / "urlrewrite.php",
-    ]
+    excluded = {".git", "upload", "cache", "managed_cache", "stack_cache", "html_pages", "vendor", "node_modules"}
     files: list[Path] = []
-    for candidate in candidates:
-        if candidate.is_file():
-            files.append(candidate)
-        elif candidate.is_dir():
-            for path in candidate.rglob("*.php"):
-                if not path_is_skipped(path, public_root):
-                    files.append(path)
+    for path in iter_local_files(public_root, excluded):
+        relative = path.relative_to(public_root).as_posix()
+        if path.suffix == ".php" and (
+            relative.startswith(("local/", "bitrix/templates/")) or relative == "urlrewrite.php"
+        ):
+            files.append(path)
     return files
 
 
@@ -271,7 +275,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Collect Bitrix runtime smoke preflight facts")
     parser.add_argument("--public-root", default=os.environ.get("SMOKE_PUBLIC_ROOT", "www"), help="Bitrix public root, default: SMOKE_PUBLIC_ROOT or www")
     parser.add_argument("--base-url", default=os.environ.get("SMOKE_BASE_URL", ""), help="Sandbox base URL, optional")
-    parser.add_argument("--module", action="append", dest="modules", help="Module to check; can be repeated")
+    parser.add_argument("--module", action="append", dest="modules", type=module_id, help="Module to check; can be repeated")
     parser.add_argument("--json", action="store_true", help="Print JSON instead of Markdown")
     args = parser.parse_args()
 

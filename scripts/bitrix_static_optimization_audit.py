@@ -16,6 +16,8 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Iterable
 
+from local_files import iter_local_files
+
 
 DEFAULT_EXCLUDES = {
     ".git",
@@ -256,8 +258,8 @@ def should_skip(path: Path, root: Path) -> bool:
 
 
 def iter_files(root: Path) -> Iterable[Path]:
-    for path in root.rglob("*"):
-        if path.is_file() and not should_skip(path, root):
+    for path in iter_local_files(root, DEFAULT_EXCLUDES):
+        if not should_skip(path, root):
             yield path
 
 
