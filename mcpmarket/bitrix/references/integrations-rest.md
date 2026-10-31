@@ -337,3 +337,11 @@ QUERY_LIMIT_EXCEEDED — частота; OPERATION_TIME_LIMIT — стоимос
 Проверка: Отложенная инициализация: UI не принимает false до init за реальный отказ в правах.
 
 [Официальный контракт](https://apidocs.bitrix24.ru/sdk/bx24-js-sdk/system-functions/bx24-init.html); documentation-backed, 2026-11-01, не runtime pass.
+
+## K35 — Установка приложения и первый запуск пользователя — разные этапы
+
+Установочный мастер: finish после успешных обязательных шагов; app.info.INSTALLED проверяет завершение. Первый запуск BX24.install — другая цепочка: finish нужен для продолжения даже при ошибке. REST-only не требует JS finish.
+
+Проверка: До/после завершения мастера сравнить INSTALLED и доставку; ошибка первого запуска не блокирует цепочку init.
+
+[Официальный контракт](https://apidocs.bitrix24.ru/sdk/bx24-js-sdk/system-functions/bx24-install-finish.html); documentation-backed, 2026-11-01, не runtime pass.

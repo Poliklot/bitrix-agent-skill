@@ -712,3 +712,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [rest.md](bitrix/references/rest.md) и [integrations-rest.md](mcpmarket/bitrix/references/integrations-rest.md); источник: [Официальный контракт](https://apidocs.bitrix24.ru/sdk/bx24-js-sdk/system-functions/bx24-init.html).
 - Самопроверка B113 — «DOM загрузился, но BX24.isAdmin() false у администратора — что проверить?»: Подключение BX24.js, запуск во фрейме приложения и выполнение после BX24.init.
 - Контрпример отвергнут: Считать DOMContentLoaded готовностью авторизации или зашить admin-токен в HTML. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K35: Установка приложения и первый запуск пользователя — разные этапы
+
+- Пробел до изменения: Нет причины успешной регистрации событий без доставки до завершения установки приложения.
+- Исправление: [rest.md](bitrix/references/rest.md) и [integrations-rest.md](mcpmarket/bitrix/references/integrations-rest.md); источник: [Официальный контракт](https://apidocs.bitrix24.ru/sdk/bx24-js-sdk/system-functions/bx24-install-finish.html).
+- Самопроверка B114 — «event.bind успешен, но новое приложение не получает события — где причина?»: Проверить завершение установки и INSTALLED; не путать мастер установки с первым запуском пользователя.
+- Контрпример отвергнут: Безусловно завершать проваленный мастер или ждать JS finish в REST-only обработчике. Результат ручной проверки ответа: pass; runtime: не запускался.
