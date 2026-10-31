@@ -361,3 +361,11 @@ user.option.set относится к владельцу токена; app.optio
 Проверка: Два пользователя: персональные значения изолированы, общая настройка едина; непереданный ключ сохранён.
 
 [Официальный контракт](https://apidocs.bitrix24.ru/api-reference/common/settings/user-option-set.html); documentation-backed, 2026-11-01, не runtime pass.
+
+## K38 — feature.get не является булевой проверкой существования API
+
+feature.get: читать строковый result.value, не bool(N). Неизвестный CODE может дать Y; selfhosted не универсальная лицензия на всё. Только документированные коды + контракт метода.
+
+Проверка: Y/N/ru_selfhosted/ошибка/неизвестный код разбираются отдельно; N не становится разрешением.
+
+[Официальный контракт](https://apidocs.bitrix24.ru/api-reference/common/system/feature-get.html); documentation-backed, 2026-11-01, не runtime pass.

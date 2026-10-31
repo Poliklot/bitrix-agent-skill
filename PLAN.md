@@ -733,3 +733,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [rest.md](bitrix/references/rest.md) и [integrations-rest.md](mcpmarket/bitrix/references/integrations-rest.md); источник: [Официальный контракт](https://apidocs.bitrix24.ru/api-reference/common/settings/user-option-set.html).
 - Самопроверка B116 — «Сервер сохранил user.option.set, но второй сотрудник не видит настройку — почему?»: Настройка принадлежит пользователю токена; выбрать персональный либо общий app.option слой осознанно.
 - Контрпример отвергнут: Ожидать глобальное действие user.option.set или удаление ключа пустой строкой. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K38: feature.get не является булевой проверкой существования API
+
+- Пробел до изменения: Метод перечислен без формы ответа, особенностей коробки и ложноположительных неизвестных кодов.
+- Исправление: [rest.md](bitrix/references/rest.md) и [integrations-rest.md](mcpmarket/bitrix/references/integrations-rest.md); источник: [Официальный контракт](https://apidocs.bitrix24.ru/api-reference/common/system/feature-get.html).
+- Самопроверка B117 — «feature.get для придуманного CODE вернул Y: функция точно существует?»: Нет: метод не проверяет существование кода. Использовать опубликованные CODE и проверять сам метод.
+- Контрпример отвергнут: Привести N к true или объявить поддержку по Y неизвестного кода. Результат ручной проверки ответа: pass; runtime: не запускался.
