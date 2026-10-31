@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.36.0] — 2026-11-01
+
 ### Added
 - 23 поведенческих и CLI-теста без сторонних зависимостей, `make test` внутри общего CI/release gate.
 - Eval prompts B075–B079, контракт диагностических доказательств в full/compact `release-gate.md` и аудит 10 пробелов с проверками в PLAN.
@@ -18,6 +20,11 @@
 - Preflight распознаёт `SM_VERSION` через `define`/`const` и массив версии; full/compact согласованы по приоритету main version file. Назначение `SM_VERSION`: [официальная документация](https://dev.1c-bitrix.ru/api_help/main/general/constants.php).
 - Preflight сохраняет только origin HTTP(S)-адреса, без credentials, пути, query и fragment.
 - Диагностические отчёты больше не экспортируют строки исходного кода: только координаты и фиксированные признаки; N+1-классификация сохранена.
+
+### Compatibility
+- Preflight `status: pass` заменён на `candidate`, runtime отдельно отмечен `not_checked`; URL и source snippets больше не экспортируются целиком.
+- Runtime summary должен быть таблицей с точными локальными ссылками. Старые неполные packs, внешние evidence URL и файлы, которые невозможно просканировать, теперь отклоняются; обновить их по контракту `release-gate.md`, а не ослаблять проверки.
+- Существующие заполненные evidence не перезаписываются без `--force`. Групповая генерация не является транзакцией всего каталога; при сбое записи проверить оставшиеся файлы перед повторным запуском.
 
 ## [1.35.0] — 2026-07-16
 
@@ -470,7 +477,8 @@
 ### Added
 - Первый публичный релиз: `SKILL.md`, progressive disclosure архитектура
 
-[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.35.0...HEAD
+[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.36.0...HEAD
+[1.36.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.35.0...v1.36.0
 [1.35.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.34.0...v1.35.0
 [1.34.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.33.0...v1.34.0
 [1.33.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.32.0...v1.33.0

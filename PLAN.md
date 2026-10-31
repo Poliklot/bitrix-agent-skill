@@ -6,8 +6,10 @@
 
 ## Текущий статус
 
+Версия `1.36.0` закрывает 10 подтверждённых пробелов диагностического/evidence-контура; подробности и самопроверка — в разделе «Аудит надёжности 2026-11-01».
+
 На дату этого плана:
-- актуальная версия навыка: `1.35.0`;
+- актуальная версия навыка: `1.36.0`;
 - точка входа: `bitrix/SKILL.md`;
 - reference-слой: `bitrix/references/*.md`;
 - non-commerce reference-слой прошёл ревизию против установленного core;
@@ -440,3 +442,13 @@ Commerce/1C фаза считается завершённой, когда:
 | B057 | Из checkout запустить validate_runtime_evidence для P1; сверить summary, локальные сценарии, ID/verdict и приватность. Успех validator — не доказательство выполнения smoke. | pass |
 
 Итого ручного regression gate: 15 проверено, fail = 0, warn = 0. Дополнительно просмотрены B075–B079 по новому контракту; их негативные случаи покрыты исполняемыми тестами. Runtime Bitrix smoke: не запускался, sandbox отсутствует. Проверка Windows/PowerShell не заявляется: lifecycle scripts не менялись.
+
+### Локальный release gate 1.36.0
+
+- `make release-check`: pass (включая 23 теста, оба sample packs, syntax/link/version checks).
+- `quick_validate.py bitrix` и `quick_validate.py mcpmarket/bitrix`: pass.
+- Compact bundle: 35/50 файлов; новые repo-local helpers не увеличивают установленный bundle.
+- `git diff 4c2c2b0 --check`: pass.
+- Негативные тесты также запущены на изолированной копии исходного `4c2c2b0`: они выявляют старые ошибки; новые контракты там отсутствуют. Исходный checkout при проверке не изменялся.
+- Посторонние `.playwright-mcp/` и `assets/bitrix-agent-skill-ship-support.png` оставлены без изменений и не включены в commits/release.
+- Публикация выполняется штатным Publish Release workflow после push в master; локальный gate не заменяет проверку итогового CI и опубликованного тега.
