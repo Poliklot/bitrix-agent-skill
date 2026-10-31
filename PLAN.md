@@ -514,3 +514,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [iblocks.md](bitrix/references/iblocks.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/events/oniblockelementsetpropertyvaluesex.php).
 - Самопроверка B087 — «Обработчик OnAfterIBlockElementUpdate не видит запись через Ex — почему?»: Трассировать отдельные property events; выбрать нужную фазу, scope и защиту повторного вызова, не подменять before событие post-save.
 - Контрпример отвергнут: Добавить второй Update ради запуска обработчика.. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K09: Enum: стабильный внешний ключ и локальный ID
+
+- Пробел до изменения: Есть чтение enum, но нет переноса значения между стендами с защитой scope, масок и duplicate.
+- Исправление: [iblocks.md](bitrix/references/iblocks.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockpropertyenum/getlist.php).
+- Самопроверка B088 — «Вариант имеет разные ID на dev/prod: как перенести значение?»: Разрешить XML_ID внутри конкретного свойства, проверить одну точную запись и сохранить её локальный ID; проверить повтор миграции.
+- Контрпример отвергнут: Копировать dev ID или искать первый вариант по подписи.. Результат ручной проверки ответа: pass; runtime: не запускался.

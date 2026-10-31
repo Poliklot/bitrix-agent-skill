@@ -2942,3 +2942,11 @@ SetPropertyValuesEx — отдельный путь событий. OnIBlockElem
 Проверка: Одна правка из админки и одна через Ex приводят к одному согласованному эффекту без рекурсии.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/events/oniblockelementsetpropertyvaluesex.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K09 — Enum: стабильный внешний ключ и локальный ID
+
+Для записи L нужен локальный enum ID. Разрешать XML_ID в scope свойства, проверять точное совпадение/единственность (legacy фильтр может быть маской); label не идентификатор. Missing/duplicate останавливают перенос.
+
+Проверка: Одинаковый XML_ID в двух свойствах и ключ с underscore не должны разрешаться в чужой enum.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockpropertyenum/getlist.php); documentation-backed, 2026-11-01, не runtime pass.
