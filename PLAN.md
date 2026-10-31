@@ -628,3 +628,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [rest.md](bitrix/references/rest.md) и [integrations-rest.md](mcpmarket/bitrix/references/integrations-rest.md); источник: [Официальный контракт](https://apidocs.bitrix24.ru/settings/how-to-call-rest-api/list-methods-pecularities.html).
 - Самопроверка B101 — «В списке нет total: как дочитать все страницы?»: Следовать next → start, разбирать форму result конкретного метода и не менять сортировку/фильтр.
 - Контрпример отвергнут: Остановиться после первой страницы или считать count(result) количеством записей. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K23: Версия REST определяется маршрутом и схемой метода
+
+- Пробел до изменения: Справочник предполагает единую форму REST и не отделяет новые REST 3.0 методы.
+- Исправление: [rest.md](bitrix/references/rest.md) и [integrations-rest.md](mcpmarket/bitrix/references/integrations-rest.md); источник: [Официальный контракт](https://apidocs.bitrix24.ru/api-reference/).
+- Самопроверка B102 — «Можно весь старый REST-клиент перевести добавлением /api/ в URL?»: Нет: проверить доступность и схему каждого метода новой версии, затем адаптировать клиент.
+- Контрпример отвергнут: Объявить все классические методы доступными в REST 3.0. Результат ручной проверки ответа: pass; runtime: не запускался.

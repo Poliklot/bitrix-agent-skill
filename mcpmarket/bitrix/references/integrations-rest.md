@@ -241,3 +241,11 @@ public static function onItemAdd(\Bitrix\Main\Event $event): array
 Проверка: Выборка на несколько страниц без total: все ID прочитаны; вложенный items не принят за одну запись.
 
 [Официальный контракт](https://apidocs.bitrix24.ru/settings/how-to-call-rest-api/list-methods-pecularities.html); documentation-backed, 2026-11-01, не runtime pass.
+
+## K23 — Версия REST определяется маршрутом и схемой метода
+
+REST 3.0 (/rest/api/) не заменяет все классические методы. Проверить схему метода и поддержку SDK; простая подмена URL без адаптации параметров/ответа неверна.
+
+Проверка: Для одного метода сравнить обе страницы контракта и маршруты; отсутствующая версия даёт контролируемый отказ.
+
+[Официальный контракт](https://apidocs.bitrix24.ru/api-reference/); documentation-backed, 2026-11-01, не runtime pass.
