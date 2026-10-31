@@ -479,3 +479,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [orm.md](bitrix/references/orm.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://docs.1c-bitrix.ru/pages/orm/entity-operations.html).
 - Самопроверка B082 — «Можно отправить webhook из OnAfterAdd внутри транзакции?»: Не считать событие commit: отложить внешний эффект до успешного завершения операции либо использовать согласованный transactional outbox.
 - Контрпример отвергнут: OnAfterAdd гарантирует сохранность после любого rollback.. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K04: Пагинация объектов со связями 1:N
+
+- Пробел до изменения: Описаны fetchCollection и JOIN, но нет контракта пагинации родительских объектов с несколькими множественными отношениями.
+- Исправление: [orm.md](bitrix/references/orm.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://docs.1c-bitrix.ru/pages/orm/querying-data.html).
+- Самопроверка B083 — «Почему ORM LIMIT 20 возвращает меньше 20 карточек?»: JOIN размножает строки до LIMIT; отделить страницу уникальных ID от загрузки отношений, проверить полный набор значений и стабильный порядок.
+- Контрпример отвергнут: Добавить DISTINCT ко всему select или увеличить LIMIT наугад.. Результат ручной проверки ответа: pass; runtime: не запускался.

@@ -3403,3 +3403,11 @@ OnAfter* не является after-commit внешней транзакции.
 Проверка: После OnAfter искусственно откатить транзакцию: внешнего уведомления быть не должно; повтор consumer не дублирует его.
 
 [Официальный контракт](https://docs.1c-bitrix.ru/pages/orm/entity-operations.html); documentation-backed, 2026-11-01, не runtime pass.
+
+## K04 — Пагинация объектов со связями 1:N
+
+LIMIT по JOIN ограничивает строки, не число родителей; fetchCollection не возвращает потерянные значения. Страница ID → загрузка связей; проверить QueryHelper::decompose в версии ядра. disableDataDoubling не лечит любое размножение SELECT.
+
+Проверка: Два родителя с 3 и 7 связанными значениями: лимит 2 родителей сохраняет оба и все их связи.
+
+[Официальный контракт](https://docs.1c-bitrix.ru/pages/orm/querying-data.html); documentation-backed, 2026-11-01, не runtime pass.
