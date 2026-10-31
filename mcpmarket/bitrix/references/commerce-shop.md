@@ -4534,3 +4534,11 @@ FUSER не USER_ID. В web использовать текущий подтве�
 Проверка: Guest → login с уже существующей корзиной; два сайта и фоновой запуск не должны смешивать владельцев.
 
 [Официальный контракт](https://docs.1c-bitrix.ru/api/classes/Bitrix-Sale-Fuser.html); documentation-backed, 2026-11-01, не runtime pass.
+
+## K13 — Идентичность строки корзины не равна PRODUCT_ID
+
+PRODUCT_ID не уникальный ключ строки. Менять item по идентификатору внутри своей корзины; для несохранённого объекта различать getBasketCode и DB ID. Merge зависит от свойств и provider.
+
+Проверка: Две строки одного SKU и новый item до save: меняется только выбранная строка, связи после save сохранены.
+
+[Официальный контракт](https://docs.1c-bitrix.ru/api/classes/Bitrix-Sale-BasketItem.html); documentation-backed, 2026-11-01, не runtime pass.

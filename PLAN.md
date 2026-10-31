@@ -550,3 +550,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [sale.md](bitrix/references/sale.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://docs.1c-bitrix.ru/api/classes/Bitrix-Sale-Fuser.html).
 - Самопроверка B091 — «В CLI подставить userId в loadItemsForFUser — правильно?»: Нет: отдельно разрешить FUSER целевого пользователя и site, обработать отсутствие; web-клиент не выбирает чужого владельца.
 - Контрпример отвергнут: Считать USER_ID и FUSER_ID взаимозаменяемыми.. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K13: Идентичность строки корзины не равна PRODUCT_ID
+
+- Пробел до изменения: Не описано, как адресовать несколько строк одного товара и новые несохранённые items.
+- Исправление: [sale.md](bitrix/references/sale.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://docs.1c-bitrix.ru/api/classes/Bitrix-Sale-BasketItem.html).
+- Самопроверка B092 — «У одного товара две строки с разной гравировкой: как изменить одну?»: Выбрать конкретную строку в авторизованной корзине, сохранить её свойства; не искать по одному PRODUCT_ID.
+- Контрпример отвергнут: Обновить все строки товара или привести basket code к числу.. Результат ручной проверки ответа: pass; runtime: не запускался.
