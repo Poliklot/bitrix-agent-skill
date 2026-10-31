@@ -663,3 +663,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [rest.md](bitrix/references/rest.md) и [integrations-rest.md](mcpmarket/bitrix/references/integrations-rest.md); источник: [Официальный контракт](https://apidocs.bitrix24.ru/api-reference/events/safe-event-handlers.html).
 - Самопроверка B106 — «Пришёл ONAPPUNINSTALL без access_token: удалять данные клиента?»: Только после сверки application_token с сохранённым секретом нужной установки; неизвестное событие отклонить.
 - Контрпример отвергнут: Доверять одному имени события, member_id или домену в POST. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K28: Офлайн-очередь не является журналом всех изменений
+
+- Пробел до изменения: Есть список offline API, но не указано объединение событий и отсутствие полной истории.
+- Исправление: [rest.md](bitrix/references/rest.md) и [integrations-rest.md](mcpmarket/bitrix/references/integrations-rest.md); источник: [Официальный контракт](https://apidocs.bitrix24.ru/api-reference/events/offline-events.html).
+- Самопроверка B107 — «Три обновления сделки дали одну offline-запись — события потерялись?»: Одинаковые ключи объединяются; использовать очередь для синхронизации актуального состояния, не как полный аудит.
+- Контрпример отвергнут: Считать каждую запись ровно одной бизнес-операцией и восстанавливать всю историю по очереди. Результат ручной проверки ответа: pass; runtime: не запускался.
