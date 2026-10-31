@@ -4537,3 +4537,11 @@ getById не проверяет доступность доставки. Сна�
 Проверка: Разные location/вес/сумма меняют допустимый список; прежний delivery ID отклоняется, ошибка provider видима.
 
 [Официальный контракт](https://docs.1c-bitrix.ru/api/classes/Bitrix-Sale-Delivery-Services-Manager.html); documentation-backed, 2026-11-01, не runtime pass.
+
+## K19 — Ручная цена корзины и источник истины
+
+CUSTOM_PRICE — осознанный ручной источник, не универсальный фикс provider. PRICE из клиента не доверять; согласовать валюту/налоги/скидки, refresh и возврат к catalog. BASE_PRICE, PRICE и DISCOUNT_PRICE различаются.
+
+Проверка: Ручная котировка и обычная цена после refresh ведут себя по разным явным контрактам; подмена цены в запросе игнорируется.
+
+[Официальный контракт](https://docs.1c-bitrix.ru/pages/modules/sale/architecture.html); documentation-backed, 2026-11-01, не runtime pass.
