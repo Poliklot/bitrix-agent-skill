@@ -233,3 +233,11 @@ public static function onItemAdd(\Bitrix\Main\Event $event): array
 Проверка: Три команды на тестовых данных: успех, ошибка, успех; сравнить halt=0/1 и отсутствие дубля при восстановлении.
 
 [Официальный контракт](https://apidocs.bitrix24.ru/settings/how-to-call-rest-api/batch.html); documentation-backed, 2026-11-01, не runtime pass.
+
+## K22 — Постраничная REST-выгрузка и условие завершения
+
+Для классических list: next → start до отсутствия next. Не угадывать конец по длине result/total; вложенность зависит от метода. Offset не даёт snapshot при параллельных изменениях.
+
+Проверка: Выборка на несколько страниц без total: все ID прочитаны; вложенный items не принят за одну запись.
+
+[Официальный контракт](https://apidocs.bitrix24.ru/settings/how-to-call-rest-api/list-methods-pecularities.html); documentation-backed, 2026-11-01, не runtime pass.

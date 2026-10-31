@@ -621,3 +621,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [rest.md](bitrix/references/rest.md) и [integrations-rest.md](mcpmarket/bitrix/references/integrations-rest.md); источник: [Официальный контракт](https://apidocs.bitrix24.ru/settings/how-to-call-rest-api/batch.html).
 - Самопроверка B100 — «В batch третья команда упала: первые две отменились?»: Нет: разобрать результаты по ключам, учитывать halt; сохранить успешные операции и определить безопасный повтор остальных.
 - Контрпример отвергнут: Считать HTTP 200 полным успехом или halt=1 транзакционным откатом. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K22: Постраничная REST-выгрузка и условие завершения
+
+- Пробел до изменения: Есть серверный next/total, но нет клиентского протокола обхода и различения вложенного результата.
+- Исправление: [rest.md](bitrix/references/rest.md) и [integrations-rest.md](mcpmarket/bitrix/references/integrations-rest.md); источник: [Официальный контракт](https://apidocs.bitrix24.ru/settings/how-to-call-rest-api/list-methods-pecularities.html).
+- Самопроверка B101 — «В списке нет total: как дочитать все страницы?»: Следовать next → start, разбирать форму result конкретного метода и не менять сортировку/фильтр.
+- Контрпример отвергнут: Остановиться после первой страницы или считать count(result) количеством записей. Результат ручной проверки ответа: pass; runtime: не запускался.
