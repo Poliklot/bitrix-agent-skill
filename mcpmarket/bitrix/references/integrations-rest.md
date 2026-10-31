@@ -273,3 +273,11 @@ member_id стабилен при смене домена; client_endpoint об�
 Проверка: Проверенная смена домена сохраняет клиента; поддельный endpoint отклонён до исходящего запроса.
 
 [Официальный контракт](https://apidocs.bitrix24.ru/settings/how-to-call-rest-api/change-domen.html); documentation-backed, 2026-11-01, не runtime pass.
+
+## K27 — Проверка подлинности REST-события
+
+Проверять auth.application_token по сохранённой установке/member_id до действий. ONAPPINSTALL требует верифицированной авторизации; ONAPPUPDATE учитывает смену секрета; ONAPPUNINSTALL нельзя проверять уже отозванным access_token.
+
+Проверка: Верный, отсутствующий и чужой токены; только верный вызывает согласованный обработчик, без записи секретов в журнал.
+
+[Официальный контракт](https://apidocs.bitrix24.ru/api-reference/events/safe-event-handlers.html); documentation-backed, 2026-11-01, не runtime pass.

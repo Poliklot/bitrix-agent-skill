@@ -656,3 +656,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [rest.md](bitrix/references/rest.md) и [integrations-rest.md](mcpmarket/bitrix/references/integrations-rest.md); источник: [Официальный контракт](https://apidocs.bitrix24.ru/settings/how-to-call-rest-api/change-domen.html).
 - Самопроверка B105 — «Портал сменил домен: создавать новую запись клиента?»: Найти установку по member_id и приложению, проверить авторизационные данные и обновить client_endpoint.
 - Контрпример отвергнут: Хранить tenant только по domain или отправить секрет на URL из неподтверждённого события. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K27: Проверка подлинности REST-события
+
+- Пробел до изменения: Указаны HTTPS/auth, но нет протокола application_token, особенно для удаления приложения.
+- Исправление: [rest.md](bitrix/references/rest.md) и [integrations-rest.md](mcpmarket/bitrix/references/integrations-rest.md); источник: [Официальный контракт](https://apidocs.bitrix24.ru/api-reference/events/safe-event-handlers.html).
+- Самопроверка B106 — «Пришёл ONAPPUNINSTALL без access_token: удалять данные клиента?»: Только после сверки application_token с сохранённым секретом нужной установки; неизвестное событие отклонить.
+- Контрпример отвергнут: Доверять одному имени события, member_id или домену в POST. Результат ручной проверки ответа: pass; runtime: не запускался.
