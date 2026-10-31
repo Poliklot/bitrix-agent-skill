@@ -493,3 +493,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [iblocks.md](bitrix/references/iblocks.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockelement/getpublicelementsormfilter.php).
 - Самопроверка B084 — «После перехода на ORM посетителям видны черновики: что проверить?»: Сопоставить со stock public selection, проверить getPublicElementsOrmFilter и отдельно права, активность, даты, сайт и кеш.
 - Контрпример отвергнут: Считать ACTIVE=Y полной моделью публикации и доступа.. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K06: Частичная запись свойств и явное очищение
+
+- Пробел до изменения: Gotcha ошибочно противопоставлял PROP_ID и PROP_CODE; отсутствовали очистка multiple и возвращаемое значение Ex.
+- Исправление: [iblocks.md](bitrix/references/iblocks.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockelement/setpropertyvaluesex.php).
+- Самопроверка B085 — «Как обновить одно свойство и очистить TAGS, не потеряв остальные?»: Использовать SetPropertyValuesEx с нужными ключами, TAGS=false; после записи перечитать значения, не проверять isSuccess у null.
+- Контрпример отвергнут: Передать неполный набор в SetPropertyValues без PROPERTY_CODE.. Результат ручной проверки ответа: pass; runtime: не запускался.

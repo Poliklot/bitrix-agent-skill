@@ -549,7 +549,7 @@ class IblockHandler
 - **Множественные свойства в D7 ORM**: нельзя использовать `fetch()` если в select есть множественное свойство — получишь дубли строк. Используй `fetchObject()` + коллекцию.
 - **Свойство без CODE** — не попадёт в скомпилированную сущность (цикл по `$property->getCode()` пропускает пустые).
 - **`GetNext()` vs `Fetch()` в legacy**: `GetNext()` заменяет спецсимволы HTML, применяет шаблоны URL (`LIST_PAGE_URL`, `DETAIL_PAGE_URL`). `Fetch()` — сырые данные без замен.
-- **`SetPropertyValues` vs `SetPropertyValuesEx`**: `SetPropertyValues` устанавливает по массиву `[PROP_ID => value]`; `SetPropertyValuesEx` — по `[PROP_CODE => value]` — предпочтителен.
+- **`SetPropertyValues` vs `SetPropertyValuesEx`**: различие в полной/частичной записи, не в ID/CODE; см. K06. Неуказанные обычные свойства при полной записи могут быть очищены.
 - **HL-блок: `compileEntity` кеширует класс** в памяти — повторный вызов возвращает уже созданный класс, не пересоздаёт. Безопасно вызывать несколько раз.
 - **HL UTM-таблицы**: при переименовании поля физическая таблица не переименовывается — остаётся со старым именем. При удалении поля — таблица удаляется.
 - **`SECTION_ID` vs `IBLOCK_SECTION_ID` в GetList**: `SECTION_ID` — фильтрует по разделу (с учётом `INCLUDE_SUBSECTIONS`); в поле результата — `IBLOCK_SECTION_ID`.
@@ -2918,3 +2918,11 @@ File::putFileContents(
 Проверка: Опубликованная запись, черновик и версия истории; guest и редактор не должны получать одинаковую административную выборку.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockelement/getpublicelementsormfilter.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K06 — Частичная запись свойств и явное очищение
+
+SetPropertyValues без PROPERTY_CODE — полная замена, Ex — частичная; это не выбор ID/CODE. Для очистки multiple у Ex — false, не []. Ex не возвращает Result: сверить данные повторным чтением.
+
+Проверка: У элемента заполнены A/B/TAGS: изменение A и очистка TAGS сохраняют B; пустой массив не считать явным очищением.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockelement/setpropertyvaluesex.php); documentation-backed, 2026-11-01, не runtime pass.
