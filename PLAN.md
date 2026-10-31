@@ -507,3 +507,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [iblocks.md](bitrix/references/iblocks.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockelement/setpropertyvalues.php).
 - Самопроверка B086 — «Как удалить два фото и добавить одно в множественное свойство?»: Прочитать связи, проверить принадлежность элементу, сформировать один пакет удаления/добавления и перечитать новые value IDs.
 - Контрпример отвергнут: Два последовательных удаления по старым value IDs или прямой CFile::Delete.. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K08: Отдельный lifecycle записи свойств
+
+- Пробел до изменения: В справочнике событий инфоблока отсутствовал отдельный property-write путь, поэтому интеграция могла пропускать Ex.
+- Исправление: [iblocks.md](bitrix/references/iblocks.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/events/oniblockelementsetpropertyvaluesex.php).
+- Самопроверка B087 — «Обработчик OnAfterIBlockElementUpdate не видит запись через Ex — почему?»: Трассировать отдельные property events; выбрать нужную фазу, scope и защиту повторного вызова, не подменять before событие post-save.
+- Контрпример отвергнут: Добавить второй Update ради запуска обработчика.. Результат ручной проверки ответа: pass; runtime: не запускался.

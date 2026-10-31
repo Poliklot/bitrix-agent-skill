@@ -2934,3 +2934,11 @@ SetPropertyValues без PROPERTY_CODE — полная замена, Ex — ч�
 Проверка: Три исходных файла: два удалены, один сохранён, новый добавлен; чужой file/value ID отклонён.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockelement/setpropertyvalues.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K08 — Отдельный lifecycle записи свойств
+
+SetPropertyValuesEx — отдельный путь событий. OnIBlockElementSetPropertyValuesEx вызывается до БД; post-write event и его сигнатуру сверить в ядре. Нельзя надеяться только на OnAfterIBlockElementUpdate; ограничить scope и рекурсию.
+
+Проверка: Одна правка из админки и одна через Ex приводят к одному согласованному эффекту без рекурсии.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/events/oniblockelementsetpropertyvaluesex.php); documentation-backed, 2026-11-01, не runtime pass.
