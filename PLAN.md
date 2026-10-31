@@ -472,3 +472,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [orm.md](bitrix/references/orm.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/db/connection/starttransaction.php).
 - Самопроверка B081 — «Дочерняя запись вернула ошибку Result, но родитель сохранился — почему?»: Неуспешный Result не бросает исключение сам; проверить дочерний результат и откатить собственную транзакцию до commit, обработать Throwable.
 - Контрпример отвергнут: Коммитить потому, что исключения не было.. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K03: OnAfter ORM не равен после commit
+
+- Пробел до изменения: Справочник рекомендовал отправку уведомлений в OnAfter без различения commit внешней транзакции.
+- Исправление: [orm.md](bitrix/references/orm.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://docs.1c-bitrix.ru/pages/orm/entity-operations.html).
+- Самопроверка B082 — «Можно отправить webhook из OnAfterAdd внутри транзакции?»: Не считать событие commit: отложить внешний эффект до успешного завершения операции либо использовать согласованный transactional outbox.
+- Контрпример отвергнут: OnAfterAdd гарантирует сохранность после любого rollback.. Результат ручной проверки ответа: pass; runtime: не запускался.

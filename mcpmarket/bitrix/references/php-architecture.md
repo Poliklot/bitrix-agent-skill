@@ -1902,7 +1902,7 @@ $result = OrderTable::getList([
 
 **Когда что использовать:**
 - `OnBefore*` — валидация, автозаполнение полей, проверка бизнес-правил
-- `OnAfter*` — очистка кеша, отправка уведомлений, каскадные операции в других таблицах
+- `OnAfter*` — реакция на ORM-операцию, но не гарантия commit внешней транзакции; внешние уведомления согласовать с владельцем unit of work (см. K03).
 - `On*` (средние) — когда нужно вклиниться в pipeline после валидации, но до фактического сохранения/удаления
 
 ### ORM\EventResult — управление событием
@@ -3395,3 +3395,11 @@ Context::getCurrent()->getResponse()->addCookie($cookie);
 Проверка: Имитировать failed Result у второго шага и TypeError; оба пути не должны фиксировать родителя.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/db/connection/starttransaction.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K03 — OnAfter ORM не равен после commit
+
+OnAfter* не является after-commit внешней транзакции. Webhook/уведомление — после успешного unit of work; при требовании надёжности проектный transactional outbox с идемпотентным consumer. Не выдумывать универсальный afterCommit hook.
+
+Проверка: После OnAfter искусственно откатить транзакцию: внешнего уведомления быть не должно; повтор consumer не дублирует его.
+
+[Официальный контракт](https://docs.1c-bitrix.ru/pages/orm/entity-operations.html); documentation-backed, 2026-11-01, не runtime pass.

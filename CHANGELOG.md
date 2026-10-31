@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+- K03: OnAfter ORM не равен после commit — дополнены знания, full/compact и сценарий B082.
+
 - K02: Result внутри транзакции и граница отката — дополнены знания, full/compact и сценарий B081.
 
 - K01: Три результата CIBlockElement::GetList — дополнены знания, full/compact и сценарий B080.
