@@ -4601,3 +4601,11 @@ recountPricesFromBase(basePriceId): только зависимые цены с�
 Проверка: Повтор импорта не размножает карточки, ошибка коммерческой записи видна отдельно.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/catalog/model/product/add.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K147 — Единицы веса и габаритов каталога фиксированы
+
+WEIGHT — г; WIDTH/LENGTH/HEIGHT — мм; MEASURE не переключает эти единицы.
+
+Проверка: Повторный импорт не умножает уже нормализованные размеры второй раз.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/user_help/content/iblock/iblock_element_admin.php?print=Y); documentation-backed, 2026-11-01, не runtime pass.

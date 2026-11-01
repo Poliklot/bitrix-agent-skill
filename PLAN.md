@@ -1675,3 +1675,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [catalog.md](bitrix/references/catalog.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/catalog/model/product/add.php).
 - Самопроверка B225 — «Создаст ли Product::add с NAME новый элемент и назначит ID?»: Нет; нужен уже существующий элемент каталога и проверка отдельного результата записи.
 - Контрпример отвергнут: Product::add заменяет CIBlockElement::Add. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K147: Единицы веса и габаритов каталога фиксированы
+
+- Пробел до изменения: Не объяснялись единицы полей, из-за чего данные внешней доставки можно передать без пересчёта.
+- Исправление: [catalog.md](bitrix/references/catalog.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/user_help/content/iblock/iblock_element_admin.php?print=Y).
+- Самопроверка B226 — «Источник отдаёт 2 кг и длину 30 см — что сохранить в catalog?»: 2000 граммов и LENGTH=300 миллиметров после проверки единиц источника.
+- Контрпример отвергнут: MEASURE автоматически преобразует вес и габариты. Результат ручной проверки ответа: pass; runtime: не запускался.
