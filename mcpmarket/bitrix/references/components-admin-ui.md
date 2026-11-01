@@ -225,8 +225,8 @@ $CACHE_MANAGER->ClearByTag('iblock_id_5');
 
 ```php
 // Кешируем только часть arResult
-$this->arResultCacheKeys = ['ITEMS', 'TOTAL_COUNT'];
-// CURRENT_USER и другие personalised-данные не кешируются
+$this->SetResultCacheKeys(['ITEMS', 'TOTAL_COUNT']);
+// Это ограничивает arResult, но НЕ удаляет персональные значения из HTML-кеша.
 ```
 
 ### Шаблон компонента
@@ -3297,3 +3297,11 @@ HTML-кеш: шаблон внутри StartResultCache; на hit вывод у�
 Проверка: Холодный и тёплый запросы выводят один блок; счётчик выполнения шаблона растёт только на miss.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cbitrixcomponent/startresultcache.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K42 — SetResultCacheKeys не удаляет персональные данные из HTML
+
+Ключи ограничивают arResult, не HTML. Отсутствие CURRENT_USER в списке не защищает уже выведенное имя; нужен отдельный персональный вывод/ключ.
+
+Проверка: Два пользователя по одному URL не видят имя друг друга на тёплом кеше.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cbitrixcomponent/setresultcachekeys.php); documentation-backed, 2026-11-01, не runtime pass.
