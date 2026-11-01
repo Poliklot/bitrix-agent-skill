@@ -864,3 +864,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [modules-loader.md](bitrix/references/modules-loader.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/coption/getoptionstring.php).
 - Самопроверка B131 — «Почему Option::get без siteId вернул значение текущего сайта?»: Не считать пропуск аргумента глобальным чтением; задать сайт либо пустую общую область явно.
 - Контрпример отвергнут: Убирать четвёртый аргумент ради гарантированно общего значения. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K53: Отсутствующая настройка и сохранённая пустая строка
+
+- Пробел до изменения: Нет способа отличить несохранённую настройку от значения, подставленного default_option.php.
+- Исправление: [modules-loader.md](bitrix/references/modules-loader.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/config/option/getrealvalue.php).
+- Самопроверка B132 — «Как не перезаписать сохранённый ноль при установке default?»: Получить реальное значение и сравнить с null строго; get с fallback не доказывает наличие записи.
+- Контрпример отвергнут: Если empty(Option::get(...)), записать default. Результат ручной проверки ответа: pass; runtime: не запускался.

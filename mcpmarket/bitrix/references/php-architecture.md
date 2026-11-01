@@ -3466,3 +3466,11 @@ int не проверяет диапазон. До ORM ограничить page
 Проверка: Разные значения общей области и двух сайтов читаются раздельно, включая CLI.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/coption/getoptionstring.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K53 — Отсутствующая настройка и сохранённая пустая строка
+
+getRealValue не подставляет defaults; null отличается от пустой строки и "0". Не используй empty для решения о миграции.
+
+Проверка: Отсутствие, пустая строка, "0" и обычное значение дают разные решения миграции.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/config/option/getrealvalue.php); documentation-backed, 2026-11-01, не runtime pass.
