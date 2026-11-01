@@ -2519,10 +2519,10 @@ while (ob_get_level()) {
     ob_end_clean();
 }
 
-$response = Application::getInstance()->getContext()->getResponse();
-$response->addHeader('Content-Type', 'text/csv; charset=utf-8');
-$response->addHeader('Content-Disposition', 'attachment; filename="export_' . date('Y-m-d') . '.csv"');
-$response->flush('');  // отправить заголовки
+// Отдельный потоковый endpoint: заголовки до тела, без преждевременного
+// HttpResponse::flush(), который завершает ответ, а не только шлёт заголовки.
+header('Content-Type: text/csv; charset=utf-8');
+header('Content-Disposition: attachment; filename="export_' . date('Y-m-d') . '.csv"');
 
 // BOM для корректного открытия в Excel
 echo "\xEF\xBB\xBF";
@@ -2538,7 +2538,7 @@ $res = \CIBlockElement::GetList(
     ['ID', 'NAME', 'PROPERTY_ARTICLE', 'PROPERTY_PRICE']
 );
 
-while ($el = $res->GetNext()) {
+while ($el = $res->Fetch()) {
     fputcsv($out, [
         $el['ID'],
         $el['NAME'],
@@ -3042,3 +3042,11 @@ CheckImageFile: байты, ширина, высота — отдельные л
 Проверка: Изображение выше/шире лимита не попадает в resize и сохранение.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cfile/checkimagefile.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K70 — CSV требует исходных значений, а не HTML из GetNext
+
+CSV: Fetch для исходных полей, fputcsv для формата. GetNext предназначен для HTML, а не экспорта; формулы требуют отдельной политики.
+
+Проверка: Названия с &, кавычками и переносами проходят CSV round-trip без HTML-сущностей.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockresult/getnext.php); documentation-backed, 2026-11-01, не runtime pass.

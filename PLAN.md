@@ -993,3 +993,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [file-upload-modern.md](bitrix/references/file-upload-modern.md) и [components-admin-ui.md](mcpmarket/bitrix/references/components-admin-ui.md); источник: [Официальный контракт](https://docs.1c-bitrix.ru/api/classes/Bitrix-UI-FileUploader-UploaderController.html).
 - Самопроверка B148 — «Можно ли после IsAuthorized пометить все fileId как свои?»: Нет: подтвердить каждый файл и операции по серверному объекту-владельцу; не выдумывать разрешающую модель.
 - Контрпример отвергнут: Безусловный markAsOwn и canRemove=true. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K70: CSV требует исходных значений, а не HTML из GetNext
+
+- Пробел до изменения: CSV-экспорт читал GetNext и сериализовал HTML-экранированное имя в файл. Кроме того, flush вызывался до формирования тела CSV.
+- Исправление: [import-export.md](bitrix/references/import-export.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockresult/getnext.php).
+- Самопроверка B149 — «Почему название A & B выгрузилось как A &amp; B?»: GetNext преобразовал HTML; выбрать Fetch и сериализовать исходное значение.
+- Контрпример отвергнут: Использовать GetNext как универсальный raw fetch. Результат ручной проверки ответа: pass; runtime: не запускался.

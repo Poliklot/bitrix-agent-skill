@@ -407,10 +407,10 @@ while (ob_get_level()) {
     ob_end_clean();
 }
 
-$response = Application::getInstance()->getContext()->getResponse();
-$response->addHeader('Content-Type', 'text/csv; charset=utf-8');
-$response->addHeader('Content-Disposition', 'attachment; filename="export_' . date('Y-m-d') . '.csv"');
-$response->flush('');  // отправить заголовки
+// Отдельный потоковый endpoint: заголовки до тела, без преждевременного
+// HttpResponse::flush(), который завершает ответ, а не только шлёт заголовки.
+header('Content-Type: text/csv; charset=utf-8');
+header('Content-Disposition: attachment; filename="export_' . date('Y-m-d') . '.csv"');
 
 // BOM для корректного открытия в Excel
 echo "\xEF\xBB\xBF";
@@ -426,7 +426,7 @@ $res = \CIBlockElement::GetList(
     ['ID', 'NAME', 'PROPERTY_ARTICLE', 'PROPERTY_PRICE']
 );
 
-while ($el = $res->GetNext()) {
+while ($el = $res->Fetch()) {
     fputcsv($out, [
         $el['ID'],
         $el['NAME'],
@@ -519,3 +519,11 @@ die();
 **Проверка на стенде:** Изображение выше/шире лимита не попадает в resize и сохранение.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cfile/checkimagefile.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.
+
+## K70 — CSV требует исходных значений, а не HTML из GetNext
+
+GetNext по умолчанию готовит HTML-представление и тильда-значения. Для табличного экспорта без URL-подстановок используй Fetch, затем форматирование CSV; не применяй html_entity_decode вслепую к уже неоднозначным данным. HTML-экранирование и защита от формул таблиц — разные задачи: fputcsv экранирует CSV, но не запрещает формулу; политику безопасного просмотра задай отдельно от машинного обмена. В самостоятельном потоковом endpoint не вызывай HttpResponse::flush перед генерацией CSV: это не операция отправки одних заголовков; пример отправляет заголовки нативно до тела.
+
+**Проверка на стенде:** Названия с &, кавычками и переносами проходят CSV round-trip без HTML-сущностей.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockresult/getnext.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.
