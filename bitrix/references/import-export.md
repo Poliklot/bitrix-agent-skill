@@ -51,7 +51,10 @@ if ($uploadedFile && $uploadedFile['error'] === UPLOAD_ERR_OK) {
     }
     $uploadedFile['type'] = $mime;
     $uploadedFile['size'] = filesize($uploadedFile['tmp_name']);
-    // Ограничения размера/геометрии добавлены ниже в контрактах CFile.
+    $error = CFile::CheckFile($uploadedFile, 5 * 1024 * 1024, false, 'jpg,jpeg,png,webp');
+    if ($error !== '') {
+        throw new \RuntimeException($error);
+    }
     $fileId = CFile::SaveFile($uploadedFile, 'my_module');
     if (!$fileId) {
         throw new \RuntimeException('Не удалось сохранить файл');
@@ -451,5 +454,13 @@ die();
 Поле type в массиве браузерной загрузки недоверенное; документация CheckFile прямо ограничивает MIME-проверку данными посетителя. До SaveFile проверяй ошибку загрузки, серверный размер, допустимое расширение и содержимое. В примере finfo проверяет тип по временному файлу; для изображений дополнительно нужен CheckImageFile и лимиты. Это не антивирус и не гарантия безопасности SVG/активного содержимого.
 
 **Проверка на стенде:** Переименованный текстовый файл с type=image/jpeg отклоняется, настоящий разрешённый JPEG принимается.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cfile/checkfile.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.
+
+## K62 — CheckFile возвращает текст ошибки, а не success boolean
+
+У CheckFile непустой результат означает ошибку. max_size задаётся в байтах, ноль отключает ограничение. Расширения передаются строкой через запятую без точек — это иной формат, чем setAcceptedFileTypes современного загрузчика. Не меняй условие на if(CheckFile(...)) save: оно сохранит ошибочный файл. Сам SaveFile не заменяет выбранную политику загрузки.
+
+**Проверка на стенде:** Файл сверх лимита и запрещённое расширение не доходят до SaveFile.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cfile/checkfile.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.

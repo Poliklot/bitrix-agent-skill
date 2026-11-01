@@ -2163,7 +2163,10 @@ if ($uploadedFile && $uploadedFile['error'] === UPLOAD_ERR_OK) {
     }
     $uploadedFile['type'] = $mime;
     $uploadedFile['size'] = filesize($uploadedFile['tmp_name']);
-    // Ограничения размера/геометрии добавлены ниже в контрактах CFile.
+    $error = CFile::CheckFile($uploadedFile, 5 * 1024 * 1024, false, 'jpg,jpeg,png,webp');
+    if ($error !== '') {
+        throw new \RuntimeException($error);
+    }
     $fileId = CFile::SaveFile($uploadedFile, 'my_module');
     if (!$fileId) {
         throw new \RuntimeException('Не удалось сохранить файл');
@@ -2974,5 +2977,13 @@ SetPropertyValuesEx — отдельный путь событий. OnIBlockElem
 Не доверяй uploadedFile[type]. Проверяй фактический временный файл, расширение и изображение до SaveFile.
 
 Проверка: Переименованный текстовый файл с type=image/jpeg отклоняется, настоящий разрешённый JPEG принимается.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cfile/checkfile.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K62 — CheckFile возвращает текст ошибки, а не success boolean
+
+CheckFile: ошибка — непустая строка; лимит в байтах; расширения jpg,png без точек. Ноль не ограничивает размер.
+
+Проверка: Файл сверх лимита и запрещённое расширение не доходят до SaveFile.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cfile/checkfile.php); documentation-backed, 2026-11-01, не runtime pass.
