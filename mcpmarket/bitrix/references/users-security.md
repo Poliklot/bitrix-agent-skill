@@ -1854,3 +1854,11 @@ $links = UserLinkTable::getList([
 Проверка: Провал Add не отправляет welcome и не создаёт связанные строки с ID=0.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/events/onafteruseradd.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K86 — Register не является административным Add
+
+CUser::Add; Register относится к публичному потоку с дополнительными эффектами.
+
+Проверка: Создание тестовой учётки не авторизует оператора под ней и не создаёт неожиданных писем.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cuser/register.php); documentation-backed, 2026-11-01, не runtime pass.

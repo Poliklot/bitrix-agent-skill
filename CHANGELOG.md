@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+- K86: Register не является административным Add — дополнены знания, full/compact и сценарий B165.
+
 - K85: OnAfterUserAdd вызывается после попытки, а не только успеха — дополнены знания, full/compact и сценарий B164.
 
 - K84: Отмена OnBeforeUserAdd требует false вместе с ThrowException — дополнены знания, full/compact и сценарий B163.

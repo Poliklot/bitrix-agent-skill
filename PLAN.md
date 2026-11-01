@@ -1148,3 +1148,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [users.md](bitrix/references/users.md) и [users-security.md](mcpmarket/bitrix/references/users-security.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/events/onafteruseradd.php).
 - Самопроверка B164 — «Можно ли отправлять welcome при каждом OnAfterUserAdd?»: Нет: проверить успешный результат и положительный ID; ошибка попытки тоже достигает after hook.
 - Контрпример отвергнут: Считать сам вызов after гарантией создания. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K86: Register не является административным Add
+
+- Пробел до изменения: Есть только Add и Login; не разграничены создание учётки и публичная регистрация.
+- Исправление: [users.md](bitrix/references/users.md) и [users-security.md](mcpmarket/bitrix/references/users-security.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cuser/register.php).
+- Самопроверка B165 — «Чем создавать пользователей импортом, не меняя сессию администратора?»: CUser::Add; Register относится к публичному потоку с дополнительными эффектами.
+- Контрпример отвергнут: Подменить Add методом Register в административном импорте. Результат ручной проверки ответа: pass; runtime: не запускался.
