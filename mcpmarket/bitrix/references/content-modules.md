@@ -1890,3 +1890,11 @@ Check(form, values, resultId, Y, Y) → ошибки по SID и общие; с�
 Проверка: Неверная дата и незаполненное обязательное поле не создают результат.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/classes/cform/check.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K124 — user_id в Add задаёт автора, не субъекта проверки прав
+
+Add user_id — автор записи, права остаются у текущего пользователя.
+
+Проверка: Оператор без права заполнения не обходит отказ подменой автора.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/classes/cformresult/add.php); documentation-backed, 2026-11-01, не runtime pass.

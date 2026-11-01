@@ -1454,3 +1454,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [webforms.md](bitrix/references/webforms.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/classes/cform/check.php).
 - Самопроверка B202 — «Check вернул массив с ошибкой EMAIL — это успешная проверка?»: Нет; показать ошибку и не сохранять, при редактировании передать текущий RESULT_ID.
 - Контрпример отвергнут: Непустой результат Check означает success. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K124: user_id в Add задаёт автора, не субъекта проверки прав
+
+- Пробел до изменения: Не раскрыта роль четвёртого аргумента при импорте результатов.
+- Исправление: [webforms.md](bitrix/references/webforms.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/classes/cformresult/add.php).
+- Самопроверка B203 — «Достаточно передать ID администратора четвёртым аргументом Add?»: Нет, это автор; права текущего субъекта и разрешение импорта проверяются отдельно.
+- Контрпример отвергнут: user_id подменяет текущего пользователя для проверки доступа. Результат ручной проверки ответа: pass; runtime: не запускался.
