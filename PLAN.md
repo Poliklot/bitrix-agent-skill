@@ -1406,3 +1406,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [search.md](bitrix/references/search.md) и [search-seo-ops.md](mcpmarket/bitrix/references/search-seo-ops.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/search/classes/csearch/search.php).
 - Самопроверка B198 — «Почему поиск с MODULE=iblock не ограничивается нужным источником?»: Исправить ключ на MODULE_ID и согласовать параметры с индексатором.
 - Контрпример отвергнут: MODULE и MODULE_ID взаимозаменяемы. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K120: aParamsEx объединяет альтернативные области через ИЛИ
+
+- Пробел до изменения: Не описана логика третьего аргумента Search для нескольких источников.
+- Исправление: [search.md](bitrix/references/search.md) и [search-seo-ops.md](mcpmarket/bitrix/references/search-seo-ops.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/search/classes/csearch/search.php).
+- Самопроверка B199 — «Как искать в одном форуме или одном инфоблоке, не требуя оба модуля сразу?»: Две области в aParamsEx; общий SITE_ID и доступ не расширять.
+- Контрпример отвергнут: Считать массивы aParamsEx логическим И. Результат ручной проверки ответа: pass; runtime: не запускался.

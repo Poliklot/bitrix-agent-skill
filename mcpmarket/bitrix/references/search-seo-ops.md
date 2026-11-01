@@ -1922,3 +1922,11 @@ Search: MODULE_ID, согласованные PARAM1/PARAM2; SITE_ID и CHECK_DA
 Проверка: Одинаковое слово в двух модулях не расширяет заданную область.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/search/classes/csearch/search.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K120 — aParamsEx объединяет альтернативные области через ИЛИ
+
+Search aParamsEx: альтернативные области через ИЛИ, общую безопасную область сохранить.
+
+Проверка: Выдача содержит обе разрешённые области, но не третий источник.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/search/classes/csearch/search.php); documentation-backed, 2026-11-01, не runtime pass.
