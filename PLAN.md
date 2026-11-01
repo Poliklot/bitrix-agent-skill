@@ -1654,3 +1654,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [catalog.md](bitrix/references/catalog.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/catalog/pricetable/index.php?print=Y).
 - Самопроверка B222 — «Можно ли при импорте USD записать PRICE_SCALE равным числу PRICE?»: Нет; сохранять исходную цену/валюту и использовать штатный пересчёт.
 - Контрпример отвергнут: PRICE_SCALE всегда совпадает с PRICE. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K144: Границы количественной цены обновляются парой
+
+- Пробел до изменения: Упоминались quantity ranges без контракта их изменения.
+- Исправление: [catalog.md](bitrix/references/catalog.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/catalog/model/price/update.php).
+- Самопроверка B223 — «Достаточно обновить только QUANTITY_FROM у существующей цены?»: Нет; передать согласованную пару границ и проверить пограничные количества.
+- Контрпример отвергнут: Вторая граница сама всегда перестроится безопасно. Результат ручной проверки ответа: pass; runtime: не запускался.
