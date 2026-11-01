@@ -1378,3 +1378,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [search.md](bitrix/references/search.md) и [search-seo-ops.md](mcpmarket/bitrix/references/search-seo-ops.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/search/classes/csearch/changesite.php).
 - Самопроверка B194 — «Как перенести URL одного индексированного документа на другой сайт?»: Использовать ChangeSite с картой путей и точным ITEM_ID; проверить оба сайта.
 - Контрпример отвергнут: Путать ChangeSite с ChangePermission из опечатки документации. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K116: ReIndexAll возвращает состояние или итоговый счётчик
+
+- Пробел до изменения: Примеры вызывали переиндексацию без сохранения состояния и выдавали NS за фильтр.
+- Исправление: [search.md](bitrix/references/search.md) и [search-seo-ops.md](mcpmarket/bitrix/references/search-seo-ops.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/search/classes/csearch/reindexall.php).
+- Самопроверка B195 — «ReIndexAll вернул 0 — запускать снова с пустым NS?»: Нет, число — завершение; только массив задаёт следующий шаг.
+- Контрпример отвергнут: Считать 0 ошибкой, а третий аргумент произвольным фильтром. Результат ручной проверки ответа: pass; runtime: не запускался.

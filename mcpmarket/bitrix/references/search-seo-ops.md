@@ -86,17 +86,13 @@ CSearch::DeleteIndex('my.module', '42%');
 ## Полная переиндексация: CSearch::ReIndexAll
 
 ```php
-// Быстрая — только добавить новые и обновить изменённые
-CSearch::ReIndexAll(false);
-
-// Полная — очистить таблицы и переиндексировать всё
-CSearch::ReIndexAll(true);
-
-// Только конкретный модуль
-CSearch::ReIndexAll(true, 0, ['MODULE_ID' => 'iblock']);
-
-// Только конкретный сайт
-CSearch::ReIndexAll(false, 0, ['SITE_ID' => 's1']);
+// Один шаг. $savedState — сохранённое состояние этого же задания либо [].
+$next = CSearch::ReIndexAll(false, 10, $savedState);
+if (is_array($next)) {
+    // Сохранить $next целиком; следующий шаг — отдельный запуск задания.
+} else {
+    // Завершено: $next — число, 0 тоже допустим.
+}
 ```
 
 > `ReIndexAll` вызывает события `OnReindex` у всех модулей. Для включения своего модуля нужно зарегистрировать обработчик.
@@ -368,7 +364,7 @@ $APPLICATION->IncludeComponent('bitrix:search.page', '', [
 - `SITE_ID` может быть строкой `'s1'` — ядро само приведёт к `['s1' => '']`
 - `bOverWrite` управляет перезаписью существующего документа, не созданием дублей (K111).
 - `DeleteIndex` без `$ITEM_ID` удаляет **весь** индекс модуля — используй осторожно
-- `ReIndexAll(true)` — очищает таблицы `TRUNCATE`, очень деструктивно
+- `ReIndexAll(true)` очищает индекс на первом шаге; сохраняй NS продолжения (K116).
 - `PERMISSIONS` — список читателей, не карта уровней; группа 2 включает гостя (K113).
 
 ---
@@ -1923,3 +1919,11 @@ ChangeSite: карта сайт→путь плюс точная область,
 Проверка: Меняется только нужный документ, выдача соседнего сайта не загрязнена.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/search/classes/csearch/changesite.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K116 — ReIndexAll возвращает состояние или итоговый счётчик
+
+ReIndexAll: массив продолжить, число завершить; NS хранить целиком, не переинициализировать.
+
+Проверка: Продолжение не повторяет первый шаг; ноль элементов завершает процесс.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/search/classes/csearch/reindexall.php); documentation-backed, 2026-11-01, не runtime pass.
