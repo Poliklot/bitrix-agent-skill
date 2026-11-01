@@ -34,6 +34,9 @@ $dt   = DateTime::createFromTimestamp(time());                 // из UNIX time
 $dt   = DateTime::createFromUserTime('15.06.2024 14:30:00');  // из строки в зоне пользователя
 $dt   = DateTime::createFromPhp(new \DateTime('now'));         // из PHP-нативного \DateTime
 $dt   = DateTime::tryParse($userInput);                        // null при ошибке, не кидает исключение
+if ($dt === null) {
+    throw new \InvalidArgumentException('Некорректная дата');
+}
 
 $date = new Date('2024-06-15', 'Y-m-d');  // Date — только дата без времени
 $date = Date::createFromTimestamp(time());
