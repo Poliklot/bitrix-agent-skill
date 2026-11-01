@@ -4609,3 +4609,11 @@ WEIGHT — г; WIDTH/LENGTH/HEIGHT — мм; MEASURE не переключает
 Проверка: Повторный импорт не умножает уже нормализованные размеры второй раз.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/user_help/content/iblock/iblock_element_admin.php?print=Y); documentation-backed, 2026-11-01, не runtime pass.
+
+## K148 — D в настройках товара означает наследование, не false
+
+Y/N/D не boolean: D наследует настройку модуля; сохраняй различие raw/effective.
+
+Проверка: Изменение настройки модуля влияет на D, но не на явные Y/N.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/catalog/producttable/index.php); documentation-backed, 2026-11-01, не runtime pass.

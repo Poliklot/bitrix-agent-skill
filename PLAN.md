@@ -1682,3 +1682,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [catalog.md](bitrix/references/catalog.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/user_help/content/iblock/iblock_element_admin.php?print=Y).
 - Самопроверка B226 — «Источник отдаёт 2 кг и длину 30 см — что сохранить в catalog?»: 2000 граммов и LENGTH=300 миллиметров после проверки единиц источника.
 - Контрпример отвергнут: MEASURE автоматически преобразует вес и габариты. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K148: D в настройках товара означает наследование, не false
+
+- Пробел до изменения: Флаги QUANTITY_TRACE/CAN_BUY_ZERO/SUBSCRIBE перечислялись без семантики D.
+- Исправление: [catalog.md](bitrix/references/catalog.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/catalog/producttable/index.php).
+- Самопроверка B227 — «Можно ли считать QUANTITY_TRACE=D отключённым учётом?»: Нет; разрешить настройку модуля и не переписать наследование постоянным N.
+- Контрпример отвергнут: Любое значение кроме Y равно N. Результат ручной проверки ответа: pass; runtime: не запускался.
