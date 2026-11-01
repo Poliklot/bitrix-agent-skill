@@ -899,6 +899,13 @@ CForm::GetDataByID(
 ```php
 global $strError;
 
+// $values уже сформирован по схеме формы; метод/CSRF проверены обработчиком.
+$errors = CForm::Check($formId, $values, false, 'Y', 'Y');
+if (!empty($errors)) {
+    throw new \RuntimeException('Веб-форма не прошла проверку');
+    // UI получает исходный массив ошибок; не выводи его без escaping.
+}
+
 $resultId = CFormResult::Add(
     $formId,
     $values, // только допустимые ответы из проверенного запроса
@@ -1875,3 +1882,11 @@ Add(values=false) читает REQUEST; передавай allowlist ответ�
 Проверка: Значение из GET не подмешивается в явно подготовленный набор.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/classes/cformresult/add.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K123 — Check возвращает ошибки и знает редактируемый результат
+
+Check(form, values, resultId, Y, Y) → ошибки по SID и общие; сохранять только без ошибок.
+
+Проверка: Неверная дата и незаполненное обязательное поле не создают результат.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/classes/cform/check.php); documentation-backed, 2026-11-01, не runtime pass.

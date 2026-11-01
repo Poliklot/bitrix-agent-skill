@@ -1447,3 +1447,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [webforms.md](bitrix/references/webforms.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/classes/cformresult/add.php).
 - Самопроверка B201 — «Как создать результат из подготовленного пустого набора, не подхватив GET?»: Передать явный массив, не false; контролировать вход на границе обработчика.
 - Контрпример отвергнут: false означает отсутствие ответов. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K123: Check возвращает ошибки и знает редактируемый результат
+
+- Пробел до изменения: Не был описан штатный validation flow и массив ошибок по SID.
+- Исправление: [webforms.md](bitrix/references/webforms.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/classes/cform/check.php).
+- Самопроверка B202 — «Check вернул массив с ошибкой EMAIL — это успешная проверка?»: Нет; показать ошибку и не сохранять, при редактировании передать текущий RESULT_ID.
+- Контрпример отвергнут: Непустой результат Check означает success. Результат ручной проверки ответа: pass; runtime: не запускался.
