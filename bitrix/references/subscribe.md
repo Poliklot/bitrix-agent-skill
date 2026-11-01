@@ -163,9 +163,9 @@ $subscriptionId = $subscription->Add([
     'EMAIL' => 'user@example.com',
     'FORMAT' => 'html',
     'ACTIVE' => 'Y',
-    'CONFIRMED' => 'Y',
+    'CONFIRMED' => 'N',
     'RUB_ID' => [$rubricId],
-    'SEND_CONFIRM' => 'N',
+    'SEND_CONFIRM' => 'Y',
 ], SITE_ID);
 
 if (!$subscriptionId)
@@ -387,3 +387,11 @@ CPostingTemplate::Execute();
 - `CPosting::ChangeStatus($id, 'P')` — нормальная точка входа в очередь отправки. Не выдумывай отдельную сущность “sending job”.
 - `SendMessage()` синхронен. Для боевой рассылки ориентируйся на queue/agent/cron workflow.
 - Если включаешь `SEND_CONFIRM`, не забывай, что подписка останется неподтверждённой до прохождения confirm-flow.
+
+## K131 — Публичная подписка не должна сама устанавливать CONFIRMED=Y
+
+Для новой публичной подписки не выставляй CONFIRMED=Y и SEND_CONFIRM=N: создай неподтверждённую запись и используй штатное подтверждение. Включение ACTIVE не доказывает владение адресом. Доверенный импорт ранее подтверждённых подписок — отдельная операция с доказанным источником, не режим формы сайта.
+
+**Проверка на стенде:** Произвольный чужой адрес не становится подтверждённым после POST.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/csubscriptiongeneral/csubscriptionadd.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.

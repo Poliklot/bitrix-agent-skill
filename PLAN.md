@@ -1533,3 +1533,10 @@ Commerce/1C фаза считается завершённой, когда:
 ### Gate этапа 10 / 1.46.0
 
 `make release-check`, 23 существующих теста инструментов и quick_validate обеих версий: pass. Эти тесты не доказывают знания API; предметная самопроверка записана для каждого K-пункта. Compact: 35/50 файлов. Live Bitrix runtime не выполнялся. Публикация — штатный Publish Release после push в master.
+
+### K131: Публичная подписка не должна сама устанавливать CONFIRMED=Y
+
+- Пробел до изменения: Основной пример обходил подтверждение адреса по умолчанию.
+- Исправление: [subscribe.md](bitrix/references/subscribe.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/csubscriptiongeneral/csubscriptionadd.php).
+- Самопроверка B210 — «Можно ли сразу ставить CONFIRMED=Y при отправке публичной формы?»: Нет; оставить подтверждение адреса штатному потоку, импорт выделить отдельно.
+- Контрпример отвергнут: Введённый email и ACTIVE=Y доказывают подтверждение. Результат ручной проверки ответа: pass; runtime: не запускался.

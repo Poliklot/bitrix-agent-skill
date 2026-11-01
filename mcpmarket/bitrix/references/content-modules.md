@@ -1588,9 +1588,9 @@ $subscriptionId = $subscription->Add([
     'EMAIL' => 'user@example.com',
     'FORMAT' => 'html',
     'ACTIVE' => 'Y',
-    'CONFIRMED' => 'Y',
+    'CONFIRMED' => 'N',
     'RUB_ID' => [$rubricId],
-    'SEND_CONFIRM' => 'N',
+    'SEND_CONFIRM' => 'Y',
 ], SITE_ID);
 
 if (!$subscriptionId)
@@ -1950,3 +1950,11 @@ ForHTML — схема ключей, не HTML-разметка; get_fields=Y в
 Проверка: Форма редактирования показывает текст с кавычками и сохранённое вложение без повторной загрузки.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/classes/cformresult/getdatabyidforhtml.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K131 — Публичная подписка не должна сама устанавливать CONFIRMED=Y
+
+Публичный Add: неподтверждённая запись и письмо подтверждения; не самоподтверждение из запроса.
+
+Проверка: Произвольный чужой адрес не становится подтверждённым после POST.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/csubscriptiongeneral/csubscriptionadd.php); documentation-backed, 2026-11-01, не runtime pass.
