@@ -4,25 +4,19 @@
 
 ## [Unreleased]
 
-- K90: SendPassword отправляет контрольную строку, а не новый пароль — дополнены знания, full/compact и сценарий B169.
+## [1.43.0] — 2026-11-01
 
-- K89: LOGIN в legacy-фильтре не равно точному поиску — дополнены знания, full/compact и сценарий B168.
-
-- K88: CUser::GetList принимает сортировку по ссылке — дополнены знания, full/compact и сценарий B167.
-
-- K87: Email не гарантирует уникальную учётную запись — дополнены знания, full/compact и сценарий B166.
-
-- K86: Register не является административным Add — дополнены знания, full/compact и сценарий B165.
-
-- K85: OnAfterUserAdd вызывается после попытки, а не только успеха — дополнены знания, full/compact и сценарий B164.
-
-- K84: Отмена OnBeforeUserAdd требует false вместе с ThrowException — дополнены знания, full/compact и сценарий B163.
-
-- K83: SetUserGroup не обновляет уже авторизованную сессию — дополнены знания, full/compact и сценарий B162.
-
-- K82: Замена групп должна сохранять временные членства — дополнены знания, full/compact и сценарий B161.
-
+### Added
 - K81: Группы изменяемого пользователя не равны группам оператора — дополнены знания, full/compact и сценарий B160.
+- K82: Замена групп должна сохранять временные членства — дополнены знания, full/compact и сценарий B161.
+- K83: SetUserGroup не обновляет уже авторизованную сессию — дополнены знания, full/compact и сценарий B162.
+- K84: Отмена OnBeforeUserAdd требует false вместе с ThrowException — дополнены знания, full/compact и сценарий B163.
+- K85: OnAfterUserAdd вызывается после попытки, а не только успеха — дополнены знания, full/compact и сценарий B164.
+- K86: Register не является административным Add — дополнены знания, full/compact и сценарий B165.
+- K87: Email не гарантирует уникальную учётную запись — дополнены знания, full/compact и сценарий B166.
+- K88: CUser::GetList принимает сортировку по ссылке — дополнены знания, full/compact и сценарий B167.
+- K89: LOGIN в legacy-фильтре не равно точному поиску — дополнены знания, full/compact и сценарий B168.
+- K90: SendPassword отправляет контрольную строку, а не новый пароль — дополнены знания, full/compact и сценарий B169.
 
 ## [1.42.0] — 2026-11-01
 
@@ -602,7 +596,8 @@
 ### Added
 - Первый публичный релиз: `SKILL.md`, progressive disclosure архитектура
 
-[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.42.0...HEAD
+[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.43.0...HEAD
+[1.43.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.42.0...v1.43.0
 [1.42.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.41.0...v1.42.0
 [1.41.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.40.0...v1.41.0
 [1.40.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.39.0...v1.40.0
