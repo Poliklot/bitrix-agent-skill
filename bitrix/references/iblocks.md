@@ -153,7 +153,7 @@ $res = CIBlockSection::GetList(
         'SECTION_ID'  => 0,               // корневые разделы (0 = корень)
         // DEPTH_LEVEL, LEFT_MARGIN, RIGHT_MARGIN, CNT
     ],
-    true,                                 // bIncCnt — включить ELEMENT_CNT, SECTION_CNT
+    true,                                 // bIncCnt — включить ELEMENT_CNT; см. K102
     ['ID', 'NAME', 'CODE', 'SORT', 'DEPTH_LEVEL',
      'SECTION_PAGE_URL', 'LEFT_MARGIN', 'RIGHT_MARGIN',
      'ELEMENT_CNT',                       // только если bIncCnt=true
@@ -610,5 +610,13 @@ class IblockHandler
 В CIBlockSection::GetList для выборки и фильтра UF_* укажи IBLOCK_ID; нужные UF включи в select. Это поля раздела, не PROPERTY_* элемента. Не загружай все пользовательские поля ради одного значения.
 
 **Проверка на стенде:** Два инфоблока с одноимённым UF не смешивают данные.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblocksection/getlist.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.
+
+## K102 — ELEMENT_CNT зависит от политики подсчёта
+
+bIncCnt включает ELEMENT_CNT, не обещает SECTION_CNT. Явно выбери ELEMENT_SUBSECTIONS и CNT_ACTIVE: первое управляет вложенными разделами, второе учитывает ACTIVE и сроки элементов. Число на витрине должно соответствовать фильтру её списка.
+
+**Проверка на стенде:** Просроченный элемент и элемент подраздела дают ожидаемые разные счётчики.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblocksection/getlist.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.

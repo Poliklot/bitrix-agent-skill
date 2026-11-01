@@ -1280,3 +1280,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [iblocks.md](bitrix/references/iblocks.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblocksection/getlist.php).
 - Самопроверка B180 — «Почему UF_COLOR раздела не выбирается?»: Задать IBLOCK_ID в фильтре и UF_COLOR в select.
 - Контрпример отвергнут: Искать его как PROPERTY_COLOR элемента. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K102: ELEMENT_CNT зависит от политики подсчёта
+
+- Пробел до изменения: Пример обещал SECTION_CNT и не задавал семантику числа элементов.
+- Исправление: [iblocks.md](bitrix/references/iblocks.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblocksection/getlist.php).
+- Самопроверка B181 — «Почему счётчик раздела больше списка товаров?»: Согласовать вложенность, активность и даты; не ждать SECTION_CNT.
+- Контрпример отвергнут: Считать bIncCnt числом только активных прямых элементов. Результат ручной проверки ответа: pass; runtime: не запускался.
