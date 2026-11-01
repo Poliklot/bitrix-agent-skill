@@ -1974,3 +1974,11 @@ RUB_ID меняй в явном SITE_ID; ALL_SITES не включать для 
 Проверка: Рубрика второго сайта сохраняется при локальном изменении первого.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/csubscriptiongeneral/csubscriptionupdate.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K134 — Authorize с false безусловно открывает доступ к подписке
+
+Authorize(ID, false) — доверенный обход, не проверка; публичный ID требует штатного подтверждения доступа.
+
+Проверка: Чужой ID и отсутствующий код не открывают редактирование.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/csubscriptiongeneral/csubscriptionauthorize.php); documentation-backed, 2026-11-01, не runtime pass.

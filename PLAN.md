@@ -1554,3 +1554,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [subscribe.md](bitrix/references/subscribe.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/csubscriptiongeneral/csubscriptionupdate.php).
 - Самопроверка B212 — «Почему изменение рубрик одного сайта затронуло другой?»: Проверить SITE_ID/ALL_SITES и полный желаемый набор рубрик в выбранной области.
 - Контрпример отвергнут: ALL_SITES=Y безопасно включать для любого Update. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K134: Authorize с false безусловно открывает доступ к подписке
+
+- Пробел до изменения: Не описан опасный default кода авторизации подписки.
+- Исправление: [subscribe.md](bitrix/references/subscribe.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/csubscriptiongeneral/csubscriptionauthorize.php).
+- Самопроверка B213 — «Можно ли восстановить доступ к подписке вызовом Authorize(ID) из формы email?»: Нет, default false безусловно авторизует; использовать проверенный код/владельца.
+- Контрпример отвергнут: Authorize без кода безопасно сам проверит владельца. Результат ручной проверки ответа: pass; runtime: не запускался.
