@@ -1433,3 +1433,10 @@ Commerce/1C фаза считается завершённой, когда:
 ### Gate этапа 9 / 1.45.0
 
 `make release-check`, 23 существующих теста инструментов и quick_validate обеих версий: pass. Эти тесты не доказывают знания API; предметная самопроверка записана для каждого K-пункта. Compact: 35/50 файлов. Live Bitrix runtime не выполнялся. Публикация — штатный Publish Release после push в master.
+
+### K121: HTML-имена ответов зависят от типа вопроса
+
+- Пробел до изменения: Не было схемы имён входных полей form; SID и ID ответа легко перепутать.
+- Исправление: [webforms.md](bitrix/references/webforms.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/htmlnames.php).
+- Самопроверка B200 — «Почему form_text_CONTACT не сохраняет имя, а radio сохраняет?»: Текст требует ID ответа в имени, radio — SID вопроса и ID варианта в значении.
+- Контрпример отвергнут: Все типы имеют ключ form_тип_SID. Результат ручной проверки ответа: pass; runtime: не запускался.

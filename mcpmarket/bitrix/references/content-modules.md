@@ -1859,3 +1859,11 @@ duplicate=N отключает административную копию, не
 Проверка: Тестовое вложение сохраняет ожидаемое имя и доступно при отложенной отправке без лишней копии.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cevent/send.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K121 — HTML-имена ответов зависят от типа вопроса
+
+form_text_ID ответа; form_radio_SID вопроса → ID ответа; множественный выбор → массив ID.
+
+Проверка: Один текстовый и один radio-вопрос записываются в свои ответы, чужой ID варианта отклоняется.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/htmlnames.php); documentation-backed, 2026-11-01, не runtime pass.

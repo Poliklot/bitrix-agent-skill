@@ -400,3 +400,11 @@ CFormResult::SetStatus($resultId, $defaultStatusId);
 - `Reset()` и `Delete()` ведут себя по-разному; для частичного очищения результата не подменяй одно другим.
 - При отсутствии `local/*` следующий truth layer для form-задач — stock component.php, template variant и component assets, а не только одна `.default`-вёрстка.
 - `form.result.new` и `form.result.edit` имеют собственный error-style слой и component-level cache rules, которые часто важнее шаблонной косметики.
+
+## K121 — HTML-имена ответов зависят от типа вопроса
+
+Для text/date/file имя содержит ID ответа; для radio/dropdown — SID вопроса, а значение — ID выбранного ответа. Checkbox/multiselect передают массив ID. Строй mapping из структуры конкретной формы, проверяй принадлежность выбранных ответов; не считай NAME или произвольный SID универсальным ключом Add.
+
+**Проверка на стенде:** Один текстовый и один radio-вопрос записываются в свои ответы, чужой ID варианта отклоняется.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/htmlnames.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.
