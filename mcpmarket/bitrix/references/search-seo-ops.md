@@ -1920,3 +1920,11 @@ $hits = CPerfomanceHit::GetList(
 Проверка: Одинаковое задание на публичном хите, админском хите и cron выбирает одинаковый сайт/язык.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=43&LESSON_ID=3436); documentation-backed, 2026-11-01, не runtime pass.
+
+## K93 — NAME агента является кодом, а не параметризованным заданием
+
+Сохранить данные в серверном задании и передать фиксированному методу проверенный ID.
+
+Проверка: Кавычки и кодоподобный текст остаются данными задания и не меняют NAME.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cagent/addagent.php); documentation-backed, 2026-11-01, не runtime pass.
