@@ -4675,3 +4675,11 @@ HIDE_ZERO — публичное оформление, не изменение �
 Проверка: Одинаковая сохранённая сумма имеет допустимое разное оформление без мутации.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/currency/developer/ccurrencylang/getformatdescription.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K156 — Обработчик CurrencyFormat может заменить штатный результат
+
+Непустой результат события CurrencyFormat переопределяет штатное оформление.
+
+Проверка: Кастомный обработчик меняет только выбранную валюту, остальные используют штатный формат.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/currency/events/currencyformat.php?print=Y); documentation-backed, 2026-11-01, не runtime pass.

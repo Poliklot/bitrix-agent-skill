@@ -1738,3 +1738,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [currency.md](bitrix/references/currency.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/currency/developer/ccurrencylang/getformatdescription.php).
 - Самопроверка B234 — «В админке 10.00, на витрине 10 — потеряна точность цены?»: Не обязательно; проверить HIDE_ZERO и формат, исходную сумму не менять.
 - Контрпример отвергнут: Для совпадения вида переписать цену без дробной части. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K156: Обработчик CurrencyFormat может заменить штатный результат
+
+- Пробел до изменения: Не был описан приоритет пользовательского обработчика форматирования.
+- Исправление: [currency.md](bitrix/references/currency.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/currency/events/currencyformat.php?print=Y).
+- Самопроверка B235 — «Почему правильный FORMAT_STRING не влияет на вывод цены?»: Проверить обработчик CurrencyFormat, который возвращает собственную строку.
+- Контрпример отвергнут: Изменять FORMAT_STRING вслепую, игнорируя обработчики. Результат ручной проверки ответа: pass; runtime: не запускался.
