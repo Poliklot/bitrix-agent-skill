@@ -1617,9 +1617,8 @@ $subscription = new CSubscription();
 
 $ok = $subscription->Update($subscriptionId, [
     'ACTIVE' => 'Y',
-    'CONFIRMED' => 'Y',
+    // CONFIRMED не меняем: редактирование рубрик не подтверждает адрес.
     'RUB_ID' => [$rubricId1, $rubricId2],
-    'SEND_CONFIRM' => 'N',
 ], SITE_ID);
 ```
 
@@ -1982,3 +1981,11 @@ Authorize(ID, false) — доверенный обход, не проверка;
 Проверка: Чужой ID и отсутствующий код не открывают редактирование.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/csubscriptiongeneral/csubscriptionauthorize.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K135 — Смена EMAIL снимает подтверждение подписки
+
+Новый EMAIL требует нового подтверждения; LAST_MESSAGE SENT ≠ CONF и не доставка.
+
+Проверка: Смена адреса переводит подписку в неподтверждённое состояние до корректного кода.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/csubscriptiongeneral/csubscriptionupdate.php); documentation-backed, 2026-11-01, не runtime pass.

@@ -1561,3 +1561,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [subscribe.md](bitrix/references/subscribe.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/csubscriptiongeneral/csubscriptionauthorize.php).
 - Самопроверка B213 — «Можно ли восстановить доступ к подписке вызовом Authorize(ID) из формы email?»: Нет, default false безусловно авторизует; использовать проверенный код/владельца.
 - Контрпример отвергнут: Authorize без кода безопасно сам проверит владельца. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K135: Смена EMAIL снимает подтверждение подписки
+
+- Пробел до изменения: Пример Update заново устанавливал CONFIRMED=Y без нового доказательства владения адресом.
+- Исправление: [subscribe.md](bitrix/references/subscribe.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/csubscriptiongeneral/csubscriptionupdate.php).
+- Самопроверка B214 — «Можно ли сохранить подтверждение старого адреса после изменения EMAIL?»: Нет; штатный Update запускает новое подтверждение, не подменять его флагом.
+- Контрпример отвергнут: Успешный Update или SENT означает подтверждённый новый email. Результат ручной проверки ответа: pass; runtime: не запускался.
