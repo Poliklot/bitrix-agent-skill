@@ -965,3 +965,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [import-export.md](bitrix/references/import-export.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cfile/makefilearray.php).
 - Самопроверка B144 — «Можно ли передать любой путь из формы в MakeFileArray?»: Нет: определить разрешённый тип источника и корень; сайт-relative путь явно преобразовать.
 - Контрпример отвергнут: Полагаться на автоматическое добавление DOCUMENT_ROOT или разрешать любой URL/путь. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K66: Картинка элемента записывается файловым дескриптором
+
+- Пробел до изменения: Импорт сохранял CFile заранее и передавал один ID в PREVIEW_PICTURE и DETAIL_PICTURE.
+- Исправление: [import-export.md](bitrix/references/import-export.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockelement/add.php).
+- Самопроверка B145 — «Как прикрепить новое изображение при Add элемента?»: Передать проверенный файловый массив; дать API элемента сохранить файл, проверить ID/LAST_ERROR.
+- Контрпример отвергнут: Предварительно SaveFile и передать его ID как новый DETAIL_PICTURE. Результат ручной проверки ответа: pass; runtime: не запускался.

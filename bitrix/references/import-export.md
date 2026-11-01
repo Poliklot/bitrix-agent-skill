@@ -355,32 +355,34 @@ async function runImport(file) {
 
 Типичная задача при импорте товаров: загрузить картинку по URL и прикрепить к элементу.
 
+URL сначала скачай по разрешённой политике источников в рабочий каталог задания (с лимитами размера/времени и проверкой перенаправлений). Следующий пример начинает работу с уже подготовленного доверенного локального пути, не с произвольного URL клиента.
+
 ```php
 use Bitrix\Main\Loader;
-Loader::includeModule('iblock');
+if (!Loader::includeModule('iblock')) {
+    throw new \RuntimeException('Модуль iblock недоступен');
+}
 
 foreach ($products as $product) {
-    $picFileId = false;
-
-    if (!empty($product['IMAGE_URL'])) {
-        // MakeFileArray скачивает URL через HttpClient
-        $arFile = CFile::MakeFileArray($product['IMAGE_URL']);
-        if ($arFile) {
-            // Опциональный ресайз перед сохранением
-            CFile::ResizeImage($arFile, ['width' => 800, 'height' => 800], BX_RESIZE_IMAGE_PROPORTIONAL);
-
-            $picFileId = CFile::SaveFile($arFile, 'iblock');
-        }
+    // IMAGE_LOCAL_PATH задаёт серверный этап загрузки, не пользовательский запрос.
+    $picture = CFile::MakeFileArray($product['IMAGE_LOCAL_PATH']);
+    if (!$picture) {
+        throw new \RuntimeException('Исходное изображение недоступно');
     }
-
+    $error = CFile::CheckImageFile($picture, 5 * 1024 * 1024, 8000, 8000);
+    if ($error !== '') {
+        throw new \RuntimeException($error);
+    }
     $el = new \CIBlockElement();
-    $el->Add([
-        'IBLOCK_ID'        => CATALOG_IBLOCK_ID,
-        'NAME'             => $product['NAME'],
-        'PREVIEW_PICTURE'  => $picFileId ?: false,
-        'DETAIL_PICTURE'   => $picFileId ?: false,
-        'ACTIVE'           => 'Y',
-    ]);
+    $id = $el->Add([
+        'IBLOCK_ID' => CATALOG_IBLOCK_ID,
+        'NAME' => $product['NAME'],
+        'DETAIL_PICTURE' => $picture,
+        'ACTIVE' => 'Y',
+    ], false, true, true); // обработка картинок по настройкам инфоблока
+    if ($id === false) {
+        throw new \RuntimeException($el->LAST_ERROR);
+    }
 }
 ```
 
@@ -489,3 +491,11 @@ die();
 **Проверка на стенде:** Путь сайта разрешается независимо от cwd; ../ и неразрешённый URL не принимаются.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cfile/makefilearray.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.
+
+## K66 — Картинка элемента записывается файловым дескриптором
+
+Для добавления изображения в CIBlockElement::Add передавай файловый массив, например результат MakeFileArray, а не заранее сохранённый ID. Сохранением и связью управляет API элемента. Если нужно превью по настройкам инфоблока, проверь эти настройки и bResizePictures=true; флаг не создаёт отсутствующую конфигурацию. Проверяй false/LAST_ERROR. Ни пример, ни успешное сохранение картинки не доказывают идемпотентность всего импорта.
+
+**Проверка на стенде:** Добавление создаёт читаемую DETAIL_PICTURE; preview соответствует настройкам; ошибка Add видна импорту.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockelement/add.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.
