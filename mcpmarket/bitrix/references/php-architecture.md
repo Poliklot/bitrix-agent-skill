@@ -3498,3 +3498,11 @@ add мутирует объект. Независимый deadline создав�
 Проверка: После add у клона timestamp исходного объекта неизменен.
 
 [Официальный контракт](https://docs.1c-bitrix.ru/api/classes/Bitrix-Main-Type-DateTime.html); documentation-backed, 2026-11-01, не runtime pass.
+
+## K74 — Сутки в ORM задаются двумя границами в согласованной зоне
+
+День: [начало, начало следующего дня), clone + P1D в бизнес-зоне, затем зона хранения. Не 86400 и не toString.
+
+Проверка: Проверить полночь обеих границ и день перехода DST, включая отсутствие записи следующего дня.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/type/date/add.php); documentation-backed, 2026-11-01, не runtime pass.
