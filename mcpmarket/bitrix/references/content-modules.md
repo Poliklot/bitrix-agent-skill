@@ -1811,3 +1811,11 @@ D7 Event::send/sendImmediate: C_FIELDS, не FIELDS. Legacy CEvent::Send: тре
 Проверка: Контрольный ORDER_ID появляется в скомпилированном письме тестового получателя.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/mail/event/send.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K55 — Список сайтов в Legacy и D7 почте различается
+
+При переносе CEvent в D7 преобразуй массив разрешённых сайтов в строку LID через запятую; это не язык.
+
+Проверка: Два сайта с разными шаблонами и отдельный язык проверяются на тестовой очереди.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/mail/event/send.php); documentation-backed, 2026-11-01, не runtime pass.

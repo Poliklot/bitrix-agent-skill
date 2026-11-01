@@ -878,3 +878,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [mail-notifications.md](bitrix/references/mail-notifications.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/mail/event/send.php).
 - Самопроверка B133 — «Письмо поставилось в очередь, но ORDER_ID пуст — что проверить первым?»: Ключ C_FIELDS в D7 и соответствие макросу шаблона; успешная очередь не подтверждает содержимое.
 - Контрпример отвергнут: Передавать FIELDS по аналогии с другим API. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K55: Список сайтов в Legacy и D7 почте различается
+
+- Пробел до изменения: Нет контракта переноса многосайтовой отправки CEvent в D7.
+- Исправление: [mail-notifications.md](bitrix/references/mail-notifications.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/mail/event/send.php).
+- Самопроверка B134 — «Можно ли без изменений передать массив lid из CEvent в Event::send?»: Нет по документированному контракту: D7 LID — строка с ID через запятую.
+- Контрпример отвергнут: Считать массив сайтов одинаковым аргументом обоих API. Результат ручной проверки ответа: pass; runtime: не запускался.
