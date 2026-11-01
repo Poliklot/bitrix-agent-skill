@@ -1547,3 +1547,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [subscribe.md](bitrix/references/subscribe.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/csubscriptiongeneral/csubscriptiongeneralfields.php).
 - Самопроверка B211 — «Add не создал подписку из-за существующего EMAIL — можно сразу обновить её?»: Только после проверки доступа к найденной подписке; не раскрывать приватные данные.
 - Контрпример отвергнут: Совпадение введённого email даёт право менять USER_ID и RUB_ID. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K133: Обновление RUB_ID требует явной области сайта
+
+- Пробел до изменения: ALL_SITES был перечислен без объяснения области изменения рубрик.
+- Исправление: [subscribe.md](bitrix/references/subscribe.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/csubscriptiongeneral/csubscriptionupdate.php).
+- Самопроверка B212 — «Почему изменение рубрик одного сайта затронуло другой?»: Проверить SITE_ID/ALL_SITES и полный желаемый набор рубрик в выбранной области.
+- Контрпример отвергнут: ALL_SITES=Y безопасно включать для любого Update. Результат ручной проверки ответа: pass; runtime: не запускался.

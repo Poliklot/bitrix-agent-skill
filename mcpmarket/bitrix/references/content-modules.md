@@ -1966,3 +1966,11 @@ ForHTML — схема ключей, не HTML-разметка; get_fields=Y в
 Проверка: Два параллельных запроса не создают захват существующей подписки.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/csubscriptiongeneral/csubscriptiongeneralfields.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K133 — Обновление RUB_ID требует явной области сайта
+
+RUB_ID меняй в явном SITE_ID; ALL_SITES не включать для обхода ошибки области.
+
+Проверка: Рубрика второго сайта сохраняется при локальном изменении первого.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/csubscriptiongeneral/csubscriptionupdate.php); documentation-backed, 2026-11-01, не runtime pass.
