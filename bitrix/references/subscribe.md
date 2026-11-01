@@ -331,11 +331,18 @@ if (!$posting->ChangeStatus($postingId, 'P')) {
 CPosting::AutoSend($postingId, true, SITE_ID);
 ```
 
-Для тестовой или синхронной отправки есть:
+Для управляемого шага реальной отправки есть (это не dry-run):
 
 ```php
 $posting = new CPosting();
-$result = $posting->SendMessage($postingId, 0, 0, false);
+$result = $posting->SendMessage($postingId, 10, 100, false);
+if ($result === 'CONTINUE') {
+    // Запланировать следующий шаг того же выпуска, без сброса очереди.
+} elseif ($result === false) {
+    throw new \RuntimeException($posting->LAST_ERROR);
+} elseif ($result === true) {
+    // Шаг/выпуск завершён по контракту отправки; это не receipt доставки в inbox.
+}
 ```
 
 Но `SendMessage()` блокирует выполнение и не подходит как default-стратегия для массовой рассылки.
@@ -436,3 +443,11 @@ D→P формирует очередь; W→P продолжает её, E→P 
 **Проверка на стенде:** Продолжение не отправляет уже обработанным адресам заново.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/cpostinggeneral/cpostingchangestatus.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.
+
+## K137 — SendMessage имеет три исхода, CONTINUE не является успехом
+
+Различай строго true, false и строку CONTINUE. Продолжение возможно при лимите шага, занятой блокировке или несовпадении кодировки при её проверке; не объявляй всё отправленным по truthy. SendMessage реально отправляет очередь, это не dry-run. Ограничения timeout/maxcount относятся к персональному режиму.
+
+**Проверка на стенде:** Все три значения дают разные ветви; CONTINUE не переводит отчёт в успех.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/cpostinggeneral/cpostingsendmessage.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.

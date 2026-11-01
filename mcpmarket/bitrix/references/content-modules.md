@@ -1756,11 +1756,18 @@ if (!$posting->ChangeStatus($postingId, 'P')) {
 CPosting::AutoSend($postingId, true, SITE_ID);
 ```
 
-Для тестовой или синхронной отправки есть:
+Для управляемого шага реальной отправки есть (это не dry-run):
 
 ```php
 $posting = new CPosting();
-$result = $posting->SendMessage($postingId, 0, 0, false);
+$result = $posting->SendMessage($postingId, 10, 100, false);
+if ($result === 'CONTINUE') {
+    // Запланировать следующий шаг того же выпуска, без сброса очереди.
+} elseif ($result === false) {
+    throw new \RuntimeException($posting->LAST_ERROR);
+} elseif ($result === true) {
+    // Шаг/выпуск завершён по контракту отправки; это не receipt доставки в inbox.
+}
 ```
 
 Но `SendMessage()` блокирует выполнение и не подходит как default-стратегия для массовой рассылки.
@@ -1999,3 +2006,11 @@ Posting: pause W, retry E→P, D сбрасывает очередь; запус
 Проверка: Продолжение не отправляет уже обработанным адресам заново.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/cpostinggeneral/cpostingchangestatus.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K137 — SendMessage имеет три исхода, CONTINUE не является успехом
+
+SendMessage: true/false/CONTINUE разбирать строго; метод реально отправляет, не тестовый.
+
+Проверка: Все три значения дают разные ветви; CONTINUE не переводит отчёт в успех.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/cpostinggeneral/cpostingsendmessage.php); documentation-backed, 2026-11-01, не runtime pass.

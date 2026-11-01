@@ -1575,3 +1575,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [subscribe.md](bitrix/references/subscribe.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/cpostinggeneral/cpostingchangestatus.php).
 - Самопроверка B215 — «Как продолжить остановленную рассылку, не собрать список заново?»: W→P; не переводить в D для обычного продолжения.
 - Контрпример отвергнут: Статус можно писать напрямую, D — безопасная пауза. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K137: SendMessage имеет три исхода, CONTINUE не является успехом
+
+- Пробел до изменения: Пример не разбирал частичную отправку и ошибочно называл метод тестовым.
+- Исправление: [subscribe.md](bitrix/references/subscribe.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/cpostinggeneral/cpostingsendmessage.php).
+- Самопроверка B216 — «Если SendMessage вернул CONTINUE, можно показать «готово»?»: Нет; сохранить продолжение и проверить причину, не сбрасывая очередь.
+- Контрпример отвергнут: Любая непустая строка означает успешную полную отправку. Результат ручной проверки ответа: pass; runtime: не запускался.
