@@ -1063,3 +1063,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [orm.md](bitrix/references/orm.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=43&LESSON_ID=3030).
 - Самопроверка B158 — «Почему подчёркивание в коде сопоставилось с другим символом?»: Это wildcard LIKE; определить буквальный или шаблонный поиск и явно задать его.
 - Контрпример отвергнут: Считать underscore буквальным символом или гарантировать prefix без маски. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K80: TTL ORM-кеша не включает кеширование JOIN автоматически
+
+- Пробел до изменения: Нет отдельного контракта кеша ORM-запросов с JOIN и его принудительной очистки.
+- Исправление: [orm.md](bitrix/references/orm.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=43&LESSON_ID=5753).
+- Самопроверка B159 — «Почему JOIN-запрос снова обращается к БД при заданном ttl?»: Проверить cache_joins и настройки кеширования; включать лишь с корректной инвалидизацией зависимостей.
+- Контрпример отвергнут: Считать ttl достаточным для любого JOIN и любого способа записи. Результат ручной проверки ответа: pass; runtime: не запускался.

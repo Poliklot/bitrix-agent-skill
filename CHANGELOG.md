@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+- K80: TTL ORM-кеша не включает кеширование JOIN автоматически — дополнены знания, full/compact и сценарий B159.
+
 - K79: LIKE-паттерн задаётся явно, wildcard не является SQL injection — дополнены знания, full/compact и сценарий B158.
 
 - K78: ExpressionField не параметризует произвольный SQL-текст — дополнены знания, full/compact и сценарий B157.

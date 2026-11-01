@@ -3546,3 +3546,11 @@ whereLike принимает явный pattern. % и _ расширяют по�
 Проверка: Коды order_1 и orderX1 различаются при буквальном поиске и ожидаемо совпадают при маске.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=43&LESSON_ID=3030); documentation-backed, 2026-11-01, не runtime pass.
+
+## K80 — TTL ORM-кеша не включает кеширование JOIN автоматически
+
+ORM cache.ttl не включает JOIN: нужен cache_joins. Внешний SQL требует явной политики сброса; entity cleanCache не равен очистке HTML.
+
+Проверка: Повторный запрос, изменение основной/связанной записи и внешний импорт не оставляют устаревший результат.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=43&LESSON_ID=5753); documentation-backed, 2026-11-01, не runtime pass.
