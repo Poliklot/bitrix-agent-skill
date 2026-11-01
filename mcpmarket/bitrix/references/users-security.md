@@ -249,8 +249,8 @@ $oUserTypeEntity->Add([
 // Назначить группы (ЗАМЕНЯЕТ все существующие)
 CUser::SetUserGroup($userId, [5, 8, 14]);
 
-// Добавить в группу (сохранив остальные)
-$currentGroups = $USER->GetUserGroupArray();
+// Добавить в группу целевого пользователя (для членств без интервалов; см. K82)
+$currentGroups = CUser::GetUserGroup($userId);
 if (!in_array(5, $currentGroups)) {
     CUser::SetUserGroup($userId, array_merge($currentGroups, [5]));
 }
@@ -1812,3 +1812,11 @@ $links = UserLinkTable::getList([
 - Не хардкодь URL callback, если провайдер уже умеет собрать его сам.
 
 ---
+
+## K81 — Группы изменяемого пользователя не равны группам оператора
+
+Из записи клиента по целевому userId, не из USER оператора; проверить право назначения.
+
+Проверка: У оператора и цели разные группы; после операции у цели нет лишних привилегий.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cuser/getusergroup.php); documentation-backed, 2026-11-01, не runtime pass.

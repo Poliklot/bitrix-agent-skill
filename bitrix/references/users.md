@@ -242,8 +242,8 @@ $oUserTypeEntity->Add([
 // Назначить группы (ЗАМЕНЯЕТ все существующие)
 CUser::SetUserGroup($userId, [5, 8, 14]);
 
-// Добавить в группу (сохранив остальные)
-$currentGroups = $USER->GetUserGroupArray();
+// Добавить в группу целевого пользователя (для членств без интервалов; см. K82)
+$currentGroups = CUser::GetUserGroup($userId);
 if (!in_array(5, $currentGroups)) {
     CUser::SetUserGroup($userId, array_merge($currentGroups, [5]));
 }
@@ -347,3 +347,11 @@ $em->addEventHandler('main', 'OnUserLoginComplete', function(\Bitrix\Main\Event 
 - `$USER->IsAdmin()` — только системный администратор (группа 1). Для проверки других групп используй `GetUserGroupArray()`
 - `CUser::GetByID` возвращает db_result, надо вызвать `->Fetch()`
 - Пароль в `Add/Update` всегда открытый — ядро само хеширует через `Password::hash()`
+
+## K81 — Группы изменяемого пользователя не равны группам оператора
+
+Для изменения другого пользователя читай членство именно по его ID. GetUserGroupArray относится к текущей сессии; перенос её групп может выдать цели права оператора. Назначаемые группы определяет серверная политика, не POST. Пример с простыми ID подходит только без временных членств; сохранение интервалов описано в K82.
+
+**Проверка на стенде:** У оператора и цели разные группы; после операции у цели нет лишних привилегий.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cuser/getusergroup.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.
