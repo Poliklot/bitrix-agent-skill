@@ -4,25 +4,19 @@
 
 ## [Unreleased]
 
-- K130: GetDataByIDForHTML возвращает данные для имён полей, не готовую разметку — дополнены знания, full/compact и сценарий B209.
+## [1.46.0] — 2026-11-01
 
-- K129: Фильтр ответов результата вложен в FIELDS — дополнены знания, full/compact и сценарий B208.
-
-- K128: SetField принимает значения по ID ответа, false очищает — дополнены знания, full/compact и сценарий B207.
-
-- K127: Update управляет дополнительными полями отдельным флагом — дополнены знания, full/compact и сценарий B206.
-
-- K126: GetDataByID даёт две разные индексации ответов — дополнены знания, full/compact и сценарий B205.
-
-- K125: Неактивный вопрос может молча не сохранить ответ — дополнены знания, full/compact и сценарий B204.
-
-- K124: user_id в Add задаёт автора, не субъекта проверки прав — дополнены знания, full/compact и сценарий B203.
-
-- K123: Check возвращает ошибки и знает редактируемый результат — дополнены знания, full/compact и сценарий B202.
-
-- K122: values=false читает REQUEST, а не пустую форму — дополнены знания, full/compact и сценарий B201.
-
+### Added
 - K121: HTML-имена ответов зависят от типа вопроса — дополнены знания, full/compact и сценарий B200.
+- K122: values=false читает REQUEST, а не пустую форму — дополнены знания, full/compact и сценарий B201.
+- K123: Check возвращает ошибки и знает редактируемый результат — дополнены знания, full/compact и сценарий B202.
+- K124: user_id в Add задаёт автора, не субъекта проверки прав — дополнены знания, full/compact и сценарий B203.
+- K125: Неактивный вопрос может молча не сохранить ответ — дополнены знания, full/compact и сценарий B204.
+- K126: GetDataByID даёт две разные индексации ответов — дополнены знания, full/compact и сценарий B205.
+- K127: Update управляет дополнительными полями отдельным флагом — дополнены знания, full/compact и сценарий B206.
+- K128: SetField принимает значения по ID ответа, false очищает — дополнены знания, full/compact и сценарий B207.
+- K129: Фильтр ответов результата вложен в FIELDS — дополнены знания, full/compact и сценарий B208.
+- K130: GetDataByIDForHTML возвращает данные для имён полей, не готовую разметку — дополнены знания, full/compact и сценарий B209.
 
 ## [1.45.0] — 2026-11-01
 
@@ -654,7 +648,8 @@
 ### Added
 - Первый публичный релиз: `SKILL.md`, progressive disclosure архитектура
 
-[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.45.0...HEAD
+[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.46.0...HEAD
+[1.46.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.45.0...v1.46.0
 [1.45.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.44.0...v1.45.0
 [1.44.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.43.0...v1.44.0
 [1.43.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.42.0...v1.43.0
