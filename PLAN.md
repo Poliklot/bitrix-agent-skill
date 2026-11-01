@@ -812,3 +812,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [components.md](bitrix/references/components.md) и [components-admin-ui.md](mcpmarket/bitrix/references/components-admin-ui.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=43&LESSON_ID=2192).
 - Самопроверка B125 — «ID подписан компонентом: можно пропустить проверку прав в AJAX?»: Нет: проверить актуального пользователя и объект; подпись защищает целостность параметров, не полномочия.
 - Контрпример отвергнут: Поместить секрет в подпись или доверять всему data рядом с ней. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K47: Действие компонента и действие модуля имеют разные маршруты
+
+- Пробел до изменения: Нет выбора runComponentAction mode=class/ajax; есть только модульный runAction.
+- Исправление: [components.md](bitrix/references/components.md) и [components-admin-ui.md](mcpmarket/bitrix/references/components-admin-ui.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/js_lib/ajax/bx_ajax_runcomponentaction.php).
+- Самопроверка B126 — «Вызвал vendor:widget через runAction: почему action не найден?»: Разделить модульный и компонентный диспетчер, выбрать mode по месту реализации действия.
+- Контрпример отвергнут: Подменить компонентный маршрут модульным либо обращаться напрямую к файлу ajax.php. Результат ручной проверки ответа: pass; runtime: не запускался.

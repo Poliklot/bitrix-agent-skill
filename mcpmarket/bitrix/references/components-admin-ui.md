@@ -3330,3 +3330,11 @@ Whitelist listKeysSignedParameters → signedParameters; ajax.php читает g
 Проверка: Испорченная подпись отклонена; валидная подпись без доступа не разрешает операцию.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=43&LESSON_ID=2192); documentation-backed, 2026-11-01, не runtime pass.
+
+## K47 — Действие компонента и действие модуля имеют разные маршруты
+
+Компонент: runComponentAction(name, action, {mode:class/ajax}); модуль: runAction. Не открывать ajax.php напрямую и не добавлять Action к имени вызова.
+
+Проверка: Одинаковое имя действия в class/ajax попадает в выбранную реализацию; неверный mode даёт явную ошибку.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/js_lib/ajax/bx_ajax_runcomponentaction.php); documentation-backed, 2026-11-01, не runtime pass.
