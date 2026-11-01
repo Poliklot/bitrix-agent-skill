@@ -1898,3 +1898,11 @@ Add user_id — автор записи, права остаются у теку
 Проверка: Оператор без права заполнения не обходит отказ подменой автора.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/classes/cformresult/add.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K125 — Неактивный вопрос может молча не сохранить ответ
+
+Успешный Add не гарантирует запись неактивных вопросов: проверяй ACTIVE и mapping.
+
+Проверка: Неактивный вопрос распознаётся до импорта, его потеря не маскируется успехом.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/classes/cformresult/add.php); documentation-backed, 2026-11-01, не runtime pass.
