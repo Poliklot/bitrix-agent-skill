@@ -805,3 +805,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [components.md](bitrix/references/components.md) и [components-admin-ui.md](mcpmarket/bitrix/references/components-admin-ui.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cbitrixcomponent/startresultcache.php).
 - Самопроверка B124 — «У компонента один arParams, но разные региональные цены: почему смешались?»: Добавить нормализованный регион/контекст доступа в additionalCacheID и проверять права до кеша.
 - Контрпример отвергнут: Читать контекст только внутри miss и считать CACHE_GROUPS автоматической защитой. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K46: Подписанные параметры компонента: целостность, не право доступа
+
+- Пробел до изменения: Есть список ключей подписи без ограничений доверия, хранения и чтения в ajax.php.
+- Исправление: [components.md](bitrix/references/components.md) и [components-admin-ui.md](mcpmarket/bitrix/references/components-admin-ui.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=43&LESSON_ID=2192).
+- Самопроверка B125 — «ID подписан компонентом: можно пропустить проверку прав в AJAX?»: Нет: проверить актуального пользователя и объект; подпись защищает целостность параметров, не полномочия.
+- Контрпример отвергнут: Поместить секрет в подпись или доверять всему data рядом с ней. Результат ручной проверки ответа: pass; runtime: не запускался.

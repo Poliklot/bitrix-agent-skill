@@ -3322,3 +3322,11 @@ local/components задаёт реализацию, не приоритет на
 Проверка: Два региона и отозванный доступ: разные результаты, запрет действует на тёплом кеше.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cbitrixcomponent/startresultcache.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K46 — Подписанные параметры компонента: целостность, не право доступа
+
+Whitelist listKeysSignedParameters → signedParameters; ajax.php читает getUnsignedParameters. Подпись не шифрует и не авторизует; data и объектные права проверять отдельно.
+
+Проверка: Испорченная подпись отклонена; валидная подпись без доступа не разрешает операцию.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=43&LESSON_ID=2192); documentation-backed, 2026-11-01, не runtime pass.
