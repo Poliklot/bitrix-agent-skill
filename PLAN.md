@@ -871,3 +871,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [modules-loader.md](bitrix/references/modules-loader.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/config/option/getrealvalue.php).
 - Самопроверка B132 — «Как не перезаписать сохранённый ноль при установке default?»: Получить реальное значение и сравнить с null строго; get с fallback не доказывает наличие записи.
 - Контрпример отвергнут: Если empty(Option::get(...)), записать default. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K54: Макросы D7 почты передаются через C_FIELDS
+
+- Пробел до изменения: Три примера Event::send/sendImmediate передавали FIELDS вместо документированного C_FIELDS.
+- Исправление: [mail-notifications.md](bitrix/references/mail-notifications.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/mail/event/send.php).
+- Самопроверка B133 — «Письмо поставилось в очередь, но ORDER_ID пуст — что проверить первым?»: Ключ C_FIELDS в D7 и соответствие макросу шаблона; успешная очередь не подтверждает содержимое.
+- Контрпример отвергнут: Передавать FIELDS по аналогии с другим API. Результат ручной проверки ответа: pass; runtime: не запускался.

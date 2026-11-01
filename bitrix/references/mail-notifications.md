@@ -78,7 +78,7 @@ use Bitrix\Main\Mail\Event;
 $result = Event::send([
     'EVENT_NAME' => 'MY_MODULE_ORDER_NEW',
     'LID' => SITE_ID,
-    'FIELDS' => [
+    'C_FIELDS' => [
         'ORDER_ID' => $orderId,
         'EMAIL' => $email,
         'TOTAL' => $total,
@@ -99,7 +99,7 @@ use Bitrix\Main\Mail\Event;
 $sendResult = Event::sendImmediate([
     'EVENT_NAME' => 'MY_MODULE_ORDER_NEW',
     'LID' => SITE_ID,
-    'FIELDS' => [
+    'C_FIELDS' => [
         'ORDER_ID' => $orderId,
         'EMAIL' => $email,
     ],
@@ -139,7 +139,7 @@ use Bitrix\Main\Mail\Event;
 Event::send([
     'EVENT_NAME' => 'MY_MODULE_ORDER_NEW',
     'LID' => SITE_ID,
-    'FIELDS' => [
+    'C_FIELDS' => [
         'ORDER_ID' => $orderId,
         'EMAIL' => $email,
     ],
@@ -271,3 +271,11 @@ while ($row = $result->fetch())
 - `OnBeforeEventSend` в текущем core реально может отменить шаблон через `return false`; не пиши в reference обратное.
 - Если шаблон не найден, `sendImmediate()` вернёт `'0'`, а не `false`.
 - `CEvent::Send()` только кладёт событие в очередь. Письмо уйдёт, когда отработает mail-event manager/агент.
+
+## K54 — Макросы D7 почты передаются через C_FIELDS
+
+В массиве параметров `Bitrix\Main\Mail\Event` передавай макросы через `C_FIELDS`. `FIELDS` — не документированная замена этого ключа. Не переноси форму аргументов из иных API: у CEvent::Send поля идут третьим позиционным аргументом. После постановки проверяй AddResult и подстановку контрольного макроса, а не только отсутствие исключения.
+
+**Проверка на стенде:** Контрольный ORDER_ID появляется в скомпилированном письме тестового получателя.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/mail/event/send.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.

@@ -1214,7 +1214,7 @@ use Bitrix\Main\Mail\Event;
 $result = Event::send([
     'EVENT_NAME' => 'MY_MODULE_ORDER_NEW',
     'LID' => SITE_ID,
-    'FIELDS' => [
+    'C_FIELDS' => [
         'ORDER_ID' => $orderId,
         'EMAIL' => $email,
         'TOTAL' => $total,
@@ -1235,7 +1235,7 @@ use Bitrix\Main\Mail\Event;
 $sendResult = Event::sendImmediate([
     'EVENT_NAME' => 'MY_MODULE_ORDER_NEW',
     'LID' => SITE_ID,
-    'FIELDS' => [
+    'C_FIELDS' => [
         'ORDER_ID' => $orderId,
         'EMAIL' => $email,
     ],
@@ -1275,7 +1275,7 @@ use Bitrix\Main\Mail\Event;
 Event::send([
     'EVENT_NAME' => 'MY_MODULE_ORDER_NEW',
     'LID' => SITE_ID,
-    'FIELDS' => [
+    'C_FIELDS' => [
         'ORDER_ID' => $orderId,
         'EMAIL' => $email,
     ],
@@ -1803,3 +1803,11 @@ CPostingTemplate::Execute();
 - Если включаешь `SEND_CONFIRM`, не забывай, что подписка останется неподтверждённой до прохождения confirm-flow.
 
 ---
+
+## K54 — Макросы D7 почты передаются через C_FIELDS
+
+D7 Event::send/sendImmediate: C_FIELDS, не FIELDS. Legacy CEvent::Send: третий аргумент. Проверяй подстановку макроса.
+
+Проверка: Контрольный ORDER_ID появляется в скомпилированном письме тестового получателя.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/mail/event/send.php); documentation-backed, 2026-11-01, не runtime pass.
