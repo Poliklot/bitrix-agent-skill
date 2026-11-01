@@ -3565,3 +3565,11 @@ ORM cache.ttl не включает JOIN: нужен cache_joins. Внешний
 Проверка: Одинаковый ключ из нужного файла доступен после правильной регистрации пути, без массовых include.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/localization/loc/loadmessages.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K96 — Коды Loc не изолированы PHP-файлом
+
+Нет гарантированной изоляции; использовать уникальные префиксные коды.
+
+Проверка: Два компонента с разным порядком подключения сохраняют свои тексты.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/localization/loc/getmessage.php); documentation-backed, 2026-11-01, не runtime pass.

@@ -1228,3 +1228,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [modules-loader.md](bitrix/references/modules-loader.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/localization/loc/loadmessages.php).
 - Самопроверка B174 — «Почему helper не нашёл перевод компонента после loadMessages(__FILE__)?»: Проверить, чей путь передан: lazy loading привязано к исходному файлу регистрации.
 - Контрпример отвергнут: Считать getMessage поиском рядом с местом каждого вызова. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K96: Коды Loc не изолированы PHP-файлом
+
+- Пробел до изменения: Нет предупреждения о глобальной уникальности кода сообщения.
+- Исправление: [modules-loader.md](bitrix/references/modules-loader.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/localization/loc/getmessage.php).
+- Самопроверка B175 — «Можно ли в каждом файле объявлять собственный MESS[TITLE]?»: Нет гарантированной изоляции; использовать уникальные префиксные коды.
+- Контрпример отвергнут: Полагаться на приватность lang-файла для общего ключа. Результат ручной проверки ответа: pass; runtime: не запускался.
