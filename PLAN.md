@@ -1752,3 +1752,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [currency.md](bitrix/references/currency.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/currency/currencymanager/checkcurrencyid.php).
 - Самопроверка B236 — «checkCurrencyID вернул USD — почему проверка === true отвергает валюту?»: Успех возвращается строкой; проверить !== false и отдельно существование.
 - Контрпример отвергнут: Валидный код гарантирует установленную и разрешённую валюту. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K158: updateBaseRates пересчитывает локальные данные, не скачивает курсы
+
+- Пробел до изменения: Не было границы между загрузкой внешних курсов и внутренним пересчётом.
+- Исправление: [currency.md](bitrix/references/currency.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/currency/currencymanager/updatebaserates.php).
+- Самопроверка B237 — «Почему updateBaseRates не подтянул сегодняшний курс из внешнего источника?»: Это локальный пересчёт; сначала нужен разрешённый импорт курсов и проверка их даты.
+- Контрпример отвергнут: Название update означает сетевую загрузку новых курсов. Результат ручной проверки ответа: pass; runtime: не запускался.

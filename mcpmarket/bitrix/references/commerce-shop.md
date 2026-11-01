@@ -4691,3 +4691,11 @@ checkCurrencyID → string/false, не bool; наличие — isCurrencyExist,
 Проверка: Неустановленный код не попадает в запись цены даже при допустимой форме идентификатора.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/currency/currencymanager/checkcurrencyid.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K158 — updateBaseRates пересчитывает локальные данные, не скачивает курсы
+
+updateBaseRates использует БД, не сеть; актуальность внешних курсов проверяется отдельно.
+
+Проверка: Без новых строк источника вызов не выдаётся за успешное внешнее обновление.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/currency/currencymanager/updatebaserates.php); documentation-backed, 2026-11-01, не runtime pass.
