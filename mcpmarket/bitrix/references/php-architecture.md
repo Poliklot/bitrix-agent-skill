@@ -1099,10 +1099,13 @@ class vendor_mymodule extends CModule
 
     public function __construct()
     {
-        $version = [];
+        $arModuleVersion = [];
         include __DIR__ . '/version.php';
-        $this->MODULE_VERSION      = $version['VERSION'];
-        $this->MODULE_VERSION_DATE = $version['VERSION_DATE'];
+        if (empty($arModuleVersion['VERSION']) || empty($arModuleVersion['VERSION_DATE'])) {
+            throw new \RuntimeException('Некорректный install/version.php');
+        }
+        $this->MODULE_VERSION      = $arModuleVersion['VERSION'];
+        $this->MODULE_VERSION_DATE = $arModuleVersion['VERSION_DATE'];
         $this->MODULE_NAME         = Loc::getMessage('VENDOR_MYMODULE_NAME');
         $this->MODULE_DESCRIPTION  = Loc::getMessage('VENDOR_MYMODULE_DESCRIPTION');
     }
@@ -3589,3 +3592,11 @@ ORM cache.ttl не включает JOIN: нужен cache_joins. Внешний
 Проверка: В одном процессе ru и en возвращаются независимо от текущего языка интерфейса.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/localization/loc/getmessage.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K99 — Версия модуля читается из arModuleVersion
+
+Читать arModuleVersion, а не version; проверить оба обязательных значения.
+
+Проверка: Фикстура стандартного version.php заполняет свойства; отсутствие ключа даёт явную ошибку.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=101&LESSON_ID=2902); documentation-backed, 2026-11-01, не runtime pass.

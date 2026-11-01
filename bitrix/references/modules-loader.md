@@ -202,10 +202,13 @@ class vendor_mymodule extends CModule
 
     public function __construct()
     {
-        $version = [];
+        $arModuleVersion = [];
         include __DIR__ . '/version.php';
-        $this->MODULE_VERSION      = $version['VERSION'];
-        $this->MODULE_VERSION_DATE = $version['VERSION_DATE'];
+        if (empty($arModuleVersion['VERSION']) || empty($arModuleVersion['VERSION_DATE'])) {
+            throw new \RuntimeException('Некорректный install/version.php');
+        }
+        $this->MODULE_VERSION      = $arModuleVersion['VERSION'];
+        $this->MODULE_VERSION_DATE = $arModuleVersion['VERSION_DATE'];
         $this->MODULE_NAME         = Loc::getMessage('VENDOR_MYMODULE_NAME');
         $this->MODULE_DESCRIPTION  = Loc::getMessage('VENDOR_MYMODULE_DESCRIPTION');
     }
@@ -633,3 +636,11 @@ loadMessages(__FILE__) отмечает исходный файл для лен�
 **Проверка на стенде:** В одном процессе ru и en возвращаются независимо от текущего языка интерфейса.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/localization/loc/getmessage.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.
+
+## K99 — Версия модуля читается из arModuleVersion
+
+Стандартный install/version.php заполняет arModuleVersion с VERSION и VERSION_DATE. Конструктор должен читать именно этот массив и явно отклонять неполное описание, а не получать null/notice. Имя переменной — часть формата, который использует инфраструктура модуля; произвольный return-массив требует отдельного согласованного загрузчика и не является заменой штатного файла.
+
+**Проверка на стенде:** Фикстура стандартного version.php заполняет свойства; отсутствие ключа даёт явную ошибку.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=101&LESSON_ID=2902). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.

@@ -191,3 +191,5 @@ Gate: перед релизом бытового слоя выбрать мин�
 | B176 | Безопасно ли echo Loc::getMessage с именем из формы? | `modules-loader` / `php-architecture` | Подстановка не sanitizer; экранировать результат для конкретного контекста вывода. | Считать переведённую строку автоматически HTML-безопасной |
 
 | B177 | Как получить английский текст без выдуманного getMessageByLang? | `modules-loader` / `php-architecture` | Загрузить нужный файл и вызвать getMessage(code, replacements, en). | Вызывать getMessageByLang как гарантированный публичный метод |
+
+| B178 | Почему версия модуля пустая после include стандартного version.php? | `modules-loader` / `php-architecture` | Читать arModuleVersion, а не version; проверить оба обязательных значения. | Считать имя локальной переменной произвольным при штатном формате |
