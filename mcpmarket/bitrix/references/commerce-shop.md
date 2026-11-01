@@ -4569,3 +4569,11 @@ Price::update(priceId, fields): сначала выбрать нужную це�
 Проверка: Две цены одного товара не изменяются обе при точечной правке одной.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/catalog/model/price/update.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K143 — PRICE_SCALE — производное значение в базовой валюте
+
+PRICE_SCALE — базовая валюта, не дубль PRICE; штатный model write рассчитывает его.
+
+Проверка: Одинаковые числа в разных валютах дают корректно различающиеся нормализованные значения.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/catalog/pricetable/index.php?print=Y); documentation-backed, 2026-11-01, не runtime pass.

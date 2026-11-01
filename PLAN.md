@@ -1647,3 +1647,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [catalog.md](bitrix/references/catalog.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/catalog/model/price/update.php).
 - Самопроверка B221 — «Можно ли передать PRODUCT_ID первым аргументом Price::update?»: Нет; это ID цены, найденной и проверенной в нужном товаре/типе/диапазоне.
 - Контрпример отвергнут: ID товара, типа и цены взаимозаменяемы. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K143: PRICE_SCALE — производное значение в базовой валюте
+
+- Пробел до изменения: Поле PRICE_SCALE не объяснялось и могло заполняться исходной ценой другой валюты.
+- Исправление: [catalog.md](bitrix/references/catalog.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/catalog/pricetable/index.php?print=Y).
+- Самопроверка B222 — «Можно ли при импорте USD записать PRICE_SCALE равным числу PRICE?»: Нет; сохранять исходную цену/валюту и использовать штатный пересчёт.
+- Контрпример отвергнут: PRICE_SCALE всегда совпадает с PRICE. Результат ручной проверки ответа: pass; runtime: не запускался.
