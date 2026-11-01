@@ -1496,3 +1496,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [webforms.md](bitrix/references/webforms.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/classes/cformresult/getlist.php).
 - Самопроверка B208 — «Как отфильтровать результаты по введённому EMAIL, а не подписи ответа?»: FIELDS с нужным SID, PARAMETER_NAME=USER и подходящим FILTER_TYPE.
 - Контрпример отвергнут: Искать пользовательский ввод через ANSWER_TEXT либо PROPERTY_EMAIL. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K130: GetDataByIDForHTML возвращает данные для имён полей, не готовую разметку
+
+- Пробел до изменения: Название helper могло трактоваться как готовый безопасный HTML или полный набор служебных полей.
+- Исправление: [webforms.md](bitrix/references/webforms.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/classes/cformresult/getdatabyidforhtml.php).
+- Самопроверка B209 — «Можно ли echo всего результата GetDataByIDForHTML и передать файл как новый upload?»: Нет; это массив значений с HTML-ключами, файл — сохранённый ID, вывод экранируется по контексту.
+- Контрпример отвергнут: ForHTML означает готовую безопасную HTML-строку. Результат ручной проверки ответа: pass; runtime: не запускался.

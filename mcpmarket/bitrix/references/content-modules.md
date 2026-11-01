@@ -1942,3 +1942,11 @@ GetList FIELDS: SID + PARAMETER_NAME + VALUE + FILTER_TYPE; это не PROPERTY
 Проверка: Одинаковая подпись поля не смешивает результаты с разным пользовательским вводом.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/classes/cformresult/getlist.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K130 — GetDataByIDForHTML возвращает данные для имён полей, не готовую разметку
+
+ForHTML — схема ключей, не HTML-разметка; get_fields=Y включает дополнительные поля.
+
+Проверка: Форма редактирования показывает текст с кавычками и сохранённое вложение без повторной загрузки.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/classes/cformresult/getdatabyidforhtml.php); documentation-backed, 2026-11-01, не runtime pass.
