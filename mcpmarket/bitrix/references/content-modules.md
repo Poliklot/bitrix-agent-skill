@@ -1922,3 +1922,11 @@ Update(result, values, update_fields, check_rights): дополнительны�
 Проверка: Обычные ответы и служебное поле меняются только по выбранной политике.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/classes/cformresult/update.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K128 — SetField принимает значения по ID ответа, false очищает
+
+SetField: SID + карта ANSWER_ID→значение; для дополнительного поля скаляр; false очищает.
+
+Проверка: Текст, выбор и явная очистка дают три ожидаемых результата без потери соседних вопросов.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/classes/cformresult/setfield.php); documentation-backed, 2026-11-01, не runtime pass.

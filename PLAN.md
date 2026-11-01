@@ -1482,3 +1482,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [webforms.md](bitrix/references/webforms.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/classes/cformresult/update.php).
 - Самопроверка B206 — «Почему служебное поле ADDITIONAL не меняется при Update по умолчанию?»: Нужен осознанный update_fields=Y и проверка прав; не отключать check_rights.
 - Контрпример отвергнут: Третий аргумент всегда означает права, как у Add. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K128: SetField принимает значения по ID ответа, false очищает
+
+- Пробел до изменения: Упоминался SetField без формата аргумента и опасного default.
+- Исправление: [webforms.md](bitrix/references/webforms.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/classes/cformresult/setfield.php).
+- Самопроверка B207 — «Можно ли не передавать value в SetField, чтобы оставить ответ прежним?»: Нет, false очищает; отсутствие изменения означает не вызывать метод.
+- Контрпример отвергнут: SetField принимает тот же payload, что Add, и пропуск безопасен. Результат ручной проверки ответа: pass; runtime: не запускался.
