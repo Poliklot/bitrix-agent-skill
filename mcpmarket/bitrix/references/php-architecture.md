@@ -958,7 +958,8 @@ use Bitrix\Main\Localization\Loc;
 
 Loc::loadMessages(__FILE__); // вызывай в начале каждого файла где нужны переводы
 
-echo Loc::getMessage('MY_MODULE_GREETING', ['#NAME#' => 'Иван']);
+$greeting = Loc::getMessage('MY_MODULE_GREETING', ['#NAME#' => 'Иван']);
+echo htmlspecialcharsbx($greeting); // перевод здесь plain text, вывод в HTML-текст
 // lang/ru/my_file.php: $MESS['MY_MODULE_GREETING'] = 'Привет, #NAME#!';
 // lang/en/my_file.php: $MESS['MY_MODULE_GREETING'] = 'Hello, #NAME#!';
 ```
@@ -3571,5 +3572,13 @@ ORM cache.ttl не включает JOIN: нужен cache_joins. Внешний
 Нет гарантированной изоляции; использовать уникальные префиксные коды.
 
 Проверка: Два компонента с разным порядком подключения сохраняют свои тексты.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/localization/loc/getmessage.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K97 — Подстановка Loc не экранирует значение для HTML
+
+Подстановка не sanitizer; экранировать результат для конкретного контекста вывода.
+
+Проверка: Имя с HTML-тегом отображается текстом и не исполняется.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/localization/loc/getmessage.php); documentation-backed, 2026-11-01, не runtime pass.

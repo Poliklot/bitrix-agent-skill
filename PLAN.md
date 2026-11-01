@@ -1235,3 +1235,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [modules-loader.md](bitrix/references/modules-loader.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/localization/loc/getmessage.php).
 - Самопроверка B175 — «Можно ли в каждом файле объявлять собственный MESS[TITLE]?»: Нет гарантированной изоляции; использовать уникальные префиксные коды.
 - Контрпример отвергнут: Полагаться на приватность lang-файла для общего ключа. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K97: Подстановка Loc не экранирует значение для HTML
+
+- Пробел до изменения: Вывод с заменой #NAME# не объяснял границу текста и HTML.
+- Исправление: [modules-loader.md](bitrix/references/modules-loader.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/localization/loc/getmessage.php).
+- Самопроверка B176 — «Безопасно ли echo Loc::getMessage с именем из формы?»: Подстановка не sanitizer; экранировать результат для конкретного контекста вывода.
+- Контрпример отвергнут: Считать переведённую строку автоматически HTML-безопасной. Результат ручной проверки ответа: pass; runtime: не запускался.
