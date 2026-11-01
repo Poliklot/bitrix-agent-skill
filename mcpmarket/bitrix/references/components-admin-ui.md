@@ -541,25 +541,20 @@ LANG              // 'ru' — то же самое
 
 ---
 
-## component_epilog.php и component_prolog.php
+## component_epilog.php и данные кеша
 
-Выполняются до/после шаблона компонента, но **вне кешируемого блока**:
+Page effects, которые нужны и на тёплом HTML-кеше, выполняй в `component_epilog.php`. До сохранения кеша включи `META_TITLE` в `SetResultCacheKeys` компонента.
 
 ```php
-// /local/templates/my_tpl/components/bitrix/news.list/my_tpl/component_prolog.php
-// Выполняется ВСЕГДА, даже при выдаче из кеша
-// Используется для: AddChainItem, SetTitle, SetPageProperty
-
+// component_epilog.php
+if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die();
 global $APPLICATION;
 if (!empty($arResult['META_TITLE'])) {
     $APPLICATION->SetTitle($arResult['META_TITLE']);
 }
 ```
 
-```php
-// component_epilog.php — выполняется после шаблона
-// Используется для: SEO-данных, финальных изменений
-```
+`component_prolog.php` не считай автоматически вызываемым файлом: для такого проектного расширения найди явное подключение. Контракт эпилога и ограничения — K43.
 
 ---
 
@@ -630,7 +625,7 @@ $frame = $this->createFrame('header-cart-counter')->begin('');
 - У `CBitrixComponentTemplate` в текущем core нет подтверждённого `$this->GetTemplatePath(...)`: для URL ресурса шаблона компонента используй `$this->GetFolder() . '/img.png'`
 - Если нужен серверный путь к ресурсу шаблона компонента, собирай его явно: `$_SERVER['DOCUMENT_ROOT'] . $this->GetFolder() . '/img.png'`
 - `Asset::addCss/addJs` дедублирует по пути — можно вызывать несколько раз без дублей
-- В `component_epilog.php` переменная `$arResult` доступна, в `component_prolog.php` — нет (компонент ещё не выполнен)
+- В `component_epilog.php` рассчитывай на сохранённые ключи `$arResult`; произвольный `component_prolog.php` требует подтверждённого проектного подключения.
 - `SITE_TEMPLATE_PATH` — URL-путь к шаблону (без хоста), удобен для построения URL ресурсов
 
 ---
@@ -3305,3 +3300,11 @@ HTML-кеш: шаблон внутри StartResultCache; на hit вывод у�
 Проверка: Два пользователя по одному URL не видят имя друг друга на тёплом кеше.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cbitrixcomponent/setresultcachekeys.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K43 — Эпилог и сохранённые данные вместо вымышленного component_prolog
+
+Page effects — component_epilog с сохранёнными ключами/templateData. result_modifier не каждый hit; component_prolog не считать автоматическим hook без явного include.
+
+Проверка: Холодный/тёплый запросы дают одинаковый title без повторной выборки данных.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=43&CHAPTER_ID=02975); documentation-backed, 2026-11-01, не runtime pass.

@@ -784,3 +784,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [components.md](bitrix/references/components.md) и [components-admin-ui.md](mcpmarket/bitrix/references/components-admin-ui.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cbitrixcomponent/setresultcachekeys.php).
 - Самопроверка B121 — «Убрал CURRENT_USER из cache keys: имя теперь безопасно в общем HTML?»: Нет: HTML уже содержит имя; изменить границу/ключ кеша, не только состав arResult.
 - Контрпример отвергнут: Считать cache keys механизмом очистки персонального HTML. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K43: Эпилог и сохранённые данные вместо вымышленного component_prolog
+
+- Пробел до изменения: Показан component_prolog.php с arResult, ниже утверждалось, что arResult там недоступен; автоматический hook не обоснован.
+- Исправление: [templates.md](bitrix/references/templates.md) и [components-admin-ui.md](mcpmarket/bitrix/references/components-admin-ui.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=43&CHAPTER_ID=02975).
+- Самопроверка B122 — «Где ставить заголовок из результата, чтобы он работал при тёплом кеше?»: В component_epilog, предварительно сохранив нужные значения; не в result_modifier или недоказанном component_prolog.
+- Контрпример отвергнут: Обещать автоматический вызов component_prolog с готовым arResult. Результат ручной проверки ответа: pass; runtime: не запускался.

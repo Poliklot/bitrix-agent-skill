@@ -129,3 +129,5 @@ Gate: перед релизом бытового слоя выбрать мин�
 | B120 | Почему второй запрос компонента выводит HTML дважды? | `components` / `components-admin-ui` | Проверить шаблон вне StartResultCache: на hit HTML уже выведен. Разделить HTML и data-only режимы. | Безусловно исполнять шаблон после выдачи HTML-кеша |
 
 | B121 | Убрал CURRENT_USER из cache keys: имя теперь безопасно в общем HTML? | `components` / `components-admin-ui` | Нет: HTML уже содержит имя; изменить границу/ключ кеша, не только состав arResult. | Считать cache keys механизмом очистки персонального HTML |
+
+| B122 | Где ставить заголовок из результата, чтобы он работал при тёплом кеше? | `templates` / `components-admin-ui` | В component_epilog, предварительно сохранив нужные значения; не в result_modifier или недоказанном component_prolog. | Обещать автоматический вызов component_prolog с готовым arResult |

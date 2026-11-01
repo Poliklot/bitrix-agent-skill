@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+- K43: Эпилог и сохранённые данные вместо вымышленного component_prolog — дополнены знания, full/compact и сценарий B122.
+
 - K42: SetResultCacheKeys не удаляет персональные данные из HTML — дополнены знания, full/compact и сценарий B121.
 
 - K41: HTML-кеш компонента уже выводится на cache hit — дополнены знания, full/compact и сценарий B120.
