@@ -148,11 +148,12 @@ class MyVendorComponent extends CBitrixComponent
 
             // Управление кешем через теги (BX_COMP_MANAGED_CACHE)
             global $CACHE_MANAGER;
-            $CACHE_MANAGER->RegisterTag('iblock_id_' . $this->arParams['IBLOCK_ID']);
+            if (defined('BX_COMP_MANAGED_CACHE')) {
+                $CACHE_MANAGER->RegisterTag('iblock_id_' . $this->arParams['IBLOCK_ID']);
+            }
+            // Шаблон завершает HTML-кеш; на hit его уже не исполняем.
+            $this->includeComponentTemplate();
         }
-
-        // includeComponentTemplate() вызывает endResultCache() автоматически
-        $this->includeComponentTemplate();
 
         return $this->arResult;
     }
@@ -198,11 +199,9 @@ public function executeComponent(): mixed
         }
 
         $this->arResult = $this->loadData();
+        // Шаблон завершает HTML-кеш вместе с выбранными arResult и ресурсами.
+        $this->includeComponentTemplate();
     }
-
-    // includeComponentTemplate() автоматически вызывает endResultCache()
-    // Кешируются: arResult, CSS/JS, NavNum, дочерние компоненты
-    $this->includeComponentTemplate();
 
     return $this->arResult;
 }
@@ -3290,3 +3289,11 @@ return new EventResult(EventResult::SUCCESS, [
 - Если нужно одноразовое согласие, сначала проверь `ConsentTable`, потом вызывай `addByContext()`.
 
 ---
+
+## K41 — HTML-кеш компонента уже выводится на cache hit
+
+HTML-кеш: шаблон внутри StartResultCache; на hit вывод уже выполнен. Внешний рендер допустим при отдельном data-only протоколе.
+
+Проверка: Холодный и тёплый запросы выводят один блок; счётчик выполнения шаблона растёт только на miss.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cbitrixcomponent/startresultcache.php); documentation-backed, 2026-11-01, не runtime pass.

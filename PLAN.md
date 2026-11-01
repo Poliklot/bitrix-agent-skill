@@ -770,3 +770,10 @@ Commerce/1C фаза считается завершённой, когда:
 ### Gate этапа 3 / 1.39.0
 
 `make release-check`, 23 существующих теста инструментов и quick_validate обеих версий: pass. Эти тесты не доказывают знания API; предметная самопроверка записана для каждого K-пункта. Compact: 35/50 файлов. Live Bitrix runtime не выполнялся. Публикация — штатный Publish Release после push в master.
+
+### K41: HTML-кеш компонента уже выводится на cache hit
+
+- Пробел до изменения: Оба примера вызывали includeComponentTemplate вне cache miss, хотя использовали HTML-кеш.
+- Исправление: [components.md](bitrix/references/components.md) и [components-admin-ui.md](mcpmarket/bitrix/references/components-admin-ui.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cbitrixcomponent/startresultcache.php).
+- Самопроверка B120 — «Почему второй запрос компонента выводит HTML дважды?»: Проверить шаблон вне StartResultCache: на hit HTML уже выведен. Разделить HTML и data-only режимы.
+- Контрпример отвергнут: Безусловно исполнять шаблон после выдачи HTML-кеша. Результат ручной проверки ответа: pass; runtime: не запускался.

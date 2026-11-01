@@ -141,11 +141,12 @@ class MyVendorComponent extends CBitrixComponent
 
             // Управление кешем через теги (BX_COMP_MANAGED_CACHE)
             global $CACHE_MANAGER;
-            $CACHE_MANAGER->RegisterTag('iblock_id_' . $this->arParams['IBLOCK_ID']);
+            if (defined('BX_COMP_MANAGED_CACHE')) {
+                $CACHE_MANAGER->RegisterTag('iblock_id_' . $this->arParams['IBLOCK_ID']);
+            }
+            // Шаблон завершает HTML-кеш; на hit его уже не исполняем.
+            $this->includeComponentTemplate();
         }
-
-        // includeComponentTemplate() вызывает endResultCache() автоматически
-        $this->includeComponentTemplate();
 
         return $this->arResult;
     }
@@ -191,11 +192,9 @@ public function executeComponent(): mixed
         }
 
         $this->arResult = $this->loadData();
+        // Шаблон завершает HTML-кеш вместе с выбранными arResult и ресурсами.
+        $this->includeComponentTemplate();
     }
-
-    // includeComponentTemplate() автоматически вызывает endResultCache()
-    // Кешируются: arResult, CSS/JS, NavNum, дочерние компоненты
-    $this->includeComponentTemplate();
 
     return $this->arResult;
 }
@@ -314,3 +313,11 @@ $componentPage = $engine->guessComponentPath($folder, $arUrlTemplates, $arVariab
 ```
 
 ---
+
+## K41 — HTML-кеш компонента уже выводится на cache hit
+
+При действительном HTML-кеше StartResultCache уже выводит сохранённый результат. IncludeComponentTemplate вызывай внутри успешной ветки StartResultCache, иначе повторно исполнишь шаблон. Data-only режим — отдельный осознанный вариант с EndResultCache до рендеринга; не смешивай его с HTML-кешем.
+
+**Проверка на стенде:** Холодный и тёплый запросы выводят один блок; счётчик выполнения шаблона растёт только на miss.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cbitrixcomponent/startresultcache.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.
