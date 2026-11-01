@@ -1745,3 +1745,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [currency.md](bitrix/references/currency.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/currency/events/currencyformat.php?print=Y).
 - Самопроверка B235 — «Почему правильный FORMAT_STRING не влияет на вывод цены?»: Проверить обработчик CurrencyFormat, который возвращает собственную строку.
 - Контрпример отвергнут: Изменять FORMAT_STRING вслепую, игнорируя обработчики. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K157: checkCurrencyID возвращает код, а существование проверяется отдельно
+
+- Пробел до изменения: Не различались проверка идентификатора и наличие валюты в установке.
+- Исправление: [currency.md](bitrix/references/currency.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/currency/currencymanager/checkcurrencyid.php).
+- Самопроверка B236 — «checkCurrencyID вернул USD — почему проверка === true отвергает валюту?»: Успех возвращается строкой; проверить !== false и отдельно существование.
+- Контрпример отвергнут: Валидный код гарантирует установленную и разрешённую валюту. Результат ручной проверки ответа: pass; runtime: не запускался.

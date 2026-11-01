@@ -4683,3 +4683,11 @@ HIDE_ZERO — публичное оформление, не изменение �
 Проверка: Кастомный обработчик меняет только выбранную валюту, остальные используют штатный формат.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/currency/events/currencyformat.php?print=Y); documentation-backed, 2026-11-01, не runtime pass.
+
+## K157 — checkCurrencyID возвращает код, а существование проверяется отдельно
+
+checkCurrencyID → string/false, не bool; наличие — isCurrencyExist, допустимость — политика операции.
+
+Проверка: Неустановленный код не попадает в запись цены даже при допустимой форме идентификатора.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/currency/currencymanager/checkcurrencyid.php); documentation-backed, 2026-11-01, не runtime pass.
