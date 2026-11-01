@@ -181,3 +181,5 @@
 | B121 | Убрал CURRENT_USER из cache keys: имя теперь безопасно в общем HTML? | `components` / `components-admin-ui` | Нет: HTML уже содержит имя; изменить границу/ключ кеша, не только состав arResult. | Считать cache keys механизмом очистки персонального HTML |
 
 | B122 | Где ставить заголовок из результата, чтобы он работал при тёплом кеше? | `templates` / `components-admin-ui` | В component_epilog, предварительно сохранив нужные значения; не в result_modifier или недоказанном component_prolog. | Обещать автоматический вызов component_prolog с готовым arResult |
+
+| B123 | Правлю local/components/.../templates, но сайт показывает старый вид: почему? | `templates` / `components-admin-ui` | Проверить переопределение в активном site-template и шаблоне комплексного родителя, затем кеш. | Утверждать, что любой local/components template всегда приоритетнее site-template |

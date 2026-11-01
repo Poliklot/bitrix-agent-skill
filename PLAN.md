@@ -791,3 +791,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [templates.md](bitrix/references/templates.md) и [components-admin-ui.md](mcpmarket/bitrix/references/components-admin-ui.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=43&CHAPTER_ID=02975).
 - Самопроверка B122 — «Где ставить заголовок из результата, чтобы он работал при тёплом кеше?»: В component_epilog, предварительно сохранив нужные значения; не в result_modifier или недоказанном component_prolog.
 - Контрпример отвергнут: Обещать автоматический вызов component_prolog с готовым arResult. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K44: Шаблон сайта переопределяет встроенный шаблон компонента
+
+- Пробел до изменения: У пути local/components стояла неверная пометка о большем приоритете над site-template.
+- Исправление: [templates.md](bitrix/references/templates.md) и [components-admin-ui.md](mcpmarket/bitrix/references/components-admin-ui.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=43&LESSON_ID=2829).
+- Самопроверка B123 — «Правлю local/components/.../templates, но сайт показывает старый вид: почему?»: Проверить переопределение в активном site-template и шаблоне комплексного родителя, затем кеш.
+- Контрпример отвергнут: Утверждать, что любой local/components template всегда приоритетнее site-template. Результат ручной проверки ответа: pass; runtime: не запускался.

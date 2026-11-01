@@ -504,7 +504,7 @@ $arAreas = [
 
 ```
 /local/templates/<site_tpl>/components/<namespace>/<component>/<template_name>/
-/local/components/<namespace>/<component>/templates/<template_name>/   ← приоритет выше
+/local/components/<namespace>/<component>/templates/<template_name>/   ← fallback после site-template
 /bitrix/components/<namespace>/<component>/templates/<template_name>/
 ```
 
@@ -3308,3 +3308,11 @@ Page effects — component_epilog с сохранёнными ключами/tem
 Проверка: Холодный/тёплый запросы дают одинаковый title без повторной выборки данных.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=43&CHAPTER_ID=02975); documentation-backed, 2026-11-01, не runtime pass.
+
+## K44 — Шаблон сайта переопределяет встроенный шаблон компонента
+
+local/components задаёт реализацию, не приоритет над site-template. Активный шаблон сайта/.default и комплексный родитель участвуют в поиске раньше встроенного шаблона.
+
+Проверка: Разные маркеры во встроенном и site-template показывают реальный выбранный путь на стенде.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=43&LESSON_ID=2829); documentation-backed, 2026-11-01, не runtime pass.

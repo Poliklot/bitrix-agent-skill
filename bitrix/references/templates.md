@@ -179,7 +179,7 @@ $arAreas = [
 
 ```
 /local/templates/<site_tpl>/components/<namespace>/<component>/<template_name>/
-/local/components/<namespace>/<component>/templates/<template_name>/   ← приоритет выше
+/local/components/<namespace>/<component>/templates/<template_name>/   ← fallback после site-template
 /bitrix/components/<namespace>/<component>/templates/<template_name>/
 ```
 
@@ -310,3 +310,11 @@ $frame = $this->createFrame('header-cart-counter')->begin('');
 **Проверка на стенде:** Холодный/тёплый запросы дают одинаковый title без повторной выборки данных.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=43&CHAPTER_ID=02975). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.
+
+## K44 — Шаблон сайта переопределяет встроенный шаблон компонента
+
+Не путай выбор реализации компонента из local/components с поиском его шаблона. Переопределение в активном шаблоне сайта ищется раньше встроенного templates компонента; учитывай .default сайта. Для дочернего компонента учитывается шаблон комплексного родителя. Фактические пути и выбранный SITE_TEMPLATE_ID проверяй до правки: наличие local-файла само по себе не доказывает его исполнение.
+
+**Проверка на стенде:** Разные маркеры во встроенном и site-template показывают реальный выбранный путь на стенде.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=43&LESSON_ID=2829). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.
