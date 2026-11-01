@@ -951,7 +951,7 @@ Option::delete('my.module', ['name' => 'API_KEY']);
 
 ## Локализация
 
-`Loc::getMessage()` ищет ключ в lang-файле рядом с текущим PHP-файлом. `loadMessages(__FILE__)` говорит системе: "загрузи lang-файл для этого файла". Без вызова `loadMessages` ключи будут пустыми.
+`Loc::loadMessages(__FILE__)` регистрирует исходный файл для ленивой загрузки переводов при getMessage. Поиск lang идёт вверх относительно переданного пути, а не от каждого места вызова getMessage (см. K95).
 
 ```php
 use Bitrix\Main\Localization\Loc;
@@ -3557,3 +3557,11 @@ ORM cache.ttl не включает JOIN: нужен cache_joins. Внешний
 Проверка: Повторный запрос, изменение основной/связанной записи и внешний импорт не оставляют устаревший результат.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=43&LESSON_ID=5753); documentation-backed, 2026-11-01, не runtime pass.
+
+## K95 — loadMessages регистрирует отложенную загрузку
+
+Проверить, чей путь передан: lazy loading привязано к исходному файлу регистрации.
+
+Проверка: Одинаковый ключ из нужного файла доступен после правильной регистрации пути, без массовых include.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/localization/loc/loadmessages.php); documentation-backed, 2026-11-01, не runtime pass.

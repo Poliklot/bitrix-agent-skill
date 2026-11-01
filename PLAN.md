@@ -1221,3 +1221,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [cache-infra.md](bitrix/references/cache-infra.md) и [search-seo-ops.md](mcpmarket/bitrix/references/search-seo-ops.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cagent/addagent.php).
 - Самопроверка B173 — «Как отложить первый запуск агента, не перепутав аргументы дат?»: Задать next_exec в требуемом языковом формате; datecheck имеет другой смысл.
 - Контрпример отвергнут: Использовать datecheck как единственный контракт времени первого исполнения. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K95: loadMessages регистрирует отложенную загрузку
+
+- Пробел до изменения: Справочник описывал немедленное чтение файла рядом с вызывающим PHP.
+- Исправление: [modules-loader.md](bitrix/references/modules-loader.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/localization/loc/loadmessages.php).
+- Самопроверка B174 — «Почему helper не нашёл перевод компонента после loadMessages(__FILE__)?»: Проверить, чей путь передан: lazy loading привязано к исходному файлу регистрации.
+- Контрпример отвергнут: Считать getMessage поиском рядом с местом каждого вызова. Результат ручной проверки ответа: pass; runtime: не запускался.
