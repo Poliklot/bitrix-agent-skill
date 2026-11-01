@@ -1155,3 +1155,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [users.md](bitrix/references/users.md) и [users-security.md](mcpmarket/bitrix/references/users-security.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cuser/register.php).
 - Самопроверка B165 — «Чем создавать пользователей импортом, не меняя сессию администратора?»: CUser::Add; Register относится к публичному потоку с дополнительными эффектами.
 - Контрпример отвергнут: Подменить Add методом Register в административном импорте. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K87: Email не гарантирует уникальную учётную запись
+
+- Пробел до изменения: getRow по email выдавал первую запись без оговорки о настройках уникальности.
+- Исправление: [users.md](bitrix/references/users.md) и [users-security.md](mcpmarket/bitrix/references/users-security.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/user_help/settings/settings/settings.php).
+- Самопроверка B166 — «Можно ли взять первый UserTable::getRow по email и связать заказ/аккаунт?»: Не без проверки уникальности кандидата и политики идентификации; email не универсальный ключ.
+- Контрпример отвергнут: Молча выбрать первого пользователя с общим email. Результат ручной проверки ответа: pass; runtime: не запускался.

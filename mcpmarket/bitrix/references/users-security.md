@@ -58,7 +58,7 @@ while ($row = $result->fetch()) { ... }
 // Один пользователь по ID
 $user = UserTable::getById($userId)->fetch();
 
-// Один пользователь по email
+// Один кандидат по email; это не доказательство уникальности (см. K87)
 $user = UserTable::getRow([
     'filter' => ['=EMAIL' => 'user@example.com'],
     'select' => ['ID', 'LOGIN', 'NAME', 'LAST_NAME', 'ACTIVE'],
@@ -1862,3 +1862,11 @@ CUser::Add; Register относится к публичному потоку с 
 Проверка: Создание тестовой учётки не авторизует оператора под ней и не создаёт неожиданных писем.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cuser/register.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K87 — Email не гарантирует уникальную учётную запись
+
+Не без проверки уникальности кандидата и политики идентификации; email не универсальный ключ.
+
+Проверка: Две учётки с одним email не объединяются и не дают вход в чужую.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/user_help/settings/settings/settings.php); documentation-backed, 2026-11-01, не runtime pass.
