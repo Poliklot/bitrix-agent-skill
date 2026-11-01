@@ -1759,3 +1759,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [currency.md](bitrix/references/currency.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/currency/currencymanager/updatebaserates.php).
 - Самопроверка B237 — «Почему updateBaseRates не подтянул сегодняшний курс из внешнего источника?»: Это локальный пересчёт; сначала нужен разрешённый импорт курсов и проверка их даты.
 - Контрпример отвергнут: Название update означает сетевую загрузку новых курсов. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K159: BX.Currency требует загруженного формата до форматирования
+
+- Пробел до изменения: Не было клиентского контракта готовности формата валюты.
+- Исправление: [currency.md](bitrix/references/currency.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/js_lib/currency/index.php?print=Y).
+- Самопроверка B238 — «Почему первая AJAX-карточка оформляет деньги иначе, чем следующая?»: Проверить гонку загрузки формата; форматировать после его готовности.
+- Контрпример отвергнут: CJSCore Init гарантирует загруженные форматы всех валют. Результат ручной проверки ответа: pass; runtime: не запускался.

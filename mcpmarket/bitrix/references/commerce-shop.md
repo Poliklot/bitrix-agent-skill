@@ -4699,3 +4699,11 @@ updateBaseRates использует БД, не сеть; актуальност
 Проверка: Без новых строк источника вызов не выдаётся за успешное внешнее обновление.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/currency/currencymanager/updatebaserates.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K159 — BX.Currency требует загруженного формата до форматирования
+
+BX.Currency: библиотека + данные формата; loadCurrencyFormat нужно дождаться и обработать отказ.
+
+Проверка: На медленном ответе форматирование ждёт данные, при ошибке не показывает ложную валюту.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/js_lib/currency/index.php?print=Y); documentation-backed, 2026-11-01, не runtime pass.
