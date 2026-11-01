@@ -899,3 +899,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [mail-notifications.md](bitrix/references/mail-notifications.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/events/onbeforeeventadd.php).
 - Самопроверка B136 — «Нужно не создавать событие определённого типа — какой hook?»: OnBeforeEventAdd, ограниченный типом события; проверить отсутствие новой записи и сохранение прочих типов.
 - Контрпример отвергнут: Использовать OnBeforeEventSend как запрет записи b_event. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K58: Явный почтовый шаблон и языковой фильтр
+
+- Пробел до изменения: Нет правил MESSAGE_ID при нескольких шаблонах и языках.
+- Исправление: [mail-notifications.md](bitrix/references/mail-notifications.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/events/onbeforeeventadd.php).
+- Самопроверка B137 — «Почему с MESSAGE_ID письмо пришло не на выбранном языке?»: Языковой фильтр не выполняется при явном ID; проверить язык выбранного шаблона и mapping окружения.
+- Контрпример отвергнут: Считать languageId гарантией языка при любом MESSAGE_ID. Результат ручной проверки ответа: pass; runtime: не запускался.

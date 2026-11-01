@@ -1835,3 +1835,11 @@ Legacy-многоаргументный callback регистрируй чере
 Проверка: Запрещённый тип не попадает в очередь, разрешённый продолжает отправляться.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/events/onbeforeeventadd.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K58 — Явный почтовый шаблон и языковой фильтр
+
+MESSAGE_ID выбирает шаблон; заданный ID снимает языковую фильтрацию по документированному контракту. Сопоставляй ID окружению.
+
+Проверка: Два языка: автоподбор и явный ID дают ожидаемый, отдельно проверенный шаблон.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/events/onbeforeeventadd.php); documentation-backed, 2026-11-01, не runtime pass.
