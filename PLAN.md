@@ -1336,3 +1336,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [iblocks.md](bitrix/references/iblocks.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockelement/setelementsection.php).
 - Самопроверка B188 — «Как добавить второй раздел, не потеряв первый и основной?»: Прочитать текущие связи, сформировать полный набор и вызвать Update с основным разделом.
 - Контрпример отвергнут: SetElementSection([$newId]) как безусловное добавление. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K110: GetElementGroups включает связи из свойств
+
+- Пробел до изменения: Не различались принадлежность разделам и значения свойств типа G.
+- Исправление: [iblocks.md](bitrix/references/iblocks.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockelement/getelementgroups.php).
+- Самопроверка B189 — «Почему чтение разделов вернуло раздел из свойства RELATED_SECTION?»: По умолчанию включены связи свойств; для принадлежности нужен true.
+- Контрпример отвергнут: Записать все найденные разделы обратно как принадлежность. Результат ручной проверки ответа: pass; runtime: не запускался.

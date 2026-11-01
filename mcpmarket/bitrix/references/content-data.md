@@ -3122,3 +3122,11 @@ Delete раздела — каскад, не удаление строки: пр
 Проверка: После добавления сохранены прежняя связь и выбранный основной раздел.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockelement/setelementsection.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K110 — GetElementGroups включает связи из свойств
+
+GetElementGroups(..., true) — обычные связи; false добавляет связи из свойств.
+
+Проверка: Раздел из G-свойства не становится обычной связью после редактирования.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockelement/getelementgroups.php); documentation-backed, 2026-11-01, не runtime pass.
