@@ -181,16 +181,14 @@ public function executeComponent(): mixed
 {
     // startResultCache() возвращает true при CACHE MISS (нужно выполнить)
     // и false при CACHE HIT (arResult уже восстановлен из кеша)
-    if ($this->startResultCache()) {
-        // Тут выполняется только при cache miss
-        $userId = $this->request->getQuery('user_id');
-        if (!$userId) {
-            // КРИТИЧНО: если выходим досрочно — обязателен abortResultCache()
-            // иначе незакрытый кеш сохранится как пустой
-            $this->abortResultCache();
-            return null;
-        }
-
+    // Пример приватного списка: личность определяется сервером до cache hit.
+    global $USER;
+    if (!$USER->IsAuthorized()) {
+        return null;
+    }
+    $cacheContext = 'user:' . (int)$USER->GetID();
+    if ($this->startResultCache(false, $cacheContext)) {
+        // loadData также ограничивает выборку доступными текущему пользователю объектами.
         $this->arResult = $this->loadData();
         // Шаблон завершает HTML-кеш вместе с выбранными arResult и ресурсами.
         $this->includeComponentTemplate();
@@ -329,3 +327,11 @@ $componentPage = $engine->guessComponentPath($folder, $arUrlTemplates, $arVariab
 **Проверка на стенде:** Два пользователя по одному URL не видят имя друг друга на тёплом кеше.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cbitrixcomponent/setresultcachekeys.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.
+
+## K45 — Дополнительные зависимости ключа компонента
+
+Зависимости, не входящие в arParams, передавай через additionalCacheID в стабильном представлении: например, разрешённый scope пользователя, регион и нормализованный фильтр. Право чтения проверяй до выдачи кеша. CACHE_GROUPS в своём компоненте не реализует авторизацию само: проверь фактическое включение групп в ключ. Не включай токены и произвольный полный запрос.
+
+**Проверка на стенде:** Два региона и отозванный доступ: разные результаты, запрет действует на тёплом кеше.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cbitrixcomponent/startresultcache.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.

@@ -188,16 +188,14 @@ public function executeComponent(): mixed
 {
     // startResultCache() возвращает true при CACHE MISS (нужно выполнить)
     // и false при CACHE HIT (arResult уже восстановлен из кеша)
-    if ($this->startResultCache()) {
-        // Тут выполняется только при cache miss
-        $userId = $this->request->getQuery('user_id');
-        if (!$userId) {
-            // КРИТИЧНО: если выходим досрочно — обязателен abortResultCache()
-            // иначе незакрытый кеш сохранится как пустой
-            $this->abortResultCache();
-            return null;
-        }
-
+    // Пример приватного списка: личность определяется сервером до cache hit.
+    global $USER;
+    if (!$USER->IsAuthorized()) {
+        return null;
+    }
+    $cacheContext = 'user:' . (int)$USER->GetID();
+    if ($this->startResultCache(false, $cacheContext)) {
+        // loadData также ограничивает выборку доступными текущему пользователю объектами.
         $this->arResult = $this->loadData();
         // Шаблон завершает HTML-кеш вместе с выбранными arResult и ресурсами.
         $this->includeComponentTemplate();
@@ -3316,3 +3314,11 @@ local/components задаёт реализацию, не приоритет на
 Проверка: Разные маркеры во встроенном и site-template показывают реальный выбранный путь на стенде.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=43&LESSON_ID=2829); documentation-backed, 2026-11-01, не runtime pass.
+
+## K45 — Дополнительные зависимости ключа компонента
+
+Внешние зависимости → additionalCacheID; права проверять до cache hit. Один CACHE_GROUPS без реализации не изолирует данные.
+
+Проверка: Два региона и отозванный доступ: разные результаты, запрет действует на тёплом кеше.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cbitrixcomponent/startresultcache.php); documentation-backed, 2026-11-01, не runtime pass.

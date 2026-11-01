@@ -798,3 +798,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [templates.md](bitrix/references/templates.md) и [components-admin-ui.md](mcpmarket/bitrix/references/components-admin-ui.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=43&LESSON_ID=2829).
 - Самопроверка B123 — «Правлю local/components/.../templates, но сайт показывает старый вид: почему?»: Проверить переопределение в активном site-template и шаблоне комплексного родителя, затем кеш.
 - Контрпример отвергнут: Утверждать, что любой local/components template всегда приоритетнее site-template. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K45: Дополнительные зависимости ключа компонента
+
+- Пробел до изменения: Перечислен готовый ключ, но пример читает user_id из запроса лишь внутри miss и не изолирует результат.
+- Исправление: [components.md](bitrix/references/components.md) и [components-admin-ui.md](mcpmarket/bitrix/references/components-admin-ui.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cbitrixcomponent/startresultcache.php).
+- Самопроверка B124 — «У компонента один arParams, но разные региональные цены: почему смешались?»: Добавить нормализованный регион/контекст доступа в additionalCacheID и проверять права до кеша.
+- Контрпример отвергнут: Читать контекст только внутри miss и считать CACHE_GROUPS автоматической защитой. Результат ручной проверки ответа: pass; runtime: не запускался.

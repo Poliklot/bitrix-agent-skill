@@ -133,3 +133,5 @@ Gate: перед релизом бытового слоя выбрать мин�
 | B122 | Где ставить заголовок из результата, чтобы он работал при тёплом кеше? | `templates` / `components-admin-ui` | В component_epilog, предварительно сохранив нужные значения; не в result_modifier или недоказанном component_prolog. | Обещать автоматический вызов component_prolog с готовым arResult |
 
 | B123 | Правлю local/components/.../templates, но сайт показывает старый вид: почему? | `templates` / `components-admin-ui` | Проверить переопределение в активном site-template и шаблоне комплексного родителя, затем кеш. | Утверждать, что любой local/components template всегда приоритетнее site-template |
+
+| B124 | У компонента один arParams, но разные региональные цены: почему смешались? | `components` / `components-admin-ui` | Добавить нормализованный регион/контекст доступа в additionalCacheID и проверять права до кеша. | Читать контекст только внутри miss и считать CACHE_GROUPS автоматической защитой |
