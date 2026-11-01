@@ -1697,7 +1697,7 @@ $result = OrderTable::getList([
 
 ### ExpressionField — вычисляемые поля в схеме
 
-`ExpressionField` позволяет добавить SQL-выражение как виртуальное поле. `%s` — плейсхолдер для подстановки имён колонок через ORM (безопасно, экранируется).
+`ExpressionField` позволяет добавить SQL-выражение как виртуальное поле. `%s` — плейсхолдер для полей из `buildFrom`; это не защита произвольного SQL-текста `$expression` (см. K78).
 
 ```php
 use Bitrix\Main\ORM\Fields\ExpressionField;
@@ -3530,3 +3530,11 @@ createFromUserTime — текущий пользователь/culture, не п�
 Проверка: Одна запись с полным и частичным select не приводит к разному решению об очистке.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=43&LESSON_ID=11695); documentation-backed, 2026-11-01, не runtime pass.
+
+## K78 — ExpressionField не параметризует произвольный SQL-текст
+
+ExpressionField: buildFrom — поля; expression — доверенный SQL. %s не защищает пользовательскую конкатенацию.
+
+Проверка: Кавычки и SQL-подобные строки остаются значениями, неизвестное поле отклоняется.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/entity/expressionfield/__construct.php); documentation-backed, 2026-11-01, не runtime pass.

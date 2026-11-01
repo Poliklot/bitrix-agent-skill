@@ -1049,3 +1049,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [orm.md](bitrix/references/orm.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=43&LESSON_ID=11695).
 - Самопроверка B156 — «getTitle вернул null после select ID — надо очистить TITLE в БД?»: Нет: сначала загрузить TITLE; null неполной проекции не доказывает значение в БД.
 - Контрпример отвергнут: Сохранить null из незагруженного getter обратно. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K78: ExpressionField не параметризует произвольный SQL-текст
+
+- Пробел до изменения: Фраза «безопасно, экранируется» создавала ложную гарантию для всего SQL-выражения.
+- Исправление: [orm.md](bitrix/references/orm.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/entity/expressionfield/__construct.php).
+- Самопроверка B157 — «Защитит ли %s выражение, в которое уже вставлен текст пользователя?»: Нет: отказаться от конкатенации; значения передать фильтром, поля выбрать по allowlist.
+- Контрпример отвергнут: Считать ExpressionField универсальным prepared statement. Результат ручной проверки ответа: pass; runtime: не запускался.
