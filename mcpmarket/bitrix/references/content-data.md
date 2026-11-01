@@ -3106,3 +3106,11 @@ GetNavChain: ненулевой IBLOCK_ID, true четвёртым → масс�
 Проверка: После переноса цепочка и обход поддерева совпадают; ошибка Update не считается успехом.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblocksection/update.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K108 — Удаление раздела затрагивает больше одной строки
+
+Delete раздела — каскад, не удаление строки: предварительно проверить поддерево, элементы и привязки.
+
+Проверка: Фикстура с единственной и дополнительной привязкой показывает различный результат; запрет события учтён.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblocksection/delete.php); documentation-backed, 2026-11-01, не runtime pass.
