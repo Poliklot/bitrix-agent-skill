@@ -177,7 +177,7 @@ Mail::send([
 ```php
 use Bitrix\Main\EventManager;
 
-EventManager::getInstance()->addEventHandler(
+EventManager::getInstance()->addEventHandlerCompatible(
     'main',
     'OnBeforeEventSend',
     [MyModule\EventHandler::class, 'onBeforeEventSend']
@@ -287,3 +287,11 @@ while ($row = $result->fetch())
 **Проверка на стенде:** Два сайта с разными шаблонами и отдельный язык проверяются на тестовой очереди.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/mail/event/send.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.
+
+## K56 — Совместимая регистрация OnBeforeEventSend
+
+Для legacy-сигнатуры OnBeforeEventSend применяй `addEventHandlerCompatible` либо AddEventHandler. Обычный addEventHandler рассчитан на объект Main\Event; замена имени без изменения callback нарушает контракт. Ссылочные параметры и число аргументов сверяй с вызовом события в установленном ядре; не добавляй второй обработчик поверх ошибочного первого.
+
+**Проверка на стенде:** Один обработчик меняет контрольный макрос без TypeError и повторной регистрации.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/functions/module/addeventhandler.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.

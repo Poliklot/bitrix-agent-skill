@@ -1313,7 +1313,7 @@ Mail::send([
 ```php
 use Bitrix\Main\EventManager;
 
-EventManager::getInstance()->addEventHandler(
+EventManager::getInstance()->addEventHandlerCompatible(
     'main',
     'OnBeforeEventSend',
     [MyModule\EventHandler::class, 'onBeforeEventSend']
@@ -1819,3 +1819,11 @@ D7 Event::send/sendImmediate: C_FIELDS, не FIELDS. Legacy CEvent::Send: тре
 Проверка: Два сайта с разными шаблонами и отдельный язык проверяются на тестовой очереди.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/mail/event/send.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K56 — Совместимая регистрация OnBeforeEventSend
+
+Legacy-многоаргументный callback регистрируй через addEventHandlerCompatible. Обычный addEventHandler предназначен для объекта Event.
+
+Проверка: Один обработчик меняет контрольный макрос без TypeError и повторной регистрации.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/functions/module/addeventhandler.php); documentation-backed, 2026-11-01, не runtime pass.

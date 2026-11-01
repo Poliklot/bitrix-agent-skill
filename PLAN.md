@@ -885,3 +885,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [mail-notifications.md](bitrix/references/mail-notifications.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/mail/event/send.php).
 - Самопроверка B134 — «Можно ли без изменений передать массив lid из CEvent в Event::send?»: Нет по документированному контракту: D7 LID — строка с ID через запятую.
 - Контрпример отвергнут: Считать массив сайтов одинаковым аргументом обоих API. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K56: Совместимая регистрация OnBeforeEventSend
+
+- Пробел до изменения: Обработчик с несколькими ссылочными аргументами зарегистрирован через объектный addEventHandler.
+- Исправление: [mail-notifications.md](bitrix/references/mail-notifications.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/functions/module/addeventhandler.php).
+- Самопроверка B135 — «Почему callback OnBeforeEventSend с массивами не совместим с регистрацией?»: Согласовать legacy-сигнатуру и addEventHandlerCompatible; не заменять callback объектом Event вслепую.
+- Контрпример отвергнут: Оставить объектный режим для ссылочных массивов. Результат ручной проверки ответа: pass; runtime: не запускался.
