@@ -3074,3 +3074,11 @@ GetList разделов: пятый аргумент [] ≠ false; задава
 Проверка: На 12 разделах [] возвращает не полный экспорт; выбранная стратегия сохраняет все 12.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblocksection/getlist.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K104 — Проверка прав разделов от имени заданного пользователя
+
+PERMISSIONS_BY выбирает субъекта; CHECK_PERMISSIONS=N отключает проверку, а не имитирует гостя.
+
+Проверка: Закрытый раздел отсутствует у гостя и присутствует только у разрешённого субъекта.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblocksection/getlist.php); documentation-backed, 2026-11-01, не runtime pass.
