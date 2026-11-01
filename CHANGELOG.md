@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+- K63: Размеры ResizeImageGet нужно запросить явно — дополнены знания, full/compact и сценарий B142.
+
 - K62: CheckFile возвращает текст ошибки, а не success boolean — дополнены знания, full/compact и сценарий B141.
 
 - K61: MIME из браузера не подтверждает содержимое — дополнены знания, full/compact и сценарий B140.

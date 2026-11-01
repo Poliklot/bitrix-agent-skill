@@ -2245,7 +2245,8 @@ $arSize = ['width' => 300, 'height' => 200];
 $arResized = CFile::ResizeImageGet(
     $fileId,                           // int или массив от GetFileArray
     $arSize,
-    BX_RESIZE_IMAGE_PROPORTIONAL
+    BX_RESIZE_IMAGE_PROPORTIONAL,
+    true // bInitSizes: нужны width/height результата
 );
 
 if ($arResized) {
@@ -2987,3 +2988,11 @@ CheckFile: ошибка — непустая строка; лимит в бай�
 Проверка: Файл сверх лимита и запрещённое расширение не доходят до SaveFile.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cfile/checkfile.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K63 — Размеры ResizeImageGet нужно запросить явно
+
+ResizeImageGet(..., BX_RESIZE_IMAGE_PROPORTIONAL, true) возвращает размеры. Рамка arSize не равна фактическим dimensions.
+
+Проверка: Горизонтальный и вертикальный оригиналы дают корректные размеры и пропорции превью.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cfile/resizeimageget.php); documentation-backed, 2026-11-01, не runtime pass.

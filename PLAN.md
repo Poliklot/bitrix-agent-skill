@@ -944,3 +944,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [import-export.md](bitrix/references/import-export.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cfile/checkfile.php).
 - Самопроверка B141 — «CheckFile вернул строку: можно сохранять?»: Нет: остановить сохранение; пустой результат допускает следующий этап проверки.
 - Контрпример отвергнут: Трактовать непустой текст CheckFile как успешную проверку. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K63: Размеры ResizeImageGet нужно запросить явно
+
+- Пробел до изменения: Пример читает width/height, но не включает четвёртый аргумент bInitSizes.
+- Исправление: [import-export.md](bitrix/references/import-export.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cfile/resizeimageget.php).
+- Самопроверка B142 — «Почему после ResizeImageGet отсутствует width?»: Проверить bInitSizes=true и успешность вызова; не подменять размеры файла рамкой.
+- Контрпример отвергнут: Читать width/height без bInitSizes или растягивать до рамки. Результат ручной проверки ответа: pass; runtime: не запускался.
