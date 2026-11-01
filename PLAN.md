@@ -1489,3 +1489,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [webforms.md](bitrix/references/webforms.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/classes/cformresult/setfield.php).
 - Самопроверка B207 — «Можно ли не передавать value в SetField, чтобы оставить ответ прежним?»: Нет, false очищает; отсутствие изменения означает не вызывать метод.
 - Контрпример отвергнут: SetField принимает тот же payload, что Add, и пропуск безопасен. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K129: Фильтр ответов результата вложен в FIELDS
+
+- Пробел до изменения: Не было поиска по ответам; пример имел присваивания в ссылочных аргументах.
+- Исправление: [webforms.md](bitrix/references/webforms.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/classes/cformresult/getlist.php).
+- Самопроверка B208 — «Как отфильтровать результаты по введённому EMAIL, а не подписи ответа?»: FIELDS с нужным SID, PARAMETER_NAME=USER и подходящим FILTER_TYPE.
+- Контрпример отвергнут: Искать пользовательский ввод через ANSWER_TEXT либо PROPERTY_EMAIL. Результат ручной проверки ответа: pass; runtime: не запускался.

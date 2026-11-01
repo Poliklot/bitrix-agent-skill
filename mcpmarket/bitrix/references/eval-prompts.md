@@ -221,3 +221,5 @@ Gate: перед релизом бытового слоя выбрать мин�
 | B206 | Почему служебное поле ADDITIONAL не меняется при Update по умолчанию? | `webforms` / `content-modules` | Нужен осознанный update_fields=Y и проверка прав; не отключать check_rights. | Третий аргумент всегда означает права, как у Add |
 
 | B207 | Можно ли не передавать value в SetField, чтобы оставить ответ прежним? | `webforms` / `content-modules` | Нет, false очищает; отсутствие изменения означает не вызывать метод. | SetField принимает тот же payload, что Add, и пропуск безопасен |
+
+| B208 | Как отфильтровать результаты по введённому EMAIL, а не подписи ответа? | `webforms` / `content-modules` | FIELDS с нужным SID, PARAMETER_NAME=USER и подходящим FILTER_TYPE. | Искать пользовательский ввод через ANSWER_TEXT либо PROPERTY_EMAIL |

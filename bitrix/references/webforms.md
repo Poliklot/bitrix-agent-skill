@@ -115,9 +115,11 @@ if ($permission < 10)
 ## Получить форму и её структуру
 
 ```php
+$by = 's_sort';
+$order = 'asc';
 $forms = CForm::GetList(
-    $by = 's_sort',
-    $order = 'asc',
+    $by,
+    $order,
     ['ACTIVE' => 'Y']
 );
 
@@ -196,11 +198,13 @@ CFormResult::Mail($resultId);
 
 ```php
 $isFiltered = false;
+$by = 's_timestamp';
+$order = 'desc';
 
 $dbResults = CFormResult::GetList(
     $formId,
-    $by = 's_timestamp',
-    $order = 'desc',
+    $by,
+    $order,
     ['STATUS_ID' => 1],
     $isFiltered,
     'Y',
@@ -471,3 +475,11 @@ Add не сохраняет ответы неактивных вопросов �
 **Проверка на стенде:** Текст, выбор и явная очистка дают три ожидаемых результата без потери соседних вопросов.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/classes/cformresult/setfield.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.
+
+## K129 — Фильтр ответов результата вложен в FIELDS
+
+В GetList результатов фильтр FIELDS содержит записи с SID, PARAMETER_NAME, VALUE и FILTER_TYPE. USER ищет введённое пользователем, ANSWER_TEXT/ANSWER_VALUE — характеристики варианта. Не переноси сюда PROPERTY_* инфоблока. Список содержит метаданные результата; ответы читаются отдельным API с сохранением прав.
+
+**Проверка на стенде:** Одинаковая подпись поля не смешивает результаты с разным пользовательским вводом.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/classes/cformresult/getlist.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.

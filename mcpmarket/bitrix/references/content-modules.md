@@ -844,9 +844,11 @@ if ($permission < 10)
 ## Получить форму и её структуру
 
 ```php
+$by = 's_sort';
+$order = 'asc';
 $forms = CForm::GetList(
-    $by = 's_sort',
-    $order = 'asc',
+    $by,
+    $order,
     ['ACTIVE' => 'Y']
 );
 
@@ -925,11 +927,13 @@ CFormResult::Mail($resultId);
 
 ```php
 $isFiltered = false;
+$by = 's_timestamp';
+$order = 'desc';
 
 $dbResults = CFormResult::GetList(
     $formId,
-    $by = 's_timestamp',
-    $order = 'desc',
+    $by,
+    $order,
     ['STATUS_ID' => 1],
     $isFiltered,
     'Y',
@@ -1930,3 +1934,11 @@ SetField: SID + карта ANSWER_ID→значение; для дополнит
 Проверка: Текст, выбор и явная очистка дают три ожидаемых результата без потери соседних вопросов.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/classes/cformresult/setfield.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K129 — Фильтр ответов результата вложен в FIELDS
+
+GetList FIELDS: SID + PARAMETER_NAME + VALUE + FILTER_TYPE; это не PROPERTY_*.
+
+Проверка: Одинаковая подпись поля не смешивает результаты с разным пользовательским вводом.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/classes/cformresult/getlist.php); documentation-backed, 2026-11-01, не runtime pass.
