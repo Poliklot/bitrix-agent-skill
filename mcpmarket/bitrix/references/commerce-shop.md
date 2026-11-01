@@ -4707,3 +4707,11 @@ BX.Currency: библиотека + данные формата; loadCurrencyFor
 Проверка: На медленном ответе форматирование ждёт данные, при ошибке не показывает ложную валюту.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/js_lib/currency/index.php?print=Y); documentation-backed, 2026-11-01, не runtime pass.
+
+## K160 — Курс одной валюты на один день нельзя импортировать повторным Add
+
+Ключ курса — валюта/день; Add даёт ID/false. Повтор требует проверки существующей записи.
+
+Проверка: Повтор и конкурентный импорт не объявляют неуспешный Add успешной записью.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/currency/developer/ccurrencyrates/ccurrencyrates__add.a9ea23d5.php); documentation-backed, 2026-11-01, не runtime pass.
