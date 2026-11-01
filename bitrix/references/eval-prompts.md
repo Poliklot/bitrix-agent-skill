@@ -235,3 +235,5 @@
 | B177 | Как получить английский текст без выдуманного getMessageByLang? | `modules-loader` / `php-architecture` | Загрузить нужный файл и вызвать getMessage(code, replacements, en). | Вызывать getMessageByLang как гарантированный публичный метод |
 | B178 | Почему версия модуля пустая после include стандартного version.php? | `modules-loader` / `php-architecture` | Читать arModuleVersion, а не version; проверить оба обязательных значения. | Считать имя локальной переменной произвольным при штатном формате |
 | B179 | Можно ли проверять includeSharewareModule только на truthy? | `modules-loader` / `php-architecture` | Нет: разобрать константы установленного, demo, истёкшего и отсутствующего состояния. | Считать любое ненулевое состояние успешной загрузкой |
+
+| B180 | Почему UF_COLOR раздела не выбирается? | `iblocks` / `content-data` | Задать IBLOCK_ID в фильтре и UF_COLOR в select. | Искать его как PROPERTY_COLOR элемента |

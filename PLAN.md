@@ -1273,3 +1273,10 @@ Commerce/1C фаза считается завершённой, когда:
 ### Gate этапа 8 / 1.44.0
 
 `make release-check`, 23 существующих теста инструментов и quick_validate обеих версий: pass. Эти тесты не доказывают знания API; предметная самопроверка записана для каждого K-пункта. Compact: 35/50 файлов. Live Bitrix runtime не выполнялся. Публикация — штатный Publish Release после push в master.
+
+### K101: UF-поля раздела требуют области инфоблока
+
+- Пробел до изменения: Не описан обязательный IBLOCK_ID для UF в выборке разделов.
+- Исправление: [iblocks.md](bitrix/references/iblocks.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblocksection/getlist.php).
+- Самопроверка B180 — «Почему UF_COLOR раздела не выбирается?»: Задать IBLOCK_ID в фильтре и UF_COLOR в select.
+- Контрпример отвергнут: Искать его как PROPERTY_COLOR элемента. Результат ручной проверки ответа: pass; runtime: не запускался.

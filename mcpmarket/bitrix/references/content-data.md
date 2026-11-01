@@ -3050,3 +3050,11 @@ CSV: Fetch для исходных полей, fputcsv для формата. Ge
 Проверка: Названия с &, кавычками и переносами проходят CSV round-trip без HTML-сущностей.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockresult/getnext.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K101 — UF-поля раздела требуют области инфоблока
+
+UF_* раздела: явный IBLOCK_ID и точный select, не PROPERTY_*.
+
+Проверка: Два инфоблока с одноимённым UF не смешивают данные.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblocksection/getlist.php); documentation-backed, 2026-11-01, не runtime pass.
