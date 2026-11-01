@@ -3114,3 +3114,11 @@ Delete раздела — каскад, не удаление строки: пр
 Проверка: Фикстура с единственной и дополнительной привязкой показывает различный результат; запрет события учтён.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblocksection/delete.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K109 — Связи элемента с разделами меняются публичным Update
+
+Связи/главный раздел: Update с IBLOCK_SECTION и IBLOCK_SECTION_ID; не служебный SetElementSection.
+
+Проверка: После добавления сохранены прежняя связь и выбранный основной раздел.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockelement/setelementsection.php); documentation-backed, 2026-11-01, не runtime pass.
