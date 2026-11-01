@@ -1127,3 +1127,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [users.md](bitrix/references/users.md) и [users-security.md](mcpmarket/bitrix/references/users-security.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cuser/getusergrouplist.php).
 - Самопроверка B161 — «Как добавить постоянную группу, не сделать временную бессрочной?»: Считать полный GetUserGroupList и сохранить интервалы при записи структурированного groups.
 - Контрпример отвергнут: Свести все членства к одним ID. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K83: SetUserGroup не обновляет уже авторизованную сессию
+
+- Пробел до изменения: После записи групп не объяснялась разница БД и уже авторизованного посетителя.
+- Исправление: [users.md](bitrix/references/users.md) и [users-security.md](mcpmarket/bitrix/references/users-security.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cuser/setusergroup.php).
+- Самопроверка B162 — «Группу удалили, но открытая сессия ещё видит доступ — почему?»: Запись членства не равна обновлению активной сессии; проверить механизм отзыва и повторную авторизацию.
+- Контрпример отвергнут: Обещать немедленный отзыв во всех сессиях по SetUserGroup. Результат ручной проверки ответа: pass; runtime: не запускался.

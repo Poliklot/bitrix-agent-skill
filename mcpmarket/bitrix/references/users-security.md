@@ -1828,3 +1828,11 @@ $links = UserLinkTable::getList([
 Проверка: Будущая и истёкшая привязки сохраняют свои даты после добавления другой группы.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cuser/getusergrouplist.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K83 — SetUserGroup не обновляет уже авторизованную сессию
+
+Запись членства не равна обновлению активной сессии; проверить механизм отзыва и повторную авторизацию.
+
+Проверка: Изменение прав проверяется в существующей и новой сессии, включая второй браузер.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cuser/setusergroup.php); documentation-backed, 2026-11-01, не runtime pass.
