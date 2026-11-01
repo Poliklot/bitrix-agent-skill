@@ -1661,3 +1661,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [catalog.md](bitrix/references/catalog.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/catalog/model/price/update.php).
 - Самопроверка B223 — «Достаточно обновить только QUANTITY_FROM у существующей цены?»: Нет; передать согласованную пару границ и проверить пограничные количества.
 - Контрпример отвергнут: Вторая граница сама всегда перестроится безопасно. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K145: Пересчёт наценок не означает изменение всех цен товара
+
+- Пробел до изменения: Не описаны область и результат recountPricesFromBase.
+- Исправление: [catalog.md](bitrix/references/catalog.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/catalog/model/price/recountpricesfrombase.php).
+- Самопроверка B224 — «Метод вернул true — можно считать все цены товара пересчитанными?»: Нет; проверить наличие наценок, диапазон и фактические изменённые строки.
+- Контрпример отвергнут: true означает обновление каждой цены и каждого диапазона. Результат ручной проверки ответа: pass; runtime: не запускался.

@@ -4585,3 +4585,11 @@ PRICE_SCALE — базовая валюта, не дубль PRICE; штатны
 Проверка: Количество на стыке диапазонов не получает пропущенную или неоднозначную цену.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/catalog/model/price/update.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K145 — Пересчёт наценок не означает изменение всех цен товара
+
+recountPricesFromBase(basePriceId): только зависимые цены соответствующего диапазона; true не счётчик изменений.
+
+Проверка: Независимая цена и другой диапазон не меняются; пустой набор не выдаётся за изменения.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/catalog/model/price/recountpricesfrombase.php); documentation-backed, 2026-11-01, не runtime pass.
