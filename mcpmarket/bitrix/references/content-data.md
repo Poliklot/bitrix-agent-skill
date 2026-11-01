@@ -2558,7 +2558,7 @@ die();
 - `CFile::ResizeImage` изменяет `$arFile['tmp_name']` на месте — оригинал теряется. Если нужен оригинал, скопируй сначала
 - `BX_RESIZE_IMAGE_EXACT` = точный crop по центру; `BX_RESIZE_IMAGE_PROPORTIONAL` = вписать в рамку (поля пустые)
 - В CSV-экспорте добавляй UTF-8 BOM `\xEF\xBB\xBF` — Excel иначе не откроет кириллицу корректно
-- При многошаговом импорте храни файл вне `upload/` (в `sys_get_temp_dir()`), иначе он попадёт в БД
+- При многошаговом импорте храни исходник в закрытом каталоге задания и очищай по lifecycle; размещение в `upload/` само по себе не создаёт запись в БД.
 - `fgetcsv` зависит от локали — если возникают проблемы с кодировкой, используй `mb_convert_encoding`
 - `connection_aborted()` в цикле экспорта позволяет корректно завершить если пользователь закрыл браузер
 
@@ -2996,3 +2996,11 @@ ResizeImageGet(..., BX_RESIZE_IMAGE_PROPORTIONAL, true) возвращает р�
 Проверка: Горизонтальный и вертикальный оригиналы дают корректные размеры и пропорции превью.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cfile/resizeimageget.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K64 — Папка upload сама не регистрирует файл в b_file
+
+upload не наблюдается для автоматической регистрации: b_file создаёт SaveFile. Временные файлы изолируй ради доступа и очистки.
+
+Проверка: Сравнить контролируемый copy и SaveFile на стенде по новым ID, затем удалить тестовые артефакты владельцем.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cfile/savefile.php); documentation-backed, 2026-11-01, не runtime pass.

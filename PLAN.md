@@ -951,3 +951,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [import-export.md](bitrix/references/import-export.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cfile/resizeimageget.php).
 - Самопроверка B142 — «Почему после ResizeImageGet отсутствует width?»: Проверить bInitSizes=true и успешность вызова; не подменять размеры файла рамкой.
 - Контрпример отвергнут: Читать width/height без bInitSizes или растягивать до рамки. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K64: Папка upload сама не регистрирует файл в b_file
+
+- Пробел до изменения: Gotcha утверждал, что временный файл попадёт в БД просто из-за размещения в upload.
+- Исправление: [import-export.md](bitrix/references/import-export.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cfile/savefile.php).
+- Самопроверка B143 — «Появится ли запись b_file после обычного copy в upload?»: Нет по контракту SaveFile; для регистрации нужен соответствующий API.
+- Контрпример отвергнут: Считать размещение в upload автоматической регистрацией. Результат ручной проверки ответа: pass; runtime: не запускался.

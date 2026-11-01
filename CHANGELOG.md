@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+- K64: Папка upload сама не регистрирует файл в b_file — дополнены знания, full/compact и сценарий B143.
+
 - K63: Размеры ResizeImageGet нужно запросить явно — дополнены знания, full/compact и сценарий B142.
 
 - K62: CheckFile возвращает текст ошибки, а не success boolean — дополнены знания, full/compact и сценарий B141.
