@@ -321,63 +321,11 @@ class SearchReindex
 
 ---
 
-## Интеграция с инфоблоком: автоиндексация по событию
+## Синхронизация источника и индекса
 
-Сбрасывать и переиндексировать при сохранении элемента инфоблока:
+Для обычных инфоблоков сначала используй штатную индексацию iblock, не создавай второй документ под my.module без отдельной необходимости. Для собственного источника сохраняй в документе его права, сайты и дату изменения. Изменение ACL синхронизируй отдельно (K114), даже если текст не менялся.
 
-```php
-EventManager::getInstance()->addEventHandler(
-    'iblock',
-    'OnAfterIBlockElementAdd',
-    ['\MyVendor\MyModule\IblockSearchSync', 'reindex']
-);
-EventManager::getInstance()->addEventHandler(
-    'iblock',
-    'OnAfterIBlockElementUpdate',
-    ['\MyVendor\MyModule\IblockSearchSync', 'reindex']
-);
-EventManager::getInstance()->addEventHandler(
-    'iblock',
-    'OnBeforeIBlockElementDelete',
-    ['\MyVendor\MyModule\IblockSearchSync', 'delete']
-);
-```
-
-```php
-namespace MyVendor\MyModule;
-
-class IblockSearchSync
-{
-    public static function reindex(array &$arFields): void
-    {
-        if ((int)($arFields['IBLOCK_ID'] ?? 0) !== MY_IBLOCK_ID) {
-            return;
-        }
-        $id = (int)$arFields['ID'];
-        if (!$id) {
-            return;
-        }
-
-        $res = \CIBlockElement::GetByID($id);
-        if (!($el = $res->GetNext())) {
-            return;
-        }
-
-        \CSearch::Index('my.module', (string)$id, [
-            'TITLE'   => $el['NAME'],
-            'BODY'    => strip_tags($el['DETAIL_TEXT'] ?? ''),
-            'URL'     => $el['DETAIL_PAGE_URL'],
-            'SITE_ID' => [SITE_ID => ''],
-            'PARAM1'  => 'my.module',
-        ], true);
-    }
-
-    public static function delete(int $elementId): void
-    {
-        \CSearch::DeleteIndex('my.module', (string)$elementId);
-    }
-}
-```
+Не удаляй custom-индекс в OnBeforeIBlockElementDelete: последующий обработчик может запретить удаление источника. Запускай синхронизацию после подтверждённого изменения и используй повторяемое задание; OnAfter сам по себе не доказывает commit (K03).
 
 ---
 
@@ -437,5 +385,13 @@ $APPLICATION->IncludeComponent('bitrix:search.page', '', [
 Для показанного legacy группового контракта PERMISSIONS передаёт список ID групп с правом чтения, не карту G2→R/G1→D. Группа 2 — все посетители, включая гостя: добавляй её только для публичного документа. Разрешённый список выводится из прав источника, не из групп оператора.
 
 **Проверка на стенде:** Гость не видит частный документ, разрешённая группа видит; публичный виден гостю.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/search/classes/csearch/changepermission.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.
+
+## K114 — Изменение прав источника синхронизируется с индексом
+
+Изменение ACL без изменения текста тоже требует обновления индекса. ChangePermission принимает новый список читателей и область MODULE_ID/ITEM_ID/PARAM1/PARAM2/SITE_ID; false снимает соответствующее ограничение. Для одного документа задай ITEM_ID явно. Страница источника всё равно обязана проверять доступ.
+
+**Проверка на стенде:** Отзыв доступа убирает результат и сниппет, соседние документы не затронуты.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/search/classes/csearch/changepermission.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.
