@@ -14,7 +14,7 @@ description: >-
   local core and `local/*`; missing optional modules are deferred.
 metadata:
   author: poliklot
-  version: "1.43.0"
+  version: "1.44.0"
 ---
 
 # Bitrix Expert Skill
@@ -32,7 +32,7 @@ Designed for Claude Code and Codex on 1C-Bitrix CMS projects.
 
 Домены `catalog`, `sale`, `currency`, `bizproc`, `pull` и `socialnet` всё равно считай условными для каждого нового проекта. Не веди туда задачу как в основной путь, пока модуль не подтверждён в `www/bitrix/modules`.
 
-Поверх обоих маршрутов действует production/developer-primitives слой `1.43.0`: best practices, структура/include, project configuration/stable IDs, pitfalls matrix, tail module routing и runtime smoke verification. Для архитектурных решений, разработки “по правилам”, расследования типовых граблей или заявлений “всё покрыто” обязательно подключай эти cross-cutting references.
+Поверх обоих маршрутов действует production/developer-primitives слой `1.44.0`: best practices, структура/include, project configuration/stable IDs, pitfalls matrix, tail module routing и runtime smoke verification. Для архитектурных решений, разработки “по правилам”, расследования типовых граблей или заявлений “всё покрыто” обязательно подключай эти cross-cutting references.
 
 ## Источник истины
 
@@ -222,3 +222,5 @@ if (!$result->isSuccess()) {
 - Файлы/данные: CFile, входные дескрипторы, размеры, замена и CSV — [import-export.md](references/import-export.md); владение загрузками — [file-upload-modern.md](references/file-upload-modern.md); формат/зоны/арифметика дат — [http.md](references/http.md); primary, проекции, ExpressionField, LIKE и JOIN-кеш — [orm.md](references/orm.md). K61–K80, B140–B159.
 
 - Пользователи и группы: [users.md](references/users.md). K81–K90, B160–B169.
+
+- Агенты, локализация и модули: [cache-infra.md](references/cache-infra.md), [modules-loader.md](references/modules-loader.md). K91–K100, B170–B179.

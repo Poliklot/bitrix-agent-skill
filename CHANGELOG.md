@@ -4,25 +4,19 @@
 
 ## [Unreleased]
 
-- K100: includeSharewareModule возвращает состояние лицензии — дополнены знания, full/compact и сценарий B179.
+## [1.44.0] — 2026-11-01
 
-- K99: Версия модуля читается из arModuleVersion — дополнены знания, full/compact и сценарий B178.
-
-- K98: Явный язык передаётся документированному getMessage — дополнены знания, full/compact и сценарий B177.
-
-- K97: Подстановка Loc не экранирует значение для HTML — дополнены знания, full/compact и сценарий B176.
-
-- K96: Коды Loc не изолированы PHP-файлом — дополнены знания, full/compact и сценарий B175.
-
-- K95: loadMessages регистрирует отложенную загрузку — дополнены знания, full/compact и сценарий B174.
-
-- K94: DATE_CHECK не заменяет NEXT_EXEC при первом запуске — дополнены знания, full/compact и сценарий B173.
-
-- K93: NAME агента является кодом, а не параметризованным заданием — дополнены знания, full/compact и сценарий B172.
-
-- K92: Агент не наследует надёжный контекст посетителя — дополнены знания, full/compact и сценарий B171.
-
+### Added
 - K91: Периодический агент догоняет пропущенные интервалы — дополнены знания, full/compact и сценарий B170.
+- K92: Агент не наследует надёжный контекст посетителя — дополнены знания, full/compact и сценарий B171.
+- K93: NAME агента является кодом, а не параметризованным заданием — дополнены знания, full/compact и сценарий B172.
+- K94: DATE_CHECK не заменяет NEXT_EXEC при первом запуске — дополнены знания, full/compact и сценарий B173.
+- K95: loadMessages регистрирует отложенную загрузку — дополнены знания, full/compact и сценарий B174.
+- K96: Коды Loc не изолированы PHP-файлом — дополнены знания, full/compact и сценарий B175.
+- K97: Подстановка Loc не экранирует значение для HTML — дополнены знания, full/compact и сценарий B176.
+- K98: Явный язык передаётся документированному getMessage — дополнены знания, full/compact и сценарий B177.
+- K99: Версия модуля читается из arModuleVersion — дополнены знания, full/compact и сценарий B178.
+- K100: includeSharewareModule возвращает состояние лицензии — дополнены знания, full/compact и сценарий B179.
 
 ## [1.43.0] — 2026-11-01
 
@@ -616,7 +610,8 @@
 ### Added
 - Первый публичный релиз: `SKILL.md`, progressive disclosure архитектура
 
-[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.43.0...HEAD
+[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.44.0...HEAD
+[1.44.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.43.0...v1.44.0
 [1.43.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.42.0...v1.43.0
 [1.42.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.41.0...v1.42.0
 [1.41.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.40.0...v1.41.0
