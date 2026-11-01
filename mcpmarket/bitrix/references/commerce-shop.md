@@ -482,9 +482,11 @@ $formats = CurrencyLangTable::getList([
 ```php
 use Bitrix\Currency\CurrencyRateTable;
 
+// Диагностическая запись не позднее выбранной даты, не замена conversion API.
+$rateDate = new \Bitrix\Main\Type\Date();
 $rate = CurrencyRateTable::getList([
     'select' => ['CURRENCY', 'DATE_RATE', 'RATE_CNT', 'RATE'],
-    'filter' => ['=CURRENCY' => 'USD'],
+    'filter' => ['=CURRENCY' => 'USD', '<=DATE_RATE' => $rateDate],
     'order' => ['DATE_RATE' => 'DESC'],
     'limit' => 1,
 ])->fetch();
@@ -4641,3 +4643,11 @@ GetProductInfo(offerId, offerIblockId) → parent ID/IBLOCK_ID либо false.
 Проверка: Котировки за 1 и за 100 единиц дают одинаковый результат после нормализации.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/currency/developer/ccurrencyrates/ccurrencyrates__add.a9ea23d5.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K152 — Историческая конвертация требует даты, а не последней строки курса
+
+История: явная ISO-дата в GetConvertFactorEx; последний курс без даты не подходит.
+
+Проверка: Будущий курс не влияет на расчёт выбранной прошлой даты.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/currency/developer/ccurrencyrates/getconvertfactorex.php); documentation-backed, 2026-11-01, не runtime pass.

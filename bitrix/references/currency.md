@@ -61,9 +61,11 @@ $formats = CurrencyLangTable::getList([
 ```php
 use Bitrix\Currency\CurrencyRateTable;
 
+// Диагностическая запись не позднее выбранной даты, не замена conversion API.
+$rateDate = new \Bitrix\Main\Type\Date();
 $rate = CurrencyRateTable::getList([
     'select' => ['CURRENCY', 'DATE_RATE', 'RATE_CNT', 'RATE'],
-    'filter' => ['=CURRENCY' => 'USD'],
+    'filter' => ['=CURRENCY' => 'USD', '<=DATE_RATE' => $rateDate],
     'order' => ['DATE_RATE' => 'DESC'],
     'limit' => 1,
 ])->fetch();
@@ -117,3 +119,11 @@ RATE относится к RATE_CNT единицам валюты. Для цен
 **Проверка на стенде:** Котировки за 1 и за 100 единиц дают одинаковый результат после нормализации.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/currency/developer/ccurrencyrates/ccurrencyrates__add.a9ea23d5.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.
+
+## K152 — Историческая конвертация требует даты, а не последней строки курса
+
+GetConvertFactorEx принимает явную дату YYYY-MM-DD; пустая дата означает текущий курс. Для исторического расчёта не заменяй API запросом ORDER BY DATE_RATE DESC без границы даты. Отдельно проверь наличие нужных курсов и политику проекта при их отсутствии; не объявляй случайный fallback подтверждённым историческим курсом.
+
+**Проверка на стенде:** Будущий курс не влияет на расчёт выбранной прошлой даты.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/currency/developer/ccurrencyrates/getconvertfactorex.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.

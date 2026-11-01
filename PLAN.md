@@ -1710,3 +1710,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [currency.md](bitrix/references/currency.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/currency/developer/ccurrencyrates/ccurrencyrates__add.a9ea23d5.php).
 - Самопроверка B230 — «Если за 100 единиц указано RATE=250, сколько стоит одна?»: 2.5 базовых единицы; сохранить RATE_CNT=100 и RATE=250.
 - Контрпример отвергнут: Умножить любую сумму на 250 без номинала. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K152: Историческая конвертация требует даты, а не последней строки курса
+
+- Пробел до изменения: Пример выбирал последнюю запись без ограничения даты, что могло взять будущий курс.
+- Исправление: [currency.md](bitrix/references/currency.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/currency/developer/ccurrencyrates/getconvertfactorex.php).
+- Самопроверка B231 — «Можно ли пересчитать прошлый документ по последней строке CurrencyRateTable?»: Нет; передать дату расчёта, проверить покрытие курсов и не брать будущую запись.
+- Контрпример отвергнут: Самая новая строка всегда верна для любой даты. Результат ручной проверки ответа: pass; runtime: не запускался.
