@@ -2030,3 +2030,11 @@ DIRECT_SEND — персональный режим; расписание/син
 Проверка: Пустая, ошибочная и успешная очереди дают разные отчёты.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/cpostinggeneral/getemailstatuses.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K140 — Вложение posting связывается через SaveFile
+
+Вложение выпуска: SaveFile(postingId, descriptor), проверить ID/false до отправки.
+
+Проверка: GetFileList выпуска содержит ровно ожидаемое вложение; ошибка файла не запускает выпуск.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/cpostinggeneral/cpostingsavefile.php); documentation-backed, 2026-11-01, не runtime pass.

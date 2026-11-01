@@ -1596,3 +1596,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [subscribe.md](bitrix/references/subscribe.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/cpostinggeneral/getemailstatuses.php).
 - Самопроверка B218 — «В GetEmailStatuses нет Y, но есть E — выпуск успешен?»: Нет; остались ошибки, а отсутствие ожидающих само по себе не доказывает успех.
 - Контрпример отвергнут: Y значит успешно отправлено, N — не отправлено. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K140: Вложение posting связывается через SaveFile
+
+- Пробел до изменения: Не описана регистрация вложения в lifecycle конкретного выпуска.
+- Исправление: [subscribe.md](bitrix/references/subscribe.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/cpostinggeneral/cpostingsavefile.php).
+- Самопроверка B219 — «Файл уже есть в b_file — автоматически ли он приложен к posting?»: Нет; нужна штатная привязка вложения к выпуску и проверка результата.
+- Контрпример отвергнут: Один CFile::SaveFile гарантирует вложение рассылки. Результат ручной проверки ответа: pass; runtime: не запускался.
