@@ -1689,3 +1689,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [catalog.md](bitrix/references/catalog.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/catalog/producttable/index.php).
 - Самопроверка B227 — «Можно ли считать QUANTITY_TRACE=D отключённым учётом?»: Нет; разрешить настройку модуля и не переписать наследование постоянным N.
 - Контрпример отвергнут: Любое значение кроме Y равно N. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K149: getOffersList возвращает вложенную карту и требует области для свойств
+
+- Пробел до изменения: Не описан пакетный контракт выборки SKU и ограничение property-фильтра.
+- Исправление: [catalog.md](bitrix/references/catalog.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/catalog/classes/catalogsku/getofferslist.php).
+- Самопроверка B228 — «Почему в пакетной выборке предложений нет NAME и ключа одного товара?»: Запросить fields явно и учитывать отсутствие предложений; разобрать вложенную карту.
+- Контрпример отвергнут: Пустой fields возвращает всё, результат всегда плоский и полный. Результат ручной проверки ответа: pass; runtime: не запускался.

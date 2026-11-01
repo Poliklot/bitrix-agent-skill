@@ -4617,3 +4617,11 @@ Y/N/D не boolean: D наследует настройку модуля; сох
 Проверка: Изменение настройки модуля влияет на D, но не на явные Y/N.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/catalog/producttable/index.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K149 — getOffersList возвращает вложенную карту и требует области для свойств
+
+getOffersList: вложенная карта; смешанные ИБ → iblockID=0, без общего фильтра свойств.
+
+Проверка: Два товара из разных ИБ не смешивают свойства, товар без SKU обрабатывается без ошибки.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/catalog/classes/catalogsku/getofferslist.php); documentation-backed, 2026-11-01, не runtime pass.
