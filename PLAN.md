@@ -1357,3 +1357,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [search.md](bitrix/references/search.md) и [search-seo-ops.md](mcpmarket/bitrix/references/search-seo-ops.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/search/classes/csearch/indexs.php).
 - Самопроверка B191 — «Почему сортировка по изменению не отражает дату источника?»: Проверить DATE_CHANGE и формат даты, не LAST_MODIFIED.
 - Контрпример отвергнут: Передавать произвольный DateTime в вымышленное поле. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K113: PERMISSIONS поиска — список читателей, не карта R/D
+
+- Пробел до изменения: Пример путал список групп с картой прав и называл группу 2 авторизованными.
+- Исправление: [search.md](bitrix/references/search.md) и [search-seo-ops.md](mcpmarket/bitrix/references/search-seo-ops.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/search/classes/csearch/changepermission.php).
+- Самопроверка B192 — «Защищает ли PERMISSIONS=[G2=>R] частный документ?»: Нет; получить реальный список групп читателей, не публиковать группе 2 частные данные.
+- Контрпример отвергнут: G2 означает только авторизованных, G1 — всех. Результат ручной проверки ответа: pass; runtime: не запускался.

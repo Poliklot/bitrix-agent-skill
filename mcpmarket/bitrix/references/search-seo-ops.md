@@ -44,7 +44,7 @@ CSearch::Index(
 | `PARAM2` | нет | Группировка второго уровня (напр. ID раздела) |
 | `TAGS` | нет | Строка тегов через запятую |
 | `DATE_CHANGE` | да | Дата изменения источника в формате legacy API проекта |
-| `PERMISSIONS` | нет | Массив прав `['G2' => 'R', 'G1' => 'D']` |
+| `PERMISSIONS` | да для безопасного примера | Список ID групп с правом чтения из источника |
 
 ```php
 // $dateChange — дата изменения источника в формате проекта.
@@ -57,7 +57,7 @@ CSearch::Index('my.module', (string)$elementId, [
     'PARAM2'        => (string)$sectionId,     // раздел
     'TAGS'          => 'новость, важное',
     'DATE_CHANGE'   => $dateChange,
-    'PERMISSIONS'   => ['G2' => 'R'],          // G2 = все авторизованные
+    'PERMISSIONS'   => $readGroupIds,          // проверенные права источника; [2] только для публичного
 ], true);
 ```
 
@@ -421,7 +421,7 @@ $APPLICATION->IncludeComponent('bitrix:search.page', '', [
 - `bOverWrite` управляет перезаписью существующего документа, не созданием дублей (K111).
 - `DeleteIndex` без `$ITEM_ID` удаляет **весь** индекс модуля — используй осторожно
 - `ReIndexAll(true)` — очищает таблицы `TRUNCATE`, очень деструктивно
-- Права `PERMISSIONS` `['G1' => 'D']` — группа 1 (все) не видит. `['G2' => 'R']` — авторизованные видят
+- `PERMISSIONS` — список читателей, не карта уровней; группа 2 включает гостя (K113).
 
 ---
 
@@ -1951,3 +1951,11 @@ Index получает DATE_CHANGE источника, не LAST_MODIFIED и н�
 Проверка: Документы сохраняют порядок реальных изменений после повторной индексации.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/search/classes/csearch/indexs.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K113 — PERMISSIONS поиска — список читателей, не карта R/D
+
+PERMISSIONS: список групп-читателей; [2] публично, не «только авторизованные».
+
+Проверка: Гость не видит частный документ, разрешённая группа видит; публичный виден гостю.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/search/classes/csearch/changepermission.php); documentation-backed, 2026-11-01, не runtime pass.
