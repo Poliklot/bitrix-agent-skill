@@ -1724,3 +1724,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [currency.md](bitrix/references/currency.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/currency/developer/ccurrencylang/currencyformat.php?print=Y).
 - Самопроверка B232 — «Превратит ли CurrencyFormat(100, EUR) сто USD в EUR?»: Нет, только оформит 100 как EUR; сначала нужна конвертация с валютой источника.
 - Контрпример отвергнут: Код валюты в форматировании автоматически конвертирует сумму. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K154: Большие суммы форматируются десятичной строкой с учётом версии
+
+- Пробел до изменения: Нет контракта сохранения точности больших чисел при форматировании.
+- Исправление: [currency.md](bitrix/references/currency.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/currency/developer/ccurrencylang/formatvalue.php).
+- Самопроверка B233 — «Как вывести сумму длиннее точности float без потери цифр?»: Сохранить десятичную строку и проверить версию formatValue; не преобразовывать заранее.
+- Контрпример отвергнут: float перед форматированием без потерь подходит для любой суммы. Результат ручной проверки ответа: pass; runtime: не запускался.

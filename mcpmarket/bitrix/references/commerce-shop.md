@@ -4659,3 +4659,11 @@ GetProductInfo(offerId, offerIblockId) → parent ID/IBLOCK_ID либо false.
 Проверка: Смена оформления не меняет исходное число; конвертация выполняется отдельным шагом.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/currency/developer/ccurrencylang/currencyformat.php?print=Y); documentation-backed, 2026-11-01, не runtime pass.
+
+## K154 — Большие суммы форматируются десятичной строкой с учётом версии
+
+currency ≥24: длинная decimal-string в formatValue; не float и не локализованный ввод.
+
+Проверка: Последние цифры длинной суммы сохраняются в поддерживаемой версии.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/currency/developer/ccurrencylang/formatvalue.php); documentation-backed, 2026-11-01, не runtime pass.
