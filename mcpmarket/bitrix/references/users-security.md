@@ -1880,3 +1880,11 @@ CUser::Add; Register относится к публичному потоку с 
 Проверка: Вызов с отдельно подготовленными переменными проходит без reference error.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cuser/getlist.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K89 — LOGIN в legacy-фильтре не равно точному поиску
+
+Нет: LOGIN — подстрока; для точного поиска LOGIN_EQUAL или GetByLogin.
+
+Проверка: ivan и ivan_petrov различаются точным поиском без случайного выбора первой записи.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cuser/getlist.php); documentation-backed, 2026-11-01, не runtime pass.

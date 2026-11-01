@@ -1169,3 +1169,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [users.md](bitrix/references/users.md) и [users-security.md](mcpmarket/bitrix/references/users-security.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cuser/getlist.php).
 - Самопроверка B167 — «Как исправить ошибку передачи первого аргумента CUser::GetList по ссылке?»: Объявить by/order отдельно и передать переменные; не выражения присваивания.
 - Контрпример отвергнут: Передать строковый литерал или assignment expression в ссылочный аргумент. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K89: LOGIN в legacy-фильтре не равно точному поиску
+
+- Пробел до изменения: Нет различения LOGIN и LOGIN_EQUAL для поиска учётной записи.
+- Исправление: [users.md](bitrix/references/users.md) и [users-security.md](mcpmarket/bitrix/references/users-security.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cuser/getlist.php).
+- Самопроверка B168 — «Поиск LOGIN=ivan вернул ivan_petrov — ошибка ядра?»: Нет: LOGIN — подстрока; для точного поиска LOGIN_EQUAL или GetByLogin.
+- Контрпример отвергнут: Выбирать первую строку подстрочного поиска как точную учётку. Результат ручной проверки ответа: pass; runtime: не запускался.
