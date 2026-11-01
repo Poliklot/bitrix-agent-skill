@@ -1256,3 +1256,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [modules-loader.md](bitrix/references/modules-loader.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=101&LESSON_ID=2902).
 - Самопроверка B178 — «Почему версия модуля пустая после include стандартного version.php?»: Читать arModuleVersion, а не version; проверить оба обязательных значения.
 - Контрпример отвергнут: Считать имя локальной переменной произвольным при штатном формате. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K100: includeSharewareModule возвращает состояние лицензии
+
+- Пробел до изменения: Нет отличия enum-состояний партнёрского модуля от bool includeModule.
+- Исправление: [modules-loader.md](bitrix/references/modules-loader.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/loader/includesharewaremodule.php).
+- Самопроверка B179 — «Можно ли проверять includeSharewareModule только на truthy?»: Нет: разобрать константы установленного, demo, истёкшего и отсутствующего состояния.
+- Контрпример отвергнут: Считать любое ненулевое состояние успешной загрузкой. Результат ручной проверки ответа: pass; runtime: не запускался.

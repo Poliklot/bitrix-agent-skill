@@ -3600,3 +3600,11 @@ ORM cache.ttl не включает JOIN: нужен cache_joins. Внешний
 Проверка: Фикстура стандартного version.php заполняет свойства; отсутствие ключа даёт явную ошибку.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=101&LESSON_ID=2902); documentation-backed, 2026-11-01, не runtime pass.
+
+## K100 — includeSharewareModule возвращает состояние лицензии
+
+Нет: разобрать константы установленного, demo, истёкшего и отсутствующего состояния.
+
+Проверка: Все четыре состояния приводят к осознанной ветке, expired не исполняет защищённый сценарий.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/loader/includesharewaremodule.php); documentation-backed, 2026-11-01, не runtime pass.

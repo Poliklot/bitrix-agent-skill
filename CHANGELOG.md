@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+- K100: includeSharewareModule возвращает состояние лицензии — дополнены знания, full/compact и сценарий B179.
+
 - K99: Версия модуля читается из arModuleVersion — дополнены знания, full/compact и сценарий B178.
 
 - K98: Явный язык передаётся документированному getMessage — дополнены знания, full/compact и сценарий B177.
