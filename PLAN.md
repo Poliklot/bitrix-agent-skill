@@ -1014,3 +1014,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [http.md](bitrix/references/http.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/type/datetime/settimezone.php).
 - Самопроверка B151 — «Вернёт ли format серверное время после setTimeZone(UTC)?»: Нет, он форматирует в установленной зоне объекта; для серверной зоны установить её явно.
 - Контрпример отвергнут: Считать format или disableUserTime принудительной серверной зоной. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K73: Арифметика Bitrix DateTime изменяет исходный объект
+
+- Пробел до изменения: Примеры add не объясняли, что присваивание даты второй переменной не создаёт копию.
+- Исправление: [http.md](bitrix/references/http.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://docs.1c-bitrix.ru/api/classes/Bitrix-Main-Type-DateTime.html).
+- Самопроверка B152 — «Почему после расчёта deadline изменился createdAt?»: Обе переменные ссылались на один DateTime; клонировать перед add.
+- Контрпример отвергнут: Присвоить объект второй переменной и считать его immutable. Результат ручной проверки ответа: pass; runtime: не запускался.

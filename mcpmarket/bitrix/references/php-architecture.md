@@ -3490,3 +3490,11 @@ format зависит от timezone объекта. disableUserTime не зам�
 Проверка: Один момент в двух зонах имеет одинаковый timestamp и ожидаемо разные строки.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/type/datetime/settimezone.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K73 — Арифметика Bitrix DateTime изменяет исходный объект
+
+add мутирует объект. Независимый deadline создавай через clone, а не простое присваивание.
+
+Проверка: После add у клона timestamp исходного объекта неизменен.
+
+[Официальный контракт](https://docs.1c-bitrix.ru/api/classes/Bitrix-Main-Type-DateTime.html); documentation-backed, 2026-11-01, не runtime pass.

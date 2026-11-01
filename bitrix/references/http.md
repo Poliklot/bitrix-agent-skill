@@ -307,3 +307,11 @@ Context::getCurrent()->getResponse()->addCookie($cookie);
 **Проверка на стенде:** Один момент в двух зонах имеет одинаковый timestamp и ожидаемо разные строки.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/type/datetime/settimezone.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.
+
+## K73 — Арифметика Bitrix DateTime изменяет исходный объект
+
+add возвращает $this и изменяет дату; setTime/setTimeZone тоже не следует считать immutable API. Для независимого срока сначала `$deadline = clone $createdAt;`, затем `$deadline->add("P1D");`. Bitrix DateTime — не наследник нативного PHP DateTime: для интеграции используй createFromPhp вместо ожидания взаимозаменяемости типов.
+
+**Проверка на стенде:** После add у клона timestamp исходного объекта неизменен.
+
+[Официальный контракт](https://docs.1c-bitrix.ru/api/classes/Bitrix-Main-Type-DateTime.html). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.
