@@ -1582,3 +1582,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [subscribe.md](bitrix/references/subscribe.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/cpostinggeneral/cpostingsendmessage.php).
 - Самопроверка B216 — «Если SendMessage вернул CONTINUE, можно показать «готово»?»: Нет; сохранить продолжение и проверить причину, не сбрасывая очередь.
 - Контрпример отвергнут: Любая непустая строка означает успешную полную отправку. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K138: DIRECT_SEND задаёт персональную отправку, а не синхронность
+
+- Пробел до изменения: Поле было показано без семантики и связи с пакетными ограничениями.
+- Исправление: [subscribe.md](bitrix/references/subscribe.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/cpostinggeneral/cpostingfields.php).
+- Самопроверка B217 — «DIRECT_SEND=Y обходит очередь и немедленно отправляет письмо?»: Нет; это персональный режим, очередь и запуск управляются отдельно.
+- Контрпример отвергнут: DIRECT_SEND означает прямую синхронную отправку. Результат ручной проверки ответа: pass; runtime: не запускался.

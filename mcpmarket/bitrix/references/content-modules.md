@@ -1668,7 +1668,7 @@ $postingId = $posting->Add([
     'SUBJECT' => 'Новости недели',
     'BODY_TYPE' => 'html',
     'BODY' => '<p>Контент письма</p>',
-    'DIRECT_SEND' => 'N',
+    'DIRECT_SEND' => 'Y', // персональный режим для ограниченных шагов отправки
     'SUBSCR_FORMAT' => 'html',
     'RUB_ID' => [$rubricId],
     'GROUP_ID' => [],
@@ -2014,3 +2014,11 @@ SendMessage: true/false/CONTINUE разбирать строго; метод р�
 Проверка: Все три значения дают разные ветви; CONTINUE не переводит отчёт в успех.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/cpostinggeneral/cpostingsendmessage.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K138 — DIRECT_SEND задаёт персональную отправку, а не синхронность
+
+DIRECT_SEND — персональный режим; расписание/синхронность задаются не им.
+
+Проверка: Тестовые письма не раскрывают адреса других получателей; пакетный лимит действует.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/cpostinggeneral/cpostingfields.php); documentation-backed, 2026-11-01, не runtime pass.
