@@ -1915,3 +1915,11 @@ PERMISSIONS: список групп-читателей; [2] публично, �
 Проверка: Отзыв доступа убирает результат и сниппет, соседние документы не затронуты.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/search/classes/csearch/changepermission.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K115 — ChangeSite изменяет привязки и пути индекса
+
+ChangeSite: карта сайт→путь плюс точная область, не ACL ChangePermission.
+
+Проверка: Меняется только нужный документ, выдача соседнего сайта не загрязнена.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/search/classes/csearch/changesite.php); documentation-backed, 2026-11-01, не runtime pass.

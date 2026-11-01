@@ -1371,3 +1371,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [search.md](bitrix/references/search.md) и [search-seo-ops.md](mcpmarket/bitrix/references/search-seo-ops.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/search/classes/csearch/changepermission.php).
 - Самопроверка B193 — «Текст не менялся, но доступ отозван: достаточно скрыть ссылку на странице?»: Нет; обновить ACL индекса в точной области и проверить выдачу отозванного пользователя.
 - Контрпример отвергнут: Ждать полной переиндексации или массово менять права модуля. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K115: ChangeSite изменяет привязки и пути индекса
+
+- Пробел до изменения: Не было пути обновления сайтов/URL без удаления всего индекса.
+- Исправление: [search.md](bitrix/references/search.md) и [search-seo-ops.md](mcpmarket/bitrix/references/search-seo-ops.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/search/classes/csearch/changesite.php).
+- Самопроверка B194 — «Как перенести URL одного индексированного документа на другой сайт?»: Использовать ChangeSite с картой путей и точным ITEM_ID; проверить оба сайта.
+- Контрпример отвергнут: Путать ChangeSite с ChangePermission из опечатки документации. Результат ручной проверки ответа: pass; runtime: не запускался.
