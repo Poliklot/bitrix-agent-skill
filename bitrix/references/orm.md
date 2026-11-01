@@ -277,8 +277,8 @@ while ($row = $result->fetch()) { ... }
 | `<` | `< value` | `['<DATE_CREATE' => $dt]` |
 | `<=` | `<= value` | `['<=SORT' => 500]` |
 | `%` | `LIKE '%value%'` | `['%TITLE' => 'заказ']` |
-| `=%` | `LIKE 'value%'` | `['=%CODE' => 'order_']` |
-| `%=` | `LIKE '%value'` | `['%=CODE' => '_ru']` |
+| Query `whereLike` | `LIKE 'order%'` — явная маска | `->whereLike('CODE', 'order%')` |
+| Query `whereLike` | `LIKE '%ru'` — явная маска | `->whereLike('CODE', '%ru')` |
 | `!%` | `NOT LIKE '%value%'` | `['!%TITLE' => 'удалён']` |
 | `=` + `null` | `IS NULL` | `['=DELETED_AT' => null]` |
 | `!=` + `null` | `IS NOT NULL` | `['!=DELETED_AT' => null]` |
@@ -747,3 +747,11 @@ try {
 **Проверка на стенде:** Кавычки и SQL-подобные строки остаются значениями, неизвестное поле отклоняется.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/entity/expressionfield/__construct.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.
+
+## K79 — LIKE-паттерн задаётся явно, wildcard не является SQL injection
+
+Для ясного контракта используй `whereLike("CODE", "order%")` или `whereLike("CODE", "%ru")`. SQL-паттерн содержит % и _: это wildcard, даже когда строка безопасно передана как значение. Для буквального сравнения выбери =; если нужен буквальный substring, используй согласованное с СУБД экранирование LIKE и проверь SQL. Не обещай автоматическую маску по неоднозначной записи legacy-оператора.
+
+**Проверка на стенде:** Коды order_1 и orderX1 различаются при буквальном поиске и ожидаемо совпадают при маске.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=43&LESSON_ID=3030). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.
