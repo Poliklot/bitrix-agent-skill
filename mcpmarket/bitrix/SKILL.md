@@ -14,7 +14,7 @@ description: >-
   local core and `local/*`; missing optional modules are deferred.
 metadata:
   author: poliklot
-  version: "1.40.0"
+  version: "1.41.0"
 ---
 
 # Bitrix Expert Skill — MCP Market Edition
@@ -138,3 +138,5 @@ foreach (['iblock'] as $module) {
 - Внешние интеграции: batch/pagination, OAuth/вебхуки, offline queue, приложения/встройки, файлы, лимиты и неопределённый исход HTTP — [integrations-rest.md](references/integrations-rest.md) и [php-architecture.md](references/php-architecture.md). Контракты K21–K40, сценарии B100–B119. REST-контракты относятся к Битрикс24; наличие возможностей в 1С-Битрикс и версию API проверять отдельно.
 
 - Компоненты/Engine: HTML-кеш, приватность результата, эпилог, приоритет шаблона, дополнительные ключи, подписанные параметры, AJAX-маршруты и объектные права — [components-admin-ui.md](references/components-admin-ui.md), [php-architecture.md](references/php-architecture.md). K41–K50, B120–B129.
+
+- Настройки/кеш/почта: [php-architecture.md](references/php-architecture.md), [search-seo-ops.md](references/search-seo-ops.md), [content-modules.md](references/content-modules.md). K51–K60, B130–B139.

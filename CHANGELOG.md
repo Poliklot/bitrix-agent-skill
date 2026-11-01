@@ -4,25 +4,19 @@
 
 ## [Unreleased]
 
-- K60: Вложение по ID и по пути имеет разную стоимость — дополнены знания, full/compact и сценарий B139.
+## [1.41.0] — 2026-11-01
 
-- K59: DUPLICATE управляет копией, а не идемпотентностью — дополнены знания, full/compact и сценарий B138.
-
-- K58: Явный почтовый шаблон и языковой фильтр — дополнены знания, full/compact и сценарий B137.
-
-- K57: Отмена постановки письма до очереди — дополнены знания, full/compact и сценарий B136.
-
-- K56: Совместимая регистрация OnBeforeEventSend — дополнены знания, full/compact и сценарий B135.
-
-- K55: Список сайтов в Legacy и D7 почте различается — дополнены знания, full/compact и сценарий B134.
-
-- K54: Макросы D7 почты передаются через C_FIELDS — дополнены знания, full/compact и сценарий B133.
-
-- K53: Отсутствующая настройка и сохранённая пустая строка — дополнены знания, full/compact и сценарий B132.
-
-- K52: Явная область чтения Option — дополнены знания, full/compact и сценарий B131.
-
+### Added
 - K51: Штатный тег инфоблока и проектные теги — дополнены знания, full/compact и сценарий B130.
+- K52: Явная область чтения Option — дополнены знания, full/compact и сценарий B131.
+- K53: Отсутствующая настройка и сохранённая пустая строка — дополнены знания, full/compact и сценарий B132.
+- K54: Макросы D7 почты передаются через C_FIELDS — дополнены знания, full/compact и сценарий B133.
+- K55: Список сайтов в Legacy и D7 почте различается — дополнены знания, full/compact и сценарий B134.
+- K56: Совместимая регистрация OnBeforeEventSend — дополнены знания, full/compact и сценарий B135.
+- K57: Отмена постановки письма до очереди — дополнены знания, full/compact и сценарий B136.
+- K58: Явный почтовый шаблон и языковой фильтр — дополнены знания, full/compact и сценарий B137.
+- K59: DUPLICATE управляет копией, а не идемпотентностью — дополнены знания, full/compact и сценарий B138.
+- K60: Вложение по ID и по пути имеет разную стоимость — дополнены знания, full/compact и сценарий B139.
 
 ## [1.40.0] — 2026-11-01
 
@@ -563,7 +557,8 @@
 ### Added
 - Первый публичный релиз: `SKILL.md`, progressive disclosure архитектура
 
-[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.40.0...HEAD
+[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.41.0...HEAD
+[1.41.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.40.0...v1.41.0
 [1.40.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.39.0...v1.40.0
 [1.39.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.38.0...v1.39.0
 [1.38.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.37.0...v1.38.0
