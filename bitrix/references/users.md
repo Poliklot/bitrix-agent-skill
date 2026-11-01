@@ -297,21 +297,23 @@ $em = EventManager::getInstance();
 // Чтобы изменить $arFields по ссылке или отменить операцию — нужен addEventHandlerCompatible.
 // addEventHandler оборачивает параметры в Event-объект и ссылка теряется.
 $em->addEventHandlerCompatible('main', 'OnBeforeUserAdd',
-    ['\MyVendor\MyModule\UserHandler', 'onBeforeAdd']);
+    [UserHandler::class, 'onBeforeAdd']);
 
 class UserHandler
 {
     // $arFields — по ссылке: можно читать и изменять
-    public static function onBeforeAdd(array &$arFields): void
+    public static function onBeforeAdd(array &$arFields): bool
     {
         // Нормализация
         $arFields['EMAIL'] = mb_strtolower(trim($arFields['EMAIL'] ?? ''));
 
-        // Отмена операции: ThrowException, ядро проверит GetException() после события
+        // Документированный отказ: сообщение и return false
         if (empty($arFields['EMAIL'])) {
             global $APPLICATION;
             $APPLICATION->ThrowException('Email обязателен');
+            return false;
         }
+        return true;
     }
 
     // OnAfterUserAdd — читаем результат, arFields['ID'] = ID нового пользователя
@@ -371,3 +373,11 @@ $em->addEventHandler('main', 'OnUserLoginComplete', function(\Bitrix\Main\Event 
 **Проверка на стенде:** Изменение прав проверяется в существующей и новой сессии, включая второй браузер.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cuser/setusergroup.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.
+
+## K84 — Отмена OnBeforeUserAdd требует false вместе с ThrowException
+
+В legacy OnBeforeUserAdd установи сообщение через APPLICATION->ThrowException и верни false. ThrowException здесь не равен PHP throw и сам по себе не заменяет возвращаемый результат. Убери void из запрещающего callback; нормализация может завершаться true. Используй регистрацию compatible, а вызывающий Add обязан проверить возвращённый ID/LAST_ERROR.
+
+**Проверка на стенде:** Пустой обязательный email отменяет Add; допустимое значение проходит обработчик.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/events/onbeforeuseradd.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.

@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+- K84: Отмена OnBeforeUserAdd требует false вместе с ThrowException — дополнены знания, full/compact и сценарий B163.
+
 - K83: SetUserGroup не обновляет уже авторизованную сессию — дополнены знания, full/compact и сценарий B162.
 
 - K82: Замена групп должна сохранять временные членства — дополнены знания, full/compact и сценарий B161.

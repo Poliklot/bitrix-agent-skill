@@ -1134,3 +1134,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [users.md](bitrix/references/users.md) и [users-security.md](mcpmarket/bitrix/references/users-security.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cuser/setusergroup.php).
 - Самопроверка B162 — «Группу удалили, но открытая сессия ещё видит доступ — почему?»: Запись членства не равна обновлению активной сессии; проверить механизм отзыва и повторную авторизацию.
 - Контрпример отвергнут: Обещать немедленный отзыв во всех сессиях по SetUserGroup. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K84: Отмена OnBeforeUserAdd требует false вместе с ThrowException
+
+- Пробел до изменения: Callback имел void и только ThrowException вместо документированного отказа.
+- Исправление: [users.md](bitrix/references/users.md) и [users-security.md](mcpmarket/bitrix/references/users-security.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/events/onbeforeuseradd.php).
+- Самопроверка B163 — «Достаточно ли ThrowException внутри void-обработчика до Add?»: Нет: документированный отказ — сообщение и return false; сигнатура должна разрешать этот результат.
+- Контрпример отвергнут: Оставить void и считать ThrowException остановкой исполнения PHP. Результат ручной проверки ответа: pass; runtime: не запускался.

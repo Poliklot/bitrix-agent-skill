@@ -304,21 +304,23 @@ $em = EventManager::getInstance();
 // Чтобы изменить $arFields по ссылке или отменить операцию — нужен addEventHandlerCompatible.
 // addEventHandler оборачивает параметры в Event-объект и ссылка теряется.
 $em->addEventHandlerCompatible('main', 'OnBeforeUserAdd',
-    ['\MyVendor\MyModule\UserHandler', 'onBeforeAdd']);
+    [UserHandler::class, 'onBeforeAdd']);
 
 class UserHandler
 {
     // $arFields — по ссылке: можно читать и изменять
-    public static function onBeforeAdd(array &$arFields): void
+    public static function onBeforeAdd(array &$arFields): bool
     {
         // Нормализация
         $arFields['EMAIL'] = mb_strtolower(trim($arFields['EMAIL'] ?? ''));
 
-        // Отмена операции: ThrowException, ядро проверит GetException() после события
+        // Документированный отказ: сообщение и return false
         if (empty($arFields['EMAIL'])) {
             global $APPLICATION;
             $APPLICATION->ThrowException('Email обязателен');
+            return false;
         }
+        return true;
     }
 
     // OnAfterUserAdd — читаем результат, arFields['ID'] = ID нового пользователя
@@ -1836,3 +1838,11 @@ $links = UserLinkTable::getList([
 Проверка: Изменение прав проверяется в существующей и новой сессии, включая второй браузер.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cuser/setusergroup.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K84 — Отмена OnBeforeUserAdd требует false вместе с ThrowException
+
+Нет: документированный отказ — сообщение и return false; сигнатура должна разрешать этот результат.
+
+Проверка: Пустой обязательный email отменяет Add; допустимое значение проходит обработчик.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/events/onbeforeuseradd.php); documentation-backed, 2026-11-01, не runtime pass.
