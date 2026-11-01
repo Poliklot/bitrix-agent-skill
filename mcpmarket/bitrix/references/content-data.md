@@ -3066,3 +3066,11 @@ bIncCnt → ELEMENT_CNT; согласуй ELEMENT_SUBSECTIONS/CNT_ACTIVE с вы
 Проверка: Просроченный элемент и элемент подраздела дают ожидаемые разные счётчики.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblocksection/getlist.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K103 — Пустая навигация разделов ограничивает десятью
+
+GetList разделов: пятый аргумент [] ≠ false; задавай навигацию явно.
+
+Проверка: На 12 разделах [] возвращает не полный экспорт; выбранная стратегия сохраняет все 12.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblocksection/getlist.php); documentation-backed, 2026-11-01, не runtime pass.

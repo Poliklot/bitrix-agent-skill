@@ -1287,3 +1287,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [iblocks.md](bitrix/references/iblocks.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblocksection/getlist.php).
 - Самопроверка B181 — «Почему счётчик раздела больше списка товаров?»: Согласовать вложенность, активность и даты; не ждать SECTION_CNT.
 - Контрпример отвергнут: Считать bIncCnt числом только активных прямых элементов. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K103: Пустая навигация разделов ограничивает десятью
+
+- Пробел до изменения: Не раскрыто отличие [] от false в пятом аргументе GetList разделов.
+- Исправление: [iblocks.md](bitrix/references/iblocks.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblocksection/getlist.php).
+- Самопроверка B182 — «Почему экспорт с пятым аргументом [] теряет разделы?»: Это лимит десяти; использовать осознанную полную или постраничную выборку.
+- Контрпример отвергнут: Считать [] синонимом отсутствия лимита. Результат ручной проверки ответа: pass; runtime: не запускался.
