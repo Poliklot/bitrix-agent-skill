@@ -1589,3 +1589,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [subscribe.md](bitrix/references/subscribe.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/cpostinggeneral/cpostingfields.php).
 - Самопроверка B217 — «DIRECT_SEND=Y обходит очередь и немедленно отправляет письмо?»: Нет; это персональный режим, очередь и запуск управляются отдельно.
 - Контрпример отвергнут: DIRECT_SEND означает прямую синхронную отправку. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K139: Счётчики очереди используют Y как ожидание и N как отправку
+
+- Пробел до изменения: Не было правильной интерпретации статистики получателей.
+- Исправление: [subscribe.md](bitrix/references/subscribe.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/cpostinggeneral/getemailstatuses.php).
+- Самопроверка B218 — «В GetEmailStatuses нет Y, но есть E — выпуск успешен?»: Нет; остались ошибки, а отсутствие ожидающих само по себе не доказывает успех.
+- Контрпример отвергнут: Y значит успешно отправлено, N — не отправлено. Результат ручной проверки ответа: pass; runtime: не запускался.

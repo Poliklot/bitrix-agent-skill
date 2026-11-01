@@ -2022,3 +2022,11 @@ DIRECT_SEND — персональный режим; расписание/син
 Проверка: Тестовые письма не раскрывают адреса других получателей; пакетный лимит действует.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/cpostinggeneral/cpostingfields.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K139 — Счётчики очереди используют Y как ожидание и N как отправку
+
+Счётчики Y=ожидает, N=отправлено, E=ошибка; нет ключа → 0, нет Y ≠ всё успешно.
+
+Проверка: Пустая, ошибочная и успешная очереди дают разные отчёты.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/cpostinggeneral/getemailstatuses.php); documentation-backed, 2026-11-01, не runtime pass.
