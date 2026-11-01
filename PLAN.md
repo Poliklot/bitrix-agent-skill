@@ -1343,3 +1343,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [iblocks.md](bitrix/references/iblocks.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockelement/getelementgroups.php).
 - Самопроверка B189 — «Почему чтение разделов вернуло раздел из свойства RELATED_SECTION?»: По умолчанию включены связи свойств; для принадлежности нужен true.
 - Контрпример отвергнут: Записать все найденные разделы обратно как принадлежность. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K111: bOverWrite не создаёт второй документ индекса
+
+- Пробел до изменения: Gotcha ошибочно обещала дубли при bOverWrite=false.
+- Исправление: [search.md](bitrix/references/search.md) и [search-seo-ops.md](mcpmarket/bitrix/references/search-seo-ops.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/search/classes/csearch/indexs.php).
+- Самопроверка B190 — «Создаёт ли Index(..., false) дубль того же MODULE_ID/ITEM_ID?»: Нет; для принудительной перезаписи использовать true с прежней идентичностью.
+- Контрпример отвергнут: Каждый false добавляет отдельный документ. Результат ручной проверки ответа: pass; runtime: не запускался.

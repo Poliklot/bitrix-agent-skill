@@ -419,7 +419,7 @@ $APPLICATION->IncludeComponent('bitrix:search.page', '', [
 - `CSearch::Index` — работает только если модуль `search` подключён через `Loader::includeModule('search')`
 - `BODY` — передавай текст без HTML (`strip_tags`), иначе теги попадут в индекс
 - `SITE_ID` может быть строкой `'s1'` — ядро само приведёт к `['s1' => '']`
-- `bOverWrite = true` — перезаписывает запись, `false` — добавляет новую (дубли!)
+- `bOverWrite` управляет перезаписью существующего документа, не созданием дублей (K111).
 - `DeleteIndex` без `$ITEM_ID` удаляет **весь** индекс модуля — используй осторожно
 - `ReIndexAll(true)` — очищает таблицы `TRUNCATE`, очень деструктивно
 - Права `PERMISSIONS` `['G1' => 'D']` — группа 1 (все) не видит. `['G2' => 'R']` — авторизованные видят
@@ -1936,3 +1936,11 @@ $hits = CPerfomanceHit::GetList(
 Проверка: До назначенного времени задача не исполняется; после — исполняется при работе планировщика.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cagent/addagent.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K111 — bOverWrite не создаёт второй документ индекса
+
+bOverWrite — политика перезаписи той же пары, не режим создания дублей.
+
+Проверка: Два вызова с одной идентичностью не размножают документы.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/search/classes/csearch/indexs.php); documentation-backed, 2026-11-01, не runtime pass.
