@@ -1214,3 +1214,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [cache-infra.md](bitrix/references/cache-infra.md) и [search-seo-ops.md](mcpmarket/bitrix/references/search-seo-ops.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cagent/addagent.php).
 - Самопроверка B172 — «Как передать текст клиента агенту без включения текста в eval?»: Сохранить данные в серверном задании и передать фиксированному методу проверенный ID.
 - Контрпример отвергнут: Конкатенировать PHP-вызов из POST с именем метода и аргументами. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K94: DATE_CHECK не заменяет NEXT_EXEC при первом запуске
+
+- Пробел до изменения: Комментарий AddAgent называл DATE_CHECK датой начала вместо первой проверки.
+- Исправление: [cache-infra.md](bitrix/references/cache-infra.md) и [search-seo-ops.md](mcpmarket/bitrix/references/search-seo-ops.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cagent/addagent.php).
+- Самопроверка B173 — «Как отложить первый запуск агента, не перепутав аргументы дат?»: Задать next_exec в требуемом языковом формате; datecheck имеет другой смысл.
+- Контрпример отвергнут: Использовать datecheck как единственный контракт времени первого исполнения. Результат ручной проверки ответа: pass; runtime: не запускался.

@@ -1146,7 +1146,7 @@ D7-обёртки над агентами нет — используется le
     'my.module',                         // MODULE_ID
     'N',                                 // IS_PERIOD: 'N' = интервальный, 'Y' = периодический
     3600,                                // AGENT_INTERVAL: секунды между запусками
-    '',                                  // DATE_CHECK: дата начала ('' = с текущего момента)
+    '',                                  // DATE_CHECK: дата первой проверки необходимости запуска
     'Y',                                 // ACTIVE
     '',                                  // NEXT_EXEC: '' = запустить как можно скорее
     100,                                 // SORT
@@ -1926,5 +1926,13 @@ $hits = CPerfomanceHit::GetList(
 Сохранить данные в серверном задании и передать фиксированному методу проверенный ID.
 
 Проверка: Кавычки и кодоподобный текст остаются данными задания и не меняют NAME.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cagent/addagent.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K94 — DATE_CHECK не заменяет NEXT_EXEC при первом запуске
+
+Задать next_exec в требуемом языковом формате; datecheck имеет другой смысл.
+
+Проверка: До назначенного времени задача не исполняется; после — исполняется при работе планировщика.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cagent/addagent.php); documentation-backed, 2026-11-01, не runtime pass.
