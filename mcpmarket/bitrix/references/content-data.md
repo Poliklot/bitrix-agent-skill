@@ -3098,3 +3098,11 @@ GetNavChain: ненулевой IBLOCK_ID, true четвёртым → масс�
 Проверка: Раздел другого инфоблока не даёт цепочку; массивный режим обрабатывается foreach.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblocksection/getnavchain.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K107 — Перемещение раздела сохраняет вычисляемые границы
+
+Родителя меняет Update; вычисляемые границы не писать, bResort не отключать при структурных изменениях.
+
+Проверка: После переноса цепочка и обход поддерева совпадают; ошибка Update не считается успехом.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblocksection/update.php); documentation-backed, 2026-11-01, не runtime pass.

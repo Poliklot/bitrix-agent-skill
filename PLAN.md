@@ -1315,3 +1315,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [iblocks.md](bitrix/references/iblocks.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblocksection/getnavchain.php).
 - Самопроверка B185 — «Можно ли вызвать Fetch на GetNavChain(..., true)?»: Нет, это массив; сохранить проверку IBLOCK_ID и не ждать UF.
 - Контрпример отвергнут: Передавать ноль вместо области и считать результат авторизацией. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K107: Перемещение раздела сохраняет вычисляемые границы
+
+- Пробел до изменения: Нет правила безопасного перемещения и ограничений bResort.
+- Исправление: [iblocks.md](bitrix/references/iblocks.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblocksection/update.php).
+- Самопроверка B186 — «Можно ли ускорить перенос раздела, записав LEFT_MARGIN напрямую?»: Нет; Update родителя с пересчётом и проверкой результата.
+- Контрпример отвергнут: Писать границы SQL или bResort=false без восстановления дерева. Результат ручной проверки ответа: pass; runtime: не запускался.
