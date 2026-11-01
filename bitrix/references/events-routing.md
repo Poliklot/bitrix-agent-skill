@@ -275,8 +275,13 @@ class Order extends Controller
 
     // Параметры биндятся автоматически из GET/POST по именам и типам PHP
     // Метод ОБЯЗАН заканчиваться на 'Action' (METHOD_ACTION_SUFFIX = 'Action')
-    public function getListAction(int $page = 1, int $limit = 20): array
+    public function getListAction(int $page = 1, int $limit = 20): ?array
     {
+        // Пример проектного ограничения, не универсальный лимит ядра.
+        if ($page < 1 || $page > 10000 || $limit < 1 || $limit > 100) {
+            $this->addError(new Error('Недопустимая страница или размер', 'INVALID_PAGE'));
+            return null;
+        }
         // Учебная owner-only модель; права реального модуля проверяются его API.
         $accessFilter = ['=ACTIVE' => 'Y', '=USER_ID' => (int)CurrentUser::get()->getId()];
         $items = \MyVendor\MyModule\OrderTable::getList([
@@ -471,3 +476,11 @@ runAction по умолчанию отправляет POST: для read-only GE
 **Проверка на стенде:** GET-list работает; ошибочный status вызывает ветку ошибки и снимает ожидание.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/js_lib/ajax/bx_ajax_runaction.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.
+
+## K50 — PHP-тип параметра действия не задаёт бизнес-диапазон
+
+Тип int не означает положительный ID, допустимый page или ограниченный limit. Проверяй диапазоны до запроса, возвращай контролируемую ошибку. В поддерживаемой версии main можно применять Validation Rule/ValidationParameter; не навязывай новые атрибуты старому ядру. Ограничение размера страницы — проектный контракт; фильтруемые/сортируемые поля также выбираются из разрешённого списка, а не из произвольных ключей запроса.
+
+**Проверка на стенде:** page=0, limit=-1 и чрезмерный limit отклоняются до ORM; граничные допустимые значения работают.
+
+[Официальный контракт](https://docs.1c-bitrix.ru/pages/framework/validation.html). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.

@@ -2735,8 +2735,13 @@ class Order extends Controller
 
     // Параметры биндятся автоматически из GET/POST по именам и типам PHP
     // Метод ОБЯЗАН заканчиваться на 'Action' (METHOD_ACTION_SUFFIX = 'Action')
-    public function getListAction(int $page = 1, int $limit = 20): array
+    public function getListAction(int $page = 1, int $limit = 20): ?array
     {
+        // Пример проектного ограничения, не универсальный лимит ядра.
+        if ($page < 1 || $page > 10000 || $limit < 1 || $limit > 100) {
+            $this->addError(new Error('Недопустимая страница или размер', 'INVALID_PAGE'));
+            return null;
+        }
         // Учебная owner-only модель; права реального модуля проверяются его API.
         $accessFilter = ['=ACTIVE' => 'Y', '=USER_ID' => (int)CurrentUser::get()->getId()];
         $items = \MyVendor\MyModule\OrderTable::getList([
@@ -3445,3 +3450,11 @@ runAction default POST; GET-action требует method: GET. Обрабаты�
 Проверка: GET-list работает; ошибочный status вызывает ветку ошибки и снимает ожидание.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/js_lib/ajax/bx_ajax_runaction.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K50 — PHP-тип параметра действия не задаёт бизнес-диапазон
+
+int не проверяет диапазон. До ORM ограничить page/limit; атрибуты main.validation использовать только при поддержке версии. Допустимые поля фильтра/сортировки задаются сервером.
+
+Проверка: page=0, limit=-1 и чрезмерный limit отклоняются до ORM; граничные допустимые значения работают.
+
+[Официальный контракт](https://docs.1c-bitrix.ru/pages/framework/validation.html); documentation-backed, 2026-11-01, не runtime pass.

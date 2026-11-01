@@ -833,3 +833,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [events-routing.md](bitrix/references/events-routing.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/js_lib/ajax/bx_ajax_runaction.php).
 - Самопроверка B128 — «getList не проходит HttpMethod, хотя имя верное — причина?»: Сверить default POST клиента с GET фильтром; явно указать GET и обработать reject.
 - Контрпример отвергнут: Убрать серверный фильтр ради несовпадения клиента или бесконечно повторять мутацию. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K50: PHP-тип параметра действия не задаёт бизнес-диапазон
+
+- Пробел до изменения: В примере limit/page типизированы int, но отрицательные/огромные значения сразу попадали в SQL.
+- Исправление: [events-routing.md](bitrix/references/events-routing.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://docs.1c-bitrix.ru/pages/framework/validation.html).
+- Самопроверка B129 — «У limit тип int — значит -1 и миллион уже безопасны?»: Нет: проверить бизнес-диапазон и остановить запрос при нарушении, типизацию не считать валидацией.
+- Контрпример отвергнут: Передать любой integer в limit/offset без ограничений. Результат ручной проверки ответа: pass; runtime: не запускался.
