@@ -1827,3 +1827,11 @@ Legacy-многоаргументный callback регистрируй чере
 Проверка: Один обработчик меняет контрольный макрос без TypeError и повторной регистрации.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/functions/module/addeventhandler.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K57 — Отмена постановки письма до очереди
+
+До очереди: OnBeforeEventAdd и false, с проверкой EVENT_NAME. OnBeforeEventSend — другая стадия, не удаление события.
+
+Проверка: Запрещённый тип не попадает в очередь, разрешённый продолжает отправляться.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/events/onbeforeeventadd.php); documentation-backed, 2026-11-01, не runtime pass.

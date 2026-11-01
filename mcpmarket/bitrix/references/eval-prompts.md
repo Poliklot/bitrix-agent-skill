@@ -147,3 +147,5 @@ Gate: перед релизом бытового слоя выбрать мин�
 | B134 | Можно ли без изменений передать массив lid из CEvent в Event::send? | `mail-notifications` / `content-modules` | Нет по документированному контракту: D7 LID — строка с ID через запятую. | Считать массив сайтов одинаковым аргументом обоих API |
 
 | B135 | Почему callback OnBeforeEventSend с массивами не совместим с регистрацией? | `mail-notifications` / `content-modules` | Согласовать legacy-сигнатуру и addEventHandlerCompatible; не заменять callback объектом Event вслепую. | Оставить объектный режим для ссылочных массивов |
+
+| B136 | Нужно не создавать событие определённого типа — какой hook? | `mail-notifications` / `content-modules` | OnBeforeEventAdd, ограниченный типом события; проверить отсутствие новой записи и сохранение прочих типов. | Использовать OnBeforeEventSend как запрет записи b_event |

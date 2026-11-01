@@ -892,3 +892,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [mail-notifications.md](bitrix/references/mail-notifications.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/functions/module/addeventhandler.php).
 - Самопроверка B135 — «Почему callback OnBeforeEventSend с массивами не совместим с регистрацией?»: Согласовать legacy-сигнатуру и addEventHandlerCompatible; не заменять callback объектом Event вслепую.
 - Контрпример отвергнут: Оставить объектный режим для ссылочных массивов. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K57: Отмена постановки письма до очереди
+
+- Пробел до изменения: Описана только стадия шаблонной отправки, но не отмена создания события.
+- Исправление: [mail-notifications.md](bitrix/references/mail-notifications.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/events/onbeforeeventadd.php).
+- Самопроверка B136 — «Нужно не создавать событие определённого типа — какой hook?»: OnBeforeEventAdd, ограниченный типом события; проверить отсутствие новой записи и сохранение прочих типов.
+- Контрпример отвергнут: Использовать OnBeforeEventSend как запрет записи b_event. Результат ручной проверки ответа: pass; runtime: не запускался.
