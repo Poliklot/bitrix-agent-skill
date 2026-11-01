@@ -4561,3 +4561,11 @@ BeforeSaved — правки до save; Saved — реакция. Не вызы�
 Проверка: Изменение тестовой цены проходит model events и ожидаемые связанные пересчёты.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/catalog/model/price/add.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K142 — Price::update принимает ID цены, не ID товара
+
+Price::update(priceId, fields): сначала выбрать нужную цену по товару/типу/диапазону.
+
+Проверка: Две цены одного товара не изменяются обе при точечной правке одной.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/catalog/model/price/update.php); documentation-backed, 2026-11-01, не runtime pass.

@@ -1640,3 +1640,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [catalog.md](bitrix/references/catalog.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/catalog/model/price/add.php).
 - Самопроверка B220 — «Почему запись PRICE в таблицу не обновила связанные значения каталога?»: Проверить обход Model\Price и его автоматических действий, а не только очистить кеш.
 - Контрпример отвергнут: Любой DataManager write эквивалентен коммерческому model API. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K142: Price::update принимает ID цены, не ID товара
+
+- Пробел до изменения: Не различались primary цены и её PRODUCT_ID при изменении.
+- Исправление: [catalog.md](bitrix/references/catalog.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/catalog/model/price/update.php).
+- Самопроверка B221 — «Можно ли передать PRODUCT_ID первым аргументом Price::update?»: Нет; это ID цены, найденной и проверенной в нужном товаре/типе/диапазоне.
+- Контрпример отвергнут: ID товара, типа и цены взаимозаменяемы. Результат ручной проверки ответа: pass; runtime: не запускался.
