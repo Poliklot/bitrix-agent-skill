@@ -901,7 +901,7 @@ global $strError;
 
 $resultId = CFormResult::Add(
     $formId,
-    $_POST,
+    $values, // только допустимые ответы из проверенного запроса
     'Y',
     false
 );
@@ -1867,3 +1867,11 @@ form_text_ID ответа; form_radio_SID вопроса → ID ответа; м
 Проверка: Один текстовый и один radio-вопрос записываются в свои ответы, чужой ID варианта отклоняется.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/htmlnames.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K122 — values=false читает REQUEST, а не пустую форму
+
+Add(values=false) читает REQUEST; передавай allowlist ответов, CSRF проверяется в обработчике.
+
+Проверка: Значение из GET не подмешивается в явно подготовленный набор.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/classes/cformresult/add.php); documentation-backed, 2026-11-01, не runtime pass.

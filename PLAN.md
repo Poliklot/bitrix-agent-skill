@@ -1440,3 +1440,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [webforms.md](bitrix/references/webforms.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/htmlnames.php).
 - Самопроверка B200 — «Почему form_text_CONTACT не сохраняет имя, а radio сохраняет?»: Текст требует ID ответа в имени, radio — SID вопроса и ID варианта в значении.
 - Контрпример отвергнут: Все типы имеют ключ form_тип_SID. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K122: values=false читает REQUEST, а не пустую форму
+
+- Пробел до изменения: Пример отдавал весь POST в persistence без явной границы входных данных.
+- Исправление: [webforms.md](bitrix/references/webforms.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/classes/cformresult/add.php).
+- Самопроверка B201 — «Как создать результат из подготовленного пустого набора, не подхватив GET?»: Передать явный массив, не false; контролировать вход на границе обработчика.
+- Контрпример отвергнут: false означает отсутствие ответов. Результат ручной проверки ответа: pass; runtime: не запускался.
