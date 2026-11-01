@@ -14,7 +14,7 @@ description: >-
   local core and `local/*`; missing optional modules are deferred.
 metadata:
   author: poliklot
-  version: "1.44.0"
+  version: "1.45.0"
 ---
 
 # Bitrix Expert Skill — MCP Market Edition
@@ -146,3 +146,5 @@ foreach (['iblock'] as $module) {
 - Пользователи и группы: [users-security.md](references/users-security.md). K81–K90, B160–B169.
 
 - Агенты, локализация и модули: [search-seo-ops.md](references/search-seo-ops.md), [php-architecture.md](references/php-architecture.md). K91–K100, B170–B179.
+
+- Разделы инфоблоков и внутренний поиск: [content-data.md](references/content-data.md), [search-seo-ops.md](references/search-seo-ops.md). K101–K120, B180–B199.
