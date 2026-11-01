@@ -958,3 +958,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [import-export.md](bitrix/references/import-export.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cfile/savefile.php).
 - Самопроверка B143 — «Появится ли запись b_file после обычного copy в upload?»: Нет по контракту SaveFile; для регистрации нужен соответствующий API.
 - Контрпример отвергнут: Считать размещение в upload автоматической регистрацией. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K65: MakeFileArray различает путь, URL и ID
+
+- Пробел до изменения: Локальный пример выдавал /local/import/photo.jpg за гарантированный DOCUMENT_ROOT-relative путь.
+- Исправление: [import-export.md](bitrix/references/import-export.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cfile/makefilearray.php).
+- Самопроверка B144 — «Можно ли передать любой путь из формы в MakeFileArray?»: Нет: определить разрешённый тип источника и корень; сайт-relative путь явно преобразовать.
+- Контрпример отвергнут: Полагаться на автоматическое добавление DOCUMENT_ROOT или разрешать любой URL/путь. Результат ручной проверки ответа: pass; runtime: не запускался.

@@ -74,8 +74,8 @@ if ($uploadedFile && $uploadedFile['error'] === UPLOAD_ERR_OK) {
 // По ID из b_file (например, из поля инфоблока)
 $arFile = CFile::MakeFileArray(123);
 
-// По локальному пути (относительно DOCUMENT_ROOT или абсолютный)
-$arFile = CFile::MakeFileArray('/local/import/photo.jpg');
+// По известному абсолютному пути; /local/... сам по себе не DOCUMENT_ROOT
+$arFile = CFile::MakeFileArray($_SERVER['DOCUMENT_ROOT'] . '/local/import/photo.jpg');
 
 // По URL — скачивает через HttpClient во временный файл
 $arFile = CFile::MakeFileArray('https://example.com/image.jpg');
@@ -152,7 +152,7 @@ if ($arResized) {
 Модифицирует `$arFile['tmp_name']` на месте (временный файл):
 
 ```php
-$arFile = CFile::MakeFileArray('/local/import/big.jpg');
+$arFile = CFile::MakeFileArray($_SERVER['DOCUMENT_ROOT'] . '/local/import/big.jpg');
 if ($arFile) {
     $resized = CFile::ResizeImage($arFile, ['width' => 800, 'height' => 600], BX_RESIZE_IMAGE_PROPORTIONAL);
     if ($resized) {
@@ -481,3 +481,11 @@ die();
 **Проверка на стенде:** Сравнить контролируемый copy и SaveFile на стенде по новым ID, затем удалить тестовые артефакты владельцем.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cfile/savefile.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.
+
+## K65 — MakeFileArray различает путь, URL и ID
+
+Для локального файла используй явный абсолютный путь файловой системы. Для пути сайта сначала добавь известный DOCUMENT_ROOT; не склеивай его с недоверенным ../. MakeFileArray принимает также ID и URL: выбор типа входа меняет операцию, URL может вызвать сеть. Поэтому не пропускай произвольную строку запроса в универсальный метод; разрешай конкретный источник импорта. Ограничения core на приватные IP не заменяют политику источников.
+
+**Проверка на стенде:** Путь сайта разрешается независимо от cwd; ../ и неразрешённый URL не принимаются.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cfile/makefilearray.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.

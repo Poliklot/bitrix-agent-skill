@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+- K65: MakeFileArray различает путь, URL и ID — дополнены знания, full/compact и сценарий B144.
+
 - K64: Папка upload сама не регистрирует файл в b_file — дополнены знания, full/compact и сценарий B143.
 
 - K63: Размеры ResizeImageGet нужно запросить явно — дополнены знания, full/compact и сценарий B142.
