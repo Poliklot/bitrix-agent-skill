@@ -1927,3 +1927,11 @@ ReIndexAll: массив продолжить, число завершить; NS
 Проверка: Продолжение не повторяет первый шаг; ноль элементов завершает процесс.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/search/classes/csearch/reindexall.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K117 — ReIndexAll нельзя вкладывать в незавершённую транзакцию импорта
+
+Внутренняя транзакция ReIndexAll: запускать отдельно после завершения изменения источника.
+
+Проверка: При откате импорта задание не публикует незавершённые данные.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/search/classes/csearch/reindexall.php); documentation-backed, 2026-11-01, не runtime pass.
