@@ -145,7 +145,7 @@ if ($cache->startDataCache(3600, $cacheId, $cacheDir)) {
 
     // Регистрируем теги — кеш будет инвалидирован если любой из них сбросить
     $taggedCache->registerTag('iblock_id_' . CATALOG_IBLOCK_ID);  // сброс всего каталога
-    $taggedCache->registerTag('iblock_id_el_' . $productId);       // сброс конкретного товара
+    $taggedCache->registerTag('my_module_product_' . $productId); // проектный тег, нужен свой invalidator
 
     $taggedCache->endTagCache(); // сохраняем теги в b_cache_tag
     $cache->endDataCache(['product' => $product, 'sections' => $sections]);
@@ -156,7 +156,7 @@ if ($cache->startDataCache(3600, $cacheId, $cacheDir)) {
 }
 
 // Инвалидация — можно вызывать из обработчика события OnAfterIBlockElementUpdate:
-$app->getTaggedCache()->clearByTag('iblock_id_el_' . $productId);
+$app->getTaggedCache()->clearByTag('my_module_product_' . $productId);
 
 // Сбросить все кеши в директории (удалит файлы и записи в b_cache_tag):
 $app->getTaggedCache()->clearByTag(true); // все теги кроме persistent ('*')
@@ -177,16 +177,9 @@ $tc->clearByTag(true);              // инвалидировать всё (кр
 $tc->deleteAllTags();               // truncate b_cache_tag (ядерный сброс всего)
 ```
 
-### Стандартные теги Bitrix (iblock)
+### Штатный тег Bitrix (iblock)
 
-Bitrix сам регистрирует теги при работе с инфоблоком:
-
-| Тег | Что инвалидирует |
-|-----|-----------------|
-| `iblock_id_N` | все кеши инфоблока N |
-| `iblock_id_el_N` | кеши конкретного элемента N |
-| `iblock_id_sec_N` | кеши конкретного раздела N |
-| `CATALOG_N` | кеши каталога |
+`iblock_id_N` связывает каталог кеша с инфоблоком N. В управляемом кеше CIBlockResult регистрирует этот тег; собственному D7-кешу нужна явная регистрация зависимостей. Произвольные теги элемента/раздела не считаются штатными автоматически (см. K51).
 
 ### Gotchas тегированного кеша
 
@@ -384,3 +377,11 @@ try {
 - **Не используй `file_get_contents` / `file_put_contents` напрямую** — IO-классы корректно обрабатывают кодировки и создают промежуточные директории
 
 ---
+
+## K51 — Штатный тег инфоблока и проектные теги
+
+Подтверждённый контракт инфоблока — `iblock_id_N`. Не обещай автоматическую инвалидизацию для произвольных `iblock_id_el_N`, `iblock_id_sec_N` или `CATALOG_N`. Проектный тег требует парного invalidator после успешного изменения каждой зависимости. D7 ORM-выборку нельзя автоматически приравнивать к регистрации тегов через CIBlockResult. Регистрация связывает тег с каталогом кеша, а не с одной строкой товара.
+
+**Проверка на стенде:** Изменить элемент штатным API и проверить холодный запрос; отдельно изменить зависимый раздел.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=43&LESSON_ID=2978). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.

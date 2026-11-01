@@ -1085,7 +1085,7 @@ if ($cache->startDataCache(3600, $cacheId, $cacheDir)) {
 
     // Регистрируем теги — кеш будет инвалидирован если любой из них сбросить
     $taggedCache->registerTag('iblock_id_' . CATALOG_IBLOCK_ID);  // сброс всего каталога
-    $taggedCache->registerTag('iblock_id_el_' . $productId);       // сброс конкретного товара
+    $taggedCache->registerTag('my_module_product_' . $productId); // проектный тег, нужен свой invalidator
 
     $taggedCache->endTagCache(); // сохраняем теги в b_cache_tag
     $cache->endDataCache(['product' => $product, 'sections' => $sections]);
@@ -1096,7 +1096,7 @@ if ($cache->startDataCache(3600, $cacheId, $cacheDir)) {
 }
 
 // Инвалидация — можно вызывать из обработчика события OnAfterIBlockElementUpdate:
-$app->getTaggedCache()->clearByTag('iblock_id_el_' . $productId);
+$app->getTaggedCache()->clearByTag('my_module_product_' . $productId);
 
 // Сбросить все кеши в директории (удалит файлы и записи в b_cache_tag):
 $app->getTaggedCache()->clearByTag(true); // все теги кроме persistent ('*')
@@ -1117,16 +1117,9 @@ $tc->clearByTag(true);              // инвалидировать всё (кр
 $tc->deleteAllTags();               // truncate b_cache_tag (ядерный сброс всего)
 ```
 
-### Стандартные теги Bitrix (iblock)
+### Штатный тег Bitrix (iblock)
 
-Bitrix сам регистрирует теги при работе с инфоблоком:
-
-| Тег | Что инвалидирует |
-|-----|-----------------|
-| `iblock_id_N` | все кеши инфоблока N |
-| `iblock_id_el_N` | кеши конкретного элемента N |
-| `iblock_id_sec_N` | кеши конкретного раздела N |
-| `CATALOG_N` | кеши каталога |
+`iblock_id_N` связывает каталог кеша с инфоблоком N. В управляемом кеше CIBlockResult регистрирует этот тег; собственному D7-кешу нужна явная регистрация зависимостей. Произвольные теги элемента/раздела не считаются штатными автоматически (см. K51).
 
 ### Gotchas тегированного кеша
 
@@ -1903,3 +1896,11 @@ $hits = CPerfomanceHit::GetList(
 ---
 
 Для автоматического отчёта и evidence pack соблюдай [контракт диагностических доказательств](release-gate.md#контракт-диагностических-доказательств): без исходных snippets и приватных URL; `confirmed`/`fixed` требуют отдельного локального runtime artifact, а не только заполненного шаблона.
+
+## K51 — Штатный тег инфоблока и проектные теги
+
+Используй подтверждённый iblock_id_N; собственный тег требует собственного сброса. Имя с ID не создаёт автоматической подписки на изменения.
+
+Проверка: Изменить элемент штатным API и проверить холодный запрос; отдельно изменить зависимый раздел.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=43&LESSON_ID=2978); documentation-backed, 2026-11-01, не runtime pass.
