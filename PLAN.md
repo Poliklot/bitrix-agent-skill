@@ -1696,3 +1696,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [catalog.md](bitrix/references/catalog.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/catalog/classes/catalogsku/getofferslist.php).
 - Самопроверка B228 — «Почему в пакетной выборке предложений нет NAME и ключа одного товара?»: Запросить fields явно и учитывать отсутствие предложений; разобрать вложенную карту.
 - Контрпример отвергнут: Пустой fields возвращает всё, результат всегда плоский и полный. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K150: GetProductInfo принимает инфоблок предложения, возвращает инфоблок родителя
+
+- Пробел до изменения: Не различались входная и выходная области обратного поиска SKU.
+- Исправление: [catalog.md](bitrix/references/catalog.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/catalog/classes/catalogsku/getproductinfo.php?print=Y).
+- Самопроверка B229 — «Какой IBLOCK_ID передавать в GetProductInfo и какой получим назад?»: Передать offers-ИБ, получить parent-ИБ; false обработать до чтения массива.
+- Контрпример отвергнут: Входной и выходной IBLOCK_ID всегда относятся к одному ИБ. Результат ручной проверки ответа: pass; runtime: не запускался.

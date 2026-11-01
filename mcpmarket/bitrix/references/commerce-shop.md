@@ -4625,3 +4625,11 @@ getOffersList: вложенная карта; смешанные ИБ → iblock
 Проверка: Два товара из разных ИБ не смешивают свойства, товар без SKU обрабатывается без ошибки.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/catalog/classes/catalogsku/getofferslist.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K150 — GetProductInfo принимает инфоблок предложения, возвращает инфоблок родителя
+
+GetProductInfo(offerId, offerIblockId) → parent ID/IBLOCK_ID либо false.
+
+Проверка: Обычный товар и offer с неверной связью не порождают фиктивного родителя.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/catalog/classes/catalogsku/getproductinfo.php?print=Y); documentation-backed, 2026-11-01, не runtime pass.
