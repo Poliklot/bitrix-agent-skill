@@ -55,6 +55,10 @@ if ($uploadedFile && $uploadedFile['error'] === UPLOAD_ERR_OK) {
     if ($error !== '') {
         throw new \RuntimeException($error);
     }
+    $imageError = CFile::CheckImageFile($uploadedFile, 5 * 1024 * 1024, 8000, 8000);
+    if ($imageError !== '') {
+        throw new \RuntimeException($imageError);
+    }
     $fileId = CFile::SaveFile($uploadedFile, 'my_module');
     if (!$fileId) {
         throw new \RuntimeException('Не удалось сохранить файл');
@@ -507,3 +511,11 @@ die();
 **Проверка на стенде:** Чужой old_file отклоняется; отсутствие удаления сохраняет старую связь; отказ валидации не уничтожает старый файл.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cfile/savefile.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.
+
+## K68 — CheckImageFile ограничивает геометрию до обработки
+
+После проверки источника и формата вызывай CheckImageFile с max_size, max_width, max_height. Нули снимают соответствующие ограничения; лимит байтов не заменяет ограничения геометрии. Проверяй строку ошибки до resize/SaveFile. Разрешение IMAGE не означает разрешение произвольного SVG или другого активного контента; набор поддерживаемых форматов и расходы памяти проверь в своей версии/GD. Это дополнительный барьер, не обещание абсолютной защиты декодера.
+
+**Проверка на стенде:** Изображение выше/шире лимита не попадает в resize и сохранение.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cfile/checkimagefile.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.

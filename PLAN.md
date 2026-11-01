@@ -979,3 +979,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [import-export.md](bitrix/references/import-export.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cfile/savefile.php).
 - Самопроверка B146 — «Безопасно ли слить POST с файловым массивом, включая old_file/del?»: Нет: служебные ключи задаёт сервер после проверки владельца и намерения удаления.
 - Контрпример отвергнут: Доверять old_file из POST или передавать del=N как ложь. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K68: CheckImageFile ограничивает геометрию до обработки
+
+- Пробел до изменения: В загрузке изображений не было отдельного контроля ширины и высоты.
+- Исправление: [import-export.md](bitrix/references/import-export.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cfile/checkimagefile.php).
+- Самопроверка B147 — «Маленький по байтам файл имеет огромные dimensions — достаточно CheckFile?»: Нет: ограничить геометрию CheckImageFile и ресурсы обработки до ресайза.
+- Контрпример отвергнут: Считать лимит байтов ограничением числа пикселей. Результат ручной проверки ответа: pass; runtime: не запускался.

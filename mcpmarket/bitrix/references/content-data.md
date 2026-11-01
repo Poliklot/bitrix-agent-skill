@@ -2167,6 +2167,10 @@ if ($uploadedFile && $uploadedFile['error'] === UPLOAD_ERR_OK) {
     if ($error !== '') {
         throw new \RuntimeException($error);
     }
+    $imageError = CFile::CheckImageFile($uploadedFile, 5 * 1024 * 1024, 8000, 8000);
+    if ($imageError !== '') {
+        throw new \RuntimeException($imageError);
+    }
     $fileId = CFile::SaveFile($uploadedFile, 'my_module');
     if (!$fileId) {
         throw new \RuntimeException('Не удалось сохранить файл');
@@ -3030,3 +3034,11 @@ old_file берётся из серверной записи; del — тольк
 Проверка: Чужой old_file отклоняется; отсутствие удаления сохраняет старую связь; отказ валидации не уничтожает старый файл.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cfile/savefile.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K68 — CheckImageFile ограничивает геометрию до обработки
+
+CheckImageFile: байты, ширина, высота — отдельные лимиты. Проверять до resize; ноль отключает ограничение.
+
+Проверка: Изображение выше/шире лимита не попадает в resize и сохранение.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cfile/checkimagefile.php); documentation-backed, 2026-11-01, не runtime pass.
