@@ -323,20 +323,20 @@ class UserHandler
         return true;
     }
 
-    // OnAfterUserAdd — читаем результат, arFields['ID'] = ID нового пользователя
+    // OnAfterUserAdd — после попытки; сначала проверить результат
     public static function onAfterAdd(array &$arFields): void
     {
-        $userId = (int)$arFields['ID'];
-        // отправить welcome-письмо и т.д.
+        $userId = (int)($arFields['ID'] ?? 0);
+        if ($userId <= 0 || empty($arFields['RESULT'])) {
+            return;
+        }
+        // Успешная попытка; внешний commit/повторные эффекты согласовать отдельно.
     }
 }
 
-// OnAfterUserAdd через addEventHandler тоже работает если не нужна ссылка
-$em->addEventHandler('main', 'OnAfterUserAdd', function(\Bitrix\Main\Event $event) {
-    $fields = $event->getParameter('arFields');
-    $userId = (int)($fields['ID'] ?? 0);
-    // логика после добавления
-});
+// Регистрируем callback с документированным legacy-массивом.
+$em->addEventHandlerCompatible('main', 'OnAfterUserAdd',
+    [UserHandler::class, 'onAfterAdd']);
 
 // После авторизации
 $em->addEventHandler('main', 'OnUserLoginComplete', function(\Bitrix\Main\Event $event) {
@@ -1846,3 +1846,11 @@ $links = UserLinkTable::getList([
 Проверка: Пустой обязательный email отменяет Add; допустимое значение проходит обработчик.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/events/onbeforeuseradd.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K85 — OnAfterUserAdd вызывается после попытки, а не только успеха
+
+Нет: проверить успешный результат и положительный ID; ошибка попытки тоже достигает after hook.
+
+Проверка: Провал Add не отправляет welcome и не создаёт связанные строки с ID=0.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/events/onafteruseradd.php); documentation-backed, 2026-11-01, не runtime pass.

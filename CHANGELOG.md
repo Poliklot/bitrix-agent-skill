@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+- K85: OnAfterUserAdd вызывается после попытки, а не только успеха — дополнены знания, full/compact и сценарий B164.
+
 - K84: Отмена OnBeforeUserAdd требует false вместе с ThrowException — дополнены знания, full/compact и сценарий B163.
 
 - K83: SetUserGroup не обновляет уже авторизованную сессию — дополнены знания, full/compact и сценарий B162.

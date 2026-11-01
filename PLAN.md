@@ -1141,3 +1141,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [users.md](bitrix/references/users.md) и [users-security.md](mcpmarket/bitrix/references/users-security.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/events/onbeforeuseradd.php).
 - Самопроверка B163 — «Достаточно ли ThrowException внутри void-обработчика до Add?»: Нет: документированный отказ — сообщение и return false; сигнатура должна разрешать этот результат.
 - Контрпример отвергнут: Оставить void и считать ThrowException остановкой исполнения PHP. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K85: OnAfterUserAdd вызывается после попытки, а не только успеха
+
+- Пробел до изменения: Примеры выполняли welcome-логику без проверки результата попытки Add.
+- Исправление: [users.md](bitrix/references/users.md) и [users-security.md](mcpmarket/bitrix/references/users-security.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/events/onafteruseradd.php).
+- Самопроверка B164 — «Можно ли отправлять welcome при каждом OnAfterUserAdd?»: Нет: проверить успешный результат и положительный ID; ошибка попытки тоже достигает after hook.
+- Контрпример отвергнут: Считать сам вызов after гарантией создания. Результат ручной проверки ответа: pass; runtime: не запускался.
