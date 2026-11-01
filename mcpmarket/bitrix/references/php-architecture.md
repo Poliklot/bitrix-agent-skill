@@ -3514,3 +3514,11 @@ createFromUserTime — текущий пользователь/culture, не п�
 Проверка: Один входной timestamp даёт одинаковый момент в web и CLI независимо от пользователя.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/type/datetime/createfromusertime.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K76 — Составной primary передаётся целиком
+
+Составной ключ: все primary-поля в массиве; update/delete не принимают бизнес-фильтр вместо ключа.
+
+Проверка: Из двух связей с общим LEFT_ID меняется только указанная пара.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=43&LESSON_ID=4803); documentation-backed, 2026-11-01, не runtime pass.

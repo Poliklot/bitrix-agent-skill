@@ -1035,3 +1035,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [http.md](bitrix/references/http.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/type/datetime/createfromusertime.php).
 - Самопроверка B154 — «Можно ли одинаково импортировать UTC через createFromUserTime в web и cron?»: Нет: контексты различаются; использовать явный машинный контракт времени.
 - Контрпример отвергнут: Повторно применять пользовательский сдвиг к UTC. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K76: Составной primary передаётся целиком
+
+- Пробел до изменения: CRUD показывал только числовой ID, не связи с составным первичным ключом.
+- Исправление: [orm.md](bitrix/references/orm.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=43&LESSON_ID=4803).
+- Самопроверка B155 — «Можно ли удалить связь с ключом LEFT_ID+RIGHT_ID по одному LEFT_ID?»: Нет: нужен полный primary либо отдельный явно ограниченный сценарий удаления набора.
+- Контрпример отвергнут: Передать один scalar или неполный ключ. Результат ручной проверки ответа: pass; runtime: не запускался.
