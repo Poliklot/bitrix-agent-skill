@@ -1389,11 +1389,10 @@ echo Loc::getMessage('MY_KEY');
 
 // Получить сообщение для явно заданного языка
 // (полезно когда нужно отправить уведомление на языке пользователя, не текущего сайта)
-$messageInEnglish = Loc::getMessageByLang('MY_KEY', 'en');
-$messageInRussian = Loc::getMessageByLang('MY_KEY', 'ru');
-
-// Загрузить lang-файл для конкретного языка явно
 Loc::loadLanguageFile(__FILE__, 'en');
+Loc::loadLanguageFile(__FILE__, 'ru');
+$messageInEnglish = Loc::getMessage('MY_KEY', [], 'en');
+$messageInRussian = Loc::getMessage('MY_KEY', [], 'ru');
 ```
 
 ### Переключение контекста сайта
@@ -1479,7 +1478,7 @@ class MyClass
 - **Не хардкоди `'s1'`** — это ID сайта по умолчанию только в демо-установках. В реальных проектах сайты часто имеют ID `'ru'`, `'en'`, `'by'` и т.д. Всегда используй константу `SITE_ID`.
 - **`SiteTable::getList()`** не возвращает DIR с trailing slash — сравнивай осторожно.
 - **`COption`/`Option`** без явного `SITE_ID` сохраняет в общие настройки (поле `SITE_ID = ''` в `b_option`). При чтении: если нет per-site значения, Bitrix fallback'ается на общее. Это поведение можно сломать если записать пустую строку как per-site значение.
-- **`Loc::getMessageByLang()`** требует чтобы lang-файл был загружен для указанного языка. Если не загружен — вернёт пустую строку. Предварительно вызови `Loc::loadLanguageFile(__FILE__, $lang)`.
+- **Явный язык Loc:** используй `Loc::getMessage($code, $replace, $lang)` после загрузки нужного исходного файла; наличие перевода проверяй, не обещая универсальный fallback (см. K98).
 - **`$context->setSite()`** меняет контекст только внутри текущего запроса/процесса. Не влияет на другие запросы или агенты.
 
 ---
@@ -3580,5 +3579,13 @@ ORM cache.ttl не включает JOIN: нужен cache_joins. Внешний
 Подстановка не sanitizer; экранировать результат для конкретного контекста вывода.
 
 Проверка: Имя с HTML-тегом отображается текстом и не исполняется.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/localization/loc/getmessage.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K98 — Явный язык передаётся документированному getMessage
+
+Загрузить нужный файл и вызвать getMessage(code, replacements, en).
+
+Проверка: В одном процессе ru и en возвращаются независимо от текущего языка интерфейса.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/localization/loc/getmessage.php); documentation-backed, 2026-11-01, не runtime pass.

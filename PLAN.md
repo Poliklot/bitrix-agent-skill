@@ -1242,3 +1242,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [modules-loader.md](bitrix/references/modules-loader.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/localization/loc/getmessage.php).
 - Самопроверка B176 — «Безопасно ли echo Loc::getMessage с именем из формы?»: Подстановка не sanitizer; экранировать результат для конкретного контекста вывода.
 - Контрпример отвергнут: Считать переведённую строку автоматически HTML-безопасной. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K98: Явный язык передаётся документированному getMessage
+
+- Пробел до изменения: Пример вызывал не подтверждённый getMessageByLang и загружал язык после чтения.
+- Исправление: [modules-loader.md](bitrix/references/modules-loader.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/localization/loc/getmessage.php).
+- Самопроверка B177 — «Как получить английский текст без выдуманного getMessageByLang?»: Загрузить нужный файл и вызвать getMessage(code, replacements, en).
+- Контрпример отвергнут: Вызывать getMessageByLang как гарантированный публичный метод. Результат ручной проверки ответа: pass; runtime: не запускался.
