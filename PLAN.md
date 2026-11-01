@@ -1042,3 +1042,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [orm.md](bitrix/references/orm.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=43&LESSON_ID=4803).
 - Самопроверка B155 — «Можно ли удалить связь с ключом LEFT_ID+RIGHT_ID по одному LEFT_ID?»: Нет: нужен полный primary либо отдельный явно ограниченный сценарий удаления набора.
 - Контрпример отвергнут: Передать один scalar или неполный ключ. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K77: Незагруженное поле объекта не равно NULL в базе
+
+- Пробел до изменения: Нет поведения get/require после частичного select в объектном ORM.
+- Исправление: [orm.md](bitrix/references/orm.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=43&LESSON_ID=11695).
+- Самопроверка B156 — «getTitle вернул null после select ID — надо очистить TITLE в БД?»: Нет: сначала загрузить TITLE; null неполной проекции не доказывает значение в БД.
+- Контрпример отвергнут: Сохранить null из незагруженного getter обратно. Результат ручной проверки ответа: pass; runtime: не запускался.

@@ -3522,3 +3522,11 @@ createFromUserTime — текущий пользователь/culture, не п�
 Проверка: Из двух связей с общим LEFT_ID меняется только указанная пара.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=43&LESSON_ID=4803); documentation-backed, 2026-11-01, не runtime pass.
+
+## K77 — Незагруженное поле объекта не равно NULL в базе
+
+Частичный select: getter null может означать отсутствие загруженного поля. Выбери поле явно; require не lazy loader.
+
+Проверка: Одна запись с полным и частичным select не приводит к разному решению об очистке.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=43&LESSON_ID=11695); documentation-backed, 2026-11-01, не runtime pass.
