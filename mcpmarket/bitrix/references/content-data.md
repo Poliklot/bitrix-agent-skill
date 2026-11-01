@@ -3082,3 +3082,11 @@ PERMISSIONS_BY выбирает субъекта; CHECK_PERMISSIONS=N отклю
 Проверка: Закрытый раздел отсутствует у гостя и присутствует только у разрешённого субъекта.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblocksection/getlist.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K105 — Порядок дерева не равен глобальной сортировке SORT
+
+Полное дерево: LEFT_MARGIN ASC/GetTreeList; глобальный SORT может перемешать ветви.
+
+Проверка: Две ветви с пересекающимися SORT обходятся родитель → потомки без перемешивания.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblocksection/gettreelist.php); documentation-backed, 2026-11-01, не runtime pass.

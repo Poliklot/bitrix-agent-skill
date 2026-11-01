@@ -1301,3 +1301,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [iblocks.md](bitrix/references/iblocks.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblocksection/getlist.php).
 - Самопроверка B183 — «Как проверить дерево, доступное гостю, из админской сессии?»: PERMISSIONS_BY=0 при включённой проверке прав.
 - Контрпример отвергнут: CHECK_PERMISSIONS=N как режим гостя. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K105: Порядок дерева не равен глобальной сортировке SORT
+
+- Пробел до изменения: Не объяснено, почему SORT первым ключом ломает обход полного дерева.
+- Исправление: [iblocks.md](bitrix/references/iblocks.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblocksection/gettreelist.php).
+- Самопроверка B184 — «Почему ребёнок в меню оказывается раньше родителя?»: Проверить порядок дерева: LEFT_MARGIN ASC, не общий SORT.
+- Контрпример отвергнут: Восстанавливать иерархию только по отсортированному SORT. Результат ручной проверки ответа: pass; runtime: не запускался.
