@@ -36,12 +36,11 @@ CSearch::Index(
 | `PARAM1` | нет | Группировка первого уровня (напр. тип контента) |
 | `PARAM2` | нет | Группировка второго уровня (напр. ID раздела) |
 | `TAGS` | нет | Строка тегов через запятую |
-| `LAST_MODIFIED` | нет | `\Bitrix\Main\Type\DateTime` — дата изменения |
+| `DATE_CHANGE` | да | Дата изменения источника в формате legacy API проекта |
 | `PERMISSIONS` | нет | Массив прав `['G2' => 'R', 'G1' => 'D']` |
 
 ```php
-use Bitrix\Main\Type\DateTime;
-
+// $dateChange — дата изменения источника в формате проекта.
 CSearch::Index('my.module', (string)$elementId, [
     'TITLE'         => 'Название новости',
     'BODY'          => strip_tags($content),   // убираем HTML
@@ -50,7 +49,7 @@ CSearch::Index('my.module', (string)$elementId, [
     'PARAM1'        => 'my.module',            // модуль
     'PARAM2'        => (string)$sectionId,     // раздел
     'TAGS'          => 'новость, важное',
-    'LAST_MODIFIED' => new DateTime(),
+    'DATE_CHANGE'   => $dateChange,
     'PERMISSIONS'   => ['G2' => 'R'],          // G2 = все авторизованные
 ], true);
 ```
@@ -422,5 +421,13 @@ $APPLICATION->IncludeComponent('bitrix:search.page', '', [
 Идентичность CSearch::Index остаётся парой MODULE_ID/ITEM_ID. bOverWrite управляет перезаписью уже индексированного документа, а не созданием дубля. Для принудительного обновления существующего документа передай true; не меняй ITEM_ID ради обновления.
 
 **Проверка на стенде:** Два вызова с одной идентичностью не размножают документы.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/search/classes/csearch/indexs.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.
+
+## K112 — Дата поискового документа — DATE_CHANGE
+
+В документированном формате CSearch::Index дата изменения передаётся в DATE_CHANGE. Бери время изменения источника в формате, ожидаемом legacy API проекта; не подменяй его временем запуска переиндексации. LAST_MODIFIED не является показанным официальным полем этого вызова.
+
+**Проверка на стенде:** Документы сохраняют порядок реальных изменений после повторной индексации.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/search/classes/csearch/indexs.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.

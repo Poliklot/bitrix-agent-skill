@@ -43,12 +43,11 @@ CSearch::Index(
 | `PARAM1` | нет | Группировка первого уровня (напр. тип контента) |
 | `PARAM2` | нет | Группировка второго уровня (напр. ID раздела) |
 | `TAGS` | нет | Строка тегов через запятую |
-| `LAST_MODIFIED` | нет | `\Bitrix\Main\Type\DateTime` — дата изменения |
+| `DATE_CHANGE` | да | Дата изменения источника в формате legacy API проекта |
 | `PERMISSIONS` | нет | Массив прав `['G2' => 'R', 'G1' => 'D']` |
 
 ```php
-use Bitrix\Main\Type\DateTime;
-
+// $dateChange — дата изменения источника в формате проекта.
 CSearch::Index('my.module', (string)$elementId, [
     'TITLE'         => 'Название новости',
     'BODY'          => strip_tags($content),   // убираем HTML
@@ -57,7 +56,7 @@ CSearch::Index('my.module', (string)$elementId, [
     'PARAM1'        => 'my.module',            // модуль
     'PARAM2'        => (string)$sectionId,     // раздел
     'TAGS'          => 'новость, важное',
-    'LAST_MODIFIED' => new DateTime(),
+    'DATE_CHANGE'   => $dateChange,
     'PERMISSIONS'   => ['G2' => 'R'],          // G2 = все авторизованные
 ], true);
 ```
@@ -1942,5 +1941,13 @@ $hits = CPerfomanceHit::GetList(
 bOverWrite — политика перезаписи той же пары, не режим создания дублей.
 
 Проверка: Два вызова с одной идентичностью не размножают документы.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/search/classes/csearch/indexs.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K112 — Дата поискового документа — DATE_CHANGE
+
+Index получает DATE_CHANGE источника, не LAST_MODIFIED и не время запуска задания.
+
+Проверка: Документы сохраняют порядок реальных изменений после повторной индексации.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/search/classes/csearch/indexs.php); documentation-backed, 2026-11-01, не runtime pass.

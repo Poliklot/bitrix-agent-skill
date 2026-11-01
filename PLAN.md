@@ -1350,3 +1350,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [search.md](bitrix/references/search.md) и [search-seo-ops.md](mcpmarket/bitrix/references/search-seo-ops.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/search/classes/csearch/indexs.php).
 - Самопроверка B190 — «Создаёт ли Index(..., false) дубль того же MODULE_ID/ITEM_ID?»: Нет; для принудительной перезаписи использовать true с прежней идентичностью.
 - Контрпример отвергнут: Каждый false добавляет отдельный документ. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K112: Дата поискового документа — DATE_CHANGE
+
+- Пробел до изменения: Таблица и пример использовали неподтверждённое LAST_MODIFIED с D7 DateTime.
+- Исправление: [search.md](bitrix/references/search.md) и [search-seo-ops.md](mcpmarket/bitrix/references/search-seo-ops.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/search/classes/csearch/indexs.php).
+- Самопроверка B191 — «Почему сортировка по изменению не отражает дату источника?»: Проверить DATE_CHANGE и формат даты, не LAST_MODIFIED.
+- Контрпример отвергнут: Передавать произвольный DateTime в вымышленное поле. Результат ручной проверки ответа: pass; runtime: не запускался.
