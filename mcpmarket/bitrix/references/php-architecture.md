@@ -3135,10 +3135,10 @@ final class Inn extends AbstractPropertyValidationAttribute
 
 ### Главное правило: toString() vs format()
 
-`DateTime` хранит время в серверной таймзоне. Это разграничение критично:
+У `DateTime` есть собственная timezone; исходная зона и последующие изменения важны:
 
-- `format('d.m.Y H:i:s')` → **серверное время**, для хранения, логов, сравнений
-- `toString()` → **пользовательское время** (авто-конвертация через `\CTimeZone`), для отображения
+- `format('d.m.Y H:i:s')` → время **в зоне объекта**, не безусловно серверное
+- `toString()` → региональное представление с учётом настроек пользовательского времени; не машинный формат хранения
 
 Ошибка: сравнивать `toString()` двух объектов — они уже в пользовательской зоне, результат непредсказуем. Всегда сравнивай через `getTimestamp()`.
 
@@ -3158,12 +3158,12 @@ $date = new Date('2024-06-15', 'Y-m-d');  // Date — только дата бе
 $date = Date::createFromTimestamp(time());
 
 // Форматирование
-$dt->format('d.m.Y H:i:s');   // серверное время — для хранения и логики
+$dt->format('d.m.Y H:i:s');   // время в зоне объекта
 $dt->toString();               // пользовательское время — для вывода в HTML
 $dt->getTimestamp();           // UNIX timestamp — для сравнений
 
 // Управление конвертацией таймзоны
-$dt->disableUserTime();  // toString() тоже вернёт серверное время
+$dt->disableUserTime();  // отключить пользовательскую конвертацию, не менять зону объекта
 $dt->enableUserTime();   // вернуть по умолчанию (включена)
 
 // Арифметика — ISO 8601 DateInterval
@@ -3180,7 +3180,7 @@ $dt->setTimeZone(new \DateTimeZone('Europe/Moscow'));
 OrderTable::update($id, ['DEADLINE' => new DateTime('2024-12-31 23:59:59', 'Y-m-d H:i:s')]);
 $row  = OrderTable::getById($id)->fetch();
 $date = $row['CREATED_AT']; // instanceof DateTime
-echo $date->format('d.m.Y');   // серверное
+echo $date->format('d.m.Y');   // в зоне объекта
 echo $date->toString();        // пользовательское
 ```
 
@@ -3482,3 +3482,11 @@ getRealValue не подставляет defaults; null отличается о�
 Проверка: Одинаковая машинная строка разбирается одинаково при двух culture сайта.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/type/datetime/index.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K72 — format использует зону объекта, не всегда сервера
+
+format зависит от timezone объекта. disableUserTime не заменяет setTimeZone; timestamp сравнивает моменты.
+
+Проверка: Один момент в двух зонах имеет одинаковый timestamp и ожидаемо разные строки.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/type/datetime/settimezone.php); documentation-backed, 2026-11-01, не runtime pass.

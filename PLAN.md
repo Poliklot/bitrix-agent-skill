@@ -1007,3 +1007,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [http.md](bitrix/references/http.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/type/datetime/index.php).
 - Самопроверка B150 — «Почему new DateTime с Y-m-d строкой работает на одном сайте и падает на другом?»: Не задан format, используется culture; указать Y-m-d H:i:s либо нужный контракт строки.
 - Контрпример отвергнут: Полагаться на автоматическое распознавание ISO конструктором. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K72: format использует зону объекта, не всегда сервера
+
+- Пробел до изменения: Справочник безусловно приравнивал format к серверному времени даже после setTimeZone.
+- Исправление: [http.md](bitrix/references/http.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/type/datetime/settimezone.php).
+- Самопроверка B151 — «Вернёт ли format серверное время после setTimeZone(UTC)?»: Нет, он форматирует в установленной зоне объекта; для серверной зоны установить её явно.
+- Контрпример отвергнут: Считать format или disableUserTime принудительной серверной зоной. Результат ручной проверки ответа: pass; runtime: не запускался.
