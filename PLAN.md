@@ -1176,3 +1176,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [users.md](bitrix/references/users.md) и [users-security.md](mcpmarket/bitrix/references/users-security.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cuser/getlist.php).
 - Самопроверка B168 — «Поиск LOGIN=ivan вернул ivan_petrov — ошибка ядра?»: Нет: LOGIN — подстрока; для точного поиска LOGIN_EQUAL или GetByLogin.
 - Контрпример отвергнут: Выбирать первую строку подстрочного поиска как точную учётку. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K90: SendPassword отправляет контрольную строку, а не новый пароль
+
+- Пробел до изменения: Комментарий обещал новый пароль и обязательное совпадение login+email.
+- Исправление: [users.md](bitrix/references/users.md) и [users-security.md](mcpmarket/bitrix/references/users-security.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cuser/sendpassword.php).
+- Самопроверка B169 — «Получен OK от SendPassword — пароль уже сменён?»: Нет: создан запрос с контрольной строкой; отдельно выполняется подтверждённая смена.
+- Контрпример отвергнут: Обещать новый пароль или считать login+email независимой проверкой личности. Результат ручной проверки ответа: pass; runtime: не запускался.
