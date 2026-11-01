@@ -1820,3 +1820,11 @@ $links = UserLinkTable::getList([
 Проверка: У оператора и цели разные группы; после операции у цели нет лишних привилегий.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cuser/getusergroup.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K82 — Замена групп должна сохранять временные членства
+
+Считать полный GetUserGroupList и сохранить интервалы при записи структурированного groups.
+
+Проверка: Будущая и истёкшая привязки сохраняют свои даты после добавления другой группы.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cuser/getusergrouplist.php); documentation-backed, 2026-11-01, не runtime pass.

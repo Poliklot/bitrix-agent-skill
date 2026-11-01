@@ -1120,3 +1120,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [users.md](bitrix/references/users.md) и [users-security.md](mcpmarket/bitrix/references/users-security.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cuser/getusergroup.php).
 - Самопроверка B160 — «Администратор добавляет клиента в группу: откуда брать существующий набор?»: Из записи клиента по целевому userId, не из USER оператора; проверить право назначения.
 - Контрпример отвергнут: Копировать группы администратора клиенту. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K82: Замена групп должна сохранять временные членства
+
+- Пробел до изменения: Merge массива ID теряет интервалы активности и может потерять будущие назначения.
+- Исправление: [users.md](bitrix/references/users.md) и [users-security.md](mcpmarket/bitrix/references/users-security.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cuser/getusergrouplist.php).
+- Самопроверка B161 — «Как добавить постоянную группу, не сделать временную бессрочной?»: Считать полный GetUserGroupList и сохранить интервалы при записи структурированного groups.
+- Контрпример отвергнут: Свести все членства к одним ID. Результат ручной проверки ответа: pass; runtime: не запускался.
