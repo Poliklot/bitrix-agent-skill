@@ -930,3 +930,10 @@ Commerce/1C фаза считается завершённой, когда:
 ### Gate этапа 5 / 1.41.0
 
 `make release-check`, 23 существующих теста инструментов и quick_validate обеих версий: pass. Эти тесты не доказывают знания API; предметная самопроверка записана для каждого K-пункта. Compact: 35/50 файлов. Live Bitrix runtime не выполнялся. Публикация — штатный Publish Release после push в master.
+
+### K61: MIME из браузера не подтверждает содержимое
+
+- Пробел до изменения: Загрузка разрешалась только по uploadedFile[type], который сообщает клиент.
+- Исправление: [import-export.md](bitrix/references/import-export.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cfile/checkfile.php).
+- Самопроверка B140 — «Можно ли разрешить загрузку по type=image/jpeg из запроса?»: Нет: это поле клиента; проверить содержимое на сервере и политику расширений/размеров.
+- Контрпример отвергнут: Считать MIME браузера доказательством JPEG. Результат ручной проверки ответа: pass; runtime: не запускался.

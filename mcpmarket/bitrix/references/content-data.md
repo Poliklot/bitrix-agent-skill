@@ -2151,13 +2151,23 @@ $request = Application::getInstance()->getContext()->getRequest();
 $uploadedFile = $request->getFile('image');  // эквивалент $_FILES['image']
 
 if ($uploadedFile && $uploadedFile['error'] === UPLOAD_ERR_OK) {
-    // Проверить тип — белый список
-    $allowed = ['image/jpeg', 'image/png', 'image/webp'];
-    if (!in_array($uploadedFile['type'], $allowed, true)) {
-        throw new \RuntimeException('Недопустимый тип файла');
+    if (!is_uploaded_file($uploadedFile['tmp_name'])) {
+        throw new \RuntimeException('Нет корректной браузерной загрузки');
     }
-
+    $allowed = ['jpg' => 'image/jpeg', 'jpeg' => 'image/jpeg',
+        'png' => 'image/png', 'webp' => 'image/webp'];
+    $extension = strtolower(pathinfo($uploadedFile['name'], PATHINFO_EXTENSION));
+    $mime = (new \finfo(FILEINFO_MIME_TYPE))->file($uploadedFile['tmp_name']);
+    if (!isset($allowed[$extension]) || $allowed[$extension] !== $mime) {
+        throw new \RuntimeException('Недопустимое содержимое файла');
+    }
+    $uploadedFile['type'] = $mime;
+    $uploadedFile['size'] = filesize($uploadedFile['tmp_name']);
+    // Ограничения размера/геометрии добавлены ниже в контрактах CFile.
     $fileId = CFile::SaveFile($uploadedFile, 'my_module');
+    if (!$fileId) {
+        throw new \RuntimeException('Не удалось сохранить файл');
+    }
 }
 ```
 
@@ -2958,3 +2968,11 @@ SetPropertyValuesEx — отдельный путь событий. OnIBlockElem
 Проверка: На VERSION=1 и VERSION=2 создать тестовое свойство, записать/прочитать значение; rollback не должен терять существующие свойства.
 
 [Официальный контракт](https://docs.1c-bitrix.ru/pages/modules/iblocks/api.html); documentation-backed, 2026-11-01, не runtime pass.
+
+## K61 — MIME из браузера не подтверждает содержимое
+
+Не доверяй uploadedFile[type]. Проверяй фактический временный файл, расширение и изображение до SaveFile.
+
+Проверка: Переименованный текстовый файл с type=image/jpeg отклоняется, настоящий разрешённый JPEG принимается.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cfile/checkfile.php); documentation-backed, 2026-11-01, не runtime pass.

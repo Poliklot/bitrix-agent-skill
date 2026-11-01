@@ -39,13 +39,23 @@ $request = Application::getInstance()->getContext()->getRequest();
 $uploadedFile = $request->getFile('image');  // эквивалент $_FILES['image']
 
 if ($uploadedFile && $uploadedFile['error'] === UPLOAD_ERR_OK) {
-    // Проверить тип — белый список
-    $allowed = ['image/jpeg', 'image/png', 'image/webp'];
-    if (!in_array($uploadedFile['type'], $allowed, true)) {
-        throw new \RuntimeException('Недопустимый тип файла');
+    if (!is_uploaded_file($uploadedFile['tmp_name'])) {
+        throw new \RuntimeException('Нет корректной браузерной загрузки');
     }
-
+    $allowed = ['jpg' => 'image/jpeg', 'jpeg' => 'image/jpeg',
+        'png' => 'image/png', 'webp' => 'image/webp'];
+    $extension = strtolower(pathinfo($uploadedFile['name'], PATHINFO_EXTENSION));
+    $mime = (new \finfo(FILEINFO_MIME_TYPE))->file($uploadedFile['tmp_name']);
+    if (!isset($allowed[$extension]) || $allowed[$extension] !== $mime) {
+        throw new \RuntimeException('Недопустимое содержимое файла');
+    }
+    $uploadedFile['type'] = $mime;
+    $uploadedFile['size'] = filesize($uploadedFile['tmp_name']);
+    // Ограничения размера/геометрии добавлены ниже в контрактах CFile.
     $fileId = CFile::SaveFile($uploadedFile, 'my_module');
+    if (!$fileId) {
+        throw new \RuntimeException('Не удалось сохранить файл');
+    }
 }
 ```
 
@@ -435,3 +445,11 @@ die();
 - При многошаговом импорте храни файл вне `upload/` (в `sys_get_temp_dir()`), иначе он попадёт в БД
 - `fgetcsv` зависит от локали — если возникают проблемы с кодировкой, используй `mb_convert_encoding`
 - `connection_aborted()` в цикле экспорта позволяет корректно завершить если пользователь закрыл браузер
+
+## K61 — MIME из браузера не подтверждает содержимое
+
+Поле type в массиве браузерной загрузки недоверенное; документация CheckFile прямо ограничивает MIME-проверку данными посетителя. До SaveFile проверяй ошибку загрузки, серверный размер, допустимое расширение и содержимое. В примере finfo проверяет тип по временному файлу; для изображений дополнительно нужен CheckImageFile и лимиты. Это не антивирус и не гарантия безопасности SVG/активного содержимого.
+
+**Проверка на стенде:** Переименованный текстовый файл с type=image/jpeg отклоняется, настоящий разрешённый JPEG принимается.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cfile/checkfile.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.
