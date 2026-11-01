@@ -14,7 +14,7 @@ description: >-
   local core and `local/*`; missing optional modules are deferred.
 metadata:
   author: poliklot
-  version: "1.46.0"
+  version: "1.47.0"
 ---
 
 # Bitrix Expert Skill
@@ -32,7 +32,7 @@ Designed for Claude Code and Codex on 1C-Bitrix CMS projects.
 
 Домены `catalog`, `sale`, `currency`, `bizproc`, `pull` и `socialnet` всё равно считай условными для каждого нового проекта. Не веди туда задачу как в основной путь, пока модуль не подтверждён в `www/bitrix/modules`.
 
-Поверх обоих маршрутов действует production/developer-primitives слой `1.46.0`: best practices, структура/include, project configuration/stable IDs, pitfalls matrix, tail module routing и runtime smoke verification. Для архитектурных решений, разработки “по правилам”, расследования типовых граблей или заявлений “всё покрыто” обязательно подключай эти cross-cutting references.
+Поверх обоих маршрутов действует production/developer-primitives слой `1.47.0`: best practices, структура/include, project configuration/stable IDs, pitfalls matrix, tail module routing и runtime smoke verification. Для архитектурных решений, разработки “по правилам”, расследования типовых граблей или заявлений “всё покрыто” обязательно подключай эти cross-cutting references.
 
 ## Источник истины
 
@@ -228,3 +228,5 @@ if (!$result->isSuccess()) {
 - Разделы инфоблоков и внутренний поиск: [iblocks.md](references/iblocks.md), [search.md](references/search.md). K101–K120, B180–B199.
 
 - Веб-формы: ввод, ответы и результаты: [webforms.md](references/webforms.md). K121–K130, B200–B209.
+
+- Подписки и очередь рассылок: [subscribe.md](references/subscribe.md). K131–K140, B210–B219.

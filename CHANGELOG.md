@@ -4,25 +4,19 @@
 
 ## [Unreleased]
 
-- K140: Вложение posting связывается через SaveFile — дополнены знания, full/compact и сценарий B219.
+## [1.47.0] — 2026-11-01
 
-- K139: Счётчики очереди используют Y как ожидание и N как отправку — дополнены знания, full/compact и сценарий B218.
-
-- K138: DIRECT_SEND задаёт персональную отправку, а не синхронность — дополнены знания, full/compact и сценарий B217.
-
-- K137: SendMessage имеет три исхода, CONTINUE не является успехом — дополнены знания, full/compact и сценарий B216.
-
-- K136: Статусы posting изменяют очередь, а не только метку — дополнены знания, full/compact и сценарий B215.
-
-- K135: Смена EMAIL снимает подтверждение подписки — дополнены знания, full/compact и сценарий B214.
-
-- K134: Authorize с false безусловно открывает доступ к подписке — дополнены знания, full/compact и сценарий B213.
-
-- K133: Обновление RUB_ID требует явной области сайта — дополнены знания, full/compact и сценарий B212.
-
-- K132: EMAIL подписки уникален, существующая запись не принадлежит заявителю автоматически — дополнены знания, full/compact и сценарий B211.
-
+### Added
 - K131: Публичная подписка не должна сама устанавливать CONFIRMED=Y — дополнены знания, full/compact и сценарий B210.
+- K132: EMAIL подписки уникален, существующая запись не принадлежит заявителю автоматически — дополнены знания, full/compact и сценарий B211.
+- K133: Обновление RUB_ID требует явной области сайта — дополнены знания, full/compact и сценарий B212.
+- K134: Authorize с false безусловно открывает доступ к подписке — дополнены знания, full/compact и сценарий B213.
+- K135: Смена EMAIL снимает подтверждение подписки — дополнены знания, full/compact и сценарий B214.
+- K136: Статусы posting изменяют очередь, а не только метку — дополнены знания, full/compact и сценарий B215.
+- K137: SendMessage имеет три исхода, CONTINUE не является успехом — дополнены знания, full/compact и сценарий B216.
+- K138: DIRECT_SEND задаёт персональную отправку, а не синхронность — дополнены знания, full/compact и сценарий B217.
+- K139: Счётчики очереди используют Y как ожидание и N как отправку — дополнены знания, full/compact и сценарий B218.
+- K140: Вложение posting связывается через SaveFile — дополнены знания, full/compact и сценарий B219.
 
 ## [1.46.0] — 2026-11-01
 
@@ -668,7 +662,8 @@
 ### Added
 - Первый публичный релиз: `SKILL.md`, progressive disclosure архитектура
 
-[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.46.0...HEAD
+[Unreleased]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.47.0...HEAD
+[1.47.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.46.0...v1.47.0
 [1.46.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.45.0...v1.46.0
 [1.45.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.44.0...v1.45.0
 [1.44.0]: https://github.com/Poliklot/bitrix-agent-skill/compare/v1.43.0...v1.44.0
