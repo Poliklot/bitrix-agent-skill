@@ -1392,3 +1392,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [search.md](bitrix/references/search.md) и [search-seo-ops.md](mcpmarket/bitrix/references/search-seo-ops.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/search/classes/csearch/reindexall.php).
 - Самопроверка B196 — «Можно ли включить ReIndexAll в транзакцию импорта для общей атомарности?»: Нет; отделить задание индексации, не коммитить транзакцию вызывающего кода внутри helper.
 - Контрпример отвергнут: Считать вложенный вызов общей атомарной транзакцией. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K118: OnReindex использует callback поискового модуля
+
+- Пробел до изменения: Пример выдумывал сигнатуру max_execution_time и возвращал NS вместо курсора callback-контракта.
+- Исправление: [search.md](bitrix/references/search.md) и [search-seo-ops.md](mcpmarket/bitrix/references/search-seo-ops.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/search/events/onreindex.php).
+- Самопроверка B197 — «Должен ли OnReindex принимать max_execution_time и возвращать NS?»: Нет; использовать документированный callback-протокол с ID/false.
+- Контрпример отвергнут: Копировать сигнатуру ReIndexAll в обработчик события. Результат ручной проверки ответа: pass; runtime: не запускался.

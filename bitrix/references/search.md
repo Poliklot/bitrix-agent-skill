@@ -255,62 +255,32 @@ EventManager::getInstance()->addEventHandler(
 
 ## Регистрация модуля для ReIndexAll
 
-Чтобы `ReIndexAll` переиндексировал контент вашего модуля, зарегистрируй обработчик `OnReindex`:
+Legacy-событие OnReindex передаёт позиционные аргументы. Зарегистрируй постоянную зависимость в инсталляторе, удали её при деинсталляции:
 
 ```php
-// В include.php модуля
-EventManager::getInstance()->addEventHandler(
-    'search',
-    'OnReindex',
-    ['\MyVendor\MyModule\SearchReindex', 'onReindex']
+RegisterModuleDependences(
+    'search', 'OnReindex', 'vendor.module',
+    'Vendor\\Module\\SearchReindex', 'onReindex'
 );
 ```
 
-```php
-namespace MyVendor\MyModule;
+Схема обработчика ниже иллюстрирует протокол, а не готовый индексатор. Проектный iterateDocuments нужно реализовать: он выдаёт документы по возрастанию ID после курсора с DATE_CHANGE, TITLE, BODY, URL, SITE_ID и реальными PERMISSIONS источника. Не считывай неэкранированный индекс из уже HTML-экранированного представления.
 
-use Bitrix\Main\Loader;
-use CSearch;
+```php
+namespace Vendor\Module;
 
 class SearchReindex
 {
-    /**
-     * Вызывается при ReIndexAll. Должен переиндексировать элементы пакетами.
-     * $NS — состояние (текущая позиция переиндексации).
-     * Вернуть false если всё переиндексировано, массив $NS для продолжения.
-     */
-    public static function onReindex(int $max_execution_time, array &$NS): bool|array
+    public static function onReindex($NS, $callback, $method)
     {
-        $NS['ID'] = (int)($NS['ID'] ?? 0);
-        $limit = 100;
-
-        Loader::includeModule('iblock');
-        $res = \CIBlockElement::GetList(
-            ['ID' => 'ASC'],
-            ['IBLOCK_ID' => MY_IBLOCK_ID, '>ID' => $NS['ID']],
-            false,
-            ['nPageSize' => $limit],
-            ['ID', 'NAME', 'DETAIL_TEXT', 'DETAIL_PAGE_URL']
-        );
-
-        $indexed = 0;
-        while ($el = $res->GetNext()) {
-            CSearch::Index('my.module', (string)$el['ID'], [
-                'TITLE'   => $el['NAME'],
-                'BODY'    => strip_tags($el['DETAIL_TEXT']),
-                'URL'     => $el['DETAIL_PAGE_URL'],
-                'SITE_ID' => [SITE_ID => ''],
-                'PARAM1'  => 'my.module',
-            ], true);
-            $NS['ID'] = $el['ID'];
-            $indexed++;
+        $afterId = ($NS['MODULE'] ?? '') === 'vendor.module'
+            ? (int)($NS['ID'] ?? 0) : 0;
+        foreach (static::iterateDocuments($afterId) as $document) {
+            if (!call_user_func([$callback, $method], $document)) {
+                return $document['ID'];
+            }
         }
-
-        if ($indexed < $limit) {
-            return false;  // всё переиндексировано
-        }
-
-        return $NS;  // продолжить со следующей порции
+        return false;
     }
 }
 ```
@@ -415,3 +385,11 @@ ChangeSite получает карту сайт→путь и ограничен
 **Проверка на стенде:** При откате импорта задание не публикует незавершённые данные.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/search/classes/csearch/reindexall.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.
+
+## K118 — OnReindex использует callback поискового модуля
+
+Документированный OnReindex получает NS, объект callback и имя метода. Передавай подготовленный документ callback; если он просит остановку, возвращай ID позиции, после исчерпания — false. Не заменяй этот протокол собственным вызовом Index и возвратом массива NS. Регистрация legacy-обработчика должна сохранять позиционные аргументы.
+
+**Проверка на стенде:** Два шага продолжаются после курсора без пропусков; callback ограничивает шаг.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/search/events/onreindex.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.
