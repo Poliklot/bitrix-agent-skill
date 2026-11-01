@@ -29,7 +29,7 @@ use Bitrix\Main\Type\Date;
 
 // Создание
 $now  = new DateTime();                                        // текущий момент
-$dt   = new DateTime('2024-06-15 14:30:00');                   // из строки Bitrix-формата
+$dt   = new DateTime('2024-06-15 14:30:00', 'Y-m-d H:i:s'); // явный машинный формат
 $dt   = DateTime::createFromTimestamp(time());                 // из UNIX timestamp
 $dt   = DateTime::createFromUserTime('15.06.2024 14:30:00');  // из строки в зоне пользователя
 $dt   = DateTime::createFromPhp(new \DateTime('now'));         // из PHP-нативного \DateTime
@@ -58,7 +58,7 @@ $dt->setTime(0, 0, 0);  // начало дня
 $dt->setTimeZone(new \DateTimeZone('Europe/Moscow'));
 
 // В ORM — DatetimeField принимает и возвращает объект DateTime
-OrderTable::update($id, ['DEADLINE' => new DateTime('2024-12-31 23:59:59')]);
+OrderTable::update($id, ['DEADLINE' => new DateTime('2024-12-31 23:59:59', 'Y-m-d H:i:s')]);
 $row  = OrderTable::getById($id)->fetch();
 $date = $row['CREATED_AT']; // instanceof DateTime
 echo $date->format('d.m.Y');   // серверное
@@ -291,3 +291,11 @@ Context::getCurrent()->getResponse()->addCookie($cookie);
 **Проверка на стенде:** Получатель записал объект и задержал ответ: повторный запуск не создаёт второй объект, неопределённый исход виден.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/web/httpclient/index.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.
+
+## K71 — Формат DateTime нельзя угадывать по строке
+
+Конструктор без format использует региональный формат, а не универсальный ISO parser. Для машинной строки передавай PHP-формат явно и согласованную timezone; для формы отдельно учитывай пользовательскую культуру. При ошибке отклоняй значение, не заменяй текущим временем. В ORM передавай DateTime-объект, а не строку из toString.
+
+**Проверка на стенде:** Одинаковая машинная строка разбирается одинаково при двух culture сайта.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/type/datetime/index.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.

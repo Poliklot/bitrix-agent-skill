@@ -1635,7 +1635,7 @@ $query = OrderTable::query()
     ->setLimit(10);
 
 if ($onlyRecent) {
-    $query->addFilter('>=CREATED_AT', new \Bitrix\Main\Type\DateTime('2024-01-01'));
+    $query->addFilter('>=CREATED_AT', new \Bitrix\Main\Type\DateTime('2024-01-01 00:00:00', 'Y-m-d H:i:s'));
 }
 
 // fetchObject() — возвращает EntityObject с геттерами/сеттерами
@@ -3148,7 +3148,7 @@ use Bitrix\Main\Type\Date;
 
 // Создание
 $now  = new DateTime();                                        // текущий момент
-$dt   = new DateTime('2024-06-15 14:30:00');                   // из строки Bitrix-формата
+$dt   = new DateTime('2024-06-15 14:30:00', 'Y-m-d H:i:s'); // явный машинный формат
 $dt   = DateTime::createFromTimestamp(time());                 // из UNIX timestamp
 $dt   = DateTime::createFromUserTime('15.06.2024 14:30:00');  // из строки в зоне пользователя
 $dt   = DateTime::createFromPhp(new \DateTime('now'));         // из PHP-нативного \DateTime
@@ -3177,7 +3177,7 @@ $dt->setTime(0, 0, 0);  // начало дня
 $dt->setTimeZone(new \DateTimeZone('Europe/Moscow'));
 
 // В ORM — DatetimeField принимает и возвращает объект DateTime
-OrderTable::update($id, ['DEADLINE' => new DateTime('2024-12-31 23:59:59')]);
+OrderTable::update($id, ['DEADLINE' => new DateTime('2024-12-31 23:59:59', 'Y-m-d H:i:s')]);
 $row  = OrderTable::getById($id)->fetch();
 $date = $row['CREATED_AT']; // instanceof DateTime
 echo $date->format('d.m.Y');   // серверное
@@ -3474,3 +3474,11 @@ getRealValue не подставляет defaults; null отличается о�
 Проверка: Отсутствие, пустая строка, "0" и обычное значение дают разные решения миграции.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/config/option/getrealvalue.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K71 — Формат DateTime нельзя угадывать по строке
+
+Машинная дата: явный PHP format и timezone. Без format конструктор зависит от culture; toString не формат хранения.
+
+Проверка: Одинаковая машинная строка разбирается одинаково при двух culture сайта.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/type/datetime/index.php); documentation-backed, 2026-11-01, не runtime pass.

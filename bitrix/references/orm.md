@@ -146,7 +146,7 @@ $query = OrderTable::query()
     ->setLimit(10);
 
 if ($onlyRecent) {
-    $query->addFilter('>=CREATED_AT', new \Bitrix\Main\Type\DateTime('2024-01-01'));
+    $query->addFilter('>=CREATED_AT', new \Bitrix\Main\Type\DateTime('2024-01-01 00:00:00', 'Y-m-d H:i:s'));
 }
 
 // fetchObject() — возвращает EntityObject с геттерами/сеттерами

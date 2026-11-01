@@ -1000,3 +1000,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [import-export.md](bitrix/references/import-export.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockresult/getnext.php).
 - Самопроверка B149 — «Почему название A & B выгрузилось как A &amp; B?»: GetNext преобразовал HTML; выбрать Fetch и сериализовать исходное значение.
 - Контрпример отвергнут: Использовать GetNext как универсальный raw fetch. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K71: Формат DateTime нельзя угадывать по строке
+
+- Пробел до изменения: ISO-подобные строки в примерах передавались без явного формата, завися от culture сайта.
+- Исправление: [http.md](bitrix/references/http.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/type/datetime/index.php).
+- Самопроверка B150 — «Почему new DateTime с Y-m-d строкой работает на одном сайте и падает на другом?»: Не задан format, используется culture; указать Y-m-d H:i:s либо нужный контракт строки.
+- Контрпример отвергнут: Полагаться на автоматическое распознавание ISO конструктором. Результат ручной проверки ответа: pass; runtime: не запускался.
