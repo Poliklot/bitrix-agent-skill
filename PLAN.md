@@ -1308,3 +1308,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [iblocks.md](bitrix/references/iblocks.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblocksection/gettreelist.php).
 - Самопроверка B184 — «Почему ребёнок в меню оказывается раньше родителя?»: Проверить порядок дерева: LEFT_MARGIN ASC, не общий SORT.
 - Контрпример отвергнут: Восстанавливать иерархию только по отсортированному SORT. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K106: GetNavChain: область и форма результата
+
+- Пробел до изменения: Не раскрыты проверка принадлежности и массивный режим хлебных крошек.
+- Исправление: [iblocks.md](bitrix/references/iblocks.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblocksection/getnavchain.php).
+- Самопроверка B185 — «Можно ли вызвать Fetch на GetNavChain(..., true)?»: Нет, это массив; сохранить проверку IBLOCK_ID и не ждать UF.
+- Контрпример отвергнут: Передавать ноль вместо области и считать результат авторизацией. Результат ручной проверки ответа: pass; runtime: не запускался.

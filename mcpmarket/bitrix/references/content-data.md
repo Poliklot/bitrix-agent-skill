@@ -3090,3 +3090,11 @@ PERMISSIONS_BY выбирает субъекта; CHECK_PERMISSIONS=N отклю
 Проверка: Две ветви с пересекающимися SORT обходятся родитель → потомки без перемешивания.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblocksection/gettreelist.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K106 — GetNavChain: область и форма результата
+
+GetNavChain: ненулевой IBLOCK_ID, true четвёртым → массив; UF нет.
+
+Проверка: Раздел другого инфоблока не даёт цепочку; массивный режим обрабатывается foreach.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblocksection/getnavchain.php); documentation-backed, 2026-11-01, не runtime pass.
