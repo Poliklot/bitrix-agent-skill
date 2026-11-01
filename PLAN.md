@@ -826,3 +826,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [events-routing.md](bitrix/references/events-routing.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://docs.1c-bitrix.ru/pages/security/access-control.html).
 - Самопроверка B127 — «Авторизованный пользователь передал чужой userId/id: допустимо?»: Нет без отдельного разрешения; ограничить запись/чтение серверным правилом и тем же правилом count.
 - Контрпример отвергнут: Доверять userId клиента или возвращать глобальный total приватного списка. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K49: Метод запроса BX.ajax и обработка отклонённого Promise
+
+- Пробел до изменения: Пример getList разрешает только GET, а runAction без method отправляет POST; нет ветки reject.
+- Исправление: [events-routing.md](bitrix/references/events-routing.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/js_lib/ajax/bx_ajax_runaction.php).
+- Самопроверка B128 — «getList не проходит HttpMethod, хотя имя верное — причина?»: Сверить default POST клиента с GET фильтром; явно указать GET и обработать reject.
+- Контрпример отвергнут: Убрать серверный фильтр ради несовпадения клиента или бесконечно повторять мутацию. Результат ручной проверки ответа: pass; runtime: не запускался.

@@ -2823,9 +2823,13 @@ return AjaxJson::createDenied();
 
 ```javascript
 BX.ajax.runAction('vendor:mymodule.order.getList', {
+    method: 'GET',
     data: { page: 1, limit: 20 },
 }).then(response => {
     console.log(response.data); // { items: [...], total: N }
+}, response => {
+    // Показать безопасное сообщение и снять состояние ожидания.
+    console.error('Не удалось загрузить список');
 });
 
 // POST с CSRF-токеном
@@ -3433,3 +3437,11 @@ Authentication проверяет вход, не доступ к строке. O
 Проверка: Два владельца не читают/создают данные друг друга; total не раскрывает чужие строки.
 
 [Официальный контракт](https://docs.1c-bitrix.ru/pages/security/access-control.html); documentation-backed, 2026-11-01, не runtime pass.
+
+## K49 — Метод запроса BX.ajax и обработка отклонённого Promise
+
+runAction default POST; GET-action требует method: GET. Обрабатывать reject по status, а не только HTTP; не множить встроенный однократный CSRF retry.
+
+Проверка: GET-list работает; ошибочный status вызывает ветку ошибки и снимает ожидание.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/js_lib/ajax/bx_ajax_runaction.php); documentation-backed, 2026-11-01, не runtime pass.
