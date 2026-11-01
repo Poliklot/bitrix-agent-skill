@@ -1843,3 +1843,11 @@ MESSAGE_ID выбирает шаблон; заданный ID снимает я�
 Проверка: Два языка: автоподбор и явный ID дают ожидаемый, отдельно проверенный шаблон.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/events/onbeforeeventadd.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K59 — DUPLICATE управляет копией, а не идемпотентностью
+
+duplicate=N отключает административную копию, не повторную постановку. Идемпотентность бизнес-события — отдельно.
+
+Проверка: Два вызова и отдельный адрес копии: проверить количество событий и получателей.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cevent/send.php); documentation-backed, 2026-11-01, не runtime pass.

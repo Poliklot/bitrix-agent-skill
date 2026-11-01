@@ -906,3 +906,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [mail-notifications.md](bitrix/references/mail-notifications.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/events/onbeforeeventadd.php).
 - Самопроверка B137 — «Почему с MESSAGE_ID письмо пришло не на выбранном языке?»: Языковой фильтр не выполняется при явном ID; проверить язык выбранного шаблона и mapping окружения.
 - Контрпример отвергнут: Считать languageId гарантией языка при любом MESSAGE_ID. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K59: DUPLICATE управляет копией, а не идемпотентностью
+
+- Пробел до изменения: Нет значения duplicate, которое легко ошибочно принять за защиту от повторных писем.
+- Исправление: [mail-notifications.md](bitrix/references/mail-notifications.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cevent/send.php).
+- Самопроверка B138 — «Защитит duplicate=N от двух одинаковых CEvent::Send?»: Нет: это копия на адрес из настроек, два вызова могут создать два события.
+- Контрпример отвергнут: Использовать duplicate как ключ дедупликации. Результат ручной проверки ответа: pass; runtime: не запускался.
