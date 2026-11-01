@@ -3022,3 +3022,11 @@ CIBlockElement::Add получает файловый descriptor; не один 
 Проверка: Добавление создаёт читаемую DETAIL_PICTURE; preview соответствует настройкам; ошибка Add видна импорту.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockelement/add.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K67 — old_file и del нельзя переносить из запроса без нормализации
+
+old_file берётся из серверной записи; del — только явно разрешённое удаление, не строка N. Сначала валидируй замену.
+
+Проверка: Чужой old_file отклоняется; отсутствие удаления сохраняет старую связь; отказ валидации не уничтожает старый файл.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cfile/savefile.php); documentation-backed, 2026-11-01, не runtime pass.

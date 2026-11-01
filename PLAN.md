@@ -972,3 +972,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [import-export.md](bitrix/references/import-export.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockelement/add.php).
 - Самопроверка B145 — «Как прикрепить новое изображение при Add элемента?»: Передать проверенный файловый массив; дать API элемента сохранить файл, проверить ID/LAST_ERROR.
 - Контрпример отвергнут: Предварительно SaveFile и передать его ID как новый DETAIL_PICTURE. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K67: old_file и del нельзя переносить из запроса без нормализации
+
+- Пробел до изменения: Нет разбора служебных ключей файлового массива, способных удалить прежний файл.
+- Исправление: [import-export.md](bitrix/references/import-export.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cfile/savefile.php).
+- Самопроверка B146 — «Безопасно ли слить POST с файловым массивом, включая old_file/del?»: Нет: служебные ключи задаёт сервер после проверки владельца и намерения удаления.
+- Контрпример отвергнут: Доверять old_file из POST или передавать del=N как ложь. Результат ручной проверки ответа: pass; runtime: не запускался.
