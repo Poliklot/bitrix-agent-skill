@@ -273,10 +273,12 @@ $groupIds = array_column($result->fetchAll(), 'GROUP_ID');
 ## Поиск пользователей (legacy)
 
 ```php
-// Legacy GetList — все ещё широко используется
+// Legacy GetList: первые два аргумента передаются по ссылке.
+$sort = 'ID';
+$order = 'ASC';
 $res = CUser::GetList(
-    $sort = 'ID',
-    $order = 'ASC',
+    $sort,
+    $order,
     $arFilter = [
         'ACTIVE'      => 'Y',
         'GROUPS_ID'   => [5],          // пользователи из группы 5
@@ -1870,3 +1872,11 @@ CUser::Add; Register относится к публичному потоку с 
 Проверка: Две учётки с одним email не объединяются и не дают вход в чужую.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/user_help/settings/settings/settings.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K88 — CUser::GetList принимает сортировку по ссылке
+
+Объявить by/order отдельно и передать переменные; не выражения присваивания.
+
+Проверка: Вызов с отдельно подготовленными переменными проходит без reference error.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cuser/getlist.php); documentation-backed, 2026-11-01, не runtime pass.

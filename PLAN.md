@@ -1162,3 +1162,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [users.md](bitrix/references/users.md) и [users-security.md](mcpmarket/bitrix/references/users-security.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/user_help/settings/settings/settings.php).
 - Самопроверка B166 — «Можно ли взять первый UserTable::getRow по email и связать заказ/аккаунт?»: Не без проверки уникальности кандидата и политики идентификации; email не универсальный ключ.
 - Контрпример отвергнут: Молча выбрать первого пользователя с общим email. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K88: CUser::GetList принимает сортировку по ссылке
+
+- Пробел до изменения: Вызов передавал присваивания выражениями вместо отдельных переменных by/order.
+- Исправление: [users.md](bitrix/references/users.md) и [users-security.md](mcpmarket/bitrix/references/users-security.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cuser/getlist.php).
+- Самопроверка B167 — «Как исправить ошибку передачи первого аргумента CUser::GetList по ссылке?»: Объявить by/order отдельно и передать переменные; не выражения присваивания.
+- Контрпример отвергнут: Передать строковый литерал или assignment expression в ссылочный аргумент. Результат ручной проверки ответа: pass; runtime: не запускался.
