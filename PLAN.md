@@ -986,3 +986,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [import-export.md](bitrix/references/import-export.md) и [content-data.md](mcpmarket/bitrix/references/content-data.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cfile/checkimagefile.php).
 - Самопроверка B147 — «Маленький по байтам файл имеет огромные dimensions — достаточно CheckFile?»: Нет: ограничить геометрию CheckImageFile и ресурсы обработки до ресайза.
 - Контрпример отвергнут: Считать лимит байтов ограничением числа пикселей. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K69: Uploader не должен присваивать себе все входящие файлы
+
+- Пробел до изменения: Кастомный пример разрешал все операции и вызывал markAsOwn для каждого входного файла.
+- Исправление: [file-upload-modern.md](bitrix/references/file-upload-modern.md) и [components-admin-ui.md](mcpmarket/bitrix/references/components-admin-ui.md); источник: [Официальный контракт](https://docs.1c-bitrix.ru/api/classes/Bitrix-UI-FileUploader-UploaderController.html).
+- Самопроверка B148 — «Можно ли после IsAuthorized пометить все fileId как свои?»: Нет: подтвердить каждый файл и операции по серверному объекту-владельцу; не выдумывать разрешающую модель.
+- Контрпример отвергнут: Безусловный markAsOwn и canRemove=true. Результат ручной проверки ответа: pass; runtime: не запускался.

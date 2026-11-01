@@ -160,46 +160,18 @@ $viewContext = $generator->getContextForFileInViewMode($fileId);
 namespace Vendor\Module\FileUploader;
 
 use Bitrix\UI\FileUploader\Configuration;
-use Bitrix\UI\FileUploader\FileOwnershipCollection;
 use Bitrix\UI\FileUploader\UploaderController;
 
-final class ItemUploaderController extends UploaderController
+// Абстрактный образец конфигурации, не готовый production-контроллер.
+// Наследник обязан реализовать все проверки доступа и verifyFileOwner
+// по фактической модели владения проекта. Без этого инстанцировать нельзя.
+abstract class ItemUploaderController extends UploaderController
 {
-    public function isAvailable(): bool
-    {
-        global $USER;
-
-        return $USER instanceof \CUser && $USER->IsAuthorized();
-    }
-
     public function getConfiguration(): Configuration
     {
         return (new Configuration())
             ->setMaxFileSize(10 * 1024 * 1024)
             ->setAcceptedFileTypes(['.jpg', '.png', '.pdf']);
-    }
-
-    public function canUpload(): bool
-    {
-        return true;
-    }
-
-    public function canView(): bool
-    {
-        return true;
-    }
-
-    public function verifyFileOwner(FileOwnershipCollection $files): void
-    {
-        foreach ($files as $file)
-        {
-            $file->markAsOwn();
-        }
-    }
-
-    public function canRemove(): bool
-    {
-        return true;
     }
 }
 ```
@@ -211,3 +183,11 @@ final class ItemUploaderController extends UploaderController
 - Не подменяй `Configuration::setAcceptedFileTypes()` на `setAllowedFileExtensions()`: это не подтверждено текущим API.
 - Не обещай стандартный `bitrix:ui.file.input`, пока не увидел его реально в установленном core или в проектном коде.
 - Для `FieldFileUploaderController::canUpload()` мало одной авторизации: там ещё проверяется зарегистрированный `cid` через `FileInputUtility`.
+
+## K69 — Uploader не должен присваивать себе все входящие файлы
+
+Контракт UploaderController разделяет доступность, upload/view/remove и verifyFileOwner. Авторизация пользователя не доказывает право на каждый fileId. Удали разрешающий всё пример: конкретный контроллер должен подтвердить связь файла с объектом/контекстом задания на сервере и только затем markAsOwn. Пока модель владения не задана, оставляй контроллер абстрактным, а не возвращай true ради работоспособности демо.
+
+**Проверка на стенде:** Чужой файл не просматривается/удаляется; свои файлы проходят только разрешённые операции.
+
+[Официальный контракт](https://docs.1c-bitrix.ru/api/classes/Bitrix-UI-FileUploader-UploaderController.html). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.

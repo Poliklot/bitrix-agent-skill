@@ -2772,46 +2772,18 @@ $viewContext = $generator->getContextForFileInViewMode($fileId);
 namespace Vendor\Module\FileUploader;
 
 use Bitrix\UI\FileUploader\Configuration;
-use Bitrix\UI\FileUploader\FileOwnershipCollection;
 use Bitrix\UI\FileUploader\UploaderController;
 
-final class ItemUploaderController extends UploaderController
+// Абстрактный образец конфигурации, не готовый production-контроллер.
+// Наследник обязан реализовать все проверки доступа и verifyFileOwner
+// по фактической модели владения проекта. Без этого инстанцировать нельзя.
+abstract class ItemUploaderController extends UploaderController
 {
-    public function isAvailable(): bool
-    {
-        global $USER;
-
-        return $USER instanceof \CUser && $USER->IsAuthorized();
-    }
-
     public function getConfiguration(): Configuration
     {
         return (new Configuration())
             ->setMaxFileSize(10 * 1024 * 1024)
             ->setAcceptedFileTypes(['.jpg', '.png', '.pdf']);
-    }
-
-    public function canUpload(): bool
-    {
-        return true;
-    }
-
-    public function canView(): bool
-    {
-        return true;
-    }
-
-    public function verifyFileOwner(FileOwnershipCollection $files): void
-    {
-        foreach ($files as $file)
-        {
-            $file->markAsOwn();
-        }
-    }
-
-    public function canRemove(): bool
-    {
-        return true;
     }
 }
 ```
@@ -3338,3 +3310,11 @@ Whitelist listKeysSignedParameters → signedParameters; ajax.php читает g
 Проверка: Одинаковое имя действия в class/ajax попадает в выбранную реализацию; неверный mode даёт явную ошибку.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/js_lib/ajax/bx_ajax_runcomponentaction.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K69 — Uploader не должен присваивать себе все входящие файлы
+
+Не делай markAsOwn для всей коллекции. Реализуй canUpload/canView/canRemove и проверку владения по серверной связи; без модели прав — абстрактный шаблон.
+
+Проверка: Чужой файл не просматривается/удаляется; свои файлы проходят только разрешённые операции.
+
+[Официальный контракт](https://docs.1c-bitrix.ru/api/classes/Bitrix-UI-FileUploader-UploaderController.html); documentation-backed, 2026-11-01, не runtime pass.
