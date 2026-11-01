@@ -3506,3 +3506,11 @@ add мутирует объект. Независимый deadline создав�
 Проверка: Проверить полночь обеих границ и день перехода DST, включая отсутствие записи следующего дня.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/type/date/add.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K75 — createFromUserTime зависит от текущего пользователя
+
+createFromUserTime — текущий пользователь/culture, не произвольный ISO/UTC импорт. Для задания передавай явную зону или timestamp.
+
+Проверка: Один входной timestamp даёт одинаковый момент в web и CLI независимо от пользователя.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/type/datetime/createfromusertime.php); documentation-backed, 2026-11-01, не runtime pass.

@@ -1028,3 +1028,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [http.md](bitrix/references/http.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/type/date/add.php).
 - Самопроверка B153 — «Как выбрать все записи пользовательского дня на переходе DST?»: Построить календарные границы в нужной зоне, привести к storage-контракту, использовать >= и <.
 - Контрпример отвергнут: Прибавить 86400 или сравнивать локализованные строки. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K75: createFromUserTime зависит от текущего пользователя
+
+- Пробел до изменения: Метод перечислен без различения интерактивного ввода и фонового импорта времени.
+- Исправление: [http.md](bitrix/references/http.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/type/datetime/createfromusertime.php).
+- Самопроверка B154 — «Можно ли одинаково импортировать UTC через createFromUserTime в web и cron?»: Нет: контексты различаются; использовать явный машинный контракт времени.
+- Контрпример отвергнут: Повторно применять пользовательский сдвиг к UTC. Результат ручной проверки ответа: pass; runtime: не запускался.
