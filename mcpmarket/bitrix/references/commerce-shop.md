@@ -4633,3 +4633,11 @@ GetProductInfo(offerId, offerIblockId) → parent ID/IBLOCK_ID либо false.
 Проверка: Обычный товар и offer с неверной связью не порождают фиктивного родителя.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/catalog/classes/catalogsku/getproductinfo.php?print=Y); documentation-backed, 2026-11-01, не runtime pass.
+
+## K151 — RATE_CNT задаёт номинал валютного курса
+
+Номинал обязателен: курс одной единицы = RATE/RATE_CNT; RATE не всегда за одну.
+
+Проверка: Котировки за 1 и за 100 единиц дают одинаковый результат после нормализации.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/currency/developer/ccurrencyrates/ccurrencyrates__add.a9ea23d5.php); documentation-backed, 2026-11-01, не runtime pass.

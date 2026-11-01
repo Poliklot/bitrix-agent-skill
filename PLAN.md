@@ -1703,3 +1703,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [catalog.md](bitrix/references/catalog.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/catalog/classes/catalogsku/getproductinfo.php?print=Y).
 - Самопроверка B229 — «Какой IBLOCK_ID передавать в GetProductInfo и какой получим назад?»: Передать offers-ИБ, получить parent-ИБ; false обработать до чтения массива.
 - Контрпример отвергнут: Входной и выходной IBLOCK_ID всегда относятся к одному ИБ. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K151: RATE_CNT задаёт номинал валютного курса
+
+- Пробел до изменения: Курс читался без объяснения количества единиц в котировке.
+- Исправление: [currency.md](bitrix/references/currency.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/currency/developer/ccurrencyrates/ccurrencyrates__add.a9ea23d5.php).
+- Самопроверка B230 — «Если за 100 единиц указано RATE=250, сколько стоит одна?»: 2.5 базовых единицы; сохранить RATE_CNT=100 и RATE=250.
+- Контрпример отвергнут: Умножить любую сумму на 250 без номинала. Результат ручной проверки ответа: pass; runtime: не запускался.
