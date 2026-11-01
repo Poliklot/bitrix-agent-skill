@@ -277,19 +277,21 @@ class Order extends Controller
     // Метод ОБЯЗАН заканчиваться на 'Action' (METHOD_ACTION_SUFFIX = 'Action')
     public function getListAction(int $page = 1, int $limit = 20): array
     {
+        // Учебная owner-only модель; права реального модуля проверяются его API.
+        $accessFilter = ['=ACTIVE' => 'Y', '=USER_ID' => (int)CurrentUser::get()->getId()];
         $items = \MyVendor\MyModule\OrderTable::getList([
             'select' => ['ID', 'TITLE'],
-            'filter' => ['=ACTIVE' => 'Y'],
+            'filter' => $accessFilter,
             'limit'  => $limit,
             'offset' => ($page - 1) * $limit,
         ])->fetchAll();
 
-        return ['items' => $items, 'total' => \MyVendor\MyModule\OrderTable::getCount()];
+        return ['items' => $items, 'total' => \MyVendor\MyModule\OrderTable::getCount($accessFilter)];
         // Автоматически: {"status":"success","data":{"items":[...],"total":N}}
     }
 
     // null + addError → {"status":"error","errors":[...]}
-    public function createAction(string $title, ?int $userId = null): ?array
+    public function createAction(string $title): ?array
     {
         if (empty($title)) {
             $this->addError(new Error('Заголовок обязателен', 'EMPTY_TITLE'));
@@ -298,7 +300,7 @@ class Order extends Controller
 
         $result = \MyVendor\MyModule\OrderTable::add([
             'TITLE'   => $title,
-            'USER_ID' => $userId ?? CurrentUser::get()->getId(),
+            'USER_ID' => (int)CurrentUser::get()->getId(),
         ]);
 
         if (!$result->isSuccess()) {
@@ -312,7 +314,11 @@ class Order extends Controller
     // Конвертация UPPER_CASE ключей ORM → camelCase для фронта
     public function getItemAction(int $id): ?array
     {
-        $row = \MyVendor\MyModule\OrderTable::getById($id)->fetch();
+        $row = \MyVendor\MyModule\OrderTable::getList([
+            'filter' => ['=ID' => $id, '=ACTIVE' => 'Y', '=USER_ID' => (int)CurrentUser::get()->getId()],
+            'select' => ['ID', 'TITLE'],
+            'limit' => 1,
+        ])->fetch();
         if (!$row) {
             $this->addError(new Error('Не найден', 'NOT_FOUND'));
             return null;
@@ -445,3 +451,11 @@ return function (RoutingConfigurator $routes): void {
 - где route-controller связывается с HTTP response в вашем приложении
 
 ---
+
+## K48 — Authentication не ограничивает выборку объектами владельца
+
+Для учебной owner-only модели идентификатор владельца бери из CurrentUser, не из аргумента запроса. Один серверный фильтр доступа используй и для списка, и для total; detail ограничивай тем же владельцем до выдачи полей. Делегирование другому пользователю требует отдельного разрешения. Это пример проектной модели владения, не универсальная схема прав всех модулей Bitrix: для реального модуля используй его access API.
+
+**Проверка на стенде:** Два владельца не читают/создают данные друг друга; total не раскрывает чужие строки.
+
+[Официальный контракт](https://docs.1c-bitrix.ru/pages/security/access-control.html). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.

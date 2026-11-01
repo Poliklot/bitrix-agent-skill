@@ -819,3 +819,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [components.md](bitrix/references/components.md) и [components-admin-ui.md](mcpmarket/bitrix/references/components-admin-ui.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/js_lib/ajax/bx_ajax_runcomponentaction.php).
 - Самопроверка B126 — «Вызвал vendor:widget через runAction: почему action не найден?»: Разделить модульный и компонентный диспетчер, выбрать mode по месту реализации действия.
 - Контрпример отвергнут: Подменить компонентный маршрут модульным либо обращаться напрямую к файлу ajax.php. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K48: Authentication не ограничивает выборку объектами владельца
+
+- Пробел до изменения: Пример принимал userId для создания, читал произвольный ID и считал все строки независимо от доступа.
+- Исправление: [events-routing.md](bitrix/references/events-routing.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://docs.1c-bitrix.ru/pages/security/access-control.html).
+- Самопроверка B127 — «Авторизованный пользователь передал чужой userId/id: допустимо?»: Нет без отдельного разрешения; ограничить запись/чтение серверным правилом и тем же правилом count.
+- Контрпример отвергнут: Доверять userId клиента или возвращать глобальный total приватного списка. Результат ручной проверки ответа: pass; runtime: не запускался.

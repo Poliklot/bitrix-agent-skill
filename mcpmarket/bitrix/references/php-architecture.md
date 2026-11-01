@@ -2737,19 +2737,21 @@ class Order extends Controller
     // Метод ОБЯЗАН заканчиваться на 'Action' (METHOD_ACTION_SUFFIX = 'Action')
     public function getListAction(int $page = 1, int $limit = 20): array
     {
+        // Учебная owner-only модель; права реального модуля проверяются его API.
+        $accessFilter = ['=ACTIVE' => 'Y', '=USER_ID' => (int)CurrentUser::get()->getId()];
         $items = \MyVendor\MyModule\OrderTable::getList([
             'select' => ['ID', 'TITLE'],
-            'filter' => ['=ACTIVE' => 'Y'],
+            'filter' => $accessFilter,
             'limit'  => $limit,
             'offset' => ($page - 1) * $limit,
         ])->fetchAll();
 
-        return ['items' => $items, 'total' => \MyVendor\MyModule\OrderTable::getCount()];
+        return ['items' => $items, 'total' => \MyVendor\MyModule\OrderTable::getCount($accessFilter)];
         // Автоматически: {"status":"success","data":{"items":[...],"total":N}}
     }
 
     // null + addError → {"status":"error","errors":[...]}
-    public function createAction(string $title, ?int $userId = null): ?array
+    public function createAction(string $title): ?array
     {
         if (empty($title)) {
             $this->addError(new Error('Заголовок обязателен', 'EMPTY_TITLE'));
@@ -2758,7 +2760,7 @@ class Order extends Controller
 
         $result = \MyVendor\MyModule\OrderTable::add([
             'TITLE'   => $title,
-            'USER_ID' => $userId ?? CurrentUser::get()->getId(),
+            'USER_ID' => (int)CurrentUser::get()->getId(),
         ]);
 
         if (!$result->isSuccess()) {
@@ -2772,7 +2774,11 @@ class Order extends Controller
     // Конвертация UPPER_CASE ключей ORM → camelCase для фронта
     public function getItemAction(int $id): ?array
     {
-        $row = \MyVendor\MyModule\OrderTable::getById($id)->fetch();
+        $row = \MyVendor\MyModule\OrderTable::getList([
+            'filter' => ['=ID' => $id, '=ACTIVE' => 'Y', '=USER_ID' => (int)CurrentUser::get()->getId()],
+            'select' => ['ID', 'TITLE'],
+            'limit' => 1,
+        ])->fetch();
         if (!$row) {
             $this->addError(new Error('Не найден', 'NOT_FOUND'));
             return null;
@@ -3419,3 +3425,11 @@ HttpClient timeout после POST = возможный неизвестный �
 Проверка: Получатель записал объект и задержал ответ: повторный запуск не создаёт второй объект, неопределённый исход виден.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/main/web/httpclient/index.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K48 — Authentication не ограничивает выборку объектами владельца
+
+Authentication проверяет вход, не доступ к строке. Owner-only пример: CurrentUser, одинаковый access filter для list/count/detail; делегирование отдельно.
+
+Проверка: Два владельца не читают/создают данные друг друга; total не раскрывает чужие строки.
+
+[Официальный контракт](https://docs.1c-bitrix.ru/pages/security/access-control.html); documentation-backed, 2026-11-01, не runtime pass.
