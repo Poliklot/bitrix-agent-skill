@@ -913,3 +913,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [mail-notifications.md](bitrix/references/mail-notifications.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cevent/send.php).
 - Самопроверка B138 — «Защитит duplicate=N от двух одинаковых CEvent::Send?»: Нет: это копия на адрес из настроек, два вызова могут создать два события.
 - Контрпример отвергнут: Использовать duplicate как ключ дедупликации. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K60: Вложение по ID и по пути имеет разную стоимость
+
+- Пробел до изменения: Пример смешивал ID и путь без объяснения повторного сохранения файла и имени вложения.
+- Исправление: [mail-notifications.md](bitrix/references/mail-notifications.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/cevent/send.php).
+- Самопроверка B139 — «Почему при отправке сохранённого файла по пути появилась ещё одна копия?»: Путь сохраняется повторно; использовать разрешённый ID CFile и согласовать срок жизни с очередью.
+- Контрпример отвергнут: Передавать GetPath как локальный путь или сразу удалять файл асинхронного письма. Результат ручной проверки ответа: pass; runtime: не запускался.
