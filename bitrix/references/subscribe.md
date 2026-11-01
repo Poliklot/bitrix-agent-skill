@@ -314,7 +314,9 @@ CPosting::Delete($postingId);
 ```php
 $posting = new CPosting();
 
-$posting->ChangeStatus($postingId, 'P');
+if (!$posting->ChangeStatus($postingId, 'P')) {
+    throw new \RuntimeException($posting->LAST_ERROR);
+}
 ```
 
 Что делает current core:
@@ -426,3 +428,11 @@ Authorize(ID, false) выполняет безусловную авториза�
 **Проверка на стенде:** Смена адреса переводит подписку в неподтверждённое состояние до корректного кода.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/csubscriptiongeneral/csubscriptionupdate.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.
+
+## K136 — Статусы posting изменяют очередь, а не только метку
+
+D→P формирует очередь; W→P продолжает её, E→P возвращает ошибочные адреса на отправку. Возврат в D очищает очередь и не равен паузе. Создавай выпуск черновиком и запускай ChangeStatus, не присваивай P напрямую. Всегда проверяй bool/LAST_ERROR до следующего шага.
+
+**Проверка на стенде:** Продолжение не отправляет уже обработанным адресам заново.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/cpostinggeneral/cpostingchangestatus.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.

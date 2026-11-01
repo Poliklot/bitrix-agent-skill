@@ -1568,3 +1568,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [subscribe.md](bitrix/references/subscribe.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/csubscriptiongeneral/csubscriptionupdate.php).
 - Самопроверка B214 — «Можно ли сохранить подтверждение старого адреса после изменения EMAIL?»: Нет; штатный Update запускает новое подтверждение, не подменять его флагом.
 - Контрпример отвергнут: Успешный Update или SENT означает подтверждённый новый email. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K136: Статусы posting изменяют очередь, а не только метку
+
+- Пробел до изменения: Не описаны сохранение/очистка очереди при pause/retry и неверный старт в P.
+- Исправление: [subscribe.md](bitrix/references/subscribe.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/cpostinggeneral/cpostingchangestatus.php).
+- Самопроверка B215 — «Как продолжить остановленную рассылку, не собрать список заново?»: W→P; не переводить в D для обычного продолжения.
+- Контрпример отвергнут: Статус можно писать напрямую, D — безопасная пауза. Результат ручной проверки ответа: pass; runtime: не запускался.
