@@ -1399,3 +1399,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [search.md](bitrix/references/search.md) и [search-seo-ops.md](mcpmarket/bitrix/references/search-seo-ops.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/search/events/onreindex.php).
 - Самопроверка B197 — «Должен ли OnReindex принимать max_execution_time и возвращать NS?»: Нет; использовать документированный callback-протокол с ID/false.
 - Контрпример отвергнут: Копировать сигнатуру ReIndexAll в обработчик события. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K119: Ограничение поиска задаётся MODULE_ID
+
+- Пробел до изменения: Пример и таблица называли фильтр MODULE вместо MODULE_ID.
+- Исправление: [search.md](bitrix/references/search.md) и [search-seo-ops.md](mcpmarket/bitrix/references/search-seo-ops.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/search/classes/csearch/search.php).
+- Самопроверка B198 — «Почему поиск с MODULE=iblock не ограничивается нужным источником?»: Исправить ключ на MODULE_ID и согласовать параметры с индексатором.
+- Контрпример отвергнут: MODULE и MODULE_ID взаимозаменяемы. Результат ручной проверки ответа: pass; runtime: не запускался.

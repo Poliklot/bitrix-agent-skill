@@ -106,8 +106,9 @@ $obSearch = new CSearch();
 $obSearch->Search([
     'QUERY'   => 'поисковый запрос',
     'SITE_ID' => SITE_ID,
-    'MODULE'  => 'iblock',           // фильтр по модулю (необязательно)
-    'PARAM1'  => 'iblock',           // фильтр по группе
+    'MODULE_ID' => 'iblock',         // документированный фильтр по модулю
+    'CHECK_DATES' => 'Y',            // учитывать сроки активности
+    'PARAM1'  => $iblockTypeId,      // тип инфоблока из индексатора
     'PARAM2'  => '5',                // фильтр по подгруппе
 ]);
 
@@ -133,7 +134,7 @@ if ($obSearch->errorno != 0) {
 |----------|----------|
 | `QUERY` | Поисковая фраза |
 | `SITE_ID` | ID сайта |
-| `MODULE` | Фильтр по модулю |
+| `MODULE_ID` | Фильтр по модулю |
 | `PARAM1` | Фильтр первого уровня |
 | `PARAM2` | Фильтр второго уровня |
 | `TAGS` | Поиск по тегам |
@@ -1913,3 +1914,11 @@ OnReindex(NS, callback, method): документы через callback, ост�
 Проверка: Два шага продолжаются после курсора без пропусков; callback ограничивает шаг.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/search/events/onreindex.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K119 — Ограничение поиска задаётся MODULE_ID
+
+Search: MODULE_ID, согласованные PARAM1/PARAM2; SITE_ID и CHECK_DATES задавай явно.
+
+Проверка: Одинаковое слово в двух модулях не расширяет заданную область.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/search/classes/csearch/search.php); documentation-backed, 2026-11-01, не runtime pass.
