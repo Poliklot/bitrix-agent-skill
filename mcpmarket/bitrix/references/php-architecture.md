@@ -1424,7 +1424,7 @@ $context->setLanguage(LANGUAGE_ID);
 use Bitrix\Main\Config\Option;
 
 // Получить настройку для конкретного сайта
-// четвёртый параметр — SITE_ID (без него вернётся общая настройка)
+// Четвёртый параметр задаёт сайт явно; пропуск не гарантирует общую область.
 $value = Option::get('my.module', 'api_key', '', SITE_ID);
 
 // D7-обёртка COption::GetOptionString (legacy-стиль, но с siteId)
@@ -1434,8 +1434,8 @@ $value = COption::GetOptionString('my.module', 'api_key', 'default', SITE_ID);
 Option::set('my.module', 'api_key', 'NEW_KEY', SITE_ID);
 COption::SetOptionString('my.module', 'api_key', 'NEW_KEY', '', SITE_ID);
 
-// Получить общую настройку (не привязанную к сайту) — не передавай siteId
-$globalValue = Option::get('my.module', 'global_setting', 'default');
+// Получить общую настройку: пустая область сайта задана явно
+$globalValue = Option::get('my.module', 'global_setting', 'default', '');
 
 // Удалить настройку сайта
 Option::delete('my.module', ['name' => 'api_key', 'site_id' => SITE_ID]);
@@ -3458,3 +3458,11 @@ int не проверяет диапазон. До ORM ограничить page
 Проверка: page=0, limit=-1 и чрезмерный limit отклоняются до ORM; граничные допустимые значения работают.
 
 [Официальный контракт](https://docs.1c-bitrix.ru/pages/framework/validation.html); documentation-backed, 2026-11-01, не runtime pass.
+
+## K52 — Явная область чтения Option
+
+Не путай get(siteId=false) и общую область. Передавай siteId явно; чтение и запись имеют разные defaults.
+
+Проверка: Разные значения общей области и двух сайтов читаются раздельно, включая CLI.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/coption/getoptionstring.php); documentation-backed, 2026-11-01, не runtime pass.

@@ -857,3 +857,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [cache-infra.md](bitrix/references/cache-infra.md) и [search-seo-ops.md](mcpmarket/bitrix/references/search-seo-ops.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=43&LESSON_ID=2978).
 - Самопроверка B130 — «Будет ли iblock_id_el_17 сам сброшен после Update?»: Без подтверждённого invalidator нет; выбрать штатный тег инфоблока или реализовать парный проектный сброс.
 - Контрпример отвергнут: Считать любое похожее имя встроенным тегом. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K52: Явная область чтения Option
+
+- Пробел до изменения: Пример утверждал, что пропуск siteId читает только общую настройку.
+- Исправление: [modules-loader.md](bitrix/references/modules-loader.md) и [php-architecture.md](mcpmarket/bitrix/references/php-architecture.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/coption/getoptionstring.php).
+- Самопроверка B131 — «Почему Option::get без siteId вернул значение текущего сайта?»: Не считать пропуск аргумента глобальным чтением; задать сайт либо пустую общую область явно.
+- Контрпример отвергнут: Убирать четвёртый аргумент ради гарантированно общего значения. Результат ручной проверки ответа: pass; runtime: не запускался.

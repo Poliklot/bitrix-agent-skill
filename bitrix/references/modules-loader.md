@@ -527,7 +527,7 @@ $context->setLanguage(LANGUAGE_ID);
 use Bitrix\Main\Config\Option;
 
 // Получить настройку для конкретного сайта
-// четвёртый параметр — SITE_ID (без него вернётся общая настройка)
+// Четвёртый параметр задаёт сайт явно; пропуск не гарантирует общую область.
 $value = Option::get('my.module', 'api_key', '', SITE_ID);
 
 // D7-обёртка COption::GetOptionString (legacy-стиль, но с siteId)
@@ -537,8 +537,8 @@ $value = COption::GetOptionString('my.module', 'api_key', 'default', SITE_ID);
 Option::set('my.module', 'api_key', 'NEW_KEY', SITE_ID);
 COption::SetOptionString('my.module', 'api_key', 'NEW_KEY', '', SITE_ID);
 
-// Получить общую настройку (не привязанную к сайту) — не передавай siteId
-$globalValue = Option::get('my.module', 'global_setting', 'default');
+// Получить общую настройку: пустая область сайта задана явно
+$globalValue = Option::get('my.module', 'global_setting', 'default', '');
 
 // Удалить настройку сайта
 Option::delete('my.module', ['name' => 'api_key', 'site_id' => SITE_ID]);
@@ -585,3 +585,11 @@ class MyClass
 - **`$context->setSite()`** меняет контекст только внутри текущего запроса/процесса. Не влияет на другие запросы или агенты.
 
 ---
+
+## K52 — Явная область чтения Option
+
+Чтение с `siteId=false` не равно явной общей области: текущий сайт может изменить результат. Для общего значения передавай пустой идентификатор сайта явно; для задания сайта — известный ID из серверного контекста. У Option::set значение по умолчанию для siteId — пустая строка, у get — false: не выводи семантику чтения из сигнатуры записи. В CLI не полагайся на случайно определённый SITE_ID.
+
+**Проверка на стенде:** Разные значения общей области и двух сайтов читаются раздельно, включая CLI.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/main/reference/coption/getoptionstring.php). Сверка документации: 2026-11-01; установленное ядро и runtime этого сценария здесь не проверены.
