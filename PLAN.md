@@ -1731,3 +1731,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [currency.md](bitrix/references/currency.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/currency/developer/ccurrencylang/formatvalue.php).
 - Самопроверка B233 — «Как вывести сумму длиннее точности float без потери цифр?»: Сохранить десятичную строку и проверить версию formatValue; не преобразовывать заранее.
 - Контрпример отвергнут: float перед форматированием без потерь подходит для любой суммы. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K155: HIDE_ZERO различает публичный и административный вывод
+
+- Пробел до изменения: Не объяснено штатное различие дробных нулей между витриной и админкой.
+- Исправление: [currency.md](bitrix/references/currency.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/currency/developer/ccurrencylang/getformatdescription.php).
+- Самопроверка B234 — «В админке 10.00, на витрине 10 — потеряна точность цены?»: Не обязательно; проверить HIDE_ZERO и формат, исходную сумму не менять.
+- Контрпример отвергнут: Для совпадения вида переписать цену без дробной части. Результат ручной проверки ответа: pass; runtime: не запускался.

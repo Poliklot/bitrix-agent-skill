@@ -4667,3 +4667,11 @@ currency ≥24: длинная decimal-string в formatValue; не float и не
 Проверка: Последние цифры длинной суммы сохраняются в поддерживаемой версии.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/currency/developer/ccurrencylang/formatvalue.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K155 — HIDE_ZERO различает публичный и административный вывод
+
+HIDE_ZERO — публичное оформление, не изменение суммы; админка может показывать иначе.
+
+Проверка: Одинаковая сохранённая сумма имеет допустимое разное оформление без мутации.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/currency/developer/ccurrencylang/getformatdescription.php); documentation-backed, 2026-11-01, не runtime pass.
