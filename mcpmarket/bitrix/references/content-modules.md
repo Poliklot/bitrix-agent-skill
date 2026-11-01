@@ -1914,3 +1914,11 @@ GetDataByID: return SID→список, четвёртый аргумент SID�
 Проверка: Два checkbox-ответа читаются полностью без зависимости от конкретных ID.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/classes/cformresult/getdatabyid.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K127 — Update управляет дополнительными полями отдельным флагом
+
+Update(result, values, update_fields, check_rights): дополнительные поля требуют Y; это не Add-сигнатура.
+
+Проверка: Обычные ответы и служебное поле меняются только по выбранной политике.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/classes/cformresult/update.php); documentation-backed, 2026-11-01, не runtime pass.

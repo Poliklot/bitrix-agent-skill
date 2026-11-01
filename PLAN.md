@@ -1475,3 +1475,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [webforms.md](bitrix/references/webforms.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/classes/cformresult/getdatabyid.php).
 - Самопроверка B205 — «Почему answers[SID][0] отсутствует, хотя ответ существует?»: Выходной answers индексируется ID ответа, не нулём; различать его с return.
 - Контрпример отвергнут: Возврат и оба выходных массива имеют одинаковую структуру. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K127: Update управляет дополнительными полями отдельным флагом
+
+- Пробел до изменения: Не раскрыты update_fields и отличие полного Update от точечного SetField.
+- Исправление: [webforms.md](bitrix/references/webforms.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/classes/cformresult/update.php).
+- Самопроверка B206 — «Почему служебное поле ADDITIONAL не меняется при Update по умолчанию?»: Нужен осознанный update_fields=Y и проверка прав; не отключать check_rights.
+- Контрпример отвергнут: Третий аргумент всегда означает права, как у Add. Результат ручной проверки ответа: pass; runtime: не запускался.
