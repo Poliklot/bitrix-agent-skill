@@ -1906,3 +1906,11 @@ Add user_id — автор записи, права остаются у теку
 Проверка: Неактивный вопрос распознаётся до импорта, его потеря не маскируется успехом.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/classes/cformresult/add.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K126 — GetDataByID даёт две разные индексации ответов
+
+GetDataByID: return SID→список, четвёртый аргумент SID→ANSWER_ID→данные; третий — metadata.
+
+Проверка: Два checkbox-ответа читаются полностью без зависимости от конкретных ID.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/classes/cformresult/getdatabyid.php); documentation-backed, 2026-11-01, не runtime pass.

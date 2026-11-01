@@ -1468,3 +1468,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [webforms.md](bitrix/references/webforms.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/classes/cformresult/add.php).
 - Самопроверка B204 — «ID результата получен, но один переданный ответ пропал — это кеш?»: Сначала проверить активность вопроса и соответствие входа схеме.
 - Контрпример отвергнут: Успех Add доказывает сохранение каждого входного ключа. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K126: GetDataByID даёт две разные индексации ответов
+
+- Пробел до изменения: Возвращаемое значение и выходной параметр answers не различались.
+- Исправление: [webforms.md](bitrix/references/webforms.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/form/classes/cformresult/getdatabyid.php).
+- Самопроверка B205 — «Почему answers[SID][0] отсутствует, хотя ответ существует?»: Выходной answers индексируется ID ответа, не нулём; различать его с return.
+- Контрпример отвергнут: Возврат и оба выходных массива имеют одинаковую структуру. Результат ручной проверки ответа: pass; runtime: не запускался.
