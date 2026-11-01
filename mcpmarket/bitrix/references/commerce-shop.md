@@ -4651,3 +4651,11 @@ GetProductInfo(offerId, offerIblockId) → parent ID/IBLOCK_ID либо false.
 Проверка: Будущий курс не влияет на расчёт выбранной прошлой даты.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/currency/developer/ccurrencyrates/getconvertfactorex.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K153 — CurrencyFormat форматирует, но не переводит между валютами
+
+Сначала конвертация числа, затем CurrencyFormat; форматированную строку не хранить как PRICE.
+
+Проверка: Смена оформления не меняет исходное число; конвертация выполняется отдельным шагом.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/currency/developer/ccurrencylang/currencyformat.php?print=Y); documentation-backed, 2026-11-01, не runtime pass.

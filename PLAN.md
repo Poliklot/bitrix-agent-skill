@@ -1717,3 +1717,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [currency.md](bitrix/references/currency.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/currency/developer/ccurrencyrates/getconvertfactorex.php).
 - Самопроверка B231 — «Можно ли пересчитать прошлый документ по последней строке CurrencyRateTable?»: Нет; передать дату расчёта, проверить покрытие курсов и не брать будущую запись.
 - Контрпример отвергнут: Самая новая строка всегда верна для любой даты. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K153: CurrencyFormat форматирует, но не переводит между валютами
+
+- Пробел до изменения: Не проведена граница между валютой значения и валютой оформления.
+- Исправление: [currency.md](bitrix/references/currency.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/currency/developer/ccurrencylang/currencyformat.php?print=Y).
+- Самопроверка B232 — «Превратит ли CurrencyFormat(100, EUR) сто USD в EUR?»: Нет, только оформит 100 как EUR; сначала нужна конвертация с валютой источника.
+- Контрпример отвергнут: Код валюты в форматировании автоматически конвертирует сумму. Результат ручной проверки ответа: pass; runtime: не запускался.
