@@ -1540,3 +1540,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [subscribe.md](bitrix/references/subscribe.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/csubscriptiongeneral/csubscriptionadd.php).
 - Самопроверка B210 — «Можно ли сразу ставить CONFIRMED=Y при отправке публичной формы?»: Нет; оставить подтверждение адреса штатному потоку, импорт выделить отдельно.
 - Контрпример отвергнут: Введённый email и ACTIVE=Y доказывают подтверждение. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K132: EMAIL подписки уникален, существующая запись не принадлежит заявителю автоматически
+
+- Пробел до изменения: Не раскрыт конфликт уникальности подписки и безопасное продолжение.
+- Исправление: [subscribe.md](bitrix/references/subscribe.md) и [content-modules.md](mcpmarket/bitrix/references/content-modules.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/csubscriptiongeneral/csubscriptiongeneralfields.php).
+- Самопроверка B211 — «Add не создал подписку из-за существующего EMAIL — можно сразу обновить её?»: Только после проверки доступа к найденной подписке; не раскрывать приватные данные.
+- Контрпример отвергнут: Совпадение введённого email даёт право менять USER_ID и RUB_ID. Результат ручной проверки ответа: pass; runtime: не запускался.

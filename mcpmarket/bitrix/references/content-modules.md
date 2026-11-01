@@ -1958,3 +1958,11 @@ ForHTML — схема ключей, не HTML-разметка; get_fields=Y в
 Проверка: Произвольный чужой адрес не становится подтверждённым после POST.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/csubscriptiongeneral/csubscriptionadd.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K132 — EMAIL подписки уникален, существующая запись не принадлежит заявителю автоматически
+
+Уникальный EMAIL ≠ право на существующую подписку; не превращай Add-конфликт в захват Update.
+
+Проверка: Два параллельных запроса не создают захват существующей подписки.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_help/subscribe/classes/csubscriptiongeneral/csubscriptiongeneralfields.php); documentation-backed, 2026-11-01, не runtime pass.
