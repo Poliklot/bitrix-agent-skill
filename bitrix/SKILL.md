@@ -14,7 +14,7 @@ description: >-
   local core and `local/*`; missing optional modules are deferred.
 metadata:
   author: poliklot
-  version: "1.39.0"
+  version: "1.40.0"
 ---
 
 # Bitrix Expert Skill
@@ -32,7 +32,7 @@ Designed for Claude Code and Codex on 1C-Bitrix CMS projects.
 
 Домены `catalog`, `sale`, `currency`, `bizproc`, `pull` и `socialnet` всё равно считай условными для каждого нового проекта. Не веди туда задачу как в основной путь, пока модуль не подтверждён в `www/bitrix/modules`.
 
-Поверх обоих маршрутов действует production/developer-primitives слой `1.39.0`: best practices, структура/include, project configuration/stable IDs, pitfalls matrix, tail module routing и runtime smoke verification. Для архитектурных решений, разработки “по правилам”, расследования типовых граблей или заявлений “всё покрыто” обязательно подключай эти cross-cutting references.
+Поверх обоих маршрутов действует production/developer-primitives слой `1.40.0`: best practices, структура/include, project configuration/stable IDs, pitfalls matrix, tail module routing и runtime smoke verification. Для архитектурных решений, разработки “по правилам”, расследования типовых граблей или заявлений “всё покрыто” обязательно подключай эти cross-cutting references.
 
 ## Источник истины
 
@@ -214,3 +214,5 @@ if (!$result->isSuccess()) {
 - Магазин: владение корзиной/FUSER, позиции и системная отгрузка, частичная оплата, пересчёт, купоны, ограничения доставки, ручная цена и события — [sale.md](references/sale.md). Контракты K11–K20, сценарии B090–B099.
 
 - Внешние интеграции: batch/pagination, OAuth/вебхуки, offline queue, приложения/встройки, файлы, лимиты и неопределённый исход HTTP — [rest.md](references/rest.md) и [http.md](references/http.md). Контракты K21–K40, сценарии B100–B119. REST-контракты относятся к Битрикс24; наличие возможностей в 1С-Битрикс и версию API проверять отдельно.
+
+- Компоненты/Engine: HTML-кеш, приватность результата, эпилог, приоритет шаблона, дополнительные ключи, подписанные параметры, AJAX-маршруты и объектные права — [components.md](references/components.md), [templates.md](references/templates.md), [events-routing.md](references/events-routing.md). K41–K50, B120–B129.
