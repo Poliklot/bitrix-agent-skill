@@ -1668,3 +1668,10 @@ Commerce/1C фаза считается завершённой, когда:
 - Исправление: [catalog.md](bitrix/references/catalog.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/catalog/model/price/recountpricesfrombase.php).
 - Самопроверка B224 — «Метод вернул true — можно считать все цены товара пересчитанными?»: Нет; проверить наличие наценок, диапазон и фактические изменённые строки.
 - Контрпример отвергнут: true означает обновление каждой цены и каждого диапазона. Результат ручной проверки ответа: pass; runtime: не запускался.
+
+### K146: Product::add дополняет существующий элемент, а не создаёт карточку инфоблока
+
+- Пробел до изменения: Не описан порядок двух сущностей при создании товара.
+- Исправление: [catalog.md](bitrix/references/catalog.md) и [commerce-shop.md](mcpmarket/bitrix/references/commerce-shop.md); источник: [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/catalog/model/product/add.php).
+- Самопроверка B225 — «Создаст ли Product::add с NAME новый элемент и назначит ID?»: Нет; нужен уже существующий элемент каталога и проверка отдельного результата записи.
+- Контрпример отвергнут: Product::add заменяет CIBlockElement::Add. Результат ручной проверки ответа: pass; runtime: не запускался.

@@ -4593,3 +4593,11 @@ recountPricesFromBase(basePriceId): только зависимые цены с�
 Проверка: Независимая цена и другой диапазон не меняются; пустой набор не выдаётся за изменения.
 
 [Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/catalog/model/price/recountpricesfrombase.php); documentation-backed, 2026-11-01, не runtime pass.
+
+## K146 — Product::add дополняет существующий элемент, а не создаёт карточку инфоблока
+
+Сначала элемент каталога, затем Product::add с его ID; не новая карточка через ProductTable.
+
+Проверка: Повтор импорта не размножает карточки, ошибка коммерческой записи видна отдельно.
+
+[Официальный контракт](https://dev.1c-bitrix.ru/api_d7/bitrix/catalog/model/product/add.php); documentation-backed, 2026-11-01, не runtime pass.
